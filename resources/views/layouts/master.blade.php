@@ -427,7 +427,7 @@
     </aside><!-- End Sidebar-->
     <main id="main" class="main">
         <div class="pagetitle">
-            @yield('title')
+            <h1> @yield('title') </h1>
         </div><!-- End Page Title -->
         <section class="section dashboard">
             <div class="row">

@@ -6,24 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateMachinesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
+            $table->string('machine_name');
+            $table->bigInteger('machine_code');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+
     public function down()
     {
         Schema::dropIfExists('machines');

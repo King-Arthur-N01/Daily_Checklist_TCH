@@ -217,6 +217,17 @@ h6 {
 }
 
 /* Card */
+.row-card-custom {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.card-dashboard{
+    padding: 0px 12px 0px 11px;
+    margin: 0px 0px 0px 0px;
+}
 
 .card-custom-1{
     /* background-color: #148cdb; */
@@ -293,6 +304,14 @@ h6 {
   font-weight: 500;
   color: #012970;
   font-family: "Poppins", sans-serif;
+}
+
+.card-title-custom-header {
+    padding: 20px 0 15px 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #012970;
+    font-family: "Poppins", sans-serif;
 }
 
 .card-title-custom {

@@ -8,7 +8,7 @@
             <div class="card-body-custom">
                 <div class="row-card-custom">
                     <div class="col-8">
-                        <h4 class="card-title">BARANG KELUAR</h2>
+                        <h4 class="card-title-custom-header">BARANG KELUAR</h2>
                         <h5 class="card-title-custom">50 Items Out Today</h3>
                     </div>
                     <div class="col-4">
@@ -26,7 +26,7 @@
             <div class="card-body-custom">
                 <div class="row-card-custom">
                     <div class="col-8">
-                        <h4 class="card-title">BARANG MASUK</h4>
+                        <h4 class="card-title-custom-header">BARANG MASUK</h4>
                         <h5 class="card-title-custom">10 Items In Today</h5>
                     </div>
                     <div class="col-4">
@@ -44,7 +44,7 @@
             <div class="card-body-custom">
                 <div class="row-card-custom">
                     <div class="col-8">
-                        <h4 class="card-title">OVERAL QTY.</h4>
+                        <h4 class="card-title-custom-header">OVERAL QTY.</h4>
                         <h5 class="card-title-custom">90% Items Out Today</h5>
                     </div>
                     <div class="col-4">
