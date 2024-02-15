@@ -1,73 +1,51 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Meta -->
+    <meta name="description" content="Responsive Bootstrap 4 Dashboard Template">
+    <meta name="author" content="BootstrapDash">
+    <title>Azia Responsive Bootstrap 4 Dashboard Template</title>
+    <!-- vendor css -->
+    <link href="assets/lib/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="assets/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="assets/lib/typicons.font/typicons.css" rel="stylesheet">
+    <!-- azia CSS -->
+    <link rel="stylesheet" href="assets/css/azia.css">
+</head>
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+<body class="az-body">
+    <div class="az-signin-wrapper">
+        <div class="az-card-signin">
+            <div class="az-signin-header">
+                <h2>Welcome back!</h2>
+                <h4>Please sign in to continue</h4>
+                <form action="index.html">
+                    <div class="form-group">
+                        <label>NIK</label>
+                        <input type="text" class="form-control" name="nik" placeholder="Enter your email">
+                    </div><!-- form-group -->
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Enter your password">
+                    </div><!-- form-group -->
+                    <button class="btn btn-az-primary btn-block">Sign In</button>
+                </form>
+            </div><!-- az-signin-header -->
+        </div><!-- az-card-signin -->
+    </div><!-- az-signin-wrapper -->
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+    <script src="assets/lib/jquery/jquery.min.js"></script>
+    <script src="assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/lib/ionicons/ionicons.js"></script>
+    <script src="assets/js/azia.js"></script>
+    <script>
+        $(function() {
+            'use strict'
+        });
+    </script>
+</body>
 
-                        <div class="form-group row">
-                            <label for="nik" class="col-md-4 col-form-label text-md-right">{{ __('NIK') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="nik" type="nik" class="form-control @error('nik') is-invalid @enderror" name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus>
-
-                                @error('nik')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+</html>
