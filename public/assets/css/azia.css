@@ -478,7 +478,7 @@ h6,
 .h4,
 .h5,
 .h6 {
-    margin-bottom: 0.5rem;
+    /* margin-bottom: 0.5rem; */
     font-weight: 500;
     line-height: 1.2;
 }
@@ -721,9 +721,16 @@ pre code {
 
 .row {
     display: flex;
-    flex-wrap: wrap;
     margin-right: -15px;
     margin-left: -15px;
+    flex-wrap: wrap;
+}
+
+.row-card-custom{
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 
 .no-gutters {
@@ -5008,27 +5015,37 @@ input[type="button"].btn-block {
     color: #fff;
 }
 
+.image-card-home{
+    height: 55px;
+    text-align: right;
+}
+
 .card-dashboard {
     padding: 0px 12px 0px 11px;
     margin: 0px 0px 0px 0px;
 }
 
-.card-custom-1 {
-    /* background-color: #148cdb; */
+.card-dashboard-1 {
+    background-color: white;
     border-radius: 6px;
+    padding: 10px 6px 10px 6px;
+    margin: 5px 5px 5px 5px;
+    /* max-width: 22%; */
+    /* height: 100%; */
 }
 
-.card-footer-item-custom-1 {
-    width: 100%;
-    padding: 8px 0px;
-    -webkit-box-flex: 1;
+.card-footer-item-custom{
+    /* width: 100%; */
+    padding: 8px 10px;
+    margin: 5px 0px 0px 0px;
+    /* -webkit-box-flex: 1; */
     /* border: 3px solid #148cdb; */
     border-radius: 10px;
     -ms-flex: 1;
-    flex: 1;
-    text-align: right;
-    display: inline-block;
-    background-color: white;
+    /* flex: 1; */
+    /* text-align: right; */
+    /* display: inline-block; */
+    /* background-color: white; */
 }
 
 .card {
@@ -5042,6 +5059,29 @@ input[type="button"].btn-block {
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 3px;
 }
+
+.card-custom-1{
+    /* margin-bottom: 20px; */
+    border: none;
+    -webkit-box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
+    -moz-box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
+    box-shadow: 0px 1px 2px 1px rgba(154, 154, 204, 0.22);
+}
+
+.card-footer-custom-1{
+    width: 100%;
+    padding: 8px 0px 0px 10px;
+    -webkit-box-flex: 1;
+    /* border: 3px solid #148cdb; */
+    /* border-radius: 10px; */
+    -ms-flex: 1;
+    flex: 1;
+    text-align: left;
+    display: inline-block;
+    /* background-color: white; */
+}
+
+.card-text-footer{font-size: 12px;}
 
 .card>hr {
     margin-right: 0;
@@ -5073,7 +5113,14 @@ input[type="button"].btn-block {
 .card-body {
     flex: 1 1 auto;
     min-height: 1px;
-    padding: 1.25rem;
+    padding: 12px 0px 12px 0px;
+}
+
+.card-body-custom {
+    -ms-flex: 1 1 auto;
+    display: flex;
+    /* padding: 10px 0px 0px 0px; */
+    flex-direction: column;
 }
 
 .card-title {
@@ -5082,9 +5129,10 @@ input[type="button"].btn-block {
 
 .card-title-custom-1 {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 18px;
     color: #1c273c;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    padding: 0px;
 }
 
 .card-title-custom-2 {
@@ -12209,9 +12257,8 @@ a.text-dark:focus {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    /* align-items: center; */
-    justify-content: space-between;
     /* padding: 10px 0; */
+    flex-direction: column;
 }
 
 .az-list-item+.az-list-item {
@@ -12237,7 +12284,7 @@ a.text-dark:focus {
 }
 
 .az-list-item>div:last-child {
-    text-align: right;
+    text-align: left;
 }
 
 .az-list-item>div:last-child h6 {
@@ -18089,7 +18136,7 @@ body {
     border-color: #cdd4e0;
     border-radius: 5px;
     box-shadow: 0px 0px 5px 0px #a9a9a9;
-    padding: 15px;
+    padding: 10px;
 }
 
 .card-dashboard-pageviews .card-header {
@@ -18118,6 +18165,7 @@ body {
     border-color: #cdd4e0;
     padding: 20px;
     height: 100%;
+    background-color: white;
 }
 
 .card-dashboard-four .card-header {

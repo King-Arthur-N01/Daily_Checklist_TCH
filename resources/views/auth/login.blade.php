@@ -22,20 +22,29 @@
             <div class="az-signin-header">
                 <h2>Welcome back!</h2>
                 <h4>Please sign in to continue</h4>
-                <form action="index.html">
+                <form action="{{route('pushlogin')}}" method="post">
+                @csrf
                     <div class="form-group">
                         <label>NIK</label>
-                        <input type="text" class="form-control" name="nik" placeholder="Enter your email">
-                    </div><!-- form-group -->
+                        <input type="text" class="form-control" name="nik" placeholder="Enter your NIK">
+                    </div>
+                    @error('nik')
+                        <strong>{{ $message }}</strong>
+                    @enderror
                     <div class="form-group">
                         <label>Password</label>
                         <input type="password" class="form-control" name="password" placeholder="Enter your password">
-                    </div><!-- form-group -->
+                    </div>
+                    @error('password')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
                     <button class="btn btn-az-primary btn-block">Sign In</button>
                 </form>
-            </div><!-- az-signin-header -->
-        </div><!-- az-card-signin -->
-    </div><!-- az-signin-wrapper -->
+            </div>
+        </div>
+    </div>
 
     <script src="assets/lib/jquery/jquery.min.js"></script>
     <script src="assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
