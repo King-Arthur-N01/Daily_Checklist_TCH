@@ -23,3 +23,10 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/login','Auth\LoginController@indexlogin')->name('login');
 Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin');
 Route::get('/logout','Auth\LoginController@signout')->name('logout');
+
+
+Route::get('/tablemachine','MachineData\MachineController@indexatablemachine')->name('managemachine');
+
+Route::get('/addmachine','MachineData\MachineController@indexregistermachine')->name('addmachine');
+Route::post('/addmachine','MachineData\MachineController@createmachine')->name('pushmachine');
+Route::get('/edit/{id}','MachineController@addmachine')->name('showformeditmachine');

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Machine;
+use App\Operatoraction;
 use Illuminate\Http\Request;
 
-class MachineController extends Controller
+class OperatoractionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class MachineController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Machine  $machine
+     * @param  \App\Operatoraction  $operatoraction
      * @return \Illuminate\Http\Response
      */
-    public function show(Machine $machine)
+    public function show(Operatoraction $operatoraction)
     {
         //
     }
@@ -52,10 +52,10 @@ class MachineController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Machine  $machine
+     * @param  \App\Operatoraction  $operatoraction
      * @return \Illuminate\Http\Response
      */
-    public function edit(Machine $machine)
+    public function edit(Operatoraction $operatoraction)
     {
         //
     }
@@ -64,10 +64,10 @@ class MachineController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Machine  $machine
+     * @param  \App\Operatoraction  $operatoraction
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Machine $machine)
+    public function update(Request $request, Operatoraction $operatoraction)
     {
         //
     }
@@ -75,10 +75,10 @@ class MachineController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Machine  $machine
+     * @param  \App\Operatoraction  $operatoraction
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Machine $machine)
+    public function destroy(Operatoraction $operatoraction)
     {
         //
     }
