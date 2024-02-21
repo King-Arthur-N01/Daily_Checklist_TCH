@@ -25,10 +25,16 @@ Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin')
 Route::get('/logout','Auth\LoginController@signout')->name('logout');
 
 
-Route::get('/tablemachine','MachineData\MachineController@indextablemachine')->name('managemachine');
-
 Route::get('/addmachine','MachineData\MachineController@indexregistermachine')->name('addmachine');
 Route::post('/addmachine','MachineData\MachineController@registermachine')->name('pushmachine');
 Route::get('/editmachine/{id}','MachineData\MachineController@indexupdatemachine')->name('editmachine');
-Route::post('/editmachine/{id}','MachineData\MachineController@updatemachine')->name('pusheditmachine');
+Route::put('/editmachine/{id}','MachineData\MachineController@updatemachine')->name('pusheditmachine');
+Route::get('/tablemachine','MachineData\MachineController@indextablemachine')->name('managemachine');
 Route::get('/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
+
+Route::get('/addcomponencheck','MachineData\ComponencheckController@indexregistercomponencheck')->name('addcomponencheck');
+Route::post('/addcomponencheck','MachineData\ComponencheckController@registercomponencheck')->name('pushcomponencheck');
+Route::get('/editcomponencheck/{id}','MachineData\ComponencheckController@indexeditcomponencheck')->name('editcomponencheck');
+Route::put('/editcomponencheck/{id}','MachineData\ComponencheckController@editcomponencheck')->name('pusheditcomponencheck');
+Route::get('/tablecomponencheck','MachineData\ComponencheckController@indextablecomponencheck')->name('managecomponencheck');
+Route::get('/deletecomponencheck/{id}','MachineData\ComponencheckController@deletecomponencheck')->name('deletecomponencheck');

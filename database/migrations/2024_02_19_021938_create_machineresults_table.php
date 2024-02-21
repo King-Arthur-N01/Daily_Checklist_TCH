@@ -15,7 +15,7 @@ class CreateMachineresultsTable extends Migration
     {
         Schema::create('machineresults', function (Blueprint $table) {
             $table->id();
-            $table->string('machine_code');
+            $table->string('machine_code')->default('0');
             $table->integer('id_componencheck1');
             $table->integer('id_componencheck2');
             $table->integer('id_componencheck3');

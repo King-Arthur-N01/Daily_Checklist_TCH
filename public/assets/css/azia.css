@@ -758,6 +758,7 @@ pre code {
     margin-right: -15px;
     margin-left: -15px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .row-card-custom{
@@ -2242,6 +2243,16 @@ pre code {
     .table-responsive-xl>.table-bordered {
         border: 0;
     }
+}
+
+.table-top{
+    display: flex;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
 }
 
 .table-responsive {
@@ -5056,7 +5067,9 @@ input[type="button"].btn-block {
 }
 
 .custom-card-table{
-
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; */
 }
 
 .card-dashboard {
@@ -11406,7 +11419,7 @@ a.text-dark:focus {
 /* ###### 3.9 Forms ###### */
 .form-control {
     height: 38px;
-    border-radius: 0;
+    border-radius: 5px;
 }
 
 .form-control:focus {
@@ -24844,6 +24857,7 @@ body {
 }
 
 .mg-b-5 {
+    margin-top: 5px;
     margin-bottom: 5px;
 }
 

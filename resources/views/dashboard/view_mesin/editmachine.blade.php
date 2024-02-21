@@ -9,7 +9,7 @@
             <div class="card">
                 <h5 class="card-header">Form Edit Mesin</h5>
                 <div class="card-body">
-                    <form action="{{ route('pusheditmachine') }}" id="registerform" method="post">
+                    <form action="{{route('pusheditmachine', $machines->id)}}" id="editform" method="post">
                         @csrf
                         @method('put')
                         <div class="row" align-items="center">
@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-xl-6">
                                 <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Machine</label>
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
                                     <div>
                                         <input class="form-control" type="text" name="machine_name" value="{{$machines->machine_name}}" placeholder="Nama Mesin">
                                     </div>
@@ -53,7 +53,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage Mesin</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_spec" placeholder="Spec/Tonnage Mesin">
+                                        <input class="form-control" type="text" name="machine_spec" value="{{$machines->machine_spec}}" placeholder="Spec/Tonnage Mesin">
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_made" placeholder="Buatan">
+                                        <input class="form-control" type="text" name="machine_made" value="{{$machines->machine_made}}" placeholder="Buatan">
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
                                     <div>
-                                        <input class="form-control" type="text" name="mfg_number" placeholder="MFG Number">
+                                        <input class="form-control" type="text" name="mfg_number" value="{{$machines->mfg_number}}" placeholder="MFG Number">
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
                                     <div>
-                                        <input class="form-control" type="date" name="install_date">
+                                        <input class="form-control" type="date" value="{{$machines->install_date}}" name="install_date">
                                     </div>
                                 </div>
                             </div>

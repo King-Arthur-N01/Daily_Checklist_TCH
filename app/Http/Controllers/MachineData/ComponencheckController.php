@@ -8,98 +8,61 @@ use Illuminate\Http\Request;
 
 class ComponencheckController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function indextablecomponencheck()
     {
-        //
+        $componencheck=Componencheck::get();
+        return view ('dashboard.view_componen.tablecomponencheck',['componencheck'=>$componencheck]);
+    }
+    public function indexregistercomponencheck()
+    {
+        return view ('dashboard.view_componen.addcomponencheck');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function validatecomponen(Request $request)
+    public function indexeditcomponencheck($id)
     {
+        $componencheck=Componencheck::find($id);
+        return view ('dashboard.view_componen.editcomponencheck',['componencheck'=>$componencheck]);
+    }
+
+    public function registercomponencheck(Request $request)
+    {
+        $lastIDCode = Componencheck::orderBy('id_componencheck', 'desc')->first();
+
+        if (isset($lastIDCode)) {
+            $currentvalue =  $lastIDCode->id_componencheck + 1;
+        } else {
+            $currentvalue = 1;
+        }
         $request->validate([
-            'id_componencheck' => 'required',
             'name_componencheck' => 'required|max:255'
         ]);
-        Componencheck::create($request->all());
-        return redirect()->route("#")->withSuccess('Machine added successfully.');
+        $componencheck = Componencheck::create($request->all());
+        $componencheck->id_componencheck = $currentvalue;
+        $componencheck->save();
+        return redirect()->route("managecomponencheck")->withSuccess('Componen Check added successfully.');
     }
 
-    protected function createcomponen(array $data)
-    {
-        return Componencheck::create([
-            'id_componencheck' => $data ['id_componencheck'],
-            'name_componencheck' => $data ['name_componencheck']
-        ]);
-    }
-    
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    // protected function createcomponen(array $data)
+    // {
+    //     return Componencheck::create([
+    //         'id_componencheck' => $data ['id_componencheck'],
+    //         'name_componencheck' => $data ['name_componencheck']
+    //     ]);
+    // }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Componencheck  $componencheck
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Componencheck $componencheck)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Componencheck  $componencheck
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, $id)
+    public function editcomponencheck(Request $request, $id)
     {
         $request->validate([
-            'id_componencheck' => 'required',
             'name_componencheck' => 'required|max:255'
         ]);
-        $Componenchecks = Componencheck::find($id);
-        $Componenchecks->update($request->all());
-        return redirect()->route("#")->withSuccess('Items updated successfully.');
+        $componenchecks = Componencheck::find($id);
+        $componenchecks->update($request->all());
+        return redirect()->route("managecomponencheck")->withSuccess('Items updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Componencheck  $componencheck
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Componencheck $componencheck)
+    public function deletecomponencheck($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Componencheck  $componencheck
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Componencheck $componencheck)
-    {
-        //
+        Componencheck::where('id',$id)->delete();
+        return redirect()->route("managemanagecomponencheck")->with('success', 'Items deleted successfully');
     }
 }

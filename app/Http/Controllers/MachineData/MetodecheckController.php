@@ -13,9 +13,9 @@ class MetodecheckController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function indexmethod()
     {
-        //
+        return view ('dashboard.');
     }
 
     /**
@@ -23,7 +23,7 @@ class MetodecheckController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function validatemethod(Request $request)
+    public function pushmethod(Request $request)
     {
         $request->validate([
             'id_metodecheck' => 'required',
@@ -31,14 +31,6 @@ class MetodecheckController extends Controller
         ]);
         Metodecheck::create($request->all());
         return redirect()->route("#")->withSuccess('Machine added successfully.');
-    }
-
-    protected function createmethod(array $data)
-    {
-        return Metodecheck::create([
-            'id_metodecheck' => $data ['id_metodecheck'],
-            'name_metodecheck' => $data ['name_metodecheck']
-        ]);
     }
 
     /**

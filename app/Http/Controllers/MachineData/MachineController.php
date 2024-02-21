@@ -8,33 +8,32 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
-    public function indextablemachine(){
+    public function indextablemachine()
+    {
         $machines=Machine::get();
-        return view ('dashboard.tablemachine',['machines'=>$machines]);
+        return view ('dashboard.view_mesin.tablemachine',['machines'=>$machines]);
     }
 
     public function indexregistermachine()
     {
-        return view ('dashboard.addmachine');
+        return view ('dashboard.view_mesin.addmachine');
     }
 
-    public function indexupdatemachine()
+    public function indexupdatemachine($id)
     {
-
+        $machines=Machine::find($id);
+        return view ('dashboard.view_machine.editmachine',['machines'=>$machines]);
     }
 
     public function registermachine(Request $request)
     {
-
         $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
 
         if (isset($lastMachineCode)) {
             $currentvalue =  $lastMachineCode->machine_code + 1;
         } else {
-
             $currentvalue = 1;
         }
-
         $request->validate([
             'invent_number' => 'required',
             'machine_name' => 'required|max:255',
@@ -46,10 +45,10 @@ class MachineController extends Controller
             'install_date'
         ]);
         //simpan data
-        $machine = Machine::create($request->all());
+        $machines = Machine::create($request->all());
         //sembari update data nomor mesin
-        $machine->machine_code = $currentvalue;
-        $machine->save();
+        $machines->machine_code = $currentvalue;
+        $machines->save();
 
         return redirect()->route("managemachine")->withSuccess('Machine added successfully.');
     }
@@ -69,8 +68,8 @@ class MachineController extends Controller
 
     public function updatemachine(Request $request, $id)
     {
+        // $currentvalue = Machine::orderBy('machine_code', 'desc')->first();
         $request->validate([
-            'machine_code' => 'required',
             'invent_number' => 'required',
             'machine_name' => 'required|max:255',
             'machine_brand',
@@ -80,8 +79,10 @@ class MachineController extends Controller
             'mfg_number' => 'required',
             'install_date'
         ]);
-        $Machines = Machine::find($id);
-        $Machines->update($request->all());
+        $machines = Machine::find($id);
+        $machines->update($request->all());
+        // $machines->machine_code = $currentvalue;
+        // $machines->save();
         return redirect()->route("managemachine")->withSuccess('Items updated successfully.');
     }
 

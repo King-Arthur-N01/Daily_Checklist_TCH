@@ -91,5 +91,8 @@ public function registermachine(Request $request)
         'install_date' => $request->input('install_date'),
     ]);
 
-    return redirect()->route("tablemachine")->withSuccess('Machine added successfully.');
-}
+    return redirect()->route("tablemach
+
+
+
+    Missing required parameters for [Route: pusheditmachine] [URI: editmachine/{id}]. (View: C:\laragon\www\Daily_Checklist_TCH\resources\views\dashboard\editmachine.blade.php)
