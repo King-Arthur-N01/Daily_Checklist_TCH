@@ -8,28 +8,50 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
-    public function indexatablemachine()
-    {
-        return view ('');
+    public function indextablemachine(){
+        $machines=Machine::get();
+        return view ('dashboard.tablemachine',['machines'=>$machines]);
     }
 
     public function indexregistermachine()
     {
-        return view ('');
+        return view ('dashboard.addmachine');
     }
-    public function createmachine(Request $request)
+
+    public function indexupdatemachine()
     {
+
+    }
+
+    public function registermachine(Request $request)
+    {
+
+        $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
+
+        if (isset($lastMachineCode)) {
+            $currentvalue =  $lastMachineCode->machine_code + 1;
+        } else {
+
+            $currentvalue = 1;
+        }
+
         $request->validate([
-            'machine_code' => 'required',
+            'invent_number' => 'required',
             'machine_name' => 'required|max:255',
-            'machine_brand' => 'required',
+            'machine_brand',
             'machine_type',
             'machine_spec',
+            'machine_made',
             'mfg_number' => 'required',
-            'invent_number' => 'required'
+            'install_date'
         ]);
-        Machine::create($request->all());
-        return redirect()->route("#")->withSuccess('Machine added successfully.');
+        //simpan data
+        $machine = Machine::create($request->all());
+        //sembari update data nomor mesin
+        $machine->machine_code = $currentvalue;
+        $machine->save();
+
+        return redirect()->route("managemachine")->withSuccess('Machine added successfully.');
     }
 
     // protected function createmachine(array $data)
@@ -37,7 +59,7 @@ class MachineController extends Controller
     //     return Machine::create([
     //         'machine_code' => $data ['machine_code'],
     //         'machine_name' => $data ['machine_name'],
-    //         'machine_brand'=> $data ['machine_brand'],
+    //         'machine_brand'=> $data ['machine_brand'],???
     //         'machine_type' => $data ['machine_type'],
     //         'machine_spec' => $data ['machine_spec'],
     //         'mfg_number'   => $data ['mfg_number'],
@@ -45,39 +67,27 @@ class MachineController extends Controller
     //     ]);
     // }
 
-    public function store(Request $request)
-    {
-
-    }
-
-    public function show(Machine $machine)
-    {
-        //
-    }
-
-    public function edit(Request $request, $id)
+    public function updatemachine(Request $request, $id)
     {
         $request->validate([
             'machine_code' => 'required',
+            'invent_number' => 'required',
             'machine_name' => 'required|max:255',
-            'machine_brand' => 'required',
+            'machine_brand',
             'machine_type',
             'machine_spec',
+            'machine_made',
             'mfg_number' => 'required',
-            'invent_number' => 'required'
+            'install_date'
         ]);
         $Machines = Machine::find($id);
         $Machines->update($request->all());
-        return redirect()->route("#")->withSuccess('Items updated successfully.');
+        return redirect()->route("managemachine")->withSuccess('Items updated successfully.');
     }
 
-    public function update(Request $request, Machine $machine)
+    public function deletemachine($id)
     {
-        //
-    }
-
-    public function destroy(Machine $machine)
-    {
-        //
+        Machine::where('id',$id)->delete();
+        return redirect()->route("managemachine")->with('success', 'Items deleted successfully');
     }
 }

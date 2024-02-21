@@ -15,7 +15,7 @@ class CreateComponenchecksTable extends Migration
     {
         Schema::create('componenchecks', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_componencheck');
+            $table->integer('id_componencheck');
             $table->string('name_componencheck');
             $table->timestamps();
         });

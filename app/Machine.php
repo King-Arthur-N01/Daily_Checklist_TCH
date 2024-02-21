@@ -8,11 +8,13 @@ class Machine extends Model
 {
     protected $fillable = [
         'machine_code',
+        'invent_number',
         'machine_name',
         'machine_brand',
         'machine_type',
         'machine_spec',
+        'machine_made',
         'mfg_number',
-        'invent_number'
+        'install_date'
     ];
 }

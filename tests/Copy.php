@@ -1,96 +1,95 @@
-@if (session('status'))
-<div class="alert alert-success" role="alert">
-    {{ session('status') }}
-</div>
-@endif
+<?php
+
+$myarray = Array ( 'F' ,'F' ,'N' , 'l');
+
+$j =0;
+
+for($x = 0; $x < 2; $x++ ){
+  echo $myarray[$x].'-'.$j.$x;
+echo "<br>";
+}
+echo "<br>";
 
 
-@extends('layouts.app')
+$m=0;
+for($k=2;$k<=3;$k++){
+  echo $myarray[$k].'-'.$j.$m;
+    echo "<br>";
+}
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
+// Function to perform custom incrementation
+function customIncrement(&$value, $incrementBy = 1) {
+    $value += $incrementBy;
+}
 
-                        <div class="form-group row">
-                            <label for="nik" class="col-md-4 col-form-label text-md-right">{{ __('NIK') }}</label>
+// Example usage
+$counter = 0;
+customIncrement($counter); // Increment by default value (1)
+echo "Counter: $counter\n"; // Output: Counter: 1
 
-                            <div class="col-md-6">
-                                <input id="nik" type="nik" class="form-control @error('nik') is-invalid @enderror" name="nik" value="{{ old('nik') }}" required autocomplete="nik" autofocus>
+public function registermachine(Request $request)
+{
+    // Get the last machine code from the database
+    $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
 
-                                @error('nik')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
+    // If there are no machines yet, set the machine code to 1
+    if (!$lastMachineCode) {
+        $currentvalue = 1;
+    } else {
+        // Otherwise, extract the number from the machine code and increment it
+        preg_match('/\d+/', $lastMachineCode->machine_code, $matches);
+        $currentvalue = intval($matches[0]) + 1;
+    }
 
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+    $request->validate([
+        'machine_code' => $currentvalue,
+        'invent_number' => 'required',
+        'machine_name' => 'required|max:255',
+        'machine_brand',
+        'machine_type',
+        'machine_spec',
+        'machine_made',
+        'mfg_number' => 'required',
+        'install_date'
+    ]);
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+    Machine::create($request->all());
 
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    return redirect()->route("tablemachine")->withSuccess('Machine added successfully.');
+}
 
 
 
 
-display: flex;
-    align-items: center;
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--bs-body-color);
-    text-align: center;
-    white-space: nowrap;
-    background-color: var(--bs-tertiary-bg);
-    border: var(--bs-border-width) solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
+
+public function registermachine(Request $request)
+{
+    $request->validate([
+        'invent_number' => 'required',
+        'machine_name' => 'required | max: 255',
+        'machine_brand' => 'required',
+        'machine_type' => 'required',
+        'machine_spec' => 'required',
+        'machine_made' => 'required',
+        'mfg_number' => 'required',
+        'install_date' => 'required',
+    ]);
+
+    // Generate machine code as auto-incrementing value
+    $machineCode = 'MC-' . str_pad(Machine::count() + 1, 4, '0', STR_PAD_LEFT);
+
+    Machine::create([
+        'machine_code' => $machineCode,
+        'invent_number' => $request->input('invent_number'),
+        'machine_name' => $request->input('machine_name'),
+        'machine_brand' => $request->input('machine_brand'),
+        'machine_type' => $request->input('machine_type'),
+        'machine_spec' => $request->input('machine_spec'),
+        'machine_made' => $request->input('machine_made'),
+        'mfg_number' => $request->input('mfg_number'),
+        'install_date' => $request->input('install_date'),
+    ]);
+
+    return redirect()->route("tablemachine")->withSuccess('Machine added successfully.');
+}

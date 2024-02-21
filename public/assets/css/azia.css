@@ -266,13 +266,14 @@ sup {
 }
 
 a {
-    color: #3366ff;
+    color: #000000;
     text-decoration: none;
     background-color: transparent;
+    font-weight: 500;
 }
 
 a:hover {
-    color: #0039e6;
+    color: #4e5464;
     text-decoration: none;
 }
 
@@ -334,6 +335,39 @@ th {
 label {
     display: inline-block;
     margin-bottom: 0.5rem;
+}
+
+.button-table-custom-action{
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px 0px 5px 0px;
+}
+
+.button-table-custom-view{
+    padding: 7px 4px 7px 4px;
+    margin: 2px;
+    background-color: #14c73d;
+    border-radius: 4px;
+    /* border: 1px solid gray; */
+    /* box-shadow: 0px 0px 3px 0px black; */
+}
+
+.button-table-custom-edit{
+    padding: 7px 4px 7px 4px;
+    margin: 2px;
+    background-color: #5969ff;
+    border-radius: 4px;
+    /* border: 1px solid gray; */
+    /* box-shadow: 0px 0px 3px 0px black; */
+}
+
+.button-table-custom-delete{
+    padding: 7px 4px 7px 4px;
+    margin: 2px;
+    background-color: #ef172c;
+    border-radius: 4px;
+    /* border: 1px solid gray; */
+    /* box-shadow: 0px 0px 3px 0px black; */
 }
 
 button {
@@ -2215,6 +2249,7 @@ pre code {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    background-color: white;
 }
 
 .table-responsive>.table-bordered {
@@ -5020,6 +5055,10 @@ input[type="button"].btn-block {
     text-align: right;
 }
 
+.custom-card-table{
+
+}
+
 .card-dashboard {
     padding: 0px 12px 0px 11px;
     margin: 0px 0px 0px 0px;
@@ -5058,6 +5097,7 @@ input[type="button"].btn-block {
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 3px;
+    padding: 15px;
 }
 
 .card-custom-1{

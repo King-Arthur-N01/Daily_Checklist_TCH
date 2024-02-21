@@ -20,8 +20,7 @@
     <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/css/fontawesome-all.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/themify-icons/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/simple-line-icons/css/simple-line-icons.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('assets/fonts/material-design-iconic-font/css/materialdesignicons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/fonts/material-design-iconic-font/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/flag-icon-css/flag-icon.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/azia.css') }}">
 
@@ -31,18 +30,17 @@
     <div class="az-header">
         <div class="container">
             <div class="az-header-left">
-                <a href="index.html" class="az-logo"><span></span>CONCEPT</a>
+                <a href="{{route('home')}}" class="az-logo"><span></span>CONCEPT</a>
                 <a href="" id="azMenuShow" class="az-header-menu-icon d-lg-none"><span></span></a>
             </div><!-- az-header-left -->
             <div class="az-header-menu">
                 <div class="az-header-menu-header">
-                    <a href="index.html" class="az-logo"><span></span> azia</a>
+                    <a href="{{route('home')}}" class="az-logo"><span></span>CONCEPT</a>
                     <a href="" class="close">&times;</a>
                 </div><!-- az-header-menu-header -->
                 <ul class="nav">
                     <li class="nav-item active show">
-                        <a href="index.html" class="nav-link"><i class="typcn typcn-chart-area-outline"></i>
-                            Dashboard</a>
+                        <a href="{{route('home')}}" class="nav-link"><i class="typcn typcn-chart-area-outline"></i>Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link with-sub"><i class="typcn typcn-document"></i> Pages</a>
@@ -52,12 +50,10 @@
                         </nav>
                     </li>
                     <li class="nav-item">
-                        <a href="chart-chartjs.html" class="nav-link"><i class="typcn typcn-chart-bar-outline"></i>
-                            Charts</a>
+                        <a href="chart-chartjs.html" class="nav-link"><i class="typcn typcn-chart-bar-outline"></i>Charts</a>
                     </li>
                     <li class="nav-item">
-                        <a href="form-elements.html" class="nav-link"><i class="typcn typcn-chart-bar-outline"></i>
-                            Forms</a>
+                        <a href="form-elements.html" class="nav-link"><i class="typcn typcn-chart-bar-outline"></i>Forms</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link with-sub"><i class="typcn typcn-book"></i> Components</a>
@@ -132,7 +128,7 @@
     <script src="assets/js/azia.js"></script>
     <script src="assets/js/chart.flot.sampledata.js"></script>
     <script src="assets/js/dashboard.sampledata.js"></script>
-    <script src="assets/js/jquery.cookie.js" type="text/javascript"></script>
+    {{-- <script src="assets/js/jquery.cookie.js" type="text/javascript"></script> --}}
 </body>
 
 </html>

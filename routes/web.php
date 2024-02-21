@@ -25,8 +25,10 @@ Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin')
 Route::get('/logout','Auth\LoginController@signout')->name('logout');
 
 
-Route::get('/tablemachine','MachineData\MachineController@indexatablemachine')->name('managemachine');
+Route::get('/tablemachine','MachineData\MachineController@indextablemachine')->name('managemachine');
 
 Route::get('/addmachine','MachineData\MachineController@indexregistermachine')->name('addmachine');
-Route::post('/addmachine','MachineData\MachineController@createmachine')->name('pushmachine');
-Route::get('/edit/{id}','MachineController@addmachine')->name('showformeditmachine');
+Route::post('/addmachine','MachineData\MachineController@registermachine')->name('pushmachine');
+Route::get('/editmachine/{id}','MachineData\MachineController@indexupdatemachine')->name('editmachine');
+Route::post('/editmachine/{id}','MachineData\MachineController@updatemachine')->name('pusheditmachine');
+Route::get('/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');

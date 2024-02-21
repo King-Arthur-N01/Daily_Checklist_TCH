@@ -10,7 +10,7 @@
                         <h4 class="card-title-custom-1">Input Checklist</h4>
                     </div>
                     <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{asset('assets/icons/clipboard.png')}}">
+                        <img class="image-card-home" src="{{asset('assets/icons/clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
                         <h6 class="card-title-custom">Input Preventive Harian Mesin &nbsp; <i class="fas fa-tasks"></i></h6>
@@ -22,13 +22,13 @@
             <div class="az-list-item">
                 <div class="row-card-custom">
                     <div class="col-7">
-                        <h4 class="card-title-custom-1">Add Checklist</h4>
+                        <h4 class="card-title-custom-1">Tambah Checklist</h4>
                     </div>
                     <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{asset('assets/icons/add_clipboard.png')}}">
+                        <img class="image-card-home" src="{{asset('assets/icons/add_clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <h6 class="card-title-custom">Tambah Preventive Harian Mesin &nbsp; <i class="fas fa-indent"></i></h6>
+                        <a class="card-title-custom" href="">Tambah Preventive Harian Mesin &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
@@ -37,13 +37,13 @@
             <div class="az-list-item">
                 <div class="row-card-custom">
                     <div class="col-7">
-                        <h4 class="card-title-custom-1">Add Machine</h4>
+                        <h4 class="card-title-custom-1">Tambah Machine</h4>
                     </div>
                     <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{asset('assets/icons/add_task.png')}}">
+                        <img class="image-card-home" src="{{asset('assets/icons/add_task_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <h6 class="card-title-custom">Tambah Kategori Mesin &nbsp; <i class="fas fa-indent"></i></h6>
+                        <a class="card-title-custom" href="{{route('managemachine')}}">Tambah Kategori Mesin &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
