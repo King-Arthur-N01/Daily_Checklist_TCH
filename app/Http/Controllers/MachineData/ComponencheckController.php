@@ -27,7 +27,6 @@ class ComponencheckController extends Controller
     public function registercomponencheck(Request $request)
     {
         $lastIDCode = Componencheck::orderBy('id_componencheck', 'desc')->first();
-
         if (isset($lastIDCode)) {
             $currentvalue =  $lastIDCode->id_componencheck + 1;
         } else {
@@ -57,12 +56,12 @@ class ComponencheckController extends Controller
         ]);
         $componenchecks = Componencheck::find($id);
         $componenchecks->update($request->all());
-        return redirect()->route("managecomponencheck")->withSuccess('Items updated successfully.');
+        return redirect()->route("managecomponencheck")->withSuccess('Componen updated successfully.');
     }
 
     public function deletecomponencheck($id)
     {
         Componencheck::where('id',$id)->delete();
-        return redirect()->route("managemanagecomponencheck")->with('success', 'Items deleted successfully');
+        return redirect()->route("managemanagecomponencheck")->with('success', 'Componen deleted successfully');
     }
 }

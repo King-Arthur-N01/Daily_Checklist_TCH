@@ -8,98 +8,59 @@ use Illuminate\Http\Request;
 
 class ParameterController extends Controller
 {
-        /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function indextableparameter()
     {
-        //
+        $parameters=Parameter::get();
+        return view ('dashboard.view_parameter.tableparameter',['parameters'=>$parameters]);
+    }
+    public function indexregisterparameter()
+    {
+        return view ('dashboard.view_parameter.addparameter');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function validateparameter(Request $request)
+    public function indexeditparameter($id)
     {
+        $parameters=Parameter::find($id);
+        return view ('dashboard.view_parameter.editparameter',['parameters'=>$parameters]);
+    }
+
+    public function registerparameter(Request $request)
+    {
+        $lastIDCode = Parameter::orderBy('id_parameter', 'desc')->first();
+        if (isset($lastIDCode)) {
+            $currentvalue =  $lastIDCode->id_parameter + 1;
+        } else {
+            $currentvalue = 1;
+        }
         $request->validate([
-            'id_parameter' => 'required',
             'name_parameter' => 'required|max:255',
         ]);
-        Parameter::create($request->all());
-        return redirect()->route("#")->withSuccess('Machine added successfully.');
+        $parameters = Parameter::create($request->all());
+        $parameters->id_parameter = $currentvalue;
+        $parameters->save();
+        return redirect()->route("manageparameter")->withSuccess('Parameter added successfully.');
     }
 
-    protected function createparameter(array $data)
+    // protected function createparameter(array $data)
+    // {
+    //     return Parameter::create([
+    //         'id_parameter' => $data ['id_parameter'],
+    //         'name_parameter' => $data ['name_parameter']
+    //     ]);
+    // }
+    public function editparameter(Request $request, $id)
     {
-        return Parameter::create([
-            'id_parameter' => $data ['id_parameter'],
-            'name_parameter' => $data ['name_parameter']
-        ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Machine  $machine
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Parameter $parameter)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Machine  $machine
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, $id)
-    {
+        // dd($request);
         $request->validate([
-            'id_parameter' => 'required',
             'name_parameter' => 'required|max:255',
         ]);
         $Parameters = Parameter::find($id);
         $Parameters->update($request->all());
-        return redirect()->route("#")->withSuccess('Items updated successfully.');
+        return redirect()->route("manageparameter")->withSuccess('Parameter updated successfully.');
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Machine  $machine
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Parameter $parameter)
+    public function deleteparameter($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Machine  $machine
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Parameter $parameter)
-    {
-        //
+        Parameter::where('id',$id)->delete();
+        return redirect()->route("manageparameter")->with('success', 'Parameter deleted successfully');
     }
 }

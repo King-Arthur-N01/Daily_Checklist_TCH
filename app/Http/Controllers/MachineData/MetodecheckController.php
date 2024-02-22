@@ -8,90 +8,52 @@ use Illuminate\Http\Request;
 
 class MetodecheckController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function indexmethod()
+    public function indextablemethod()
     {
-        return view ('dashboard.');
+        $metodechecks=Metodecheck::get();
+        return view ('dashboard.view_metode.tablemethod',['metodechecks'=>$metodechecks]);
+    }
+    public function indexregistermethod()
+    {
+        return view ('dashboard.view_metode.addmethod');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function pushmethod(Request $request)
+    public function indexeditmethod($id)
     {
+        $metodechecks=Metodecheck::find($id);
+        return view ('dashboard.view_metode.editmethod',['metodechecks'=>$metodechecks]);
+    }
+
+    public function registermethod(Request $request)
+    {
+        $lastIDCode = Metodecheck::orderBy('id_metodecheck', 'desc')->first();
+        if (isset($lastIDCode)) {
+            $currentvalue =  $lastIDCode->id_metodecheck + 1;
+        } else {
+            $currentvalue = 1;
+        }
         $request->validate([
-            'id_metodecheck' => 'required',
             'name_metodecheck' => 'required|max:255',
         ]);
-        Metodecheck::create($request->all());
-        return redirect()->route("#")->withSuccess('Machine added successfully.');
+        $metodecheck = Metodecheck::create($request->all());
+        $metodecheck->id_metodecheck = $currentvalue;
+        $metodecheck->save();
+        return redirect()->route("managemethod")->withSuccess('Machine added successfully.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Metodecheck  $metodecheck
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Metodecheck $metodecheck)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Metodecheck  $metodecheck
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, $id)
+    public function editmethod(Request $request, $id)
     {
         $request->validate([
-            'id_metodecheck' => 'required',
             'name_metodecheck' => 'required|max:255',
         ]);
         $Metodechecks = Metodecheck::find($id);
         $Metodechecks->update($request->all());
-        return redirect()->route("#")->withSuccess('Items updated successfully.');
+        return redirect()->route("managemethod")->withSuccess('Items updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Metodecheck  $metodecheck
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Metodecheck $metodecheck)
+    public function deletemethod($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Metodecheck  $metodecheck
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Metodecheck $metodecheck)
-    {
-        //
+        Metodecheck::where('id',$id)->delete();
+        return redirect()->route("managemethod")->with('success', 'Parameter deleted successfully');
     }
 }

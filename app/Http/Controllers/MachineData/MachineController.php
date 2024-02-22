@@ -22,7 +22,7 @@ class MachineController extends Controller
     public function indexupdatemachine($id)
     {
         $machines=Machine::find($id);
-        return view ('dashboard.view_machine.editmachine',['machines'=>$machines]);
+        return view ('dashboard.view_mesin.editmachine',['machines'=>$machines]);
     }
 
     public function registermachine(Request $request)
@@ -83,12 +83,12 @@ class MachineController extends Controller
         $machines->update($request->all());
         // $machines->machine_code = $currentvalue;
         // $machines->save();
-        return redirect()->route("managemachine")->withSuccess('Items updated successfully.');
+        return redirect()->route("managemachine")->withSuccess('Machine updated successfully.');
     }
 
     public function deletemachine($id)
     {
         Machine::where('id',$id)->delete();
-        return redirect()->route("managemachine")->with('success', 'Items deleted successfully');
+        return redirect()->route("managemachine")->with('success', 'Machine deleted successfully');
     }
 }
