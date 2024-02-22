@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Edit Checkpoint Componen Mesin')
+@section('title', 'Edit Checkpoint Komponen Mesin')
 @section('content')
     <div class="row">
         <!-- ============================================================== -->
@@ -17,7 +17,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">ID Componen</label>
                                     <div>
-                                        <input class="form-control" type="text" name="id_componencheck" value="{{$componencheck->id_componencheck}}" disabled>
+                                        <input class="form-control" type="text" name="id" value="{{$componencheck->id_componencheck}}" disabled>
                                     </div>
                                 </div>
                             </div>

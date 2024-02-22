@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Table Tambah Cek Komponen')
+@section('title', 'Table Tambah Checkpoint Komponen Mesin')
 
 @section('content')
     <div class="row">
@@ -12,7 +12,7 @@
                 <p class="mg-b-20">Add borders on all sides of the table and cells.</p>
                 <div class="col-sm-10 col-md-10">
                     <div class="dt-buttons">
-                        <a type="button" class="btn btn-block btn-primary" href="{{ route('addcomponencheck') }}" tabindex="0" aria-controls="example">+ Tambah Bagian Check Mesin</a>
+                        <a type="button" class="btn btn-block btn-primary" href="{{ route('addcomponencheck') }}" tabindex="0" aria-controls="example">+ Tambah Bagian Checkpoint Mesin</a>
                     </div>
                 </div>
                 <div class="card-body col-10">

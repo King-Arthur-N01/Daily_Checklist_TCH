@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Tambah Metode Pengecekan')
+@section('title', 'Tambah Metode Pengecekan Mesin')
 @section('content')
     <div class="row">
         <!-- ============================================================== -->

@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Edit Parameter/Standart Mesin')
+@section('title', 'Edit Parameter/Standart Pengecekan Mesin')
 @section('content')
     <div class="row">
         <!-- ============================================================== -->
@@ -23,9 +23,9 @@
                             </div>
                             <div class="col-xl-6">
                                 <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Bagian Komponen Mesin Yang Di Check</label>
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Parameter/Standart</label>
                                     <div>
-                                        <input class="form-control" type="text" name="name_parameter" value="{{$parameters->name_parameter}}" placeholder="Nama Bagian Komponen Mesin Yang Di Check">
+                                        <input class="form-control" type="text" name="name_parameter" value="{{$parameters->name_parameter}}" placeholder="Nama Parameter/Standart">
                                     </div>
                                 </div>
                             </div>

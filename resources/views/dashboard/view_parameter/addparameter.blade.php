@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Tambah Parameter')
+@section('title', 'Tambah Parameter/Standart Pengecekan Mesin')
 @section('content')
     <div class="row">
         <!-- ============================================================== -->
@@ -24,7 +24,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Parameter/Standart</label>
                                     <div>
-                                        <input class="form-control" type="text" name="name_parameter" placeholder="Nama Bagian Parameter/Standart Mesin">
+                                        <input class="form-control" type="text" name="name_parameter" placeholder="Nama Parameter/Standart">
                                     </div>
                                 </div>
                             </div>

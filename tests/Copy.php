@@ -96,3 +96,28 @@ public function registermachine(Request $request)
 
 
     Missing required parameters for [Route: pusheditmachine] [URI: editmachine/{id}]. (View: C:\laragon\www\Daily_Checklist_TCH\resources\views\dashboard\editmachine.blade.php)
+
+
+    <select name="owner">
+    <option value=""></option>
+    <?php (foreach $data as $row): ?>
+    <option value="<?= htmlspecialchars($row['id']) ?>">
+      <?= htmlspecialchars($row['username']) ?>
+    </option>
+    <?php endforeach ?>
+  </select>
+
+
+  // Di dalam controller
+public function index()
+{
+    // Ambil data dari database
+    $data = Model::all();
+
+    // Filter data yang tidak kosong
+    $filteredData = $data->reject(function ($item) {
+        return empty($item->field);
+    });
+
+    return view('view_name', ['data' => $filteredData]);
+}

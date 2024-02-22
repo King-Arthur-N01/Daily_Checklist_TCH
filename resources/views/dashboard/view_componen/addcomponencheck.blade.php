@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Add Componen Check')
+@section('title', 'Tambah Checkpoint Komponen Mesin')
 @section('content')
     <div class="row">
         <!-- ============================================================== -->
@@ -7,7 +7,7 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Form Tambah Bagian Check Mesin</h5>
+                <h5 class="card-header">Form Tambah Bagian Checkpoint Mesin</h5>
                 <div class="card-body">
                     <form action="{{ route('pushcomponencheck') }}" id="registerform" method="post">
                         @csrf
@@ -16,7 +16,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">ID Componen</label>
                                     <div>
-                                        <input class="form-control" type="text" name="id_componencheck" disabled>
+                                        <input class="form-control" type="text" name="id" disabled>
                                     </div>
                                 </div>
                             </div>

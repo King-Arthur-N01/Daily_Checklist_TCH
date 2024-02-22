@@ -25,7 +25,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Metode Pengecekan Mesin</label>
                                     <div>
-                                        <input class="form-control" type="text" name="name_metodecheck" value="{{$metodechecks->name_metodecheck}}" placeholder="Nama Nama Metode Pengecekan Mesin">
+                                        <input class="form-control" type="text" name="name_metodecheck" value="{{$metodechecks->name_metodecheck}}" placeholder="Nama Metode Pengecekan Mesin">
                                     </div>
                                 </div>
                             </div>
