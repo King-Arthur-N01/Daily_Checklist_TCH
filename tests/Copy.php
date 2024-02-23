@@ -121,3 +121,53 @@ public function index()
 
     return view('view_name', ['data' => $filteredData]);
 }
+
+
+public function indextablemachineresult()
+{
+    $emptyfield = Machineresult::all();
+    // dd($emptyfield);
+    // $filltertable = $emptyfield -> reject(function($emptydata){
+    //     return empty($emptydata->field);
+    // });
+    // $filltertable=Machineresult::get();
+    return view ('dashboard.view_hasilmesin.tablemesinresult',['machineresults'=> $emptyfield]);
+}
+
+
+public function indexregistermachineresult()
+{
+    $componenchecks = Componencheck::pluck('name_componencheck', 'id');
+    $parameters = Parameter::pluck('name_parameter', 'id');
+    $metodechecks = Metodecheck::pluck('name_metodecheck', 'id');
+
+    return view('dashboard.view_hasilmesin.addmesinresult', [
+        'componenchecks' => $componenchecks,
+        'parameters' => $parameters,
+        'metodechecks' => $metodechecks,
+    ]);
+}
+
+<select name="id_componencheck1" id="id_componencheck1">
+    @foreach ($componenchecks as $componencheck)
+        <option value="{{ $componencheck->id }}" {{ old('id_componencheck1', $machineresult->componencheck_id ?? '') == $componencheck->id ? 'selected' : '' }}>
+            {{ $componencheck->name }}
+        </option>
+    @endforeach
+</select>
+
+<select name="id_parameter1" id="id_parameter1">
+    @foreach ($parameters as $parameter)
+        <option value="{{ $parameter->id }}" {{ old('id_parameter1', $machineresult->parameter_id ?? '') == $parameter->id ? 'selected' : '' }}>
+            {{ $parameter->name }}
+        </option>
+    @endforeach
+</select>
+
+<select name="id_metodecheck1" id="id_metodecheck1">
+    @foreach ($metodechecks as $metodecheck)
+        <option value="{{ $metodecheck->id }}" {{ old('id_metodecheck1', $machineresult->metodecheck_id ?? '') == $metodecheck->id ? 'selected' : '' }}>
+            {{ $metodecheck->name }}
+        </option>
+    @endforeach
+</select>

@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('assets/fonts/material-design-iconic-font/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fonts/flag-icon-css/flag-icon.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/azia.css') }}">
-
+    @stack('style')
 </head>
 
 <body>
@@ -129,6 +129,10 @@
     <script src="assets/js/chart.flot.sampledata.js"></script>
     <script src="assets/js/dashboard.sampledata.js"></script>
     {{-- <script src="assets/js/jquery.cookie.js" type="text/javascript"></script> --}}
-</body>
 
+    @stack('script')
+    {{-- <=========================BATAS HARDCODED JAVASCRIPT!!!!=========================> --}}
+
+    {{-- <=======================BATAS HARDCODED JAVASCRIPT END!!!!=======================> --}}
+</body>
 </html>

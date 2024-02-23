@@ -12,8 +12,7 @@
                 <p class="mg-b-20">Add borders on all sides of the table and cells.</p>
                 <div class="col-sm-12 col-md-12">
                     <div class="dt-buttons">
-                        <a type="button" class="btn btn-block btn-primary" href="{{ route('addmachine') }}" tabindex="0"
-                            aria-controls="example">+ Tambah Mesin</a>
+                        <a type="button" class="btn btn-block btn-primary" href="{{ route('addmachine') }}" tabindex="0" aria-controls="example">+ Tambah Mesin</a>
                     </div>
                 </div>
                 <div class="card-body">

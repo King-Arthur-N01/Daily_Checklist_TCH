@@ -757,8 +757,8 @@ pre code {
     display: flex;
     margin-right: -15px;
     margin-left: -15px;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .row-card-custom{
@@ -766,6 +766,12 @@ pre code {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+}
+
+.row-block-custom{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .no-gutters {
@@ -2281,6 +2287,10 @@ pre code {
     border: 1px solid #cdd4e0;
     border-radius: 3px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-button-custom{
+    margin: 20px 10px 10px 10px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -25158,7 +25168,7 @@ body {
 }
 
 .mg-b-10 {
-    margin-bottom: 10px;
+    margin: 5px 0px 5px 0px;
 }
 
 .mg-l-10 {

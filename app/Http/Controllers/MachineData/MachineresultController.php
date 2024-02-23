@@ -4,24 +4,37 @@ namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
 use App\Machineresult;
+use App\Componencheck;
+use App\Machine;
+use App\Parameter;
+use App\Metodecheck;
 use Illuminate\Http\Request;
 
 class MachineresultController extends Controller
 {
     public function indextablemachineresult()
     {
-        $emptyfield = Machineresult::all();
-        // dd($emptyfield);
-        // $filltertable = $emptyfield -> reject(function($emptydata){
-        //     return empty($emptydata->field);
-        // });
-        // $filltertable=Machineresult::get();
-        return view ('dashboard.view_hasilmesin.tablemesinresult',['machineresults'=> $emptyfield]);
+        $machineresults = Machineresult::all();
+        $filltertable = $machineresults -> reject(function($emptydata){
+            return empty($emptydata->field);
+        });
+        // $machineresults = Machineresult::get();
+        return view ('dashboard.view_hasilmesin.tablemesinresult',['machineresults'=>$machineresults]);
     }
 
     public function indexregistermachineresult()
     {
-        return view ('dashboard.view_hasilmesin.addmachine');
+        $machines = Machine::all('machine_name', 'id');
+        $componenchecks = Componencheck::all('name_componencheck', 'id');
+        $parameters = Parameter::all('name_parameter', 'id');
+        $metodechecks = Metodecheck::all('name_metodecheck', 'id');
+
+        return view('dashboard.view_hasilmesin.addmesinresult', [
+            'machines' => $machines,
+            'componenchecks' => $componenchecks,
+            'parameters' => $parameters,
+            'metodechecks' => $metodechecks
+        ]);
     }
 
     public function indexeditmachineresult($id)
