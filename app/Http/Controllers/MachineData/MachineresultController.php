@@ -45,6 +45,7 @@ class MachineresultController extends Controller
 
     public function registermachineresult(Request $request)
     {
+        dd($request);
         $request->validate([
             'name_metodecheck' => 'required|max:255',
             'machine_code' => 'required',
