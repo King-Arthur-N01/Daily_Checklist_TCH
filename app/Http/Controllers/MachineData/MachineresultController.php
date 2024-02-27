@@ -9,27 +9,41 @@ use App\Machine;
 use App\Parameter;
 use App\Metodecheck;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface;
 
 class MachineresultController extends Controller
 {
+    // public function indextablemachineresult()
+    // {
+    //     $machineresults = DB::table('machineresults')
+    //         ->Join('machines', 'machinesresults.machine_code', '=', 'machines.id')
+    //         ->where('machineresults.id','machines.machine_coderesult','machines.name_machine')
+    //         ->get();
+
+    //     $machineresults = Machineresult::with('machines')->orderBy('machine_coderesult', 'desc')->get();
+    //     return view('dashboard.view_hasilmesin.tablemesinresult',['machineresults' => $machineresults])->with('machine_name');
+    // }
+
     public function indextablemachineresult()
     {
-        $machineresults = Machineresult::all();
-        $filltertable = $machineresults -> reject(function($emptydata){
-            return empty($emptydata->field);
-        });
-        // $machineresults = Machineresult::get();
-        return view ('dashboard.view_hasilmesin.tablemesinresult',['machineresults'=>$machineresults]);
+        $machineresults = DB::table('machineresults')
+            ->join('machines', 'machineresults.machine_coderesult', '=', 'machines.id')
+            ->select('machineresults.*', 'machines.machine_name')
+            ->orderBy('machineresults.machine_coderesult', 'desc')
+            ->get();
+        return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
     }
+
 
     public function indexregistermachineresult()
     {
-        $machines = Machine::all('machine_name', 'id');
-        $componenchecks = Componencheck::all('name_componencheck', 'id');
-        $parameters = Parameter::all('name_parameter', 'id');
-        $metodechecks = Metodecheck::all('name_metodecheck', 'id');
+        $machines = Machine::all('machine_name', 'machine_code');
+        $componenchecks = Componencheck::all('name_componencheck', 'id_componencheck');
+        $parameters = Parameter::all('name_parameter', 'id_parameter');
+        $metodechecks = Metodecheck::all('name_metodecheck', 'id_metodecheck');
 
-        return view('dashboard.view_hasilmesin.addmesinresult', [
+        return view('dashboard.view_hasilmesin.addmesinresult',[
             'machines' => $machines,
             'componenchecks' => $componenchecks,
             'parameters' => $parameters,
