@@ -175,3 +175,50 @@ public function indexregistermachineresult()
 
 
 php artisan migrate:refresh -path=\database\migrations\22_03_18_010_create_users_table.php
+
+
+
+public function indextablemachineresult()
+{
+    $machines = Machine::all();
+    $componenchecks = Componencheck::all();
+    $parameters = Parameter::all();
+    $metodechecks = Metodecheck::all();
+    $machineresults = Machineresult::all();
+
+    return view('dashboard.view_hasilmesin.tablemesinresult', [
+        'machines' => $machines,
+        'componenchecks' => $componenchecks,
+        'parameters' => $parameters,
+        'metodechecks' => $metodechecks,
+        'machineresults' => $machineresults
+    ]);
+}
+
+
+use Illuminate\Support\Facades\DB;
+
+// Assuming you have defined the relationships between models (e.g., Machine, Componencheck, Parameter) in your Eloquent models
+
+// Retrieve the data using joins
+$joinedData = DB::table('machineresults')
+    ->join('machines', 'machineresults.machine_id', '=', 'machines.id')
+    ->join('componenchecks', 'machineresults.componencheck_id', '=', 'componenchecks.id')
+    ->join('parameters', 'machineresults.parameter_id', '=', 'parameters.id')
+    ->select(
+        'machineresults.*', // Select all columns from machineresults
+        'machines.name as machine_name', // Alias for machine name
+        'componenchecks.name as component_name', // Alias for component name
+        'parameters.name as parameter_name' // Alias for parameter name
+    )
+    ->get();
+
+// Now you can access the joined data
+foreach ($joinedData as $data) {
+    echo "Machine Result ID: {$data->id}\n";
+    echo "Machine Name: {$data->machine_name}\n";
+    echo "Component Name: {$data->component_name}\n";
+    echo "Parameter Name: {$data->parameter_name}\n";
+    // Add other relevant fields as needed
+    echo "\n";
+}

@@ -1,6 +1,6 @@
 $(document).ready(
     function() {
-        $('#category-input-machinecode').select2();
+        // $('#category-input-machinecode').select2();
     }
     // function componencheck1() {
     //     $('#category-input-componencheck1').select2();

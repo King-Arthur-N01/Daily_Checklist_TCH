@@ -33,7 +33,7 @@
                             <tbody>
                                 @foreach ($machineresults as $machineresult)
                                     <tr>
-                                        <td rowspan="12">{{$machineresult->machine_code}}</td>
+                                        <td rowspan="12">{{$machineresult->machine_name}}</td>
                                         <td>{{$machineresult->id_componencheck1}}</td>
                                         <td>{{$machineresult->id_parameter1}}</td>
                                         <td>{{$machineresult->id_metodecheck1}}</td>
