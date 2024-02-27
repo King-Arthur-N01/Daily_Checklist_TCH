@@ -60,3 +60,7 @@ Route::get('/editmachineresult/{id}','MachineData\MachineresultController@indexe
 Route::put('/editmachineresult/{id}','MachineData\MachineresultController@editmachineresult')->name('pusheditmachineresults');
 Route::get('/tablemachineresult','MachineData\MachineresultController@indextablemachineresult')->name('managemachineresults');
 Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@deletemachineresult')->name('deletemachineresults');
+
+
+Route::get('/addpreventivemachine','MachineData\MasterMachineController@indexregisterpreventivemachine')->name('addpreventivemachine');
+Route::post('/addpreventivemachine','MachineData\MasterMachineController@registerpreventivemachine')->name('pushpreventivemachine');

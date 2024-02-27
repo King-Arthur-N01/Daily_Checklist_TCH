@@ -171,3 +171,7 @@ public function indexregistermachineresult()
         </option>
     @endforeach
 </select>
+
+
+
+php artisan migrate:refresh -path=\database\migrations\22_03_18_010_create_users_table.php

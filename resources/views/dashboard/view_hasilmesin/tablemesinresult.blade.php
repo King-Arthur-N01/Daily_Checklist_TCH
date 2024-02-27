@@ -121,4 +121,5 @@
 @endpush
 
 @push('script')
+
 @endpush

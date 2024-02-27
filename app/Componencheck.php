@@ -10,4 +10,8 @@ class Componencheck extends Model
         'id_componencheck',
         'name_componencheck',
     ];
+    public function getcomponenproperty()
+    {
+        return $this->hasMany(Machineresult::class);
+    }
 }

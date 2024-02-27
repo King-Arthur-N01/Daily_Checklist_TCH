@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
 class Machine extends Model
@@ -17,4 +18,8 @@ class Machine extends Model
         'mfg_number',
         'install_date'
     ];
+    public function getmachineproperty()
+    {
+        return $this->hasMany(Machineresult::class);
+    }
 }

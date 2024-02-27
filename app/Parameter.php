@@ -10,4 +10,8 @@ class Parameter extends Model
         'id_parameter',
         'name_parameter'
     ];
+    public function getparameterproperty()
+    {
+        return $this->hasMany(Machineresult::class);
+    }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateComponenchecksTable extends Migration
+class CreateMasterMachinesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateComponenchecksTable extends Migration
      */
     public function up()
     {
-        Schema::create('componenchecks', function (Blueprint $table) {
+        Schema::create('master_machines', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_componencheck')->unique()->index()->default('0');
-            $table->string('name_componencheck');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ class CreateComponenchecksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('componenchecks');
+        Schema::dropIfExists('master_machines');
     }
 }

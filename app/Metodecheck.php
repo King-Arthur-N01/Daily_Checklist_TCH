@@ -10,4 +10,8 @@ class Metodecheck extends Model
         'id_metodecheck',
         'name_metodecheck',
     ];
+    public function getmetoderoperty()
+    {
+        return $this->hasMany(Machineresult::class);
+    }
 }

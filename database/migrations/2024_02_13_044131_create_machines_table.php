@@ -12,7 +12,7 @@ class CreateMachinesTable extends Migration
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
-            $table->integer('machine_code')->unique()->default('0');
+            $table->integer('machine_code')->unique()->index()->default('0');
             $table->string('invent_number')->unique();
             $table->string('machine_name');
             $table->string('machine_brand')->nullable();
