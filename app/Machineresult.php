@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
 class Machineresult extends Model

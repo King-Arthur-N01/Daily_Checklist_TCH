@@ -222,3 +222,10 @@ foreach ($joinedData as $data) {
     // Add other relevant fields as needed
     echo "\n";
 }
+
+
+public function index()
+{
+    $machineresults = MachineResult::with(['machine', 'componencheck', 'parameter', 'metodecheck'])->get();
+    return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
+}

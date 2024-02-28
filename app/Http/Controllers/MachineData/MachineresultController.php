@@ -28,13 +28,19 @@ class MachineresultController extends Controller
     public function indextablemachineresult()
     {
         $machineresults = DB::table('machineresults')
-            ->join('machines', 'machineresults.machine_coderesult', '=', 'machines.id')
-            ->select('machineresults.*', 'machines.machine_name')
-            ->orderBy('machineresults.machine_coderesult', 'desc')
-            ->get();
-        return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
-    }
+        ->leftJoin('machines', 'machineresults.machine_coderesult', '=', 'machines.machine_code')
+        ->leftJoin('componenchecks', 'machineresults.id_componencheck1.id_componencheck2', '=', 'componenchecks.id_componencheck')
+        ->leftJoin('parameters', 'machineresults.id_parameter1.id_parameter2', '=', 'parameters.id_parameter')
+        ->leftJoin('metodechecks', 'machineresults.id_metodecheck1.id_metodecheck2', '=', 'metodechecks.id_metodecheck')
+        ->select('machineresults.*', 'machines.machine_name', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+        ->orderBy('machineresults.id', 'asc')
+        // ->with(['machines', 'componenchecks', 'parameters', 'metodechecks'])
+        ->get();
 
+        // $machineresults = MachineResult::with(['machines', 'componenchecks', 'parameters', 'metodechecks'])->orderBy('id','desc')->get();
+        return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
+
+    }
 
     public function indexregistermachineresult()
     {
