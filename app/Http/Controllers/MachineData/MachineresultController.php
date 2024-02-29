@@ -28,18 +28,70 @@ class MachineresultController extends Controller
     public function indextablemachineresult()
     {
         $machineresults = DB::table('machineresults')
-        ->leftJoin('machines', 'machineresults.machine_coderesult', '=', 'machines.machine_code')
-        ->leftJoin('componenchecks', 'machineresults.id_componencheck1.id_componencheck2', '=', 'componenchecks.id_componencheck')
-        ->leftJoin('parameters', 'machineresults.id_parameter1.id_parameter2', '=', 'parameters.id_parameter')
-        ->leftJoin('metodechecks', 'machineresults.id_metodecheck1.id_metodecheck2', '=', 'metodechecks.id_metodecheck')
+        ->join('machines', 'machineresults.machine_coderesult', '=', 'machines.machine_code')
+        ->join('componenchecks', 'machineresults.id_componencheck1', '=', 'componenchecks.id_componencheck')
+        ->join('parameters', 'machineresults.id_parameter1', '=', 'parameters.id_parameter')
+        ->join('metodechecks', 'machineresults.id_metodecheck1', '=', 'metodechecks.id_metodecheck')
         ->select('machineresults.*', 'machines.machine_name', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
         ->orderBy('machineresults.id', 'asc')
         // ->with(['machines', 'componenchecks', 'parameters', 'metodechecks'])
         ->get();
 
+        // $machineresults = MachineResult::with(['machines', 'componenchecks', 'parameters', 'metodechecks'])->find($id);
         // $machineresults = MachineResult::with(['machines', 'componenchecks', 'parameters', 'metodechecks'])->orderBy('id','desc')->get();
         return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
 
+
+        /*
+        $machineresults = DB::table('machineresults')
+            ->join('machines', 'machineresults.machine_coderesult', '=', 'machines.machine_name')
+            ->leftJoin('componenchecks', function ($join) {
+                $join->on('machineresults.id_componencheck1', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck2', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck3', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck4', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck5', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck6', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck7', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck8', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck9', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck10', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck11', '=', 'componenchecks.name_componencheck')
+                    ->orOn('machineresults.id_componencheck12', '=', 'componenchecks.name_componencheck');
+            })
+            ->leftJoin('parameters', function ($join) {
+                $join->on('machineresults.id_parameter1', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter2', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter3', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter4', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter5', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter6', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter7', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter8', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter9', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter10', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter11', '=', 'parameters.name_parameter')
+                    ->orOn('machineresults.id_parameter12', '=', 'parameters.name_parameter');
+            })
+            ->leftJoin('metodechecks', function ($join) {
+                $join->on('machineresults.id_metodecheck1', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck2', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck3', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck4', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck5', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck6', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck7', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck8', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck9', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck10', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck11', '=', 'metodechecks.name_metodecheck')
+                    ->orOn('machineresults.id_metodecheck12', '=', 'metodechecks.name_metodecheck');
+            })
+            ->select('machineresults.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+            ->get();
+        return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
+        // return response()->json($results);
+        */
     }
 
     public function indexregistermachineresult()

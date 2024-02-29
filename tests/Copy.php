@@ -229,3 +229,170 @@ public function index()
     $machineresults = MachineResult::with(['machine', 'componencheck', 'parameter', 'metodecheck'])->get();
     return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
 }
+
+
+
+SELECT machineresults.*, componenchecks.*, parameters.*, metodechecks.*
+FROM machineresults
+JOIN machines ON machineresults.machine_coderesult = machines.machine_code
+JOIN componenchecks ON machineresults.id_componencheck1 = componenchecks.id_componencheck OR machineresults.id_componencheck2 = componenchecks.id_componencheck OR machineresults.id_componencheck3 = componenchecks.id_componencheck OR machineresults.id_componencheck4 = componenchecks.id_componencheck OR machineresults.id_componencheck5 = componenchecks.id_componencheck OR machineresults.id_componencheck6 = componenchecks.id_componencheck OR machineresults.id_componencheck7 = componenchecks.id_componencheck OR machineresults.id_componencheck8 = componenchecks.id_componencheck OR machineresults.id_componencheck9 = componenchecks.id_componencheck OR machineresults.id_componencheck10 = componenchecks.id_componencheck OR machineresults.id_componencheck11 = componenchecks.id_componencheck OR machineresults.id_componencheck12 = componenchecks.id_componencheck
+JOIN parameters ON machineresults.id_parameter1 = parameters.id_parameter OR machineresults.id_parameter2 = parameters.id_parameter OR machineresults.id_parameter3 = parameters.id_parameter OR machineresults.id_parameter4 = parameters.id_parameter OR machineresults.id_parameter5 = parameters.id_parameter OR machineresults.id_parameter6 = parameters.id_parameter OR machineresults.id_parameter7 = parameters.id_parameter OR machineresults.id_parameter8 = parameters.id_parameter OR machineresults.id_parameter9 = parameters.id_parameter OR machineresults.id_parameter10 = parameters.id_parameter OR machineresults.id_parameter11 = parameters.id_parameter OR machineresults.id_parameter12 = parameters.id_parameter
+JOIN metodechecks ON machineresults.id_metodecheck1 = metodechecks.id_metodecheck OR machineresults.id_metodecheck2 = metodechecks.id_metodecheck OR machineresults.id_metodecheck3 = metodechecks.id_metodecheck OR machineresults.id_metodecheck4 = metodechecks.id_metodecheck OR machineresults.id_metodecheck5 = metodechecks.id_metodecheck OR machineresults.id_metodecheck6 = metodechecks.id_metodecheck OR machineresults.id_metodecheck7 = metodechecks.id_metodecheck OR machineresults.id_metodecheck8 = metodechecks.id_metodecheck OR machineresults.id_metodecheck9 = metodechecks.id_metodecheck OR machineresults.id_metodecheck10 = metodechecks.id_metodecheck OR machineresults.id_metodecheck11 = metodechecks.id_metodecheck OR machineresults.id_metodecheck12 = metodechecks.id_metodecheck;
+
+
+
+
+SELECT
+    machineresults.*, componenchecks.*, parameters.*, metodechecks.*
+FROM
+    machineresults
+JOIN
+    machines ON machineresults.machine_coderesult = machines.machine_code
+LEFT JOIN
+    (
+        SELECT
+            id_componencheck, id_parameter, id_metodecheck
+        FROM
+            componenchecks
+    ) componenchecks ON machineresults.id_componencheck1 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck2 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck3 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck4 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck5 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck6 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck7 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck8 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck9 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck10 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck11 = componenchecks.id_componencheck
+        OR machineresults.id_componencheck12 = componenchecks.id_componencheck
+LEFT JOIN
+    (
+        SELECT
+            id_parameter
+        FROM
+            parameters
+    ) parameters ON machineresults.id_parameter1 = parameters.id_parameter
+        OR machineresults.id_parameter2 = parameters.id_parameter
+        OR machineresults.id_parameter3 = parameters.id_parameter
+        OR machineresults.id_parameter4 = parameters.id_parameter
+        OR machineresults.id_parameter5 = parameters.id_parameter
+        OR machineresults.id_parameter6 = parameters.id_parameter
+        OR machineresults.id_parameter7 = parameters.id_parameter
+        OR machineresults.id_parameter8 = parameters.id_parameter
+        OR machineresults.id_parameter9 = parameters.id_parameter
+        OR machineresults.id_parameter10 = parameters.id_parameter
+        OR machineresults.id_parameter11 = parameters.id_parameter
+        OR machineresults.id_parameter12 = parameters.id_parameter
+LEFT JOIN
+    (
+        SELECT
+            id_metodecheck
+        FROM
+            metodechecks
+    ) metodechecks ON machineresults.id_metodecheck1 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck2 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck3 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck4 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck5 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck6 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck7 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck8 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck9 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck10 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck11 = metodecheck.id_metodecheck
+        OR machineresults.id_metodecheck12 = metodecheck.id_metodecheck;
+
+
+
+        SELECT machineresults.*, componenchecks.*, parameters.*, metodechecks.*
+        FROM machineresults
+        JOIN machines ON machineresults.machine_coderesult = machines.machine_name
+        JOIN componenchecks ON machineresults.id_componencheck1 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck2 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck3 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck4 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck5 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck6 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck7 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck8 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck9 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck10 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck11 = componenchecks.name_componencheck
+        OR machineresults.id_componencheck12 = componenchecks.name_componencheck
+
+        JOIN parameters ON machineresults.id_parameter1 = parameters.name_parameter
+        OR machineresults.id_parameter2 = parameters.name_parameter
+        OR machineresults.id_parameter3 = parameters.name_parameter
+        OR machineresults.id_parameter4 = parameters.name_parameter
+        OR machineresults.id_parameter5 = parameters.name_parameter
+        OR machineresults.id_parameter6 = parameters.name_parameter
+        OR machineresults.id_parameter7 = parameters.name_parameter
+        OR machineresults.id_parameter8 = parameters.name_parameter
+        OR machineresults.id_parameter9 = parameters.name_parameter
+        OR machineresults.id_parameter10 = parameters.name_parameter
+        OR machineresults.id_parameter11 = parameters.name_parameter
+        OR machineresults.id_parameter12 = parameters.name_parameter
+
+        JOIN metodechecks ON machineresults.id_metodecheck1 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck2 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck3 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck4 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck5 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck6 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck7 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck8 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck9 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck10 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck11 = metodechecks.name_metodecheck
+        OR machineresults.id_metodecheck12 = metodechecks.name_metodecheck;
+
+
+
+
+
+
+
+
+        CREATE TABLE machineresults (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            machine_coderesult INT,
+            id_componencheck1 INT,
+            id_parameter1 INT,
+            id_metodecheck1 INT,
+            id_componencheck2 INT,
+            id_parameter2 INT,
+            id_metodecheck2 INT,
+            id_componencheck3 INT,
+            id_parameter3 INT,
+            id_metodecheck3 INT,
+            id_componencheck4 INT,
+            id_parameter4 INT,
+            id_metodecheck4 INT,
+            id_componencheck5 INT,
+            id_parameter5 INT,
+            id_metodecheck5 INT,
+            id_componencheck6 INT,
+            id_parameter6 INT,
+            id_metodecheck6 INT,
+            id_componencheck7 INT,
+            id_parameter7 INT,
+            id_metodecheck7 INT,
+            id_componencheck8 INT,
+            id_parameter8 INT,
+            id_metodecheck8 INT,
+            id_componencheck9 INT,
+            id_parameter9 INT,
+            id_metodecheck9 INT,
+            id_componencheck10 INT,
+            id_parameter10 INT,
+            id_metodecheck10 INT,
+            id_componencheck11 INT,
+            id_parameter11 INT,
+            id_metodecheck11 INT,
+            id_componencheck12 INT,
+            id_parameter12 INT,
+            id_metodecheck12 INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        );

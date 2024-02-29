@@ -39,9 +39,9 @@
                                         <td>{{$machineproperty->name_metodecheck}}</td>
                                     </tr>
                                     <tr>
-                                        <td>{{$machineproperty->name_componencheck}}</td>
-                                        <td>{{$machineproperty->name_parameter}}</td>
-                                        <td>{{$machineproperty->name_metodecheck}}</td>
+                                        <td>{{$machineproperty->id_componencheck2}}</td>
+                                        <td>{{$machineproperty->id_parameter2}}</td>
+                                        <td>{{$machineproperty->id_metodecheck2}}</td>
                                     </tr>
                                     <tr>
                                         <td>{{$machineproperty->id_componencheck3}}</td>
