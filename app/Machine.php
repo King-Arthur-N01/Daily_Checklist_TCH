@@ -18,8 +18,8 @@ class Machine extends Model
         'mfg_number',
         'install_date'
     ];
-    public function getmachineproperty()
+    public function getchilderncomponen()
     {
-        return $this->hasMany(Machineresult::class);
+        return $this->belongsTo(Componencheck::class);
     }
 }

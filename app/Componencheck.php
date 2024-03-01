@@ -8,10 +8,15 @@ class Componencheck extends Model
 {
     protected $fillable = [
         'id_componencheck',
-        'name_componencheck',
+        'machine_code_componencheck',
+        'name_componencheck'
     ];
-    public function getcomponenproperty()
+    public function getparentmachine()
     {
-        return $this->hasMany(Machineresult::class);
+        return $this->hasMany(Machine::class);
+    }
+    public function getchildernparameter()
+    {
+        return $this->belongsTo(Parameter::class);
     }
 }

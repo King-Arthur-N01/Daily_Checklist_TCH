@@ -54,11 +54,11 @@ Route::put('/editmethod/{id}','MachineData\MetodecheckController@editmethod')->n
 Route::get('/tablemethod','MachineData\MetodecheckController@indextablemethod')->name('managemethod');
 Route::get('/deletemethod/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
 
-Route::get('/addmachineresult','MachineData\MachineresultController@indexregistermachineresult')->name('addmachineresults');
+Route::get('/addmachineresult','MachineData\MachineController@indexregistermachineresult')->name('addmachineresults');
 Route::post('/addmachineresult','MachineData\MachineresultController@registermachineresult')->name('pushmachineresults');
 Route::get('/editmachineresult/{id}','MachineData\MachineresultController@indexeditmachineresult')->name('editmachineresults');
 Route::put('/editmachineresult/{id}','MachineData\MachineresultController@editmachineresult')->name('pusheditmachineresults');
-Route::get('/tablemachineresult','MachineData\MachineresultController@indextablemachineresult')->name('managemachineresults');
+Route::get('/tablemachineresult','MachineData\MachineController@indextablemachineresult')->name('managemachineresults');
 Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@deletemachineresult')->name('deletemachineresults');
 
 

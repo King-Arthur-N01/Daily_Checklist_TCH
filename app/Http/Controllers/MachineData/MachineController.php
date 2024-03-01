@@ -4,10 +4,41 @@ namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
 use App\Machine;
+use App\Componencheck;
+use App\Parameter;
+use App\Metodecheck;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
+    public function indextablemachineresult(){
+
+        $machine = DB::table('machines')
+        ->join('componenchecks', 'machines.machine_code', '=', 'componenchecks.machine_code_componencheck')
+        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
+        ->join('metodechecks', 'parameters.id_parameter', '=', 'metodechecks.parameter_metodecheck')
+        ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+        ->orderBy('machines.id', 'asc')
+        ->get();
+
+        /*
+        $machineresults = DB::table('machines')
+            ->join('machines', 'machine.machine_code', '=', 'machines.machine_name')
+            ->leftJoin('componenchecks', function ($join) {
+                $join->on('machines.machine_code', '=', 'componenchecks.machine_code_componencheck');
+            })
+            ->leftJoin('parameters', function ($join) {
+                $join->on('componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter');
+            })
+            ->leftJoin('metodechecks', function ($join) {
+                $join->on('paramters.id_parameter', '=', 'metodechecks.parameter_metodecheck');
+            })
+            ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+            ->get();
+            */
+        return view('dashboard.view_hasilmesin.tablemesinresult', ['machines' => $machine]);
+    }
     public function indextablemachine()
     {
         $machines=Machine::get();
@@ -53,22 +84,8 @@ class MachineController extends Controller
         return redirect()->route("managemachine")->withSuccess('Machine added successfully.');
     }
 
-    // protected function createmachine(array $data)
-    // {
-    //     return Machine::create([
-    //         'machine_code' => $data ['machine_code'],
-    //         'machine_name' => $data ['machine_name'],
-    //         'machine_brand'=> $data ['machine_brand'],???
-    //         'machine_type' => $data ['machine_type'],
-    //         'machine_spec' => $data ['machine_spec'],
-    //         'mfg_number'   => $data ['mfg_number'],
-    //         'invent_number'=> $data ['invent_number']
-    //     ]);
-    // }
-
     public function updatemachine(Request $request, $id)
     {
-        // $currentvalue = Machine::orderBy('machine_code', 'desc')->first();
         $request->validate([
             'invent_number' => 'required',
             'machine_name' => 'required|max:255',

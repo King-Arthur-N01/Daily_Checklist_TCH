@@ -14,27 +14,33 @@ class MetodecheckSeeder extends Seeder
     {
         Metodecheck::create([
             'id_metodecheck'  => '1',
+            'parameter_metodecheck' => '10',
             'name_metodecheck' => 'Dilihat',
         ]);
         Metodecheck::create([
             'id_metodecheck'  => '2',
+            'parameter_metodecheck' => '3',
             'name_metodecheck' => 'Dioperasikan',
         ]);
         Metodecheck::create([
             'id_metodecheck'  => '3',
-            'name_metodecheck' => 'Didengar',
+            'parameter_metodecheck' => '5',
+            'name_metodecheck' => 'Lihat riwayat mesin',
         ]);
         Metodecheck::create([
             'id_metodecheck'  => '4',
-            'name_metodecheck' => 'Ditester',
+            'parameter_metodecheck' => '8',
+            'name_metodecheck' => 'Dikunci',
         ]);
         Metodecheck::create([
             'id_metodecheck'  => '5',
-            'name_metodecheck' => 'Dicium',
+            'parameter_metodecheck' => '10',
+            'name_metodecheck' => 'Dilihat',
         ]);
         Metodecheck::create([
             'id_metodecheck'  => '6',
-            'name_metodecheck' => 'Dicheck',
+            'parameter_metodecheck' => '7',
+            'name_metodecheck' => 'Dilihat',
         ]);
     }
 }

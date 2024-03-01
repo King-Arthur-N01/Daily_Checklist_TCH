@@ -15,7 +15,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             'machine_code'  => '1',
             'invent_number' => 'E-AA-14-0102',
-            'machine_name'  => 'POWER PRESS',
+            'machine_name'  => 'POWER PRESS SEDANG',
             'machine_brand' => 'WORLD PRECISE PRESS',
             'machine_type'  => 'JS36-400',
             'machine_spec'  => '400 TON',
@@ -26,7 +26,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             'machine_code'  => '2',
             'invent_number' => 'E-AA-15-0105',
-            'machine_name'  => 'POWER PRESS',
+            'machine_name'  => 'POWER PRESS BESAR',
             'machine_brand' => 'WORLD PRECISE PRESS',
             'machine_type'  => 'JS36-500',
             'machine_spec'  => '500 TON',
@@ -37,7 +37,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             'machine_code'  => '3',
             'invent_number' => 'E-JG-21-0007',
-            'machine_name'  => 'ROBOT PORTABLE SPOT',
+            'machine_name'  => 'ROBOT PORTABLE SPOT KECIL',
             'machine_brand' => 'NANCHI',
             'machine_type'  => '-',
             'machine_spec'  => '-',
@@ -48,7 +48,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             'machine_code'  => '4',
             'invent_number' => 'E-JG-21-0008',
-            'machine_name'  => 'ROBOT PORTABLE SPOT',
+            'machine_name'  => 'ROBOT PORTABLE SPOT BESAR',
             'machine_brand' => 'NANCHI',
             'machine_type'  => '-',
             'machine_spec'  => '-',

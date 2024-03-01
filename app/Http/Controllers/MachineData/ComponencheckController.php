@@ -3,25 +3,37 @@
 namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
+use App\Machine;
 use App\Componencheck;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ComponencheckController extends Controller
 {
     public function indextablecomponencheck()
     {
-        $componencheck=Componencheck::get();
+        $componencheck = DB::table('componenchecks')
+        ->join('machines', 'componenchecks.machine_code_componencheck', '=', 'machines.machine_code')
+        ->select('componenchecks.*', 'machines.machine_name')
+        ->orderBy('componenchecks.id', 'asc')
+        ->get();
         return view ('dashboard.view_componen.tablecomponencheck',['componencheck'=>$componencheck]);
     }
     public function indexregistercomponencheck()
     {
-        return view ('dashboard.view_componen.addcomponencheck');
+        $machines = Machine::all('machine_name', 'machine_code');
+        return view ('dashboard.view_componen.addcomponencheck',['machines' => $machines]);
     }
 
     public function indexeditcomponencheck($id)
     {
-        $componencheck=Componencheck::find($id);
-        return view ('dashboard.view_componen.editcomponencheck',['componencheck'=>$componencheck]);
+        $componenchecks = DB::table('componenchecks')
+        ->join('machines', 'componenchecks.machine_code_componencheck', '=', 'machines.machine_code')
+        ->select('componenchecks.*', 'machines.machine_name')
+        ->orderBy('componenchecks.id', 'asc')
+        ->get();
+        $componenchecks=Componencheck::find($id);
+        return view ('dashboard.view_componen.editcomponencheck',['componenchecks'=>$componenchecks]);
     }
 
     public function registercomponencheck(Request $request)
@@ -33,6 +45,7 @@ class ComponencheckController extends Controller
             $currentvalue = 1;
         }
         $request->validate([
+            'machine_code_componencheck'=>'required',
             'name_componencheck' => 'required|max:255'
         ]);
         $componencheck = Componencheck::create($request->all());
@@ -40,14 +53,6 @@ class ComponencheckController extends Controller
         $componencheck->save();
         return redirect()->route("managecomponencheck")->withSuccess('Componen Check added successfully.');
     }
-
-    // protected function createcomponen(array $data)
-    // {
-    //     return Componencheck::create([
-    //         'id_componencheck' => $data ['id_componencheck'],
-    //         'name_componencheck' => $data ['name_componencheck']
-    //     ]);
-    // }
 
     public function editcomponencheck(Request $request, $id)
     {

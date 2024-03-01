@@ -12,13 +12,14 @@
                     <form action="{{ route('pushcomponencheck') }}" id="registerform" method="post">
                         @csrf
                         <div class="row" align-items="center">
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">ID Componen</label>
-                                    <div>
-                                        <input class="form-control" type="text" name="id" disabled>
-                                    </div>
-                                </div>
+                            <div class="col-xl-4">
+                                <p class="mg-b-10">Input Mesin</p>
+                                <select class="form-control select2" name="machine_code_componencheck" id="category-input-machinecode">
+                                    <option selected="selected" value="">Select :</option>
+                                    @foreach($machines as $machine)
+                                        <option value="{{$machine->machine_code}}">{{$machine->machine_name}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-xl-6">
                                 <div class="form-group">

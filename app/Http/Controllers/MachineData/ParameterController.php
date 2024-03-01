@@ -3,19 +3,27 @@
 namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
+use App\Componencheck;
 use App\Parameter;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\View\Component;
 
 class ParameterController extends Controller
 {
     public function indextableparameter()
     {
-        $parameters=Parameter::get();
+        $parameters = DB::table('parameters')
+        ->join('componenchecks', 'parameters.componencheck_parameter', '=', 'componenchecks.id_componencheck')
+        ->select('parameters.*', 'componenchecks.name_componencheck')
+        ->orderBy('parameters.id', 'asc')
+        ->get();
         return view ('dashboard.view_parameter.tableparameter',['parameters'=>$parameters]);
     }
     public function indexregisterparameter()
     {
-        return view ('dashboard.view_parameter.addparameter');
+        $componenchecks= Componencheck::all('name_componencheck', 'id_componencheck');
+        return view ('dashboard.view_parameter.addparameter',['componenchecks'=>$componenchecks]);
     }
 
     public function indexeditparameter($id)
@@ -33,7 +41,8 @@ class ParameterController extends Controller
             $currentvalue = 1;
         }
         $request->validate([
-            'name_parameter' => 'required|max:255',
+            'componencheck_parameter' => 'required',
+            'name_parameter' => 'required|max:255'
         ]);
         $parameters = Parameter::create($request->all());
         $parameters->id_parameter = $currentvalue;
@@ -41,18 +50,12 @@ class ParameterController extends Controller
         return redirect()->route("manageparameter")->withSuccess('Parameter added successfully.');
     }
 
-    // protected function createparameter(array $data)
-    // {
-    //     return Parameter::create([
-    //         'id_parameter' => $data ['id_parameter'],
-    //         'name_parameter' => $data ['name_parameter']
-    //     ]);
-    // }
     public function editparameter(Request $request, $id)
     {
-        // dd($request);
         $request->validate([
-            'name_parameter' => 'required|max:255',
+            'componencheck_parameter' => 'required',
+            'id_parameter'=>'required',
+            'name_parameter' => 'required|max:255'
         ]);
         $Parameters = Parameter::find($id);
         $Parameters->update($request->all());

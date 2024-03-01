@@ -8,10 +8,11 @@ class Metodecheck extends Model
 {
     protected $fillable = [
         'id_metodecheck',
-        'name_metodecheck',
+        'parameter_metodecheck',
+        'name_metodecheck'
     ];
     public function getmetoderoperty()
     {
-        return $this->hasMany(Machineresult::class);
+        return $this->hasMany(Parameter::class);
     }
 }

@@ -396,3 +396,7 @@ LEFT JOIN
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         );
+
+
+
+        @if($componencheckget->machine_code_componencheck == $componencheckget->machine_code) selected="selected" @endif

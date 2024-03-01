@@ -29,16 +29,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($metodechecks as $metodecheck)
+                                @foreach ($metodechecks as $metodecheckget)
                                     <tr>
-                                        <td>{{ $metodecheck->id}}</td>
-                                        <td>{{ $metodecheck->name_metodecheck }}</td>
+                                        <td>{{ $metodecheckget->name_parameter}}</td>
+                                        <td>{{ $metodecheckget->name_metodecheck }}</td>
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu" aria-labelled by="navbarDropdownMenuLink2">
                                                 <a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="button-table-custom-edit" href="{{ route('editmethod', $metodecheck->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                                <a class="button-table-custom-delete" href="{{ route('deletemethod', $metodecheck->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
+                                                <a class="button-table-custom-edit" href="{{ route('editmethod', $metodecheckget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                                <a class="button-table-custom-delete" href="{{ route('deletemethod', $metodecheckget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
                                             </div>
                                         </td>
                                     </tr>

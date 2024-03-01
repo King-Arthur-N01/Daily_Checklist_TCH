@@ -38,7 +38,7 @@ class MachineresultController extends Controller
         ->get();
 
         // $machineresults = MachineResult::with(['machines', 'componenchecks', 'parameters', 'metodechecks'])->find($id);
-        // $machineresults = MachineResult::with(['machines', 'componenchecks', 'parameters', 'metodechecks'])->orderBy('id','desc')->get();
+        // $machineresults = MachineResult::with(['machines', 'componenchecks', 'parameters', 'me'todechecks'])->orderBy('id','desc')->get();
         return view('dashboard.view_hasilmesin.tablemesinresult', ['machineresults' => $machineresults]);
 
 

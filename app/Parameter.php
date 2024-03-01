@@ -8,10 +8,15 @@ class Parameter extends Model
 {
     protected $fillable = [
         'id_parameter',
+        'componencheck_parameter',
         'name_parameter'
     ];
-    public function getparameterproperty()
+    public function getparentcomponen()
     {
-        return $this->hasMany(Machineresult::class);
+        return $this->hasMany(Componencheck::class);
+    }
+    public function getchildernmetode()
+    {
+        return $this->belongsTo(Metodecheck::class);
     }
 }

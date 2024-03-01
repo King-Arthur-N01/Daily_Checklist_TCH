@@ -12,13 +12,14 @@
                     <form action="{{ route('pushmethod') }}" id="registerform" method="post">
                         @csrf
                         <div class="row" align-items="center">
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">ID Metode</label>
-                                    <div>
-                                        <input class="form-control" type="text" name="id_metodecheck" disabled>
-                                    </div>
-                                </div>
+                            <div class="col-xl-4">
+                                <p class="mg-b-10">Input Parameter Check</p>
+                                <select class="form-control select2" name="parameter_metodecheck" id="category-input-machinecode">
+                                    <option selected="selected" value="">Select :</option>
+                                    @foreach($parameters as $parameterget)
+                                        <option value="{{$parameterget->id_parameter}}">{{$parameterget->name_parameter}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-xl-6">
                                 <div class="form-group">
