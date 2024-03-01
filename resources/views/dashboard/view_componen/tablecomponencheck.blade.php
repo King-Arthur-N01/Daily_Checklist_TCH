@@ -23,7 +23,8 @@
                         <table id="example" class="table table-striped table-bordered second" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Nama Mesin</th>
+                                    <th>Brand/Merk Mesin</th>
                                     <th>Nama Check Componen</th>
                                     <th>Action</th>
                                 </tr>
@@ -32,6 +33,7 @@
                                 @foreach ($componencheck as $componenchecks)
                                     <tr>
                                         <td>{{ $componenchecks->machine_name }}</td>
+                                        <td>{{ $componenchecks->machine_brand }}</td>
                                         <td>{{ $componenchecks->name_componencheck }}</td>
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>

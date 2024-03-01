@@ -60,44 +60,6 @@ public function registermachine(Request $request)
 }
 
 
-
-
-
-public function registermachine(Request $request)
-{
-    $request->validate([
-        'invent_number' => 'required',
-        'machine_name' => 'required | max: 255',
-        'machine_brand' => 'required',
-        'machine_type' => 'required',
-        'machine_spec' => 'required',
-        'machine_made' => 'required',
-        'mfg_number' => 'required',
-        'install_date' => 'required',
-    ]);
-
-    // Generate machine code as auto-incrementing value
-    $machineCode = 'MC-' . str_pad(Machine::count() + 1, 4, '0', STR_PAD_LEFT);
-
-    Machine::create([
-        'machine_code' => $machineCode,
-        'invent_number' => $request->input('invent_number'),
-        'machine_name' => $request->input('machine_name'),
-        'machine_brand' => $request->input('machine_brand'),
-        'machine_type' => $request->input('machine_type'),
-        'machine_spec' => $request->input('machine_spec'),
-        'machine_made' => $request->input('machine_made'),
-        'mfg_number' => $request->input('mfg_number'),
-        'install_date' => $request->input('install_date'),
-    ]);
-
-    return redirect()->route("tablemach
-
-
-
-    Missing required parameters for [Route: pusheditmachine] [URI: editmachine/{id}]. (View: C:\laragon\www\Daily_Checklist_TCH\resources\views\dashboard\editmachine.blade.php)
-
-
     <select name="owner">
     <option value=""></option>
     <?php (foreach $data as $row): ?>
@@ -346,56 +308,6 @@ LEFT JOIN
         OR machineresults.id_metodecheck10 = metodechecks.name_metodecheck
         OR machineresults.id_metodecheck11 = metodechecks.name_metodecheck
         OR machineresults.id_metodecheck12 = metodechecks.name_metodecheck;
-
-
-
-
-
-
-
-
-        CREATE TABLE machineresults (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            machine_coderesult INT,
-            id_componencheck1 INT,
-            id_parameter1 INT,
-            id_metodecheck1 INT,
-            id_componencheck2 INT,
-            id_parameter2 INT,
-            id_metodecheck2 INT,
-            id_componencheck3 INT,
-            id_parameter3 INT,
-            id_metodecheck3 INT,
-            id_componencheck4 INT,
-            id_parameter4 INT,
-            id_metodecheck4 INT,
-            id_componencheck5 INT,
-            id_parameter5 INT,
-            id_metodecheck5 INT,
-            id_componencheck6 INT,
-            id_parameter6 INT,
-            id_metodecheck6 INT,
-            id_componencheck7 INT,
-            id_parameter7 INT,
-            id_metodecheck7 INT,
-            id_componencheck8 INT,
-            id_parameter8 INT,
-            id_metodecheck8 INT,
-            id_componencheck9 INT,
-            id_parameter9 INT,
-            id_metodecheck9 INT,
-            id_componencheck10 INT,
-            id_parameter10 INT,
-            id_metodecheck10 INT,
-            id_componencheck11 INT,
-            id_parameter11 INT,
-            id_metodecheck11 INT,
-            id_componencheck12 INT,
-            id_parameter12 INT,
-            id_metodecheck12 INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        );
 
 
 

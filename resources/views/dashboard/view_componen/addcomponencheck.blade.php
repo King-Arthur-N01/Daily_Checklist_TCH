@@ -16,8 +16,8 @@
                                 <p class="mg-b-10">Input Mesin</p>
                                 <select class="form-control select2" name="machine_code_componencheck" id="category-input-machinecode">
                                     <option selected="selected" value="">Select :</option>
-                                    @foreach($machines as $machine)
-                                        <option value="{{$machine->machine_code}}">{{$machine->machine_name}}</option>
+                                    @foreach($machines as $machineget)
+                                        <option value="{{$machineget->machine_code}}">{{$machineget->machine_name}}</option>
                                     @endforeach
                                 </select>
                             </div>

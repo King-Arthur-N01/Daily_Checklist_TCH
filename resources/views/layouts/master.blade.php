@@ -74,26 +74,24 @@
             </div><!-- az-header-menu -->
             <div class="az-header-right">
                 <div class="dropdown az-profile-menu">
-                    <a href="" class="az-img-user"><img src="assets/image/faces/face1.jpg" alt=""></a>
+                    <a href="" class="az-img-user"><img src="{{asset('assets/icons/avatar-1.png')}}" alt=""></a>
                     <div class="dropdown-menu">
                         <div class="az-dropdown-header d-sm-none">
                             <a href="" class="az-header-arrow"><i class="icon ion-md-arrow-back"></i></a>
                         </div>
                         <div class="az-header-profile">
                             <div class="az-img-user">
-                                <img src="assets/image/faces/face1.jpg" alt="">
+                                <img src="{{asset('assets/icons/avatar-1.png')}}" alt="">
                             </div><!-- az-img-user -->
-                            <h6>Aziana Pechon</h6>
-                            <span>Premium Member</span>
+                            <h6>Selamat Datang {{Auth::user()->name}}</h6>
+                            {{-- <span>Premium Member</span> --}}
                         </div><!-- az-header-profile -->
 
                         <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
                         <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
                         <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-                        <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account
-                            Settings</a>
-                        <a href="page-signin.html" class="dropdown-item"><i class="typcn typcn-power-outline"></i>
-                            Sign Out</a>
+                        <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
+                        <a href="{{route('logout')}}" class="dropdown-item"><i class="typcn typcn-power-outline"></i>Sign Out</a>
                     </div><!-- dropdown-menu -->
                 </div>
             </div><!-- az-header-right -->

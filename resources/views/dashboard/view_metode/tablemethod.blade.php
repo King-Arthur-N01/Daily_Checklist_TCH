@@ -23,22 +23,26 @@
                         <table id="example" class="table table-striped table-bordered second" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Nama Mesin</th>
+                                    <th>Nama Componen Yang Dicheck</th>
+                                    <th>Nama Parameter Pengecekan</th>
                                     <th>Nama Metode Pengecekan</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($metodechecks as $metodecheckget)
+                                @foreach ($componenchecks as $componenget)
                                     <tr>
-                                        <td>{{ $metodecheckget->name_parameter}}</td>
-                                        <td>{{ $metodecheckget->name_metodecheck }}</td>
+                                        <td>{{ $componenget->machine_name}}</td>
+                                        <td>{{ $componenget->name_componencheck}}</td>
+                                        <td>{{ $componenget->name_parameter}}</td>
+                                        <td>{{ $componenget->name_metodecheck }}</td>
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu" aria-labelled by="navbarDropdownMenuLink2">
                                                 <a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="button-table-custom-edit" href="{{ route('editmethod', $metodecheckget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                                <a class="button-table-custom-delete" href="{{ route('deletemethod', $metodecheckget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
+                                                <a class="button-table-custom-edit" href="{{ route('editmethod', $componenget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                                <a class="button-table-custom-delete" href="{{ route('deletemethod', $componenget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
                                             </div>
                                         </td>
                                     </tr>

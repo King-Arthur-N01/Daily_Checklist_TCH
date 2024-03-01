@@ -13,17 +13,18 @@
                         @csrf
                         <div class="row" align-items="center">
                             <div class="col-xl-4">
-                                <p class="mg-b-10">Input Parameter Check</p>
+                                <p class="col-form-label">Input Parameter Check</p>
                                 <select class="form-control select2" name="parameter_metodecheck" id="category-input-machinecode">
                                     <option selected="selected" value="">Select :</option>
-                                    @foreach($parameters as $parameterget)
-                                        <option value="{{$parameterget->id_parameter}}">{{$parameterget->name_parameter}}</option>
+                                    @foreach($componenchecks as $componenget)
+                                        <option value="{{$componenget->id_parameter}}">{{$componenget->name_componencheck}} ==> {{$componenget->name_parameter}}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            
                             <div class="col-xl-6">
                                 <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Metode Pengecekan</label>
+                                    <label class="col-form-label" style="margin-left: 4px;">Nama Metode Pengecekan</label>
                                     <div>
                                         <input class="form-control" type="text" name="name_metodecheck" placeholder="Nama Metode Pengecekan Mesin">
                                     </div>

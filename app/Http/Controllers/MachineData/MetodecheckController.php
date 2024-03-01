@@ -12,17 +12,25 @@ class MetodecheckController extends Controller
 {
     public function indextablemethod()
     {
-        $metodechecks = DB::table('metodechecks')
-        ->join('parameters', 'metodechecks.parameter_metodecheck', '=', 'parameters.id_parameter')
-        ->select('metodechecks.*', 'parameters.name_parameter')
+        $componenchecks = DB::table('machines')
+        ->join('componenchecks','machines.machine_code','=','componenchecks.machine_code_componencheck')
+        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
+        ->join('metodechecks', 'parameters.id_parameter', '=', 'metodechecks.parameter_metodecheck')
+        ->select('metodechecks.*', 'componenchecks.*', 'parameters.*', 'machines.*')
         ->orderBy('metodechecks.id', 'asc')
         ->get();
-        return view ('dashboard.view_metode.tablemethod',['metodechecks'=>$metodechecks]);
+        return view ('dashboard.view_metode.tablemethod',['componenchecks'=>$componenchecks]);
     }
     public function indexregistermethod()
     {
-        $parameters= Parameter::all('name_parameter', 'id_parameter');
-        return view ('dashboard.view_metode.addmethod',['parameters'=>$parameters]);
+        $componenchecks = DB::table('machines')
+        ->join('componenchecks','machines.machine_code','=','componenchecks.machine_code_componencheck')
+        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
+        ->join('metodechecks', 'parameters.id_parameter', '=', 'metodechecks.parameter_metodecheck')
+        ->select('metodechecks.*', 'componenchecks.*', 'parameters.*', 'machines.*')
+        ->orderBy('metodechecks.id', 'asc')
+        ->get();
+        return view ('dashboard.view_metode.addmethod',['componenchecks'=>$componenchecks]);
     }
 
     public function indexeditmethod($id)

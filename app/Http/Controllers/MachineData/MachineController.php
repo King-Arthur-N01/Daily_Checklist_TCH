@@ -59,7 +59,6 @@ class MachineController extends Controller
     public function registermachine(Request $request)
     {
         $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
-
         if (isset($lastMachineCode)) {
             $currentvalue =  $lastMachineCode->machine_code + 1;
         } else {

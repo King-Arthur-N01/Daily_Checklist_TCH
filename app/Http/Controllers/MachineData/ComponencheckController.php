@@ -14,7 +14,7 @@ class ComponencheckController extends Controller
     {
         $componencheck = DB::table('componenchecks')
         ->join('machines', 'componenchecks.machine_code_componencheck', '=', 'machines.machine_code')
-        ->select('componenchecks.*', 'machines.machine_name')
+        ->select('componenchecks.*', 'machines.*')
         ->orderBy('componenchecks.id', 'asc')
         ->get();
         return view ('dashboard.view_componen.tablecomponencheck',['componencheck'=>$componencheck]);

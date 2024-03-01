@@ -13,17 +13,23 @@ class ParameterController extends Controller
 {
     public function indextableparameter()
     {
-        $parameters = DB::table('parameters')
-        ->join('componenchecks', 'parameters.componencheck_parameter', '=', 'componenchecks.id_componencheck')
-        ->select('parameters.*', 'componenchecks.name_componencheck')
+        $machines = DB::table('machines')
+        ->join('componenchecks','machines.machine_code','=','componenchecks.machine_code_componencheck')
+        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
+        ->select('machines.*','parameters.*', 'componenchecks.*')
         ->orderBy('parameters.id', 'asc')
         ->get();
-        return view ('dashboard.view_parameter.tableparameter',['parameters'=>$parameters]);
+        return view ('dashboard.view_parameter.tableparameter',['machines'=>$machines]);
     }
     public function indexregisterparameter()
     {
-        $componenchecks= Componencheck::all('name_componencheck', 'id_componencheck');
-        return view ('dashboard.view_parameter.addparameter',['componenchecks'=>$componenchecks]);
+        $parameter = DB::table('parameters')
+        ->join('machines','parameters.machine_code','=','machines.machines.code')
+        ->join('componenchecks','parameters.machine_code','=','componenchecks.machine_code_componencheck')
+        ->select('machines.*','parameters.*', 'componenchecks.*')
+        ->orderBy('parameters.id', 'asc')
+        ->get();
+        return view ('dashboard.view_parameter.addparameter',['parameters'=>$parameter]);
     }
 
     public function indexeditparameter($id)
