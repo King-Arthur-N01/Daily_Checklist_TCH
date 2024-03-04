@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Metodecheck extends Model
 {
     protected $fillable = [
-        'id_metodecheck',
-        'parameter_metodecheck',
+        'id_parameter',
+        // 'parameter_metodecheck',
         'name_metodecheck'
     ];
     public function getmetoderoperty()

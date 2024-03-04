@@ -13,23 +13,18 @@ class ParameterController extends Controller
 {
     public function indextableparameter()
     {
-        $machines = DB::table('machines')
-        ->join('componenchecks','machines.machine_code','=','componenchecks.machine_code_componencheck')
-        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
+        $parameters = DB::table('parameters')
+        ->join('componenchecks','parameters.id_componencheck','=','componenchecks.id')
+        ->join('machines','componenchecks.id_machine','=', 'machines.id')
         ->select('machines.*','parameters.*', 'componenchecks.*')
         ->orderBy('parameters.id', 'asc')
         ->get();
-        return view ('dashboard.view_parameter.tableparameter',['machines'=>$machines]);
+        return view ('dashboard.view_parameter.tableparameter',['parameters'=>$parameters]);
     }
     public function indexregisterparameter()
     {
-        $parameter = DB::table('parameters')
-        ->join('machines','parameters.machine_code','=','machines.machines.code')
-        ->join('componenchecks','parameters.machine_code','=','componenchecks.machine_code_componencheck')
-        ->select('machines.*','parameters.*', 'componenchecks.*')
-        ->orderBy('parameters.id', 'asc')
-        ->get();
-        return view ('dashboard.view_parameter.addparameter',['parameters'=>$parameter]);
+        $componenchecks = Componencheck::all('name_componencheck', 'id');
+        return view ('dashboard.view_parameter.addparameter',['componenchecks'=>$componenchecks]);
     }
 
     public function indexeditparameter($id)
@@ -40,27 +35,17 @@ class ParameterController extends Controller
 
     public function registerparameter(Request $request)
     {
-        $lastIDCode = Parameter::orderBy('id_parameter', 'desc')->first();
-        if (isset($lastIDCode)) {
-            $currentvalue =  $lastIDCode->id_parameter + 1;
-        } else {
-            $currentvalue = 1;
-        }
         $request->validate([
-            'componencheck_parameter' => 'required',
+            'id_componencheck'  => 'required',
             'name_parameter' => 'required|max:255'
         ]);
-        $parameters = Parameter::create($request->all());
-        $parameters->id_parameter = $currentvalue;
-        $parameters->save();
+        Parameter::create($request->all());
         return redirect()->route("manageparameter")->withSuccess('Parameter added successfully.');
     }
 
     public function editparameter(Request $request, $id)
     {
         $request->validate([
-            'componencheck_parameter' => 'required',
-            'id_parameter'=>'required',
             'name_parameter' => 'required|max:255'
         ]);
         $Parameters = Parameter::find($id);

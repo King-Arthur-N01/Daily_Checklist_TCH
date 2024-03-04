@@ -12,23 +12,23 @@ class ComponencheckController extends Controller
 {
     public function indextablecomponencheck()
     {
-        $componencheck = DB::table('componenchecks')
-        ->join('machines', 'componenchecks.machine_code_componencheck', '=', 'machines.machine_code')
+        $componenchecks = DB::table('componenchecks')
+        ->join('machines', 'componenchecks.id', '=', 'machines.id')
         ->select('componenchecks.*', 'machines.*')
         ->orderBy('componenchecks.id', 'asc')
         ->get();
-        return view ('dashboard.view_componen.tablecomponencheck',['componencheck'=>$componencheck]);
+        return view ('dashboard.view_componen.tablecomponencheck',['componenchecks'=>$componenchecks]);
     }
     public function indexregistercomponencheck()
     {
-        $machines = Machine::all('machine_name', 'machine_code');
+        $machines = Machine::all('machine_name', 'id');
         return view ('dashboard.view_componen.addcomponencheck',['machines' => $machines]);
     }
 
     public function indexeditcomponencheck($id)
     {
         $componenchecks = DB::table('componenchecks')
-        ->join('machines', 'componenchecks.machine_code_componencheck', '=', 'machines.machine_code')
+        ->join('machines', 'componenchecks.id_componencheck', '=', 'machines.id')
         ->select('componenchecks.*', 'machines.machine_name')
         ->orderBy('componenchecks.id', 'asc')
         ->get();
@@ -38,25 +38,19 @@ class ComponencheckController extends Controller
 
     public function registercomponencheck(Request $request)
     {
-        $lastIDCode = Componencheck::orderBy('id_componencheck', 'desc')->first();
-        if (isset($lastIDCode)) {
-            $currentvalue =  $lastIDCode->id_componencheck + 1;
-        } else {
-            $currentvalue = 1;
-        }
+        // dd($request);
         $request->validate([
-            'machine_code_componencheck'=>'required',
+            'id_machine' => 'required',
             'name_componencheck' => 'required|max:255'
         ]);
-        $componencheck = Componencheck::create($request->all());
-        $componencheck->id_componencheck = $currentvalue;
-        $componencheck->save();
-        return redirect()->route("managecomponencheck")->withSuccess('Componen Check added successfully.');
+        Componencheck::create($request->all());
+        return redirect()->route("managecomponencheck")->withSuccess('Componencheck added successfully.');
     }
 
     public function editcomponencheck(Request $request, $id)
     {
         $request->validate([
+            'id_machine' => 'required',
             'name_componencheck' => 'required|max:255'
         ]);
         $componenchecks = Componencheck::find($id);

@@ -14,10 +14,10 @@
                         <div class="row" align-items="center">
                             <div class="col-xl-4">
                                 <p class="mg-b-10">Input Mesin</p>
-                                <select class="form-control select2" name="machine_code_componencheck" id="category-input-machinecode">
+                                <select class="form-control select2" name="id_machine" id="category-input-machinecode">
                                     <option selected="selected" value="">Select :</option>
                                     @foreach($machines as $machineget)
-                                        <option value="{{$machineget->machine_code}}">{{$machineget->machine_name}}</option>
+                                        <option value="{{ $machineget->id }}">{{$machineget->machine_name}}</option>
                                     @endforeach
                                 </select>
                             </div>

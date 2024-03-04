@@ -15,8 +15,8 @@ class CreateMetodechecksTable extends Migration
     {
         Schema::create('metodechecks', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_metodecheck')->unique()->default('0');
-            $table->integer('parameter_metodecheck')->index();
+            // $table->integer('parameter_metodecheck')->index();
+            // $table->bigInteger('id_parameter')->unique()->default('0');
             $table->string('name_metodecheck');
             $table->timestamps();
         });

@@ -12,33 +12,36 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
+    // <<<============================================================================================>>>
+    // <<<====================================batas machine result====================================>>>
+    // <<<============================================================================================>>>
     public function indextablemachineresult(){
-
-        $machine = DB::table('machines')
-        ->join('componenchecks', 'machines.machine_code', '=', 'componenchecks.machine_code_componencheck')
-        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
-        ->join('metodechecks', 'parameters.id_parameter', '=', 'metodechecks.parameter_metodecheck')
+        $machines = DB::table('machines')
+        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
         ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
         ->orderBy('machines.id', 'asc')
         ->get();
-
-        /*
-        $machineresults = DB::table('machines')
-            ->join('machines', 'machine.machine_code', '=', 'machines.machine_name')
-            ->leftJoin('componenchecks', function ($join) {
-                $join->on('machines.machine_code', '=', 'componenchecks.machine_code_componencheck');
-            })
-            ->leftJoin('parameters', function ($join) {
-                $join->on('componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter');
-            })
-            ->leftJoin('metodechecks', function ($join) {
-                $join->on('paramters.id_parameter', '=', 'metodechecks.parameter_metodecheck');
-            })
-            ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-            ->get();
-            */
-        return view('dashboard.view_hasilmesin.tablemesinresult', ['machines' => $machine]);
+        return view('dashboard.view_hasilmesin.tablemesinresult', ['machines' => $machines]);
     }
+    public function indexregistermachineresult(){
+        $machines = Machine::all('machine_name', 'id');
+        $componenchecks = Componencheck::all('name_componencheck', 'id');
+        $parameters = Parameter::all('name_parameter', 'id');
+        $metodechecks = Metodecheck::all('name_metodecheck', 'id');
+
+        return view('dashboard.view_hasilmesin.addmesinresult',[
+            'machines' => $machines,
+            'componenchecks' => $componenchecks,
+            'parameters' => $parameters,
+            'metodechecks' => $metodechecks
+        ]);
+    }
+    // <<<============================================================================================>>>
+    // <<<==================================batas machine result end==================================>>>
+    // <<<============================================================================================>>>
+
     public function indextablemachine()
     {
         $machines=Machine::get();

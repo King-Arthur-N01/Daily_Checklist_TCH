@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Componencheck extends Model
 {
     protected $fillable = [
-        'id_componencheck',
-        'machine_code_componencheck',
+        'id_machine',
+        // 'machine_code_componencheck',
         'name_componencheck'
     ];
     public function getparentmachine()

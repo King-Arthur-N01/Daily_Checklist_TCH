@@ -37,7 +37,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             'machine_code'  => '3',
             'invent_number' => 'E-JG-21-0007',
-            'machine_name'  => 'ROBOT PORTABLE SPOT KECIL',
+            'machine_name'  => 'MESIN PORTABLE SPOT KECIL',
             'machine_brand' => 'NANCHI',
             'machine_type'  => '-',
             'machine_spec'  => '-',
@@ -47,14 +47,14 @@ class MachinesSeeder extends Seeder
         ]);
         Machine::create([
             'machine_code'  => '4',
-            'invent_number' => 'E-JG-21-0008',
-            'machine_name'  => 'ROBOT PORTABLE SPOT BESAR',
+            'invent_number' => 'E-JG-19-23134',
+            'machine_name'  => 'ROBOT SPOT BESAR',
             'machine_brand' => 'NANCHI',
             'machine_type'  => '-',
             'machine_spec'  => '-',
             'machine_made'  => 'JAPAN',
             'mfg_number'    => 'B19021/94113',
-            'install_date'  => '2021-04-21'
+            'install_date'  => '2019-04-21'
         ]);
         Machine::create([
             'machine_code'  => '5',

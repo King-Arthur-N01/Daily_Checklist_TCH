@@ -30,17 +30,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($componencheck as $componenchecks)
+                                @foreach ($componenchecks as $componenget)
                                     <tr>
-                                        <td>{{ $componenchecks->machine_name }}</td>
-                                        <td>{{ $componenchecks->machine_brand }}</td>
-                                        <td>{{ $componenchecks->name_componencheck }}</td>
+                                        <td>{{ $componenget->machine_name }}</td>
+                                        <td>{{ $componenget->machine_brand }}</td>
+                                        <td>{{ $componenget->name_componencheck }}</td>
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu" aria-labelled by="navbarDropdownMenuLink2">
                                                 <a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="button-table-custom-edit" href="{{ route('editcomponencheck', $componenchecks->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                                <a class="button-table-custom-delete" href="{{ route('deletecomponencheck', $componenchecks->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
+                                                <a class="button-table-custom-edit" href="{{ route('editcomponencheck', $componenget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                                <a class="button-table-custom-delete" href="{{ route('deletecomponencheck', $componenget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
                                             </div>
                                         </td>
                                     </tr>

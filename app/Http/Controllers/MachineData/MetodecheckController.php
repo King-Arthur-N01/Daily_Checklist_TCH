@@ -12,25 +12,19 @@ class MetodecheckController extends Controller
 {
     public function indextablemethod()
     {
-        $componenchecks = DB::table('machines')
-        ->join('componenchecks','machines.machine_code','=','componenchecks.machine_code_componencheck')
-        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
-        ->join('metodechecks', 'parameters.id_parameter', '=', 'metodechecks.parameter_metodecheck')
+        $metodechecks = DB::table('metodechecks')
+        ->join('parameters', 'metodechecks.id_parameter', '=', 'parameters.id')
+        ->join('componenchecks', 'parameters.id_componencheck', '=', 'componenchecks.id')
+        ->join('machines', 'componenchecks.id_machine', '=', 'machines.id')
         ->select('metodechecks.*', 'componenchecks.*', 'parameters.*', 'machines.*')
         ->orderBy('metodechecks.id', 'asc')
         ->get();
-        return view ('dashboard.view_metode.tablemethod',['componenchecks'=>$componenchecks]);
+        return view ('dashboard.view_metode.tablemethod',['metodechecks'=>$metodechecks]);
     }
     public function indexregistermethod()
     {
-        $componenchecks = DB::table('machines')
-        ->join('componenchecks','machines.machine_code','=','componenchecks.machine_code_componencheck')
-        ->join('parameters', 'componenchecks.id_componencheck', '=', 'parameters.componencheck_parameter')
-        ->join('metodechecks', 'parameters.id_parameter', '=', 'metodechecks.parameter_metodecheck')
-        ->select('metodechecks.*', 'componenchecks.*', 'parameters.*', 'machines.*')
-        ->orderBy('metodechecks.id', 'asc')
-        ->get();
-        return view ('dashboard.view_metode.addmethod',['componenchecks'=>$componenchecks]);
+        $parameters = Parameter::all('name_parameter', 'id');
+        return view ('dashboard.view_metode.addmethod',['parameters'=>$parameters]);
     }
 
     public function indexeditmethod($id)
@@ -41,27 +35,17 @@ class MetodecheckController extends Controller
 
     public function registermethod(Request $request)
     {
-        $lastIDCode = Metodecheck::orderBy('id_metodecheck', 'desc')->first();
-        if (isset($lastIDCode)) {
-            $currentvalue =  $lastIDCode->id_metodecheck + 1;
-        } else {
-            $currentvalue = 1;
-        }
         $request->validate([
-            'parameter_metodecheck'=> 'required',
+            'id_parameter' => 'required',
             'name_metodecheck' => 'required|max:255'
         ]);
-        $metodecheck = Metodecheck::create($request->all());
-        $metodecheck->id_metodecheck = $currentvalue;
-        $metodecheck->save();
+        Metodecheck::create($request->all());
         return redirect()->route("managemethod")->withSuccess('Machine added successfully.');
     }
 
     public function editmethod(Request $request, $id)
     {
         $request->validate([
-            'parameter_metodecheck' => 'required',
-            'id_metodecheck',
             'name_metodecheck' => 'required|max:255'
         ]);
         $Metodechecks = Metodecheck::find($id);

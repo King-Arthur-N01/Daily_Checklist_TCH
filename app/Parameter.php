@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Parameter extends Model
 {
     protected $fillable = [
-        'id_parameter',
-        'componencheck_parameter',
+        'id_componencheck',
+        // 'componencheck_parameter',
         'name_parameter'
     ];
     public function getparentcomponen()

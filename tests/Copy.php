@@ -312,3 +312,11 @@ LEFT JOIN
 
 
         @if($componencheckget->machine_code_componencheck == $componencheckget->machine_code) selected="selected" @endif
+
+
+        <td>{{$machineget->machine_name}}</td>
+        <td>{{$machineget->name_componencheck}}</td>
+        <td>{{$machineget->name_parameter}}</td>
+
+        for($totmachinecheck=0; $totmachinecheck<=$totalchecks; $totmachinecheck++){
+        }

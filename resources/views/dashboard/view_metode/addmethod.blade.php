@@ -14,14 +14,14 @@
                         <div class="row" align-items="center">
                             <div class="col-xl-4">
                                 <p class="col-form-label">Input Parameter Check</p>
-                                <select class="form-control select2" name="parameter_metodecheck" id="category-input-machinecode">
+                                <select class="form-control select2" name="id_parameter" id="category-input-machinecode">
                                     <option selected="selected" value="">Select :</option>
-                                    @foreach($componenchecks as $componenget)
-                                        <option value="{{$componenget->id_parameter}}">{{$componenget->name_componencheck}} ==> {{$componenget->name_parameter}}</option>
+                                    @foreach($parameters as $parameterget)
+                                        <option value="{{$parameterget->id}}">{{$parameterget->name_parameter}}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label" style="margin-left: 4px;">Nama Metode Pengecekan</label>

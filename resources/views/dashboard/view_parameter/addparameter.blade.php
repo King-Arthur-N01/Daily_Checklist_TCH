@@ -14,10 +14,10 @@
                         <div class="row" align-items="center">
                             <div class="col-xl-4">
                                 <p class="mg-b-10">Input Component Check</p>
-                                <select class="form-control select2" name="componencheck_parameter" id="category-input-machinecode">
+                                <select class="form-control select2" name="id_componencheck" id="category-input-machinecode">
                                     <option selected="selected" value="">Select :</option>
-                                    @foreach($componenchecks as $componencheckget)
-                                        <option value="{{$componencheckget->id_componencheck}}">{{$componencheckget->name_componencheck}}</option>
+                                    @foreach($componenchecks as $componenget)
+                                        <option value="{{$componenget->id}}">{{$componenget->name_componencheck}}</option>
                                     @endforeach
                                 </select>
                             </div>

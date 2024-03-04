@@ -12,7 +12,7 @@
                 <p class="mg-b-20">Add borders on all sides of the table and cells.</p>
                 <div class="col-sm-12 col-md-12">
                     <div class="dt-buttons">
-                        <a type="button" class="btn btn-block btn-primary" href="#" tabindex="0" aria-controls="example">+ Tambah Mesin</a>
+                        <a type="button" class="btn btn-block btn-primary" href="{{route('addmachineresults')}}" tabindex="0" aria-controls="example">+ Tambah Mesin</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -37,7 +37,6 @@
                                         <td>{{$machineget->name_componencheck}}</td>
                                         <td>{{$machineget->name_parameter}}</td>
                                         <td>{{$machineget->name_metodecheck}}</td>
-                                @endforeach
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2"><a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
@@ -46,7 +45,7 @@
                                             </div>
                                         </td>
                                     </tr>
-                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
