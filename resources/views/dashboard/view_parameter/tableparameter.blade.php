@@ -31,18 +31,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($parameters as $parameterget)
+                                @foreach ($machines as $machineget)
                                     <tr>
-                                        <td>{{ $parameterget->machine_name}}</td>
-                                        <td>{{ $parameterget->machine_brand}}</td>
-                                        <td>{{ $parameterget->name_componencheck}}</td>
-                                        <td>{{ $parameterget->name_parameter }}</td>
+                                        <td>{{ $machineget->machine_name}}</td>
+                                        <td>{{ $machineget->machine_brand}}</td>
+                                        <td>{{ $machineget->name_componencheck}}</td>
+                                        <td>{{ $machineget->name_parameter }}</td>
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu" aria-labelled by="navbarDropdownMenuLink2">
                                                 <a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="button-table-custom-edit" href="{{ route('editparameter', $parameterget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                                <a class="button-table-custom-delete" href="{{ route('deleteparameter', $parameterget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
+                                                <a class="button-table-custom-edit" href="{{ route('editparameter', $machineget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                                <a class="button-table-custom-delete" href="{{ route('deleteparameter', $machineget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
                                             </div>
                                         </td>
                                     </tr>

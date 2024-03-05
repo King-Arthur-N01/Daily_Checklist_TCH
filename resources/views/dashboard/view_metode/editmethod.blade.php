@@ -13,13 +13,14 @@
                         @csrf
                         @method('put')
                         <div class="row" align-items="center">
-                            <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">ID Componen</label>
-                                    <div>
-                                        <input class="form-control" type="text" name="id_metodecheck" value="{{$metodechecks->id}}" disabled>
-                                    </div>
-                                </div>
+                            <div class="col-xl-4">
+                                <p class="mg-b-10">Input Parameter</p>
+                                <select class="form-control select2" name="id_componencheck" id="input_machine_dropdown">
+                                    <option selected="selected" value="">Select :</option>
+                                    @foreach($parameters as $parameterget)
+                                        <option value="{{$parameterget->id}}">{{$parameterget->name_parameter}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-xl-6">
                                 <div class="form-group">

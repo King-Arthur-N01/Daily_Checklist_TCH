@@ -12,14 +12,14 @@ class MetodecheckController extends Controller
 {
     public function indextablemethod()
     {
-        $metodechecks = DB::table('metodechecks')
-        ->join('parameters', 'metodechecks.id_parameter', '=', 'parameters.id')
-        ->join('componenchecks', 'parameters.id_componencheck', '=', 'componenchecks.id')
-        ->join('machines', 'componenchecks.id_machine', '=', 'machines.id')
-        ->select('metodechecks.*', 'componenchecks.*', 'parameters.*', 'machines.*')
-        ->orderBy('metodechecks.id', 'asc')
+        $machines = DB::table('machines')
+        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+        ->select( 'machines.*', 'metodechecks.*', 'parameters.*', 'componenchecks.*')
+        ->orderBy('machines.id', 'asc')
         ->get();
-        return view ('dashboard.view_metode.tablemethod',['metodechecks'=>$metodechecks]);
+        return view ('dashboard.view_metode.tablemethod',['machines'=>$machines]);
     }
     public function indexregistermethod()
     {
@@ -29,8 +29,9 @@ class MetodecheckController extends Controller
 
     public function indexeditmethod($id)
     {
+        $parameters = Parameter::all('name_parameter', 'id');
         $metodechecks=Metodecheck::find($id);
-        return view ('dashboard.view_metode.editmethod',['metodechecks'=>$metodechecks]);
+        return view ('dashboard.view_metode.editmethod',['metodechecks'=>$metodechecks,'parameters'=>$parameters]);
     }
 
     public function registermethod(Request $request)

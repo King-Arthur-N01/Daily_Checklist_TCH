@@ -30,17 +30,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($componenchecks as $componenget)
+                                @foreach ($machines as $machineget)
                                     <tr>
-                                        <td>{{ $componenget->machine_name }}</td>
-                                        <td>{{ $componenget->machine_brand }}</td>
-                                        <td>{{ $componenget->name_componencheck }}</td>
+                                        <td>{{ $machineget->machine_name }}</td>
+                                        <td>{{ $machineget->machine_brand }}</td>
+                                        <td>{{ $machineget->name_componencheck }}</td>
                                         <td>
                                             <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu" aria-labelled by="navbarDropdownMenuLink2">
                                                 <a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="button-table-custom-edit" href="{{ route('editcomponencheck', $componenget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                                <a class="button-table-custom-delete" href="{{ route('deletecomponencheck', $componenget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
+                                                <a class="button-table-custom-edit" href="{{ route('editcomponencheck', $machineget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                                <a class="button-table-custom-delete" href="{{ route('deletecomponencheck', $machineget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
                                             </div>
                                         </td>
                                     </tr>

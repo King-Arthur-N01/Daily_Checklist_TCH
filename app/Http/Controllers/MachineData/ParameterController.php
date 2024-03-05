@@ -13,13 +13,13 @@ class ParameterController extends Controller
 {
     public function indextableparameter()
     {
-        $parameters = DB::table('parameters')
-        ->join('componenchecks','parameters.id_componencheck','=','componenchecks.id')
-        ->join('machines','componenchecks.id_machine','=', 'machines.id')
+        $machines = DB::table('machines')
+        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
         ->select('machines.*','parameters.*', 'componenchecks.*')
-        ->orderBy('parameters.id', 'asc')
+        ->orderBy('machines.id', 'asc')
         ->get();
-        return view ('dashboard.view_parameter.tableparameter',['parameters'=>$parameters]);
+        return view ('dashboard.view_parameter.tableparameter',['machines'=>$machines]);
     }
     public function indexregisterparameter()
     {
@@ -29,8 +29,9 @@ class ParameterController extends Controller
 
     public function indexeditparameter($id)
     {
+        $componenchecks = Componencheck::all('name_componencheck', 'id');
         $parameters=Parameter::find($id);
-        return view ('dashboard.view_parameter.editparameter',['parameters'=>$parameters]);
+        return view ('dashboard.view_parameter.editparameter',['parameters'=>$parameters,'componenchecks'=>$componenchecks]);
     }
 
     public function registerparameter(Request $request)

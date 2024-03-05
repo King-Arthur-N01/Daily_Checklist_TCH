@@ -12,12 +12,12 @@ class ComponencheckController extends Controller
 {
     public function indextablecomponencheck()
     {
-        $componenchecks = DB::table('componenchecks')
-        ->join('machines', 'componenchecks.id', '=', 'machines.id')
-        ->select('componenchecks.*', 'machines.*')
-        ->orderBy('componenchecks.id', 'asc')
+        $machines = DB::table('machines')
+        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        ->select('machines.*','componenchecks.*')
+        ->orderBy('machines.id', 'asc')
         ->get();
-        return view ('dashboard.view_componen.tablecomponencheck',['componenchecks'=>$componenchecks]);
+        return view ('dashboard.view_componen.tablecomponencheck',['machines'=>$machines]);
     }
     public function indexregistercomponencheck()
     {
@@ -27,13 +27,9 @@ class ComponencheckController extends Controller
 
     public function indexeditcomponencheck($id)
     {
-        $componenchecks = DB::table('componenchecks')
-        ->join('machines', 'componenchecks.id_componencheck', '=', 'machines.id')
-        ->select('componenchecks.*', 'machines.machine_name')
-        ->orderBy('componenchecks.id', 'asc')
-        ->get();
+        $machines = Machine::all('machine_name', 'id');
         $componenchecks=Componencheck::find($id);
-        return view ('dashboard.view_componen.editcomponencheck',['componenchecks'=>$componenchecks]);
+        return view ('dashboard.view_componen.editcomponencheck',['componenchecks'=>$componenchecks, 'machines' => $machines]);
     }
 
     public function registercomponencheck(Request $request)
@@ -61,6 +57,6 @@ class ComponencheckController extends Controller
     public function deletecomponencheck($id)
     {
         Componencheck::where('id',$id)->delete();
-        return redirect()->route("managemanagecomponencheck")->with('success', 'Componen deleted successfully');
+        return redirect()->route("managecomponencheck")->with('success', 'Componen deleted successfully');
     }
 }
