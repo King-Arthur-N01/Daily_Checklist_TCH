@@ -13,7 +13,7 @@ class MachinesSeeder extends Seeder
     public function run()
     {
         Machine::create([
-            'machine_code'  => '1',
+            // 'machine_code'  => '1',
             'invent_number' => 'E-AA-14-0102',
             'machine_name'  => 'POWER PRESS SEDANG',
             'machine_brand' => 'WORLD PRECISE PRESS',
@@ -24,7 +24,7 @@ class MachinesSeeder extends Seeder
             'install_date'  => '2014-01-07'
         ]);
         Machine::create([
-            'machine_code'  => '2',
+            // 'machine_code'  => '2',
             'invent_number' => 'E-AA-15-0105',
             'machine_name'  => 'POWER PRESS BESAR',
             'machine_brand' => 'WORLD PRECISE PRESS',
@@ -35,7 +35,7 @@ class MachinesSeeder extends Seeder
             'install_date'  => '2015-05-07'
         ]);
         Machine::create([
-            'machine_code'  => '3',
+            // 'machine_code'  => '3',
             'invent_number' => 'E-JG-21-0007',
             'machine_name'  => 'MESIN PORTABLE SPOT KECIL',
             'machine_brand' => 'NANCHI',
@@ -46,7 +46,7 @@ class MachinesSeeder extends Seeder
             'install_date'  => '2021-04-21'
         ]);
         Machine::create([
-            'machine_code'  => '4',
+            // 'machine_code'  => '4',
             'invent_number' => 'E-JG-19-23134',
             'machine_name'  => 'ROBOT SPOT BESAR',
             'machine_brand' => 'NANCHI',
@@ -57,7 +57,7 @@ class MachinesSeeder extends Seeder
             'install_date'  => '2019-04-21'
         ]);
         Machine::create([
-            'machine_code'  => '5',
+            // 'machine_code'  => '5',
             'invent_number' => 'F-DH-18-14512',
             'machine_name'  => 'PLC ROBOT',
             'machine_brand' => 'SCHNEIDER',
@@ -68,7 +68,7 @@ class MachinesSeeder extends Seeder
             'install_date'  => '2018-06-14'
         ]);
         Machine::create([
-            'machine_code'  => '6',
+            // 'machine_code'  => '6',
             'invent_number' => 'F-DH-18-36421',
             'machine_name'  => 'PLC COUNTING',
             'machine_brand' => 'SEIMENS',

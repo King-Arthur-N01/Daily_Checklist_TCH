@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Machine extends Model
 {
     protected $fillable = [
-        'machine_code',
+        // 'machine_code',
         'invent_number',
         'machine_name',
         'machine_brand',
@@ -21,5 +21,9 @@ class Machine extends Model
     public function getchilderncomponen()
     {
         return $this->belongsTo(Componencheck::class);
+    }
+    public function getchildernrecord()
+    {
+        return $this->belongsTo(Machinerecord::class);
     }
 }

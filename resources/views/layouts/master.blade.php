@@ -87,10 +87,10 @@
                             {{-- <span>Premium Member</span> --}}
                         </div><!-- az-header-profile -->
 
-                        <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
-                        <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
-                        <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-                        <a href="" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
+                        {{-- <a href="" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a> --}}
+                        {{-- <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a> --}}
+                        {{-- <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a> --}}
+                        <a href="{{route('manageuser')}}" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Manage User</a>
                         <a href="{{route('logout')}}" class="dropdown-item"><i class="typcn typcn-power-outline"></i>Sign Out</a>
                     </div><!-- dropdown-menu -->
                 </div>
@@ -107,25 +107,22 @@
     </div><!-- az-content -->
     <div class="az-footer ht-40">
         <div class="container ht-100p pd-t-0-f">
-            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com
-                2020</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Free <a
-                    href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin
-                    templates</a> from Bootstrapdash.com</span>
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin emplates</a> from Bootstrapdash.com</span>
         </div><!-- container -->
     </div><!-- az-footer -->
 
-    <script src="assets/lib/jquery/jquery.min.js"></script>
-    <script src="assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/lib/ionicons/ionicons.js"></script>
-    <script src="assets/lib/jquery.flot/jquery.flot.js"></script>
-    <script src="assets/lib/jquery.flot/jquery.flot.resize.js"></script>
-    <script src="assets/lib/chart.js/Chart.bundle.min.js"></script>
-    <script src="assets/lib/peity/jquery.peity.min.js"></script>
+    <script src="{{asset('assets/lib/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('assets/lib/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{asset('assets/lib/ionicons/ionicons.js')}}"></script>
+    <script src="{{asset('assets/lib/jquery.flot/jquery.flot.js')}}"></script>
+    <script src="{{asset('assets/lib/jquery.flot/jquery.flot.resize.js')}}"></script>
+    <script src="{{asset('assets/lib/chart.js/Chart.bundle.min.js')}}"></script>
+    <script src="{{asset('assets/lib/peity/jquery.peity.min.js')}}"></script>
 
-    <script src="assets/js/azia.js"></script>
-    <script src="assets/js/chart.flot.sampledata.js"></script>
-    <script src="assets/js/dashboard.sampledata.js"></script>
+    <script src="{{asset('assets/js/azia.js')}}"></script>
+    <script src="{{asset('assets/js/chart.flot.sampledata.js')}}"></script>
+    <script src="{{asset('assets/js/dashboard.sampledata.js')}}"></script>
     {{-- <script src="assets/js/jquery.cookie.js" type="text/javascript"></script> --}}
 
     @stack('script')

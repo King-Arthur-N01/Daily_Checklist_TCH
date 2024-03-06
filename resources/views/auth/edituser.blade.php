@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Add User')
+@section('title', 'Edit User')
 @section('content')
     <div class="row">
         <!-- ============================================================== -->
@@ -7,12 +7,13 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Form Pendaftaran</h5>
+                <h5 class="card-header">Form Edit User</h5>
                 <div class="card-body">
-                    <form action="{{ route('pushregister') }}" id="validationform" method="post">
+                    <form action="{{ route('pushedit') }}" id="validationform" method="post">
                         @csrf
+                        @method('put')
                         <div class="row" align-items="center">
-                            <div class="col-xl-6">
+                            <div class="col-xl-2">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
                                     <div>
@@ -20,11 +21,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-6">
+                            <div class="col-xl-2">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
                                         <input class="form-control" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="status" data-parsley-maxlength="5" placeholder="NIK">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown col-xl-2">
+                                <div class="form-group searchable">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
+                                    <div>
+                                        <select selected="selected" class="form-control" name="status" id="category-input">
+                                            <option value="1">Aktif</option>
+                                            <option value="0">Nonaktif</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

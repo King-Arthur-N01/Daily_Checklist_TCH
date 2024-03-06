@@ -22,6 +22,12 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/login','Auth\LoginController@indexlogin')->name('login');
 Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin');
+Route::get('/register','Auth\RegisterController@indexregistration')->name('registeruser');
+Route::post('/register','Auth\RegisterController@authenticatecreate')->name('pushregisteruser');
+Route::get('/edituser/{$id}','Auth\RegisterController@indexedit')->name('edituser');
+Route::put('/edit/{$id}','Auth\RegisterController@authenticateedit')->name('pushedituser');
+Route::get('/userdelete/{id}','Auth\RegisterController@deleteuser')->name('deleteaccount');
+Route::get('/manageuser','Auth\RegisterController@readusertable')->name('manageuser');
 Route::get('/logout','Auth\LoginController@signout')->name('logout');
 
 
@@ -62,5 +68,5 @@ Route::get('/tablemachineresult','MachineData\MachineController@indextablemachin
 Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@deletemachineresult')->name('deletemachineresults');
 
 
-Route::get('/addpreventivemachine','MachineData\MasterMachineController@indexregisterpreventivemachine')->name('addpreventivemachine');
-Route::post('/addpreventivemachine','MachineData\MasterMachineController@registerpreventivemachine')->name('pushpreventivemachine');
+Route::get('/addpreventivemachine','MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
+Route::post('/addpreventivemachine','MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');

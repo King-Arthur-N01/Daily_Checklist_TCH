@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
+use App\Machineresult;
 use App\Machine;
 use App\Componencheck;
 use App\Parameter;
@@ -61,12 +62,12 @@ class MachineController extends Controller
 
     public function registermachine(Request $request)
     {
-        $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
-        if (isset($lastMachineCode)) {
-            $currentvalue =  $lastMachineCode->machine_code + 1;
-        } else {
-            $currentvalue = 1;
-        }
+        // $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
+        // if (isset($lastMachineCode)) {
+        //     $currentvalue =  $lastMachineCode->machine_code + 1;
+        // } else {
+        //     $currentvalue = 1;
+        // }
         $request->validate([
             'invent_number' => 'required',
             'machine_name' => 'required|max:255',
@@ -78,11 +79,11 @@ class MachineController extends Controller
             'install_date'
         ]);
         //simpan data
-        $machines = Machine::create($request->all());
+        // $machines = Machine::create($request->all());
         //sembari update data nomor mesin
-        $machines->machine_code = $currentvalue;
-        $machines->save();
-
+        // $machines->machine_code = $currentvalue;
+        // $machines->save();
+        Machine::create($request->all());
         return redirect()->route("managemachine")->withSuccess('Machine added successfully.');
     }
 

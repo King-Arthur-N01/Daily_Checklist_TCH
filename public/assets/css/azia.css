@@ -2271,6 +2271,7 @@ pre code {
 
 .table-responsive>.table-bordered {
     border: 0;
+    text-align: center;
 }
 
 .form-control {
@@ -2409,7 +2410,7 @@ select.form-control[multiple] {
 }
 
 textarea.form-control {
-    height: auto;
+    height: 120px;
 }
 
 .form-group {

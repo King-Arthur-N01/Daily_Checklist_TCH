@@ -13,7 +13,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <h6 class="card-title-custom">Input Preventive Harian Mesin &nbsp; <i class="fas fa-tasks"></i></h6>
+                        <a class="card-title-custom" href="{{route('indexmachinerecord')}}">Input Preventive Harian Mesin &nbsp; <i class="fas fa-tasks"></i></a>
                     </div>
                 </div>
             </div>

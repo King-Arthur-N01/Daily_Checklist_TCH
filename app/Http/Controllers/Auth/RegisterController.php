@@ -21,9 +21,19 @@ class RegisterController extends Controller
         $this->middleware('permission:create posts', ['only' => ['createuser']]);
         $this->middleware('permission:delete posts', ['only' => ['deleteuser']]);
     }
+    public function readusertable()
+    {
+        $users=User::get();
+        return view('auth.tableuser',['users'=>$users]);
+    }
     public function indexregistration()
     {
         return view('auth.register');
+    }
+    public function indexedit($id)
+    {
+        $users=User::find($id);
+        return view('auth.edituser',['users'=>$users]);
     }
     public function authenticatecreate(Request $request)
     {
@@ -43,6 +53,18 @@ class RegisterController extends Controller
             'nik' => $data['nik'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+    public function edituser(Request $request, $id)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'nik' => ['required', 'string', 'unique:users'],
+            'status' => ['required', 'boolean'],
+            'password' => ['required', 'string', 'min:6', 'confirmed']
+        ]);
+        $user = User::find($id);
+        $user->update($request->all());
+        return redirect()->route("manageuser")->withSuccess('User updated successfully.');
     }
     public function deleteuser($id){
         User::where('id',$id)->delete();

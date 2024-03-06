@@ -25,7 +25,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Bagian Komponen Mesin Yang Di Check</label>
                                     <div>
-                                        <input class="form-control" type="text" name="name_componencheck" placeholder="Nama Bagian Komponen Mesin Yang Di Check">
+                                        <textarea class="form-control" type="text" name="name_componencheck" placeholder="Nama Bagian Komponen Mesin Yang Di Check"></textarea>
                                     </div>
                                 </div>
                             </div>
