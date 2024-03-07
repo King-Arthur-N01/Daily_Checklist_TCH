@@ -9,7 +9,7 @@
             <div class="card">
                 <h5 class="card-header">Form Pendaftaran</h5>
                 <div class="card-body">
-                    <form action="{{ route('pushregister') }}" id="validationform" method="post">
+                    <form action="{{ route('pushregisteruser') }}" id="validationform" method="post">
                         @csrf
                         <div class="row" align-items="center">
                             <div class="col-xl-6">
@@ -25,6 +25,27 @@
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
                                         <input class="form-control" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
+                                    <div>
+                                        <select selected="selected" class="form-control" name="status" id="category-input">
+                                            <option value="1">Aktif</option>
+                                            <option value="0">Nonaktif</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="department" placeholder="Department">
                                     </div>
                                 </div>
                             </div>

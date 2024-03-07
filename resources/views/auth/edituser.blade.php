@@ -9,7 +9,7 @@
             <div class="card">
                 <h5 class="card-header">Form Edit User</h5>
                 <div class="card-body">
-                    <form action="{{ route('pushedit') }}" id="validationform" method="post">
+                    <form action="{{route('pushedituser', $users->id)}}" id="editform" method="post">
                         @csrf
                         @method('put')
                         <div class="row" align-items="center">
@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                             <div class="dropdown col-xl-2">
-                                <div class="form-group searchable">
+                                <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
                                     <div>
                                         <select selected="selected" class="form-control" name="status" id="category-input">

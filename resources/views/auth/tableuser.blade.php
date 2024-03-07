@@ -26,6 +26,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>NIK</th>
+                                    <th>Departement</th>
                                     <th>Status</th>
                                     <th>Create Date</th>
                                     <th>Action</th>
@@ -37,6 +38,7 @@
                                     <td>{{$userget->id}}</td>
                                     <td>{{$userget->name}}</td>
                                     <td>{{$userget->nik}}</td>
+                                    <td>{{$userget->department}}</td>
                                     <td>
                                         @if ($userget->status)
                                           Active

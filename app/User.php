@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasRoles;
     use HasPermissions;
     protected $fillable = [
-        'name', 'nik', 'status', 'password'
+        'name', 'nik', 'status','department', 'password'
     ];
 
     protected $hidden = [
@@ -23,4 +23,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function getchildernrecor()
+    {
+        return $this->belongsTo(Machinerecord::class);
+    }
 }

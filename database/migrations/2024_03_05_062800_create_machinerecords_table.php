@@ -19,6 +19,9 @@ class CreateMachinerecordsTable extends Migration
             $table->boolean('action_cleaning')->default(false);
             $table->boolean('action_adjust')->default(false);
             $table->boolean('action_replace')->default(false);
+            $table->integer('shift');
+            $table->string('result');
+            $table->string('note');
             $table->timestamps();
         });
     }

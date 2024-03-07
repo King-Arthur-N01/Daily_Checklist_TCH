@@ -40,6 +40,7 @@ class RegisterController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'unique:users'],
+            'department' => ['required','string','max:255'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
         $data = $request->all();
@@ -51,15 +52,17 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'nik' => $data['nik'],
+            'departement' =>  $data['departement'],
             'password' => Hash::make($data['password']),
         ]);
     }
-    public function edituser(Request $request, $id)
+    public function authenticateedit(Request $request, $id)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'unique:users'],
             'status' => ['required', 'boolean'],
+            'departement' => ['required'],
             'password' => ['required', 'string', 'min:6', 'confirmed']
         ]);
         $user = User::find($id);

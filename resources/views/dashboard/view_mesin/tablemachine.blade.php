@@ -20,7 +20,7 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
-                        <table id="example" class="table table-striped table-bordered second" style="width:100%">
+                        <table id="example" class="table table-bordered mg-b-0" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Invent Number</th>
