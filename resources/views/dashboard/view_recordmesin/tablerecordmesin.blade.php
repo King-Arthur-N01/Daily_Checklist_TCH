@@ -6,38 +6,36 @@
         <!-- ============================================================== -->
         <!-- data table  -->
         <!-- ============================================================== -->
-        <div class="custom-card-table col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-            <div class="table-top">
-                <div class="az-content-label mg-b-5">Bordered Table</div>
-                <p class="mg-b-20">Add borders on all sides of the table and cells.</p>
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800">Table Machine</h1>
+            <div class="card shadow mt-4 mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                </div>
                 <div class="card-body">
                     @if (session('success'))
-                        <div class="alert alert-success">{{ session('success')}}</div>
+                        <div class="alert alert-success">{{session('success')}}</div>
                     @endif
                     <div class="table-responsive">
-                        <table id="example" class="table" style="width:100%">
+                        <table class="table table-bordered" id="datatable" width="100%" cellspacing="0">
                             <thead>
-                                <tr>
-                                    <th>Invent Number</th>
-                                    <th>Name Machine</th>
-                                    <th>Type Machine</th>
-                                    <th>Action</th>
-                                </tr>
+                                <th>CHECKPOINT NO</th>
+                                <th>INVENT NUMBER</th>
+                                <th>MACHINE NAME</th>
+                                <th>MODEL/TYPE</th>
+                                <th>ACTION</th>
                             </thead>
                             <tbody>
-                                @foreach ($machinerecords as $recordget)
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>
-                                            <a class="button-table-custom-action dropdown" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2"><a class="button-table-custom-view" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="button-table-custom-edit" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                                <a class="button-table-custom-delete" href="#" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}"></a>
-                                            </div>
-                                        </td>
+                                @foreach ($machines as $machineget)
+                                <tr>
+                                    <td>{{$machineget->id}}</td>
+                                    <td>{{$machineget->invent_number}}</td>
+                                    <td>{{$machineget->machine_name}}</td>
+                                    <td>{{$machineget->machine_type}}</td>
+                                    <td>
+                                        <a class="btn btn-primary btn-sm" style="color:white" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                    </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -46,7 +44,6 @@
                 </div>
             </div>
         </div>
-    </div>
     <!-- ============================================================== -->
     <!-- end data table  -->
     <!-- ============================================================== -->
@@ -54,25 +51,25 @@
 @endsection
 
 @push('style')
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/lib/datatables/css/jquery.dataTables.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/lib/datatables/css/dataTables.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/lib/datatables/css/buttons.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/lib/datatables/css/select.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/lib/datatables/css/fixedHeader.bootstrap4.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/jquery.dataTables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/buttons.bootstrap4.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/select.bootstrap4.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/fixedHeader.bootstrap4.css')}}">
 @endpush
 
 @push('script')
-    <script src="{{asset('assets/lib/datatables/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/ajax/jszip.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/ajax/vfs_fonts.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/buttons.html5.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/buttons.print.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/buttons.colVis.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/dataTables.rowGroup.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/dataTables.select.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/dataTables.fixedHeader.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/data-table.js')}}"></script>
-    <script src="{{asset('assets/lib/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/dataTables.buttons.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/ajax/jszip.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/ajax/vfs_fonts.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/buttons.html5.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/buttons.print.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/buttons.colVis.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/dataTables.rowGroup.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/dataTables.select.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/dataTables.fixedHeader.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/data-table.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
 @endpush

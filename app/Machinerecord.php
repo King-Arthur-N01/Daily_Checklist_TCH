@@ -16,12 +16,13 @@ class Machinerecord extends Model
         'result',
         'note'
     ];
-    // public static function boot() {
-    //     parent::boot();
-    //     static::creating(function ($model) {
-    //         $model->id = IdGenerator::generate(['table' => 'machinerecords', 'length' => 10, 'prefix' => 'USR-']);
-    //     });
-    // }
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function ($customid) {
+            $customid->uuid = IdGenerator::generate(['table' => 'machinerecords', 'length' => 6, 'prefix' =>date('y')]);
+        });
+    }
     public function getparentmachine()
     {
         return $this->hasMany(Machine::class);
