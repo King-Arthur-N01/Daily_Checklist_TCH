@@ -16,7 +16,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
                                     <div>
-                                        <input class="form-control" type="text" name="name" placeholder="Username">
+                                        <input class="form-control form-control-user" type="text" name="name" placeholder="Username">
                                     </div>
                                 </div>
                             </div>
@@ -24,7 +24,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
-                                        <input class="form-control" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                        <input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
                                     <div>
-                                        <input class="form-control" type="text" name="department" placeholder="Department">
+                                        <input class="form-control form-control-user" type="text" name="department" placeholder="Department">
                                     </div>
                                 </div>
                             </div>

@@ -15,13 +15,10 @@ class CreateMachinerecordsTable extends Migration
     {
         Schema::create('machinerecords', function (Blueprint $table) {
             $table->id();
-            $table->boolean('action_check')->default(false);
-            $table->boolean('action_cleaning')->default(false);
-            $table->boolean('action_adjust')->default(false);
-            $table->boolean('action_replace')->default(false);
-            $table->integer('shift');
-            $table->string('result');
-            $table->string('note');
+            $table->string('operator_action');
+            $table->integer('shift')->nullable();
+            $table->string('result')->nullable();
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\MachinerecordController;
+use App\Machinerecord;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,4 +71,6 @@ Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@dele
 
 
 Route::get('/addpreventivemachine','MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
-Route::post('/addpreventivemachine','MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
+// Route::post('/addpreventivemachine','MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
+Route::get('/addchecklist/{id}', 'MachinerecordController@indexmachinerecord')->name('indexuserinput');
+Route::post('/addchecklist', 'MachinerecordController@registermachinerecord')->name('pushuserinput');

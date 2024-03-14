@@ -320,3 +320,15 @@ LEFT JOIN
 
         for($totmachinecheck=0; $totmachinecheck<=$totalchecks; $totmachinecheck++){
         }
+
+
+        <select>
+            <option type="radio" name="action_check" value="check">CHECK</option>
+            <br>
+            <option type="radio" name="action_cleaning" value="clean">CLEAN</option>
+            <br>
+            <option type="radio" name="action_adjust" value="adjust">ADJUST</option>
+            <br>
+            <option type="radio" name="action_replace" value="replace">REPLACE</option>
+            <br>
+        </select>

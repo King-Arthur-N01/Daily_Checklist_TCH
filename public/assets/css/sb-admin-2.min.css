@@ -73,7 +73,7 @@ body {
     font-weight: 400;
     line-height: 1.5;
     color: #858796;
-    text-align: center;
+    /* text-align: center; */
     background-color: #fff
 }
 
@@ -2137,6 +2137,10 @@ pre code {
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
 }
 
+.form_checkbox {
+    display: flex;
+}
+
 @media (prefers-reduced-motion:reduce) {
     .form-control {
         transition: none
@@ -2275,11 +2279,11 @@ select.form-control[size] {
 }
 
 textarea.form-control {
-    height: auto
+    height: 150px;
 }
 
 .form-group {
-    margin-bottom: 1rem
+    margin-bottom: 2rem;
 }
 
 .form-text {
@@ -2640,6 +2644,32 @@ textarea.form-control.is-invalid {
     .form-inline .custom-control-label {
         margin-bottom: 0
     }
+}
+
+.select-style-radio {
+    display: flex;
+    flex-direction: column;
+}
+
+.select-style-radio .option {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+}
+
+.select-style-radio .option:hover {
+    background-color: #f5f5f5;
+}
+
+.select-style-radio .option.selected {
+    background-color: #e0e0e0;
+}
+
+.select-style-radio label {
+    margin-left: 10px;
 }
 
 .btn {
@@ -5018,7 +5048,7 @@ input[type=submit].btn-block {
     color: #fff
 }
 
-.image-card-home{
+.image-card-home {
     height: 50px;
 }
 
@@ -5078,13 +5108,9 @@ input[type=submit].btn-block {
     margin-bottom: .75rem
 }
 
-.card-title-custom {
+.card-title-custom {}
 
-}
-
-.card-title-head {
-
-}
+.card-title-head {}
 
 .card-subtitle {
     margin-top: -.375rem;
@@ -12148,19 +12174,19 @@ a:focus {
 }
 
 .bg-login-image {
-    background: url(https://source.unsplash.com/K4mSJ7kc0As/600x800);
+    background: url("../images/AdobeStock_171602271.jpeg");
     background-position: center;
     background-size: cover
 }
 
 .bg-register-image {
-    background: url(https://source.unsplash.com/Mv9hjnEUHR4/600x800);
+    background: url("../images/AdobeStock_412243728.jpeg");
     background-position: center;
     background-size: cover
 }
 
 .bg-password-image {
-    background: url(https://source.unsplash.com/oWTW-jNGl9I/600x800);
+    background: url(#);
     background-position: center;
     background-size: cover
 }
