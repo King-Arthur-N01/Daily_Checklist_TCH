@@ -18,6 +18,7 @@ class MachinerecordController extends Controller
     }
     public function indexmachinerecord($id)
     {
+        // $machines = Machine::find($id);
         $machines = DB::table('machines')
         ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
         ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
@@ -25,29 +26,32 @@ class MachinerecordController extends Controller
         ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
         ->where('machines.id', '=', $id)
         ->get();
-        $machinerecords = Machinerecord::all();
+
+        $machinerecords = Machinerecord::where('id_machinerecord', $id)->first();
+
     return view('dashboard.view_recordmesin.formrecordmesin',[
         'machines'=>$machines,
-        'machinerecords'=>$machinerecords,
+        'machine_id' => $id,
     ]);
     }
     public function registermachinerecord(Request $request)
     {
         $operatoraction = $request->input('operator_action', []);
         $result = $request->input('result', []);
-        $get_machineid = Machine::select('id')->get();
+        // $get_machineid = Machine::where('id', $request->id)->first();
+        // $get_machineid = Machine::select('id')->get();
         $getuserid = Auth()->user()->id;
 
         $storeInfo = new Machinerecord();
         $storeInfo->operator_action = implode(',', $operatoraction);
         $storeInfo->result = implode(',', $result);
         $storeInfo->note= $request->input('note');
-        // $storeInfo->note= $request->input('id_machinerecord');
+        $storeInfo->id_machinerecord= $request->input('id_machinerecord');
         $storeInfo -> id_user = $getuserid;
-        $storeInfo -> id_machinerecord = $get_machineid;
+        // $storeInfo -> id_machinerecord = $get_machineid;
         $storeInfo->save();
-        dd($storeInfo);
-        return redirect()->route("indexmachinerecord")->withSuccess('Machine added successfully.');
+        // dd($get_machineid);
+        return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
     public function edit(Machinerecord $machinerecord)

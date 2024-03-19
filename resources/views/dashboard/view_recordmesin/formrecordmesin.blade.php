@@ -54,29 +54,22 @@
                                                         <input type="radio" name="operator_action[{{ $recordsget->id }}]"
                                                             value="check" id="option1">
                                                         {{-- <label for="option1">CHECK</label> --}}
-                                                        <img class="image-card-mini"
-                                                            src="{{ asset('assets/icons/magnifying-glass.png') }}">
+                                                        <img class="image-card-mini" src="{{ asset('assets/icons/magnifying-glass.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]"
-                                                            value="cleaning" id="option2">
+                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]" value="cleaning" id="option2">
                                                         {{-- <label for="option2">CLEANING</label> --}}
-                                                        <img class="image-card-mini"
-                                                            src="{{ asset('assets/icons/dust.png') }}">
+                                                        <img class="image-card-mini"src="{{ asset('assets/icons/dust.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]"
-                                                            value="adjust" id="option3">
+                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]" value="adjust" id="option3">
                                                         {{-- <label for="option3">ADJUST</label> --}}
-                                                        <img
-                                                            class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}">
+                                                        <img class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]"
-                                                            value="replace" id="option4">
+                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]" value="replace" id="option4">
                                                         {{-- <label for="option3">REPLACE</label> --}}
-                                                        <img class="image-card-mini"
-                                                            src="{{ asset('assets/icons/replacement.png') }}">
+                                                        <img class="image-card-mini" src="{{ asset('assets/icons/replacement.png') }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -97,6 +90,7 @@
                                 <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                                 <div>
                                     <textarea class="form-control" type="text" name="note" placeholder="Catatan bila diperlukan!"></textarea>
+                                    <input type="hidden" name="id_machinerecord" value="{{$machine_id}}">
                                 </div>
                             </div>
                             <div class="dt-buttons">
