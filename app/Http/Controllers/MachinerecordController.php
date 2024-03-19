@@ -6,19 +6,13 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Machine;
 use App\Machinerecord;
+use App\Metodecheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class MachinerecordController extends Controller
 {
     public function tablemachinerecord()
     {
-        // $machinerecords = DB::table('machinerecords')
-        // ->join('machines', 'machinerecords.id_machinerecord', '=', 'machines.id')
-        // ->join('users', 'machinerecords.id_user', '=', 'users.id')
-        // ->select('machines.*', 'users.*')
-        // ->orderBy('machinerecords.id', 'asc')
-        // ->get();
-        // $machinerecords = Machinerecord::with('users')->find($id);
         $machines = Machine::all();
         return view('dashboard.view_recordmesin.tablerecordmesin',['machines'=>$machines]);
     }
@@ -31,40 +25,31 @@ class MachinerecordController extends Controller
         ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
         ->where('machines.id', '=', $id)
         ->get();
-
-        // $machinerecords = DB::table('machinerecords')
-        // ->select('machines.*', 'users.*')
-        // ->join('machines', 'machinerecords.id_machinerecord', '=', 'machines.id')
-        // ->join('users', 'machinerecords.id_user', '=', 'users.id')
-        // ->where('machines.id', '=', $id)
-        // ->where('users.id', '=', 2)
-        // ->get();
-
-        // $machinerecords = Machinerecord::with('machines')->find($id);
-        // $machines = Machine::find($id);
         $machinerecords = Machinerecord::all();
-    return view('dashboard.view_recordmesin.formrecordmesin',['machines'=>$machines ,'machinerecords'=>$machinerecords]);
+    return view('dashboard.view_recordmesin.formrecordmesin',[
+        'machines'=>$machines,
+        'machinerecords'=>$machinerecords,
+    ]);
     }
     public function registermachinerecord(Request $request)
     {
-        $id = Auth::id();
-        $request->validate([
-            'action_check' => 'required',
-            'action_cleaning' => 'required',
-            'action_adjust' => 'required',
-            'action_replace' => 'required',
-            'shift' ,
-            'result',
-            'note'
-        ]);
-        // simpan data
-        $machinesrecords = Machinerecord::create($request->all());
-        // sembari update data nomor mesin
-        $machinesrecords->id_user = $id;
-        $machinesrecords->save();
-        // Machinerecord::create($request->all());
-        return redirect()->route("managemachine")->withSuccess('Machine updated successfully.');
+        $operatoraction = $request->input('operator_action', []);
+        $result = $request->input('result', []);
+        $get_machineid = Machine::select('id')->get();
+        $getuserid = Auth()->user()->id;
+
+        $storeInfo = new Machinerecord();
+        $storeInfo->operator_action = implode(',', $operatoraction);
+        $storeInfo->result = implode(',', $result);
+        $storeInfo->note= $request->input('note');
+        // $storeInfo->note= $request->input('id_machinerecord');
+        $storeInfo -> id_user = $getuserid;
+        $storeInfo -> id_machinerecord = $get_machineid;
+        $storeInfo->save();
+        dd($storeInfo);
+        return redirect()->route("indexmachinerecord")->withSuccess('Machine added successfully.');
     }
+
     public function edit(Machinerecord $machinerecord)
     {
         //

@@ -310,6 +310,12 @@ LEFT JOIN
         OR machineresults.id_metodecheck12 = metodechecks.name_metodecheck;
 
 
+        SELECT machines.*, componenchecks.*, parameters.*, metodechecks.*
+        FROM machines
+        JOIN componenchecks ON machines.id = componenchecks.id_machine
+        JOIN parameters ON componenchecks.id = parameters.id_componencheck
+        JOIN metodechecks ON parameters.id = metodechecks.id_parameter
+        WHERE machines.id = 1;
 
         @if($componencheckget->machine_code_componencheck == $componencheckget->machine_code) selected="selected" @endif
 
@@ -332,3 +338,19 @@ LEFT JOIN
             <option type="radio" name="action_replace" value="replace">REPLACE</option>
             <br>
         </select>
+
+
+        $dataToInsert = [];
+
+            foreach ($Kanban_no as $key => $kanban) {
+                $dataToInsert[] = [
+                    'kanban_no' => $kanban,
+                    'chuter_address' => $chutterAddres,
+                    'seq' => $squences[$key],
+                    'in_datetime' => $in_date,
+                    'created_by' => $created_by
+                ];
+            }
+            // dd($dataToInsert);
+            // Melakukan insert untuk semua data sekaligus
+            chuter_in_out_log::insert($dataToInsert);

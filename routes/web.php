@@ -70,7 +70,7 @@ Route::get('/tablemachineresult','MachineData\MachineController@indextablemachin
 Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@deletemachineresult')->name('deletemachineresults');
 
 
-Route::get('/addpreventivemachine','MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
+Route::get('/tablepreventivemachine','MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
 // Route::post('/addpreventivemachine','MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
-Route::get('/addchecklist/{id}', 'MachinerecordController@indexmachinerecord')->name('indexuserinput');
-Route::post('/addchecklist', 'MachinerecordController@registermachinerecord')->name('pushuserinput');
+Route::get('/addpreventivemachine/{id}', 'MachinerecordController@indexmachinerecord')->name('indexuserinput');
+Route::put('/addpreventivemachine', 'MachinerecordController@registermachinerecord')->name('pushuserinput');

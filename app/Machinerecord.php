@@ -8,21 +8,20 @@ class Machinerecord extends Model
 {
     protected $fillable = [
         'id_machinerecord',
-        'action_check',
-        'action_cleaning',
-        'action_adjust',
-        'action_replace',
+        'operator_action',
         'shift',
         'result',
-        'note'
+        'note',
+        'id_machinerecord',
+        'id_user'
     ];
-    public static function boot()
-    {
-        parent::boot();
-        self::creating(function ($customid) {
-            $customid->uuid = IdGenerator::generate(['table' => 'machinerecords', 'length' => 6, 'prefix' =>date('y')]);
-        });
-    }
+    // public static function boot()
+    // {
+    //     parent::boot();
+    //     self::creating(function ($customid) {
+    //         $customid->uuid = IdGenerator::generate(['table' => 'machinerecords', 'length' => 6, 'prefix' =>date('y')]);
+    //     });
+    // }
     public function getparentmachine()
     {
         return $this->hasMany(Machine::class);

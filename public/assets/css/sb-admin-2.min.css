@@ -247,6 +247,10 @@ button {
     border-radius: 0
 }
 
+.option-button{
+
+}
+
 button:focus:not(:focus-visible) {
     outline: 0
 }
@@ -5050,6 +5054,10 @@ input[type=submit].btn-block {
 
 .image-card-home {
     height: 50px;
+}
+
+.image-card-mini {
+    height: 25px;
 }
 
 .card {
