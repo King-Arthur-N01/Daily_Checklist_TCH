@@ -21,15 +21,18 @@
                         <form action="{{ route('pushuserinput') }}" id="registerform" method="post">
                             @csrf
                             @method('put')
+                            <table class="table table-bordered" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <th>Machine Number :</th>
+                                        <th>
+                                            <input class="form-control" type="int" name="machine_number" placeholder="Nomor Mesin">
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <table class="table table-bordered" id="datatables" width="100%">
                                 <thead>
-                                    {{-- <tr>
-                                        <th>No Invent Mesin = {{ $machines->invent_number }}<br>
-                                            Nama Mesin = {{ $machines->machine_name }}<br>
-                                            Brand/Merk = {{ $machines->machine_brand }}<br>
-                                            Model/Type = {{ $machines->machine_type }}
-                                        </th>
-                                    </tr> --}}
                                     <tr>
                                         <th>Nama Mesin</th>
                                         <th>Bagian Yang Dicheck</th>

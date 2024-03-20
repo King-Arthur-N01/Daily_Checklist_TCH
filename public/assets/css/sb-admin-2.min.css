@@ -99,7 +99,7 @@ h6 {
 
 p {
     margin-top: 0;
-    margin-bottom: 1rem
+    margin-bottom: 1rem;
 }
 
 abbr[data-original-title],
@@ -2119,6 +2119,12 @@ pre code {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     background-color: #ffffff;
+}
+
+.table-history{
+    display: flex;
+    margin: 0px 0px 25px 0px;
+    flex-direction: row;
 }
 
 .table-responsive>.table-bordered {

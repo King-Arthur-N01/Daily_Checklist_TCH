@@ -46,6 +46,7 @@ class MachinerecordController extends Controller
         $storeInfo->operator_action = implode(',', $operatoraction);
         $storeInfo->result = implode(',', $result);
         $storeInfo->note= $request->input('note');
+        $storeInfo->machine_number= $request->input('machine_number');
         $storeInfo->id_machinerecord= $request->input('id_machinerecord');
         $storeInfo -> id_user = $getuserid;
         // $storeInfo -> id_machinerecord = $get_machineid;

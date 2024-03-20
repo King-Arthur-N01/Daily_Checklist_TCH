@@ -37,6 +37,23 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
+                        <h5 class="card-title-head">Lihat Riwayat Mesin</h5>
+                    </div>
+                    <div class="col-5" style="text-align: right">
+                        <img class="image-card-home" src="{{asset('assets/icons/history_home.png')}}">
+                    </div>
+                    <div class="card-footer-item-custom col-12">
+                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body-custom">
+                    <div class="col-7">
                         <h5 class="card-title-head">Tambah Machine</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
@@ -48,9 +65,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xl-4 col-md-6 mb-4">
+        {{-- <div class="col-xl-4 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -94,7 +109,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 

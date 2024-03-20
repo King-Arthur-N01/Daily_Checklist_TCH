@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
-use App\Machineresult;
 use App\Machine;
 use App\Componencheck;
 use App\Parameter;

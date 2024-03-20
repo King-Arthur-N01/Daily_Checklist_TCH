@@ -23,7 +23,7 @@
                         <div class="alert alert-success">{{session('success')}}</div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered" id="datatables" width="100%" cellspacing="0">
                             <thead>
                                 <th>Nama Mesin</th>
                                 <th>Bagian Yang Dicheck</th>
@@ -43,7 +43,7 @@
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                                     {{-- <a class="dropdown-item" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a> --}}
                                                     <a class="dropdown-item-custom-edit" style="text-align: center" href="{{ route('editmachine', $machineget->id) }}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
-                                                    <a class="dropdown-item-custom-delete" style="text-align: center" href="{{ route('deletemachine', $machineget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
+                                                    <a class="dropdown-item-custom-delete" style="text-align: center" href="{{ route('deletemachineresults', $machineget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
                                                 </div>
                                             </td>
                                     </tr>
@@ -64,5 +64,5 @@
 @endpush
 
 @push('script')
-    {{-- <script src="{{asset('assets\lib\custom-js\mergecell.js')}}"></script> --}}
+    <script src="{{asset('assets/vendor/custom-js/mergecell.js')}}"></script>
 @endpush

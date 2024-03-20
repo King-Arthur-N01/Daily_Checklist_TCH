@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\MachinerecordController;
-use App\Machinerecord;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,6 +60,7 @@ Route::put('/editmethod/{id}','MachineData\MetodecheckController@editmethod')->n
 Route::get('/tablemethod','MachineData\MetodecheckController@indextablemethod')->name('managemethod');
 Route::get('/deletemethod/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
 
+
 Route::get('/addmachineresult','MachineData\MachineController@indexregistermachineresult')->name('addmachineresults');
 Route::post('/addmachineresult','MachineData\MachineresultController@registermachineresult')->name('pushmachineresults');
 Route::get('/editmachineresult/{id}','MachineData\MachineresultController@indexeditmachineresult')->name('editmachineresults');
@@ -74,3 +73,6 @@ Route::get('/tablepreventivemachine','MachinerecordController@tablemachinerecord
 // Route::post('/addpreventivemachine','MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
 Route::get('/addpreventivemachine/{id}', 'MachinerecordController@indexmachinerecord')->name('indexuserinput');
 Route::put('/addpreventivemachine', 'MachinerecordController@registermachinerecord')->name('pushuserinput');
+
+
+Route::get('/tablehistory','MachineData\HistoryController@indextablehistory')->name('historymachine');
