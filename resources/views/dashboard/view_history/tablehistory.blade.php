@@ -46,39 +46,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive">
+                    <div class="table-responsive ">
                         <table class="table table-bordered" id="datatables" width="100%" cellspacing="0">
                             <thead>
-                                <th>Invent Number</th>
+                                <th>Checkpoint NO.</th>
                                 <th>Nama Mesin</th>
-                                <th>Brand Mesin</th>
                                 <th>Type Mesin</th>
-                                <th>Tonage Mesin</th>
-                                <th>Install Date</th>
-                                <th>MFG Number</th>
+                                <th>Nomor Mesin</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </thead>
-                            {{-- <tbody>
-                                @foreach ($machines as $machineget)
+                            <tbody>
+                                @foreach ($joinrecords as $recordsget)
                                     <tr>
-                                        <td>{{ $machineget->invent_number }}</td>
-                                        <td>{{ $machineget->machine_name }}</td>
-                                        <td>{{ $machineget->machine_brand }}</td>
-                                        <td>{{ $machineget->machine_type }}</td>
-                                        <td>{{ $machineget->machine_spec }}</td>
-                                        <td>{{ $machineget->install_date }}</td>
-                                        <td>{{ $machineget->mfg_number }}</td>
+                                        <td>{{ $recordsget->id }}</td>
+                                        <td>{{ $recordsget->machine_name }}</td>
+                                        <td>{{ $recordsget->machine_type }}</td>
+                                        <td>{{ $recordsget->machine_number }}</td>
+                                        <td>{{ $recordsget->created_at }}</td>
                                         <td>
-                                            <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="dropdown-item-custom-edit" style="text-align: center" href="{{ route('editmachine', $machineget->id) }}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
-                                                <a class="dropdown-item-custom-delete" style="text-align: center" href="{{ route('deletemachine', $machineget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
-                                            </div>
+                                            <a class="btn btn-primary" href="{{route('detailhistory', $recordsget->id)}}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
                                         </td>
                                     </tr>
                                 @endforeach
-                            </tbody> --}}
+                            </tbody>
                         </table>
                     </div>
                 </div>

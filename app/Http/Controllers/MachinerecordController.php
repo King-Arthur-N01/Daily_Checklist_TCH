@@ -29,10 +29,10 @@ class MachinerecordController extends Controller
 
         $machinerecords = Machinerecord::where('id_machinerecord', $id)->first();
 
-    return view('dashboard.view_recordmesin.formrecordmesin',[
-        'machines'=>$machines,
-        'machine_id' => $id,
-    ]);
+        return view('dashboard.view_recordmesin.formrecordmesin',[
+            'machines'=>$machines,
+            'machine_id' => $id,
+        ]);
     }
     public function registermachinerecord(Request $request)
     {
@@ -49,9 +49,9 @@ class MachinerecordController extends Controller
         $storeInfo->machine_number= $request->input('machine_number');
         $storeInfo->id_machinerecord= $request->input('id_machinerecord');
         $storeInfo -> id_user = $getuserid;
+        // dd($storeInfo);
         // $storeInfo -> id_machinerecord = $get_machineid;
         $storeInfo->save();
-        // dd($get_machineid);
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 

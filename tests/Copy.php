@@ -354,3 +354,12 @@ LEFT JOIN
             // dd($dataToInsert);
             // Melakukan insert untuk semua data sekaligus
             chuter_in_out_log::insert($dataToInsert);
+
+
+SELECT machinerecords.*, machines.*, componenchecks.*, parameters.*, metodechecks.*
+FROM machinerecords
+JOIN machines ON machinerecords.id_machinerecord = machines.id
+JOIN componenchecks ON machines.id = componenchecks.id_machine
+JOIN parameters ON componenchecks.id = parameters.id_componencheck
+JOIN metodechecks ON parameters.id = metodechecks.id_parameter
+WHERE machinerecords.id_machinerecord = 1

@@ -67,5 +67,10 @@
     @endpush
 
     @push('script')
+        <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+        </script>
         {{-- <script href="{{asset('assets/vendor/custom-js/mergecell.js')}}"></script> --}}
     @endpush

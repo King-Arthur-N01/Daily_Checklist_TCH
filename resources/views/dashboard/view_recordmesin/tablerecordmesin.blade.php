@@ -18,7 +18,7 @@
                         <div class="alert alert-success">{{session('success')}}</div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="datatable" width="100%">
+                        <table class="table table-bordered" id="dataTable" width="100%">
                             <thead>
                                 <th>CHECKPOINT NO</th>
                                 <th>MACHINE NAME</th>
@@ -74,4 +74,9 @@
     <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script>
     <script src="{{asset('assets/vendor/datatables/js/data-table.js')}}"></script>
     <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
+    <script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+    </script>
 @endpush

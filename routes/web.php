@@ -76,3 +76,4 @@ Route::put('/addpreventivemachine', 'MachinerecordController@registermachinereco
 
 
 Route::get('/tablehistory','MachineData\HistoryController@indextablehistory')->name('historymachine');
+Route::get('/viewdetails/{id}','MachineData\HistoryController@viewdetails')->name('detailhistory');

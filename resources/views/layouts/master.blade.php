@@ -13,7 +13,8 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="{{asset('assets/css/sb-admin-2.min.css')}}" rel="stylesheet">
-    <link  href="{{asset('asset/vendor/fonts/fontawesome/css/fontawesome-all.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+    {{-- <link  href="{{asset('assets/vendor/fonts/fontawesome/css/fontawesome-all.css')}}" rel="stylesheet"> --}}
     @stack('style')
 </head>
 
@@ -25,7 +26,8 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('home')}}">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fas fa-tasks"></i>
+                    {{-- <i class="fas fa-laugh-wink"></i> --}}
                 </div>
                 <div class="sidebar-brand-text mx-3">CONCEP</div>
             </a>
@@ -221,7 +223,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60" alt="...">
+                                        <img class="rounded-circle" src="#" alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
                                     <div>
@@ -310,6 +312,9 @@
     <!-- Custom scripts for all pages-->
     <script src="{{asset('assets/js/sb-admin-2.min.js')}}"></script>
     <!-- Page level plugins -->
+    <script src="{{asset('assets/vendor/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('assets/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+    {{-- <script src="{{asset('assets/js/demo/datatables-demo.js')}}"></script> --}}
     {{-- <script src="{{asset('assets/vendor/chart.js/Chart.min.js')}}"></script> --}}
     <!-- Page level custom scripts -->
     {{-- <script src="{{asset('assets/js/demo/chart-area-demo.js')}}"></script>
