@@ -20,7 +20,7 @@
                                 <tr>
                                     <th>Machine Number :</th>
                                     <th>
-                                        <input class="form-control" type="int" value="{{ $machinerecords->machine_number }}">
+                                        <input class="form-control" type="int" value="">
                                     </th>
                                 </tr>
                             </tbody>
@@ -37,21 +37,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($historyrecords as $historyget)
+                                @foreach ($historyrecords as $index => $record)
                                     <tr>
-                                        <td>{{ $historyget->machine_name }}</td>
-                                        <td>{{ $historyget->name_componencheck }}</td>
-                                        <td>{{ $historyget->name_parameter }}</td>
-                                        <td>{{ $historyget->name_metodecheck }}</td>
+                                        <td>{{ $record->machine_name }}</td>
+                                        <td>{{ $record->name_componencheck }}</td>
+                                        <td>{{ $record->name_parameter }}</td>
+                                        <td>{{ $record->name_metodecheck }}</td>
+                                    <!-- Display the operator_action array as separate rows -->
+                                    @foreach ($operator_action[$index] as $operator)
+                                        <td>{{ $operator }}</td>
+                                    @endforeach
+                                    <!-- Display the result array as separate rows -->
+                                    @foreach ($result[$index] as $resultItem)
+                                        <td>{{ $resultItem }}</td>
+                                    @endforeach
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                             <div>
-                                <textarea class="form-control" type="text" value="{{ $machinerecords->note }}"></textarea>
+                                <textarea class="form-control" type="text">*</textarea>
                             </div>
                         </div>
                     </div>

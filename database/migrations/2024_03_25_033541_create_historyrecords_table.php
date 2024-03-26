@@ -4,20 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMachinerecordsTable extends Migration
+class CreateHistoryrecordsTable extends Migration
 {
     /**
      * Run the migrations.
      *
-     * @return void
+     * @retuarn void
      */
     public function up()
     {
-        Schema::create('machinerecords', function (Blueprint $table) {
+        Schema::create('historyrecords', function (Blueprint $table) {
             $table->id();
-            $table->integer('shift')->nullable();
-            $table->string('note')->nullable();
-            $table->integer('machine_number');
+            $table->string('id_metodecheck');
+            $table->string('operator_action');
+            $table->string('result');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateMachinerecordsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('machinerecords');
+        //
     }
 }

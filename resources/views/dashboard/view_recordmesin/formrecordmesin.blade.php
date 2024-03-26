@@ -83,6 +83,7 @@
                                                         <option value="good">OK</option>
                                                         <option value="not good">NG</option>
                                                     </select>
+                                                    <input type="hidden" name="id_metodecheck">
                                                 </div>
                                             </td>
                                         </tr>
@@ -93,7 +94,7 @@
                                 <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                                 <div>
                                     <textarea class="form-control" type="text" name="note" placeholder="Catatan bila diperlukan!"></textarea>
-                                    <input type="hidden" name="id_machinerecord" value="{{$machine_id}}">
+                                    <input type="hidden" name="id_machine2" value="{{$machine_id}}">
                                 </div>
                             </div>
                             <div class="dt-buttons">

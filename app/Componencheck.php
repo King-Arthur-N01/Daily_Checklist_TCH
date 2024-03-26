@@ -8,7 +8,6 @@ class Componencheck extends Model
 {
     protected $fillable = [
         'id_machine',
-        // 'machine_code_componencheck',
         'name_componencheck'
     ];
     public function getparentmachine()

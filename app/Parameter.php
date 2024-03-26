@@ -8,7 +8,6 @@ class Parameter extends Model
 {
     protected $fillable = [
         'id_componencheck',
-        // 'componencheck_parameter',
         'name_parameter'
     ];
     public function getparentcomponen()

@@ -1,5 +1,6 @@
 <?php
 
+use App\Historyrecords;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,3 +78,7 @@ Route::put('/addpreventivemachine', 'MachinerecordController@registermachinereco
 
 Route::get('/tablehistory','MachineData\HistoryController@indextablehistory')->name('historymachine');
 Route::get('/viewdetails/{id}','MachineData\HistoryController@viewdetails')->name('detailhistory');
+
+
+// Route::get('/history', 'HistoryrecordsController@insertoperatoraction')->name('operatoraction');
+// Route::post('/history', 'HistoryrecordsController@destroy')->name('deleterecord');

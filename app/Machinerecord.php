@@ -7,12 +7,10 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 class Machinerecord extends Model
 {
     protected $fillable = [
-        'operator_action',
-        'shift',
-        'result',
-        'note',
         'machine_number',
-        'id_machinerecord',
+        'shift',
+        'note',
+        'id_machine2',
         'id_user'
     ];
     // public static function boot()

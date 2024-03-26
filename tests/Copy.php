@@ -363,3 +363,45 @@ JOIN componenchecks ON machines.id = componenchecks.id_machine
 JOIN parameters ON componenchecks.id = parameters.id_componencheck
 JOIN metodechecks ON parameters.id = metodechecks.id_parameter
 WHERE machinerecords.id_machinerecord = 1
+
+
+@foreach ($historyrecords as $index => $record)
+    <tr>
+        <td>{{ $splitrecords->machine_name }}</td>
+        <td>{{ $splitrecords->name_componencheck }}</td>
+        <td>{{ $splitrecords->name_parameter }}</td>
+        <td>{{ $splitrecords->name_metodecheck }}</td>
+    <!-- Display the operator_action array as separate rows -->
+    @foreach ($operator_action[$index] as $operator)
+        <td>{{ $operator }}</td>
+    @endforeach
+
+    <!-- Display the result array as separate rows -->
+    @foreach ($result[$index] as $resultItem)
+        <td>{{ $resultItem }}</td>
+    @endforeach
+    </tr>
+@endforeach
+
+
+
+public function registermachinerecord(Request $request)
+    {
+        $operatoraction = $request->input('operator_action', []);
+        $result = $request->input('result', []);
+        $get_machineid = Machine::where('id', $request->id)->first();
+        $get_machineid = Machine::select('id')->get();
+        $getuserid = Auth()->user()->id;
+
+        $storeInfo = new Machinerecord();
+        $storeInfo->operator_action = implode(',', $operatoraction);
+        $storeInfo->result = implode(',', $result);
+        $storeInfo->note= $request->input('note');
+        $storeInfo->machine_number= $request->input('machine_number');
+        $storeInfo->id_machinerecord= $request->input('id_machinerecord');
+        $storeInfo -> id_user = $getuserid;
+        dd($storeInfo);
+        $storeInfo -> id_machinerecord = $get_machineid;
+        $storeInfo->save();
+        return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
+    }
