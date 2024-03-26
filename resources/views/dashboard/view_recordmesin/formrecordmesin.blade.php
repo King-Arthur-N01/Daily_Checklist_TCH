@@ -43,34 +43,34 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($machines as $recordsget)
+                                    @foreach ($machines as $key => $recordsget)
                                         <tr>
                                             <td>{{ $recordsget->machine_name }}</td>
                                             <td>{{ $recordsget->name_componencheck }}</td>
                                             <td>{{ $recordsget->name_parameter }}</td>
                                             <td>{{ $recordsget->name_metodecheck }}</td>
                                             <td>
+                                                <input type="hidden" name="metodecheck_id[{{$key}}]" value="{{$recordsget->metodecheck_id}}">
                                                 <div id="select-style-radio"
                                                     style="display: flex; justify-content: center;">
                                                     {{-- <label>Select an option:</label> --}}
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]"
-                                                            value="check" id="option1">
+                                                        <input type="radio" name="operator_action[{{$key}}]" value="check" id="option1">
                                                         {{-- <label for="option1">CHECK</label> --}}
                                                         <img class="image-card-mini" src="{{ asset('assets/icons/magnifying-glass.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]" value="cleaning" id="option2">
+                                                        <input type="radio" name="operator_action[{{$key}}]" value="cleaning" id="option2">
                                                         {{-- <label for="option2">CLEANING</label> --}}
                                                         <img class="image-card-mini"src="{{ asset('assets/icons/dust.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]" value="adjust" id="option3">
+                                                        <input type="radio" name="operator_action[{{$key}}]" value="adjust" id="option3">
                                                         {{-- <label for="option3">ADJUST</label> --}}
                                                         <img class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[{{ $recordsget->id }}]" value="replace" id="option4">
+                                                        <input type="radio" name="operator_action[]" value="replace" id="option4">
                                                         {{-- <label for="option3">REPLACE</label> --}}
                                                         <img class="image-card-mini" src="{{ asset('assets/icons/replacement.png') }}">
                                                     </div>
@@ -78,7 +78,7 @@
                                             </td>
                                             <td>
                                                 <div>
-                                                    <select name="result[{{ $recordsget->id }}]">
+                                                    <select name="result[{{$key}}]">
                                                         <option label="Result" disabled selected></option>
                                                         <option value="good">OK</option>
                                                         <option value="not good">NG</option>

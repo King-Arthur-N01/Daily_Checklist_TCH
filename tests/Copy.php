@@ -405,3 +405,20 @@ public function registermachinerecord(Request $request)
         $storeInfo->save();
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
+
+
+
+
+
+
+
+    $myUserId = 3;
+    $shares = Share::with('user')
+    ->join('follows', 'follows.user_id', '=', 'shares.user_id')
+    ->where('follows.follower_id', '=', $myUserId)
+    ->get(['shares.*']);
+
+    // Print the username of the person who shared something
+    foreach ($shares as $share) {
+        echo $share->user->username;
+    }
