@@ -59,13 +59,13 @@
                             <tbody>
                                 @foreach ($joinrecords as $recordsget)
                                     <tr>
-                                        <td>{{ $recordsget->id }}</td>
+                                        <td>{{ $recordsget->records_id }}</td>
                                         <td>{{ $recordsget->machine_name }}</td>
                                         <td>{{ $recordsget->machine_type }}</td>
                                         <td>{{ $recordsget->machine_number }}</td>
                                         <td>{{ $recordsget->created_at }}</td>
                                         <td>
-                                            <a class="btn btn-primary" href="{{route('detailhistory', $recordsget->id)}}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
+                                            <a class="btn btn-primary" href="{{route('detailhistory', $recordsget->records_id)}}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -79,13 +79,14 @@
 @endsection
 
 @push('style')
-<link rel="stylesheet" href="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.css')}}">
-<link rel="stylesheet" href="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.min.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.min.css')}}">
 @endpush
 
 @push('script')
-<script src="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.js')}}"></script>
-<script src="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.full.min.js')}}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script> --}}
+    <script src="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.js')}}"></script>
+    <script src="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.full.min.js')}}"></script>
 <script>
     $(function() {
       $('#datetimepicker').datetimepicker({

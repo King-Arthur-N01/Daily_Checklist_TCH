@@ -20,7 +20,7 @@
                                 <tr>
                                     <th>Machine Number :</th>
                                     <th>
-                                        <input class="form-control" type="int" value="">
+                                        <input class="form-control" type="int" value="{{ $historyrecords->record_number }}" disabled>
                                     </th>
                                 </tr>
                             </tbody>
@@ -37,20 +37,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($historyrecords as $index => $record)
+                                @foreach ($historyrecords as $getrecords)
                                     <tr>
-                                        <td>{{ $record->machine_name }}</td>
-                                        <td>{{ $record->name_componencheck }}</td>
-                                        <td>{{ $record->name_parameter }}</td>
-                                        <td>{{ $record->name_metodecheck }}</td>
-                                    <!-- Display the operator_action array as separate rows -->
-                                    @foreach ($operator_action[$index] as $operator)
-                                        <td>{{ $operator }}</td>
-                                    @endforeach
-                                    <!-- Display the result array as separate rows -->
-                                    @foreach ($result[$index] as $resultItem)
-                                        <td>{{ $resultItem }}</td>
-                                    @endforeach
+                                        <td>{{ $getrecords->machine_name }}</td>
+                                        <td>{{ $getrecords->name_componencheck }}</td>
+                                        <td>{{ $getrecords->name_parameter }}</td>
+                                        <td>{{ $getrecords->name_metodecheck }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -58,7 +50,7 @@
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                             <div>
-                                <textarea class="form-control" type="text">*</textarea>
+                                <textarea class="form-control" type="text" value="{{ $historyrecords->record_note }}"></textarea>
                             </div>
                         </div>
                     </div>

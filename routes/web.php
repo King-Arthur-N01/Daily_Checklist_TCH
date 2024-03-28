@@ -76,8 +76,8 @@ Route::get('/addpreventivemachine/{id}', 'MachinerecordController@indexmachinere
 Route::put('/addpreventivemachine', 'MachinerecordController@registermachinerecord')->name('pushuserinput');
 
 
-Route::get('/tablehistory','MachineData\HistoryController@indextablehistory')->name('historymachine');
-Route::get('/viewdetails/{id}','MachineData\HistoryController@viewdetails')->name('detailhistory');
+Route::get('/tablehistory','HistoryrecordsController@indextablehistory')->name('historymachine');
+Route::get('/viewdetails/{id}','HistoryrecordsController@viewdetails')->name('detailhistory');
 
 
 // Route::get('/history', 'HistoryrecordsController@insertoperatoraction')->name('operatoraction');

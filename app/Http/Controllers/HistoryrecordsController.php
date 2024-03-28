@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Historyrecords;
+use App\Machinerecord;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class HistoryrecordsController extends Controller
@@ -12,16 +14,36 @@ class HistoryrecordsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function indextablehistory()
     {
+        $joinrecords = DB::table('machinerecords')
+        ->select('machinerecords.*','machines.*','machinerecords.id as records_id')
+        ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+        ->orderBy('machinerecords.id', 'asc')
+        ->get();
 
+        return view ('dashboard.view_history.tablehistory', ['joinrecords' => $joinrecords]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function viewdetails($id)
+    {
+
+        $historyrecords = DB::table('machinerecords')
+        ->select('machinerecords.*', 'historyrecords.*', 'machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*'
+        ,'machinerecords.machine_number as record_number', 'machinerecords.note as record_note')
+        ->join('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
+        ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+        ->where('machinerecords.id', '=', $id)
+        ->get();
+
+        return view ('dashboard.view_history.detailspreventive',[
+            'historyrecords' => $historyrecords
+        ]);
+    }
+
     public function insertoperatoraction(Request $request)
     {
         $operatoraction = $request->input('operator_action', []);
@@ -34,57 +56,26 @@ class HistoryrecordsController extends Controller
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Historyrecords  $historyrecords
-     * @return \Illuminate\Http\Response
-     */
     public function show(Historyrecords $historyrecords)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Historyrecords  $historyrecords
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Historyrecords $historyrecords)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Historyrecords  $historyrecords
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Historyrecords $historyrecords)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Historyrecords  $historyrecords
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Historyrecords $historyrecords)
     {
         //

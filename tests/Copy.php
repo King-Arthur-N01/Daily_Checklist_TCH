@@ -422,3 +422,30 @@ public function registermachinerecord(Request $request)
     foreach ($shares as $share) {
         echo $share->user->username;
     }
+
+
+    public function viewdetails($id)
+    {
+        $historyrecords = DB::table('machinerecords')
+        ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+        ->join('machines', 'machinerecords.id_machinerecord', '=', 'machines.id')
+        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+        ->where('machinerecords.id', '=', $id)
+        ->get();
+
+        $operator_action = [];
+        foreach ($historyrecords as $getoperator) {
+            $operator_action[] = preg_split('/\s*,\s*/', $getoperator->operator_action);
+        }
+        $result = [];
+        foreach ($historyrecords as $getresult) {
+            $result[] = preg_split('/\s*,\s*/', c$getresult->result);
+        }
+        return view ('dashboard.view_history.detailspreventive',[
+            'historyrecords' => $historyrecords,
+            'operator_action' => $operator_action,
+            'result' => $result
+        ]);
+    }

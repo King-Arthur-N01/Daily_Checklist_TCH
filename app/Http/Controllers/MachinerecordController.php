@@ -27,11 +27,6 @@ class MachinerecordController extends Controller
             ->where('machines.id', '=', $id)
             ->get();
 
-        // $metodechecks_id = arr::pluck($machines, 'id', 'metodechecks.id');
-
-        // $get_metodechecks_id = $metodechecks_id[$id] ?? [];
-        // $metodecheck = Metodecheck::all($id);
-        // $getmachineid = Machine::where('id', $id)->first();
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'machines' => $machines,
             'machine_id' => $id,
@@ -40,32 +35,6 @@ class MachinerecordController extends Controller
 
     public function registermachinerecord(Request $request)
     {
-        // $metodecheck_id = $request->input('metodecheck_id', []);
-        // $operator_action = $request->input('operator_action', []);
-        // $result = $request->input('result', []);
-        // $getuserid = Auth()->user()->id;
-
-        // // Store information in the first table
-        // Machinerecord::create([
-        //     'machine_number' => $request->input('machine_number'),
-        //     // 'shift' => $request->input('shift'),
-        //     'note' => $request->input('note'),
-        //     'id_machine2' => $request->input('id_machine2'),
-        //     'id_user' => $getuserid
-        // ]);
-
-        // // Get the ID of the newly created record
-        // $getrecordid = Machinerecord::latest('id')->first()->id;
-
-        // // Store additional data in the second table
-        // Historyrecords::insert([
-        //     // 'id_metodecheck' => $request->input('metodecheck_id'),
-        //     'id_metodecheck' => implode(',' ,$metodecheck_id),
-        //     'operator_action' => implode(',', $operator_action),
-        //     'result' => implode(',', $result),
-        //     'id_machinerecord' => $getrecordid
-        // ]);
-
         $getuserid = Auth()->user()->id;
 
         $StoreRecords = new Machinerecord();

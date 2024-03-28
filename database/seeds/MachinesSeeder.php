@@ -78,5 +78,16 @@ class MachinesSeeder extends Seeder
             'mfg_number'    => 'SD08348Y1',
             'install_date'  => '2018-06-15'
         ]);
+        Machine::create([
+            // 'machine_code'  => '7',
+            'invent_number' => 'F-AA-04-0007',
+            'machine_name'  => 'SCREW COMPRESSORE',
+            'machine_brand' => 'GRECOMP',
+            'machine_type'  => 'GCP-30',
+            'machine_spec'  => '8,5 BAR',
+            'machine_made'  => 'IND',
+            'mfg_number'    => '200505',
+            'install_date'  => '2012-02-20'
+        ]);
     }
 }
