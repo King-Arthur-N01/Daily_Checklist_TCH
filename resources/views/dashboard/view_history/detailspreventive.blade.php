@@ -20,7 +20,7 @@
                                 <tr>
                                     <th>Machine Number :</th>
                                     <th>
-                                        <input class="form-control" type="int" value="{{ $historyrecords->record_number }}" disabled>
+                                        <input class="form-control" type="int" value="{{$historyrecords->first()->machine_number}}" disabled>
                                     </th>
                                 </tr>
                             </tbody>
@@ -37,20 +37,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($historyrecords as $getrecords)
-                                    <tr>
-                                        <td>{{ $getrecords->machine_name }}</td>
-                                        <td>{{ $getrecords->name_componencheck }}</td>
-                                        <td>{{ $getrecords->name_parameter }}</td>
-                                        <td>{{ $getrecords->name_metodecheck }}</td>
-                                    </tr>
-                                @endforeach
+                                @foreach ($combinedata as $row)
+                                <tr>
+                                    <td>{{ $row['machine_name'] }}</td>
+                                    <td>{{ $row['name_componencheck'] }}</td>
+                                    <td>{{ $row['name_parameter'] }}</td>
+                                    <td>{{ $row['name_metodecheck'] }}</td>
+                                    <td>{{ $row['operator_action'] }}</td>
+                                    <td>{{ $row['result'] }}</td>
+                                </tr>
+                            @endforeach
                             </tbody>
                         </table>
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                             <div>
-                                <textarea class="form-control" type="text" value="{{ $historyrecords->record_note }}"></textarea>
+                                <textarea class="form-control" type="text" value="{{$historyrecords->first()->note}}"></textarea>
                             </div>
                         </div>
                     </div>

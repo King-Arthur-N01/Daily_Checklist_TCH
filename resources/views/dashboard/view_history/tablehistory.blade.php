@@ -20,7 +20,7 @@
                     <div class="table-history">
                         <div class="col-4">
                             <p class="mg-b-10">Input Nama Mesin</p>
-                            <select class="form-control select2" name="" id="category-input-machinecode">
+                            <select class="form-control select2" name="" id="category-input-machinename">
                                 <option selected="selected" value="">Select :</option>
                                 <option></option>
                             </select>
@@ -65,7 +65,7 @@
                                         <td>{{ $recordsget->machine_number }}</td>
                                         <td>{{ $recordsget->created_at }}</td>
                                         <td>
-                                            <a class="btn btn-primary" href="{{route('detailhistory', $recordsget->records_id)}}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
+                                            <a class="btn btn-primary" href="{{ route('detailhistory', $recordsget->records_id) }}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -79,22 +79,47 @@
 @endsection
 
 @push('style')
-    <link rel="stylesheet" href="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.css')}}">
-    <link rel="stylesheet" href="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
-    {{-- <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script> --}}
-    <script src="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.js')}}"></script>
-    <script src="{{asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.full.min.js')}}"></script>
-<script>
-    $(function() {
-      $('#datetimepicker').datetimepicker({
-        datepicker: true,
-        timepicker: true,
-        format: 'm/d/Y h:i A',
-        step: 60 // Set the step interval for hour and minute selection
-      });
-    });
-</script>
+    <script src="{{ asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.js') }}"></script>
+    <script src="{{ asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script>
+        // Additional code for adding placeholder in search box of select2
+        (function($) {
+            var Defaults = $.fn.select2.amd.require('select2/defaults');
+            $.extend(Defaults.defaults, {
+                searchInputPlaceholder: ''
+            });
+            var SearchDropdown = $.fn.select2.amd.require('select2/dropdown/search');
+            var _renderSearchDropdown = SearchDropdown.prototype.render;
+            SearchDropdown.prototype.render = function(decorated) {
+                // invoke parent method
+                var $rendered = _renderSearchDropdown.apply(this, Array.prototype.slice.apply(arguments));
+                this.$search.attr('placeholder', this.options.get('searchInputPlaceholder'));
+                return $rendered;
+            };
+        })(window.jQuery);
+    </script>
+    <script>
+        $(function() {
+            $('#datetimepicker').datetimepicker({ //script for calendar.js
+                datepicker: true,
+                timepicker: true,
+                format: 'm/d/Y h:i A',
+                step: 60 // Set the step interval for hour and minute selection
+            });
+
+            $(document).ready(function() { //script for search2.js
+            $('.select2').select2({
+                placeholder: 'Select :',
+                searchInputPlaceholder: 'Search'
+            });
+        });
+        });
+    </script>
 @endpush
