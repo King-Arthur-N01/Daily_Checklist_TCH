@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\RecordsData;
 
+use App\Http\Controllers\Controller;
 use App\Historyrecords;
 use App\Machinerecord;
 use Illuminate\Support\Facades\DB;
@@ -9,11 +10,6 @@ use Illuminate\Http\Request;
 
 class HistoryrecordsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function indextablehistory()
     {
         $joinrecords = DB::table('machinerecords')
@@ -27,7 +23,6 @@ class HistoryrecordsController extends Controller
 
     public function viewdetails($id)
     {
-
         $detailrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
             ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
@@ -44,9 +39,9 @@ class HistoryrecordsController extends Controller
             ->get();
 
         $combinedata = [];
-        foreach ($detailrecords as $detail) {
-            foreach ($historyrecords as $history) {
-                if ($detail->id === $history->id) {
+        foreach ($detailrecords as $detail){
+            foreach ($historyrecords as $history){
+                if ($detail->checks_id == $history->get_checks){
                     $combinedata[] = [
                         'machine_name' => $detail->machine_name,
                         'name_componencheck' => $detail->name_componencheck,
@@ -58,6 +53,8 @@ class HistoryrecordsController extends Controller
                 }
             }
         }
+        // dd($detailrecords);
+        // dd($historyrecords);
         return view('dashboard.view_history.detailspreventive', [
             'detailrecords' => $detailrecords,
             'historyrecords' => $historyrecords,
@@ -67,14 +64,14 @@ class HistoryrecordsController extends Controller
 
     public function insertoperatoraction(Request $request)
     {
-        $operatoraction = $request->input('operator_action', []);
-        $result = $request->input('result', []);
+        // $operatoraction = $request->input('operator_action', []);
+        // $result = $request->input('result', []);
 
-        $storeData = new Historyrecords();
-        $storeData->operator_action = implode(',', $operatoraction);
-        $storeData->result = implode(',', $result);
-        $storeData->save();
-        return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
+        // $storeData = new Historyrecords();
+        // $storeData->operator_action = implode(',', $operatoraction);
+        // $storeData->result = implode(',', $result);
+        // $storeData->save();
+        // return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
     public function store(Request $request)

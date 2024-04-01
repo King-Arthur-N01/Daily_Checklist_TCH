@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\RecordsData;
 
-use Illuminate\Support\Arr;
+use App\Http\Controllers\Controller;
 use App\Machine;
 use App\Machinerecord;
 use App\Historyrecords;
-use App\Metodecheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

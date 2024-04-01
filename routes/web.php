@@ -70,15 +70,15 @@ Route::get('/tablemachineresult','MachineData\MachineController@indextablemachin
 Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@deletemachineresult')->name('deletemachineresults');
 
 
-Route::get('/tablepreventivemachine','MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
-// Route::post('/addpreventivemachine','MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
-Route::get('/addpreventivemachine/{id}', 'MachinerecordController@indexmachinerecord')->name('indexuserinput');
-Route::put('/addpreventivemachine', 'MachinerecordController@registermachinerecord')->name('pushuserinput');
+Route::get('/tablepreventivemachine','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
+// Route::post('/addpreventivemachine','RecordsData\MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
+Route::get('/addpreventivemachine/{id}', 'RecordsData\MachinerecordController@indexmachinerecord')->name('indexuserinput');
+Route::put('/addpreventivemachine', 'RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 
 
-Route::get('/tablehistory','HistoryrecordsController@indextablehistory')->name('historymachine');
-Route::get('/viewdetails/{id}','HistoryrecordsController@viewdetails')->name('detailhistory');
+Route::get('/tablehistory','RecordsData\HistoryrecordsController@indextablehistory')->name('historymachine');
+Route::get('/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
 
 
-// Route::get('/history', 'HistoryrecordsController@insertoperatoraction')->name('operatoraction');
-// Route::post('/history', 'HistoryrecordsController@destroy')->name('deleterecord');
+// Route::get('/history', 'RecordsData\HistoryrecordsController@insertoperatoraction')->name('operatoraction');
+// Route::post('/history', 'RecordsData\HistoryrecordsController@destroy')->name('deleterecord');
