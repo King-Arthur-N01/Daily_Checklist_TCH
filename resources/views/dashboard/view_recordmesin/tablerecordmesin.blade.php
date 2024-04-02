@@ -18,13 +18,14 @@
                         <div class="alert alert-success">{{session('success')}}</div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%">
+                        <table class="table" id="dataTable" width="100%">
                             <thead>
-                                <th>CHECKPOINT NO</th>
+                                <th>NO MACHINE</th>
                                 <th>MACHINE NAME</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
                                 <th>MFG NUMBER</th>
+                                {{-- <th>STATUS</th> --}}
                                 <th>ACTION</th>
                             </thead>
                             <tbody>

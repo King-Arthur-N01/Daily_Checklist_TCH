@@ -1787,7 +1787,9 @@ pre code {
 .table th {
     padding: .75rem;
     vertical-align: top;
-    border-top: 1px solid #e3e6f0
+    border-top: 1px solid #e3e6f0;
+    justify-items: center;
+    align-content: center;
 }
 
 .table thead th {
@@ -1810,7 +1812,7 @@ pre code {
 
 .table-bordered td,
 .table-bordered th {
-    border: 1px solid #e3e6f0
+    border: 1px solid #e3e6f0;
 }
 
 .table-bordered thead td,
@@ -5146,7 +5148,7 @@ input[type=submit].btn-block {
 .card-header {
     padding: .75rem 1.25rem;
     margin-bottom: 0;
-    background-color: #f8f9fc;
+    background-color: #4e73df;
     border-bottom: 1px solid #e3e6f0
 }
 
@@ -10843,7 +10845,7 @@ button.bg-dark:hover {
 }
 
 .text-primary {
-    color: #4e73df !important
+    color: #ffffff !important;
 }
 
 a.text-primary:focus,

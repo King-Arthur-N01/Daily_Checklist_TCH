@@ -26,7 +26,7 @@
                                     <tr>
                                         <th>Machine Number :</th>
                                         <th>
-                                            <input class="form-control" type="int" name="machine_number" placeholder="Nomor Mesin">
+                                            <input class="form-control" type="int" name="machine_number" id="machine_number" placeholder="Nomor Mesin" required>
                                         </th>
                                     </tr>
                                 </tbody>
@@ -50,35 +50,31 @@
                                             <td>{{ $recordsget->name_parameter }}</td>
                                             <td>{{ $recordsget->name_metodecheck }}</td>
                                             <td>
-                                                <input type="hidden" name="metodecheck_id[{{$key}}]" value="{{$recordsget->metodecheck_id}}">
+                                                <input type="hidden" name="metodecheck_id[{{$key}}]" id="metodecheck_id[{{$key}}]" value="{{$recordsget->metodecheck_id}}" required>
                                                 <div id="select-style-radio"
                                                     style="display: flex; justify-content: center;">
                                                     {{-- <label>Select an option:</label> --}}
                                                     <div class="option">
                                                         <input type="radio" name="operator_action[{{$key}}]" value="check" id="option1">
-                                                        {{-- <label for="option1">CHECK</label> --}}
                                                         <img class="image-card-mini" src="{{ asset('assets/icons/magnifying-glass.png') }}">
                                                     </div>
                                                     <div class="option">
                                                         <input type="radio" name="operator_action[{{$key}}]" value="cleaning" id="option2">
-                                                        {{-- <label for="option2">CLEANING</label> --}}
                                                         <img class="image-card-mini"src="{{ asset('assets/icons/dust.png') }}">
                                                     </div>
                                                     <div class="option">
                                                         <input type="radio" name="operator_action[{{$key}}]" value="adjust" id="option3">
-                                                        {{-- <label for="option3">ADJUST</label> --}}
                                                         <img class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}">
                                                     </div>
                                                     <div class="option">
-                                                        <input type="radio" name="operator_action[]" value="replace" id="option4">
-                                                        {{-- <label for="option3">REPLACE</label> --}}
+                                                        <input type="radio" name="operator_action[{{$key}}]" value="replace" id="option4">
                                                         <img class="image-card-mini" src="{{ asset('assets/icons/replacement.png') }}">
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div>
-                                                    <select name="result[{{$key}}]">
+                                                    <select name="result[{{$key}}]" id="result[{{$key}}]" required>
                                                         <option label="Result" disabled selected></option>
                                                         <option value="good">OK</option>
                                                         <option value="not good">NG</option>
@@ -102,6 +98,13 @@
                             </div>
                         </form>
                     </div>
+                    <div id="errorMessages">
+                        @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,5 +119,6 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/formalert.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script>
 @endpush

@@ -47,14 +47,6 @@
                                     <td>{{ $row['result'] }}</td>
                                 </tr>
                                 @endforeach
-                                {{-- @foreach ($detailrecords as $getrecords)
-                                    @foreach ($historyrecords as $gethistory)
-                                        <tr>
-                                            <td>{{ $getrecords->id }}</td>
-                                            <td>{{ $gethistory->id }}</td>
-                                        </tr>
-                                    @endforeach
-                                @endforeach --}}
                             </tbody>
                         </table>
                         <div class="form-group">

@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     <div class="table-responsive ">
-                        <table class="table table-bordered" id="datatables" width="100%" cellspacing="0">
+                        <table class="table" id="datatables" width="100%" cellspacing="0">
                             <thead>
                                 <th>Checkpoint NO.</th>
                                 <th>Nama Mesin</th>
