@@ -7,37 +7,31 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Form Edit User</h5>
+                <h5 class="card-header">Form Pendaftaran</h5>
                 <div class="card-body">
-                    <form action="{{route('pushedituser', $users->id)}}" id="editform" method="post">
+                    <form action="{{ route('pushregisteruser', $users->id) }}" id="editform" method="post">
                         @csrf
                         @method('put')
                         <div class="row" align-items="center">
-                            <div class="col-xl-2">
+                            <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
                                     <div>
-                                        <input class="form-control" type="text" name="name" placeholder="Username">
+                                        <input class="form-control form-control-user" type="text" name="name" placeholder="Username">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-2">
+                            <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
-                                        <input class="form-control" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                        <input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-2">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
-                                    <div>
-                                        <input class="form-control" type="text" name="status" data-parsley-maxlength="5" placeholder="NIK">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="dropdown col-xl-2">
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
                                     <div>
@@ -48,12 +42,21 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
+                                    <div>
+                                        <input class="form-control form-control-user" type="text" name="department" placeholder="Department">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <div>
-                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
+                                        <label class="col-form-label text-sm-right"
+                                            style="margin-left: 4px;">Password</label>
                                         <div class="form-group" style="margin: 0px;">
                                             <input class="form-control" type="password" name="password" required placeholder="Password Min:6 digits" id="password">
                                         </div>
@@ -87,8 +90,6 @@
     </div>
 @endsection
 @push('style')
-
 @endpush
 @push('script')
-
 @endpush

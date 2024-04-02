@@ -52,7 +52,7 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'nik' => $data['nik'],
-            'departement' =>  $data['departement'],
+            'department' =>  $data['department'],
             'password' => Hash::make($data['password']),
         ]);
     }
@@ -62,7 +62,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'unique:users'],
             'status' => ['required', 'boolean'],
-            'departement' => ['required'],
+            'department' => ['required'],
             'password' => ['required', 'string', 'min:6', 'confirmed']
         ]);
         $user = User::find($id);
