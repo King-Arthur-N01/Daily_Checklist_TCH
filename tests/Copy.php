@@ -449,3 +449,29 @@ public function registermachinerecord(Request $request)
             'result' => $result
         ]);
     }
+
+
+    public function import(Request $request)
+    {
+        // validasi file yang diupload
+        $this->validate($request, [
+            'file' => 'required|mimes:csv,xls,xlsx'
+        ]);
+        // menyimpan file yang diupload ke folder publik
+        $file = $request->file('file');
+        $nama_file = time() . "_" . $file->getClientOriginalName();
+        'public';
+        $file->storeAs('storage', $nama_file);
+        // baca isi file csv menggunakan fungsirfputcvs
+        $rows = array_map('str_getcsv', file('storage/' . $nama_file));
+        $header = $rows[0];
+        $databarang = [];
+        foreach ($rows as $row) {
+            if (count($row)) {
+                $databarang[] = array_combine($header, $row);
+            }
+        }
+        // menghapus file csv dari folder publik
+        unlink(public_path('/storage/') . $nama_file);
+        return view('dashboard.view_hasilmesin.forminputmesin', compact(['databarang']));
+    }

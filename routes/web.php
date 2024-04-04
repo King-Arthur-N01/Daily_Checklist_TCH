@@ -1,6 +1,5 @@
 <?php
 
-use App\Historyrecords;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,12 +61,12 @@ Route::get('/tablemethod','MachineData\MetodecheckController@indextablemethod')-
 Route::get('/deletemethod/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
 
 
-Route::get('/addmachineresult','MachineData\MachineController@indexregistermachineresult')->name('addmachineresults');
-Route::post('/addmachineresult','MachineData\MachineresultController@registermachineresult')->name('pushmachineresults');
-Route::get('/editmachineresult/{id}','MachineData\MachineresultController@indexeditmachineresult')->name('editmachineresults');
-Route::put('/editmachineresult/{id}','MachineData\MachineresultController@editmachineresult')->name('pusheditmachineresults');
-Route::get('/tablemachineresult','MachineData\MachineController@indextablemachineresult')->name('managemachineresults');
-Route::get('/deletemachineresult/{id}','MachineData\MachineresultController@deletemachineresult')->name('deletemachineresults');
+Route::get('/addmachinedata','MachineData\ImportdataController@indextableexle')->name('addmachinedata');
+Route::post('/addmachinedata','MachineData\ImportdataController@registermachineresult')->name('pushmachinedata');
+Route::get('/editmachinedata/{id}','MachineData\ImportdataController@indexeditmachineresult')->name('editmachinedata');
+Route::put('/editmachinedata/{id}','MachineData\ImportdataController@editmachineresult')->name('pusheditmachinedata');
+Route::get('/tablemachinedata','MachineData\ImportdataController@indextableexle')->name('managemachinedata');
+Route::get('/deletemachinedata/{id}','MachineData\ImportdataController@deletemachineresult')->name('deletemachinedata');
 
 
 Route::get('/tablepreventivemachine','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');

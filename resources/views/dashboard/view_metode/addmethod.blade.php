@@ -7,7 +7,7 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Form Tambah Metode Pengecekan Mesin</h5>
+                <h5 class="card-header text-primary">Form Tambah Metode Pengecekan Mesin</h5>
                 <div class="card-body">
                     <form action="{{ route('pushmethod') }}" id="registerform" method="post">
                         @csrf

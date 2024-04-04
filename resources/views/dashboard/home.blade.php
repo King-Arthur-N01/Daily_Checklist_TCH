@@ -28,7 +28,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/add_clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('managemachineresults')}}">Tambah Preventive Harian Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('managemachinedata')}}">Tambah Preventive Harian Mesin &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>

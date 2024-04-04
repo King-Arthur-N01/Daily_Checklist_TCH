@@ -7,7 +7,7 @@
         <!-- ============================================================== -->
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="card">
-                <h5 class="card-header">Form Tambah Bagian Checkpoint Mesin</h5>
+                <h5 class="card-header text-primary">Form Tambah Bagian Checkpoint Mesin</h5>
                 <div class="card-body">
                     <form action="{{ route('pushcomponencheck') }}" id="registerform" method="post">
                         @csrf
