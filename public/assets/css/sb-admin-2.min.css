@@ -1783,6 +1783,12 @@ pre code {
     color: #282828;
 }
 
+.div-tables{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .table-buttons{
     width: 100%;
     background-color: #4e73df;

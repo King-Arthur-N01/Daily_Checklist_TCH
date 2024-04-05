@@ -78,6 +78,4 @@ Route::put('/addpreventivemachine', 'RecordsData\MachinerecordController@registe
 Route::get('/tablehistory','RecordsData\HistoryrecordsController@indextablehistory')->name('historymachine');
 Route::get('/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
 
-
-// Route::get('/history', 'RecordsData\HistoryrecordsController@insertoperatoraction')->name('operatoraction');
-// Route::post('/history', 'RecordsData\HistoryrecordsController@destroy')->name('deleterecord');
+Route::post('/pushfiles', 'MachineData\ImportdataController@uploadData')->name('uploadfile');

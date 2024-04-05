@@ -14,6 +14,11 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
+                    <div class="col-sm-12 col-md-12">
+                        <div>
+                            <a type="button" class="btn btn-block btn-primary table-buttons" href="#" tabindex="0" aria-controls="example"><i class="fas fa-filter"></i>&nbsp; Fillter Table</a>
+                        </div>
+                    </div>
                     @if (session('success'))
                         <div class="alert alert-success">{{session('success')}}</div>
                     @endif

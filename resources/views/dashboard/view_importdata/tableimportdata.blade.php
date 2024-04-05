@@ -3,9 +3,6 @@
 
 @section('content')
     <div class="row">
-        <!-- ============================================================== -->
-        <!-- data table  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Tambah Checklist Machine</h1>
@@ -13,16 +10,17 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
-            <div class="card-body">
-                <form>
-                    <div class="col-sm-6 col-md-6">
-                        <input type="file" id="myFile" hidden accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                        <label for="myFile" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
-                        {{-- <input type="file" class="table-buttons" id="fileupload" name="fileupload" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" /> --}}
+                <div class="card-body">
+                    <div class="div-tables">
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#largeModal"><i class="fas fa-clipboard-check"></i>&nbsp; Tambah Checksheet Mesin</button>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons"><i class="fas fa-filter"></i>&nbsp; Filter</button>
+                        </div>
                     </div>
-                </form>
                     @if (session('success'))
-                        <div class="alert alert-success">{{session('success')}}</div>
+                        <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
                         <table class="table table-bordered" id="datatables" width="100%" cellspacing="0">
@@ -56,16 +54,66 @@
                 </div>
             </div>
         </div>
-    <!-- ============================================================== -->
-    <!-- end data table  -->
-    <!-- ============================================================== -->
     </div>
+
+    <!-- Large Modal -->
+    <div class="modal fade" id="largeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload File</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="formData">
+                        <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
+                        <p>Part Number<mark>|</mark>Line Name<mark>|</mark>Line Group<mark>|</mark>∑ Bersih<mark>|</mark>C.T (Detik)<mark>|</mark>Member Diluar Line</p>
+
+                        <label for="importExle" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
+                        <input type="file" name="fileupload" id="importExle" hidden accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitButtonAjax">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Large Modal-->
 @endsection
 
 @push('style')
 @endpush
 
 @push('script')
-    <script src="{{asset('assets/vendor/custom-js/upload.js')}}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     {{-- <script src="{{asset('assets/vendor/custom-js/mergecell.js')}}"></script> --}}
+    <script>
+        $(document).ready(function(){
+            $('#submitButtonAjax').click(function(){
+                var file = $('#importExle')[0].files[0];
+                var formData = new FormData();
+                formData.append('file', file);
+                $.ajax({
+                    url: "{{ route('uploadfile') }}",
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    success: function(response){
+                        if(response.success){
+                            alert(response.success);
+                            $('#largeModal').modal('hide');
+                        }else{
+                            alert(response.error);
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

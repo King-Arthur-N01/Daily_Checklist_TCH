@@ -475,3 +475,26 @@ public function registermachinerecord(Request $request)
         unlink(public_path('/storage/') . $nama_file);
         return view('dashboard.view_hasilmesin.forminputmesin', compact(['databarang']));
     }
+
+
+
+$(document).ready(function() {
+    $('#uploadForm').submit(function(e) {
+        e.preventDefault(); // Prevent normal form submission
+        var formData = new FormData($(this)[0]);
+
+        $.ajax({
+            url: '{{ route("upload.file") }}', // Route to handle file upload
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#message').html(response); // Display response message
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
