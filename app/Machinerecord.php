@@ -7,7 +7,7 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 class Machinerecord extends Model
 {
     protected $fillable = [
-        'machine_number',
+        'machine_number2',
         'shift',
         'note',
         'id_machine2',

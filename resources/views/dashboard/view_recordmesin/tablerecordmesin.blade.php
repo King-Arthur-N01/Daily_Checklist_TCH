@@ -11,12 +11,51 @@
             <h1 class="h3 mb-2 text-gray-800">Table Input Checklist Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+                </div>
+                <div class="card-body">
+                    <form action="{{route('filtermachinerecord')}}" method="post">
+                        @csrf
+                        <div class="table-filter">
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nama Mesin</p>
+                                <select class="form-control select2" name="" id="category-input-machinename">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <select class="form-control select2" name="" id="category-input-machinecode">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
+                                <div class="wd-250 mg-b-20">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="datetimepicker" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card shadow mt-4 mb-4">
+                <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div>
-                            <a type="button" class="btn btn-block btn-primary table-buttons" href="#" tabindex="0" aria-controls="example"><i class="fas fa-filter"></i>&nbsp; Fillter Table</a>
+                            <a type="button" class="btn btn-block btn-primary table-buttons" id="filterButton" tabindex="0" aria-controls="example"><i class="fas fa-filter"></i>&nbsp; Fillter Table</a>
                         </div>
                     </div>
                     @if (session('success'))

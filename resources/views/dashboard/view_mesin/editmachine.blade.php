@@ -17,10 +17,20 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
                                     <div>
-                                        <input class="form-control" type="text" name="invent_number" value="{{$machines->invent_number}}"placeholder="Invent Number">
+                                        <input class="form-control" type="text" name="invent_number" value="{{$machines->invent_number}}" placeholder="Invent Number">
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Mesin</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_number" value="{{$machines->machine_number}}" placeholder="Nomor Mesin">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
@@ -29,8 +39,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
@@ -39,6 +47,8 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Type Mesin</label>
@@ -47,8 +57,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage Mesin</label>
@@ -57,6 +65,8 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
@@ -65,8 +75,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
@@ -75,11 +83,13 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
                                     <div>
-                                        <input class="form-control" type="date" value="{{$machines->install_date}}" name="install_date">
+                                        <input class="form-control" type="date" name="install_date" value="{{$machines->install_date}}">
                                     </div>
                                 </div>
                             </div>

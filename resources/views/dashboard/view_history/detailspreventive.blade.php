@@ -52,7 +52,7 @@
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                             <div>
-                                <textarea class="form-control" type="text" value="{{$historyrecords->first()->note}}"></textarea>
+                                <textarea class="form-control" type="text" value="{{$historyrecords->second()->note}}"></textarea>
                             </div>
                         </div>
                     </div>

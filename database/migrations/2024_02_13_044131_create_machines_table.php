@@ -14,6 +14,7 @@ class CreateMachinesTable extends Migration
             $table->id();
             // $table->integer('machine_code')->unique()->index()->default('0');
             $table->string('invent_number')->unique();
+            $table->integer('machine_number')->index();
             $table->string('machine_name');
             $table->string('machine_brand')->nullable();
             $table->string('machine_type')->nullable();

@@ -69,6 +69,7 @@ class MachineController extends Controller
         // }
         $request->validate([
             'invent_number' => 'required',
+            'machine_number'=> 'required',
             'machine_name' => 'required|max:255',
             'machine_brand',
             'machine_type',
@@ -90,6 +91,7 @@ class MachineController extends Controller
     {
         $request->validate([
             'invent_number' => 'required',
+            'machine_number'=> 'required',
             'machine_name' => 'required|max:255',
             'machine_brand',
             'machine_type',
@@ -98,6 +100,7 @@ class MachineController extends Controller
             'mfg_number' => 'required',
             'install_date'
         ]);
+        dd($request);
         $machines = Machine::find($id);
         $machines->update($request->all());
         // $machines->machine_code = $currentvalue;

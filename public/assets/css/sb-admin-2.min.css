@@ -2148,6 +2148,12 @@ pre code {
     flex-direction: row;
 }
 
+.table-filter{
+    display: flex;
+    margin: 0px 0px 25px 0px;
+    flex-direction: row;
+}
+
 .table-responsive>.table-bordered {
     border: 0;
 }
@@ -5096,7 +5102,7 @@ input[type=submit].btn-block {
     background-color: #fff;
     background-clip: border-box;
     border: 1px solid #e3e6f0;
-    border-radius: .35rem
+    border-radius: .50rem;
 }
 
 .card>hr {

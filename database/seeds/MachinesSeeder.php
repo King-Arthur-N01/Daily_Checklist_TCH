@@ -15,6 +15,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '1',
             'invent_number' => 'E-AA-14-0102',
+            'machine_number' => '1',
             'machine_name'  => 'POWER PRESS SEDANG',
             'machine_brand' => 'WORLD PRECISE PRESS',
             'machine_type'  => 'JS36-400',
@@ -26,6 +27,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '2',
             'invent_number' => 'E-AA-15-0105',
+            'machine_number' => '5',
             'machine_name'  => 'POWER PRESS BESAR',
             'machine_brand' => 'WORLD PRECISE PRESS',
             'machine_type'  => 'JS36-500',
@@ -37,6 +39,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '3',
             'invent_number' => 'E-JG-21-0007',
+            'machine_number' => '4',
             'machine_name'  => 'MESIN PORTABLE SPOT KECIL',
             'machine_brand' => 'NANCHI',
             'machine_type'  => '-',
@@ -48,6 +51,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '4',
             'invent_number' => 'E-JG-19-23134',
+            'machine_number' => '3',
             'machine_name'  => 'ROBOT SPOT BESAR',
             'machine_brand' => 'NANCHI',
             'machine_type'  => '-',
@@ -59,6 +63,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '5',
             'invent_number' => 'F-DH-18-14512',
+            'machine_number' => '7',
             'machine_name'  => 'PLC ROBOT',
             'machine_brand' => 'SCHNEIDER',
             'machine_type'  => 'PHM-129483OBJ',
@@ -70,6 +75,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '6',
             'invent_number' => 'F-DH-18-36421',
+            'machine_number' => '6',
             'machine_name'  => 'PLC COUNTING',
             'machine_brand' => 'SEIMENS',
             'machine_type'  => 'PHM-9141HBM',
@@ -81,6 +87,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '7',
             'invent_number' => 'F-AA-04-0007',
+            'machine_number' => '8',
             'machine_name'  => 'SCREW COMPRESSORE',
             'machine_brand' => 'GRECOMP',
             'machine_type'  => 'GCP-30',

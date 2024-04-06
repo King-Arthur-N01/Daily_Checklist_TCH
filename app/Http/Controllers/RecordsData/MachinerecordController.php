@@ -19,7 +19,7 @@ class MachinerecordController extends Controller
     public function indexmachinerecord($id)
     {
         $machines = DB::table('machines')
-            ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*','metodechecks.id as metodecheck_id')
+            ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'machines.machine_number as get_number', 'metodechecks.id as metodecheck_id')
             ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
             ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
@@ -29,27 +29,43 @@ class MachinerecordController extends Controller
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'machines' => $machines,
             'machine_id' => $id,
+            'get_number'
         ]);
     }
+    public function filter(Request $request)
+    {
+        $query = Machinerecord::query();
 
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Add more filters as needed...
+
+        $items = $query->get();
+        return response()->json($items);
+    }
     public function registermachinerecord(Request $request)
     {
         $getuserid = Auth()->user()->id;
+        // Retrieve machine number based on id_machine2
+        // $machine_number = Machine::where('id', $request->input('machine_number2'))->value('machine_number');
 
         $StoreRecords = new Machinerecord();
-        $StoreRecords->machine_number = $request->input('machine_number');
+        $StoreRecords->machine_number2 = $request->input('machine_number2');
+        // $StoreRecords->machine_number2 = $machine_number; // Assign the retrieved machine number
         $StoreRecords->shift = $request->input('shift');
         $StoreRecords->note = $request->input('note');
         $StoreRecords->id_machine2 = $request->input('id_machine2');
         $StoreRecords->id_user = $getuserid;
+        dd($StoreRecords);
         $StoreRecords->save();
 
         // Get the ID of the newly created record
         $getrecordid = Machinerecord::latest('id')->first()->id;
 
         $metodecheck_id = $request->input('metodecheck_id', []);
-        foreach($metodecheck_id as $key => $test)
-        {
+        foreach ($metodecheck_id as $key => $test) {
             $StoreHistory = new Historyrecords();
             $StoreHistory->id_metodecheck = $test;
             $StoreHistory->operator_action = $request->input('operator_action')[$key];

@@ -17,7 +17,7 @@ class CreateMachinerecordsTable extends Migration
             $table->id();
             $table->integer('shift')->nullable();
             $table->string('note')->nullable();
-            $table->integer('machine_number');
+            $table->integer('machine_number2')->index();
             $table->timestamps();
         });
     }

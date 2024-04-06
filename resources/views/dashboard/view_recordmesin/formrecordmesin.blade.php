@@ -26,7 +26,7 @@
                                     <tr>
                                         <th>Machine Number :</th>
                                         <th>
-                                            <input class="form-control" type="int" name="machine_number" id="machine_number" placeholder="Nomor Mesin" required>
+                                            <input class="form-control" type="int" name="machine_number" id="machine_number2" value="{{$get_number}}" placeholder="Nomor Mesin" disabled>
                                         </th>
                                     </tr>
                                 </tbody>
