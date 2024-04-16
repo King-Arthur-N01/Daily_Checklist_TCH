@@ -2150,7 +2150,7 @@ pre code {
 
 .table-filter{
     display: flex;
-    margin: 0px 0px 25px 0px;
+    /* margin: 0px 0px 25px 0px; */
     flex-direction: row;
 }
 
@@ -5143,6 +5143,13 @@ input[type=submit].btn-block {
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+}
+
+.card-filter {
+    /* flex: 1 1 auto; */
+    min-height: 1px;
+    display: none;
+    margin: 0px 0px 15px 0px;
 }
 
 .card-title {

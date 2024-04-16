@@ -11,7 +11,6 @@ class ImportdataController extends Controller
 {
     public function indextableexle()
     {
-
         return view('dashboard.view_importdata.tableimportdata');
     }
 
@@ -26,13 +25,14 @@ class ImportdataController extends Controller
     // }
     public function uploadData(Request $request)
     {
+        date_default_timezone_set('Asia/Jakarta');
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('assets/uploads'), $filename);
+            $filename = date("Y-m-d H.i.s") . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/uploads/'), $filename);
 
             // Import the data from the uploaded file
-            Excel::import(new Importdata, public_path('assets/uploads' . $filename));
+            Excel::import(new Importdata, public_path('assets/uploads/' . $filename));
             return response()->json(['success' => 'File uploaded successfully.']);
         }
         return response()->json(['error' => 'No file selected.']);

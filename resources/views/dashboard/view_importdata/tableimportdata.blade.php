@@ -7,6 +7,43 @@
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Tambah Checklist Machine</h1>
             <div class="card shadow mt-4 mb-4">
+                <div class="card-filter" id="filterCard" style="display: none;">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+                    </div>
+                    <form action="#" method="post" style="margin-top: 10px">
+                        @csrf
+                        <div class="table-filter">
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nama Mesin</p>
+                                <select class="form-control select2" name="" id="category-input-machinename">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <select class="form-control select2" name="" id="category-input-machinecode">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
+                                <div class="wd-250 mg-b-20">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="datetimepicker" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
@@ -16,7 +53,7 @@
                             <button type="button" class="table-buttons" data-toggle="modal" data-target="#largeModal"><i class="fas fa-clipboard-check"></i>&nbsp; Tambah Checksheet Mesin</button>
                         </div>
                         <div class="col-sm-6 col-md-6">
-                            <button type="button" class="table-buttons"><i class="fas fa-filter"></i>&nbsp; Filter</button>
+                            <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
                         </div>
                     </div>
                     @if (session('success'))
@@ -87,10 +124,9 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
-    {{-- <script src="{{asset('assets/vendor/custom-js/mergecell.js')}}"></script> --}}
     <script>
-        $(document).ready(function(){
-            $('#submitButtonAjax').click(function(){
+        $(document).ready(function() {
+            $('#submitButtonAjax').click(function() {
                 var file = $('#importExle')[0].files[0];
                 var formData = new FormData();
                 formData.append('file', file);
@@ -100,20 +136,34 @@
                     data: formData,
                     contentType: false,
                     processData: false,
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    success: function(response){
-                        if(response.success){
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
                             alert(response.success);
                             $('#largeModal').modal('hide');
-                        }else{
+                        } else {
                             alert(response.error);
                         }
                     },
                     error: function(error) {
-                        console.log(error);
+                        console.log(error.responseText);
                     }
                 });
             });
+        });
+    </script>
+    <script>
+        const filterButton = document.getElementById("filterButton");
+        const filterCard = document.getElementById("filterCard");
+
+        filterButton.addEventListener("click", () => {
+        if (filterCard.style.display === "none") {
+            filterCard.style.display = "block";
+        } else {
+            filterCard.style.display = "none";
+        }
         });
     </script>
 @endpush
