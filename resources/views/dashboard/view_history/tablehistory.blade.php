@@ -34,15 +34,13 @@
                         </div>
                         <div class="col-4">
                             <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
-                            <div class="wd-250 mg-b-20">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-calendar-alt"></i>
                                     </div>
-                                    <input type="text" id="datetimepicker" class="form-control">
                                 </div>
+                                <input type="text" id="datetimepicker" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -117,9 +115,8 @@
             $(document).ready(function() { //script for search2.js
             $('.select2').select2({
                 placeholder: 'Select :',
-                searchInputPlaceholder: 'Search'
+                searchInputPlaceholder: 'Search'});
             });
-        });
         });
     </script>
 @endpush

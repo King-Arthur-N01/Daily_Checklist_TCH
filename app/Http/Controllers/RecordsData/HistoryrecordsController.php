@@ -53,8 +53,6 @@ class HistoryrecordsController extends Controller
                 }
             }
         }
-        // dd($detailrecords);
-        // dd($historyrecords);
         return view('dashboard.view_history.detailspreventive', [
             'detailrecords' => $detailrecords,
             'historyrecords' => $historyrecords,

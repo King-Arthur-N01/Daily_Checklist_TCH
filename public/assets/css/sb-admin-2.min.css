@@ -2150,12 +2150,18 @@ pre code {
 
 .table-filter{
     display: flex;
-    /* margin: 0px 0px 25px 0px; */
+    margin: 0px 0px 25px 0px;
     flex-direction: row;
 }
 
 .table-responsive>.table-bordered {
     border: 0;
+}
+
+.table-header{
+    /* display: flex; */
+    text-transform: uppercase;
+    border: dotted 2px;
 }
 
 .form-control {

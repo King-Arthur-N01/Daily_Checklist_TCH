@@ -11,55 +11,42 @@
             <h1 class="h3 mb-2 text-gray-800">Table Input Checklist Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
-                </div>
-                <div class="card-body">
-                    <form action="{{route('filtermachinerecord')}}" method="post">
-                        @csrf
-                        <div class="table-filter">
-                            <div class="col-4">
-                                <p class="mg-b-10">Input Nama Mesin</p>
-                                <select class="form-control select2" name="" id="category-input-machinename">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Input Nomor Mesin </p>
-                                <select class="form-control select2" name="" id="category-input-machinecode">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
-                                <div class="wd-250 mg-b-20">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </div>
-                                        </div>
-                                        <input type="text" id="datetimepicker" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="card shadow mt-4 mb-4">
-                <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div>
-                            <a type="button" class="btn btn-block btn-primary table-buttons" id="filterButton" tabindex="0" aria-controls="example"><i class="fas fa-filter"></i>&nbsp; Fillter Table</a>
+                            <form action="{{ route('filtermachinerecord') }}" method="post">
+                                @csrf
+                                <div class="table-filter">
+                                    <div class="col-4">
+                                        <p class="mg-b-10">MFG Number Mesin</p>
+                                        <select class="form-control select2" name="" id="category-input-machinename">
+                                            <option selected="selected" value="">Select :</option>
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="mg-b-10">Input Nomor Mesin </p>
+                                        <select class="form-control select2" name="" id="category-input-machinecode">
+                                            <option selected="selected" value="">Select :</option>
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <p class="mg-b-10">Status Mesin</p>
+                                        <select class="form-control" name="sample" id="statusMachine">
+                                            <option selected="selected" disabled>Select :</option>
+                                            <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
+                                            <option>Belum Dipreventive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     @if (session('success'))
-                        <div class="alert alert-success">{{session('success')}}</div>
+                        <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
                         <table class="table" id="dataTable" width="100%">
@@ -74,16 +61,16 @@
                             </thead>
                             <tbody>
                                 @foreach ($machines as $machineget)
-                                <tr>
-                                    <td>{{$machineget->invent_number}}</td>
-                                    <td>{{$machineget->machine_name}}</td>
-                                    <td>{{$machineget->machine_type}}</td>
-                                    <td>{{$machineget->machine_brand}}</td>
-                                    <td>{{$machineget->mfg_number}}</td>
-                                    <td>
-                                        <a class="btn btn-primary btn-sm" style="color:white" href="{{route('indexuserinput',$machineget->id)}}"><img style="height: 20px" src="{{asset('assets/icons/edit_white_table.png')}}"></a>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ $machineget->invent_number }}</td>
+                                        <td>{{ $machineget->machine_name }}</td>
+                                        <td>{{ $machineget->machine_type }}</td>
+                                        <td>{{ $machineget->machine_brand }}</td>
+                                        <td>{{ $machineget->mfg_number }}</td>
+                                        <td>
+                                            <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $machineget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -91,9 +78,9 @@
                 </div>
             </div>
         </div>
-    <!-- ============================================================== -->
-    <!-- end data table  -->
-    <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- end data table  -->
+        <!-- ============================================================== -->
     </div>
 @endsection
 
@@ -103,6 +90,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/buttons.bootstrap4.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/select.bootstrap4.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/fixedHeader.bootstrap4.css')}}"> --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
@@ -119,9 +107,20 @@
     <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script>
     <script src="{{asset('assets/vendor/datatables/js/data-table.js')}}"></script>
     <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
+    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable();
-    });
+        $(function() {
+            $(document).ready(function() { //script for search2.js
+            $('.select2').select2({
+                placeholder: 'Select :',
+                searchInputPlaceholder: 'Search'});
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+
     </script>
 @endpush

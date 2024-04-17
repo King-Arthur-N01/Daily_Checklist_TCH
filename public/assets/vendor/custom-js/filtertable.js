@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('filterButton').addEventListener('click', function () {
+    document.getElementById('filterButton2').addEventListener('click', function () {
         filterItems();
     });
 });

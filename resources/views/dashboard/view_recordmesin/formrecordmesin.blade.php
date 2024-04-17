@@ -22,12 +22,32 @@
                             @csrf
                             @method('put')
                             <table class="table table-bordered" width="100%">
-                                <tbody>
+                                <tbody class="table-header">
                                     <tr>
-                                        <th>Machine Number :</th>
-                                        <th>
-                                            <input class="form-control" type="int" name="machine_number" id="machine_number2" value="{{$get_number}}" placeholder="Nomor Mesin" disabled>
-                                        </th>
+                                        <th>No. Invent Mesin :</th>
+                                        <th>###########</th>
+                                        <th>Spec/Tonage :</th>
+                                        <th>###########</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Nama Mesin :</th>
+                                        @foreach ($joinmachine as $getmachine)
+                                        <th>{{$getmachine->get_number}}</th>
+                                        @endforeach
+                                        <th>Buatan :</th>
+                                        <th>###########</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Brand/Merk :</th>
+                                        <th>###########</th>
+                                        <th>Mfg.NO :</th>
+                                        <th>###########</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Model/Type :</th>
+                                        <th>###########</th>
+                                        <th>Install Date :</th>
+                                        <th>###########</th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -43,7 +63,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($machines as $key => $recordsget)
+                                    @foreach ($joinmachine as $key => $recordsget)
                                         <tr>
                                             <td>{{ $recordsget->machine_name }}</td>
                                             <td>{{ $recordsget->name_componencheck }}</td>

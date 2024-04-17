@@ -18,7 +18,7 @@ class MachinerecordController extends Controller
     }
     public function indexmachinerecord($id)
     {
-        $machines = DB::table('machines')
+        $joinmachine = DB::table('machines')
             ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'machines.machine_number as get_number', 'metodechecks.id as metodecheck_id')
             ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
             ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
@@ -26,8 +26,10 @@ class MachinerecordController extends Controller
             ->where('machines.id', '=', $id)
             ->get();
 
+        // $machines = Machine::all($id);
         return view('dashboard.view_recordmesin.formrecordmesin', [
-            'machines' => $machines,
+            'joinmachine' => $joinmachine,
+            // 'machines' => $machines,
             'machine_id' => $id,
             'get_number'
         ]);
