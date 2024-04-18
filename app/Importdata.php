@@ -8,9 +8,9 @@ use App\Parameter;
 use App\Metodecheck;
 class Importdata extends Model
 {
-    public function model(array $row)
+    public function import(array $row)
     {
-        // Example: dividing data into three tables based on some condition
+        // table 1
         if ($row[0] == 'Condition1') {
             return new Componencheck([
                 'id' => $row[0],
@@ -24,12 +24,14 @@ class Importdata extends Model
                 'mfg_number' => $row[8],
                 'install_date' => $row[9]
             ]);
+        // table 2
         }elseif ($row[0] == 'Condition2') {
             return new Parameter([
                 'column1' => $row[1],
                 'column2' => $row[2],
                 // Add more columns as needed
             ]);
+        // table 3
         }else {
             return new Metodecheck([
                 'column1' => $row[1],

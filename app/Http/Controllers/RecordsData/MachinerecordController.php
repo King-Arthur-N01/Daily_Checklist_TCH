@@ -16,20 +16,20 @@ class MachinerecordController extends Controller
         $machines = Machine::all();
         return view('dashboard.view_recordmesin.tablerecordmesin', ['machines' => $machines]);
     }
-    public function indexmachinerecord($id)
+    public function formmachinerecord($id)
     {
         $joinmachine = DB::table('machines')
-            ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'machines.machine_number as get_number', 'metodechecks.id as metodecheck_id')
+            ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*',
+            /*alias for formrecordmesin*/
+            'machines.machine_number as get_number', 'metodechecks.id as metodecheck_id')
             ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
             ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
             ->where('machines.id', '=', $id)
             ->get();
 
-        // $machines = Machine::all($id);
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'joinmachine' => $joinmachine,
-            // 'machines' => $machines,
             'machine_id' => $id,
             'get_number'
         ]);
@@ -60,7 +60,6 @@ class MachinerecordController extends Controller
         $StoreRecords->note = $request->input('note');
         $StoreRecords->id_machine2 = $request->input('id_machine2');
         $StoreRecords->id_user = $getuserid;
-        dd($StoreRecords);
         $StoreRecords->save();
 
         // Get the ID of the newly created record

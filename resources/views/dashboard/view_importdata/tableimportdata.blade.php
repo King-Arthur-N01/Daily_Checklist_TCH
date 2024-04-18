@@ -14,12 +14,13 @@
                     <form action="#" method="post" style="margin-top: 10px">
                         @csrf
                         <div class="table-filter">
-                            <div class="col-4">
+                            <div class="dataTables_filter col-4" id="dataTable_filter">
                                 <p class="mg-b-10">Input Nama Mesin</p>
-                                <select class="form-control select2" name="" id="category-input-machinename">
+                                <input class="form-control" type="search" aria-controls="dataTable"></input>
+                                {{-- <select class="form-control select2" name="" id="category-input-machinename">
                                     <option selected="selected" value="">Select :</option>
                                     <option></option>
-                                </select>
+                                </select> --}}
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Input Nomor Mesin </p>
@@ -69,7 +70,7 @@
                                 <th>Action</th>
                             </thead>
                             <tbody>
-                                {{-- @foreach ($machines as $machineget)
+                                @foreach ($machines as $machineget)
                                     <tr>
                                         <td>{{$machineget->machine_name}}</td>
                                         <td>{{$machineget->name_componencheck}}</td>
@@ -77,14 +78,14 @@
                                         <td>{{$machineget->name_metodecheck}}</td>
                                         <td>
                                             <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                                <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                    <a class="dropdown-item-custom-edit" style="text-align: center" href="{{ route('editmachine', $machineget->id) }}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
-                                                    <a class="dropdown-item-custom-delete" style="text-align: center" href="{{ route('deletemachineresults', $machineget->id) }}" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
-                                                </div>
-                                            </td>
+                                            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
+                                                <a class="dropdown-item-custom-edit" style="text-align: center" href="#"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
+                                                <a class="dropdown-item-custom-delete" style="text-align: center" href="#" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
+                                            </div>
+                                        </td>
                                     </tr>
-                                @endforeach --}}
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

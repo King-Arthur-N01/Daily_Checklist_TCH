@@ -20,7 +20,7 @@
                                 @csrf
                                 <div class="table-filter">
                                     <div class="col-4">
-                                        <p class="mg-b-10">MFG Number Mesin</p>
+                                        <p class="mg-b-10">Nama Mesin</p>
                                         <select class="form-control select2" name="" id="category-input-machinename">
                                             <option selected="selected" value="">Select :</option>
                                             <option></option>
@@ -36,7 +36,7 @@
                                     <div class="col-4">
                                         <p class="mg-b-10">Status Mesin</p>
                                         <select class="form-control" name="sample" id="statusMachine">
-                                            <option selected="selected" disabled>Select :</option>
+                                            <option selected="selected">Select :</option>
                                             <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
                                             <option>Belum Dipreventive</option>
                                         </select>

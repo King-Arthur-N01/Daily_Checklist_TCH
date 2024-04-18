@@ -73,14 +73,14 @@ Route::get('/editmachinedata/{id}','MachineData\ImportdataController@indexeditma
 Route::put('/editmachinedata/{id}','MachineData\ImportdataController@editmachineresult')->name('pusheditmachinedata');
 Route::get('/tablemachinedata','MachineData\ImportdataController@indextableexle')->name('managemachinedata');
 Route::get('/deletemachinedata/{id}','MachineData\ImportdataController@deletemachineresult')->name('deletemachinedata');
-Route::post('/pushfiles', 'MachineData\ImportdataController@uploadData')->name('uploadfile');
+Route::post('/pushfiles', 'MachineData\ImportdataController@uploaddata')->name('uploadfile');
 // impor machine data route end
 
 // input data machine record route
 Route::get('/tablepreventivemachine','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
 Route::post('/tablepreventivemachine/filter','RecordData\MachinerecordController@filter')->name('filtermachinerecord');
 // Route::post('/addpreventivemachine','RecordsData\MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
-Route::get('/addpreventivemachine/{id}','RecordsData\MachinerecordController@indexmachinerecord')->name('indexuserinput');
+Route::get('/addpreventivemachine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
 Route::put('/addpreventivemachine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 // input data machine record route end
 

@@ -21,36 +21,38 @@
                         <form action="{{ route('pushuserinput') }}" id="registerform" method="post">
                             @csrf
                             @method('put')
-                            <table class="table table-bordered" width="100%">
-                                <tbody class="table-header">
+                            <table class="table table-bordered table-header" width="100%">
+                                <tbody>
                                     <tr>
                                         <th>No. Invent Mesin :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->invent_number }}</th>
                                         <th>Spec/Tonage :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->machine_spec }}</th>
                                     </tr>
                                     <tr>
                                         <th>Nama Mesin :</th>
-                                        @foreach ($joinmachine as $getmachine)
-                                        <th>{{$getmachine->get_number}}</th>
-                                        @endforeach
+                                        <th>{{ $joinmachine[0]->machine_name }}</th>
                                         <th>Buatan :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->machine_made }}</th>
                                     </tr>
                                     <tr>
                                         <th>Brand/Merk :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->machine_brand }}</th>
                                         <th>Mfg.NO :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->mfg_number }}</th>
                                     </tr>
                                     <tr>
                                         <th>Model/Type :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->machine_type }}</th>
                                         <th>Install Date :</th>
-                                        <th>###########</th>
+                                        <th>{{ $joinmachine[0]->install_date }}</th>
                                     </tr>
                                 </tbody>
                             </table>
+                            <div>
+                                <a>Machine Number :</a>
+                                <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
+                            </div>
                             <table class="table table-bordered" id="datatables" width="100%">
                                 <thead>
                                     <tr>
@@ -107,9 +109,9 @@
                                 </tbody>
                             </table>
                             <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
                                 <div>
-                                    <textarea class="form-control" type="text" name="note" placeholder="Catatan bila diperlukan!"></textarea>
+                                    <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                                    <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
                                     <input type="hidden" name="id_machine2" value="{{$machine_id}}">
                                 </div>
                             </div>

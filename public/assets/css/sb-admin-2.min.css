@@ -222,7 +222,7 @@ svg {
 }
 
 table {
-    border-collapse: collapse
+    border-collapse: collapse;
 }
 
 caption {
@@ -1779,7 +1779,7 @@ pre code {
 
 .table {
     width: 100%;
-    margin-bottom: 1rem;
+    margin: 0px 0px 10px 0px;
     color: #282828;
 }
 
@@ -1787,6 +1787,7 @@ pre code {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    margin: 0px 0px 15px 0px;
 }
 
 .table-buttons{
@@ -1794,7 +1795,7 @@ pre code {
     background-color: #4e73df;
     color: white;
     padding: 10px 20px;
-    margin: 0px 0px 10px 0px;
+    /* margin: 0px 0px 10px 0px; */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -2162,6 +2163,10 @@ pre code {
     /* display: flex; */
     text-transform: uppercase;
     border: dotted 2px;
+}
+
+.header-input{
+    margin: 0px 0px 15px 0px;
 }
 
 .form-control {
