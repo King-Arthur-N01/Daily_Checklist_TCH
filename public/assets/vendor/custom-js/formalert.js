@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 form.submit(); // Submit the form
             }
         } else {
+            console.log
             console.error("Error messages container not found.");
         }
     });

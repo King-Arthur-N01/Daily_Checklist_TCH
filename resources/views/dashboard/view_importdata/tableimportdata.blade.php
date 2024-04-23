@@ -16,11 +16,7 @@
                         <div class="table-filter">
                             <div class="dataTables_filter col-4" id="dataTable_filter">
                                 <p class="mg-b-10">Input Nama Mesin</p>
-                                <input class="form-control" type="search" aria-controls="dataTable"></input>
-                                {{-- <select class="form-control select2" name="" id="category-input-machinename">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select> --}}
+                                <input class="form-control" id="searchInput" type="search" aria-controls="dataTable" placeholder="Search here"></input>
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Input Nomor Mesin </p>
@@ -124,7 +120,9 @@
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/filtertable2.js')}}"></script>
     <script>
         $(document).ready(function() {
             $('#submitButtonAjax').click(function() {
@@ -161,8 +159,10 @@
 
         filterButton.addEventListener("click", () => {
         if (filterCard.style.display === "none") {
+            $(filterCard).fadeIn(1000);
             filterCard.style.display = "block";
         } else {
+            $(filterCard).fadeOut(1000);
             filterCard.style.display = "none";
         }
         });

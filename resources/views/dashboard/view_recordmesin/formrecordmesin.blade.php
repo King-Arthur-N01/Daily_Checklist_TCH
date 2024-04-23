@@ -14,14 +14,21 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+                    <div id="successMessages">
+                        @if (session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                    </div>
+                    <div id="errorMessages">
+                        @if (session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
+                    </div>
                     <div class="table-responsive">
                         <form action="{{ route('pushuserinput') }}" id="registerform" method="post">
                             @csrf
                             @method('put')
-                            <table class="table table-bordered table-header" width="100%">
+                            <table class="table table-bordered table-header">
                                 <tbody>
                                     <tr>
                                         <th>No. Invent Mesin :</th>
@@ -49,9 +56,15 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div>
-                                <a>Machine Number :</a>
-                                <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
+                            <div class="header-input">
+                                <div class="col-6">
+                                    <a>NO.MESIN :</a>
+                                    <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <a>WAKTU PREVENTIVE :</a>
+                                    <input class="form-control" value="{{ $timenow->format('Y-m-d') }}" readonly>
+                                </div>
                             </div>
                             <table class="table table-bordered" id="datatables" width="100%">
                                 <thead>
@@ -119,13 +132,6 @@
                                 <button type="submit" class="btn btn-space btn-primary">Submit</button>
                             </div>
                         </form>
-                    </div>
-                    <div id="errorMessages">
-                        @if (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>

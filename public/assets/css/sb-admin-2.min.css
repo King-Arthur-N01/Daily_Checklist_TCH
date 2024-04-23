@@ -74,7 +74,7 @@ body {
     line-height: 1.5;
     color: #858796;
     /* text-align: center; */
-    background-color: #fff
+    background-color: #fff;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -2163,9 +2163,12 @@ pre code {
     /* display: flex; */
     text-transform: uppercase;
     border: dotted 2px;
+    /* background: url("../images/bg_paper101.jpeg"); */
+    background-position: center;
 }
 
 .header-input{
+    display: flex;
     margin: 0px 0px 15px 0px;
 }
 

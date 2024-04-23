@@ -36,8 +36,8 @@ class LoginController extends Controller
     return redirect("login")->with('You are not allowed to access');
     }
     public function signout(){
-        Session::flush();
+        Session::destroy();
         Auth::logout();
-    return Redirect('login');
+    return redirect("login");
     }
 }

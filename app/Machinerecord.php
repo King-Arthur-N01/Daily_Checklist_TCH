@@ -11,7 +11,8 @@ class Machinerecord extends Model
         'shift',
         'note',
         'id_machine2',
-        'id_user'
+        'id_user',
+        'create_at'
     ];
     // public static function boot()
     // {

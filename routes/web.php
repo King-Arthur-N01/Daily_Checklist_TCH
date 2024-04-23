@@ -67,11 +67,11 @@ Route::get('/deletemethod/{id}','MachineData\MetodecheckController@deletemethod'
 // metodecheck route end
 
 // import machine data route
-Route::get('/addmachinedata','MachineData\ImportdataController@indextableexle')->name('addmachinedata');
+Route::get('/addmachinedata','MachineData\ImportdataController@indextableimport')->name('addmachinedata');
 Route::post('/addmachinedata','MachineData\ImportdataController@registermachineresult')->name('pushmachinedata');
 Route::get('/editmachinedata/{id}','MachineData\ImportdataController@indexeditmachineresult')->name('editmachinedata');
 Route::put('/editmachinedata/{id}','MachineData\ImportdataController@editmachineresult')->name('pusheditmachinedata');
-Route::get('/tablemachinedata','MachineData\ImportdataController@indextableexle')->name('managemachinedata');
+Route::get('/tablemachinedata','MachineData\ImportdataController@indextableimport')->name('managemachinedata');
 Route::get('/deletemachinedata/{id}','MachineData\ImportdataController@deletemachineresult')->name('deletemachinedata');
 Route::post('/pushfiles', 'MachineData\ImportdataController@uploaddata')->name('uploadfile');
 // impor machine data route end

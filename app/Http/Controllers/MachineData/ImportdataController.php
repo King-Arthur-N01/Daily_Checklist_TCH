@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportdataController extends Controller
 {
-    public function indextableexle()
+    public function indextableimport()
     {
         $machines = DB::table('machines')
         ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')

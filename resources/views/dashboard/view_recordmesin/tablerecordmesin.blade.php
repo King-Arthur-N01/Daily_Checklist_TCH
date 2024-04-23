@@ -51,22 +51,23 @@
                     <div class="table-responsive">
                         <table class="table" id="dataTable" width="100%">
                             <thead>
-                                <th>NO MACHINE</th>
-                                <th>MACHINE NAME</th>
+                                <th>NO MESIN</th>
+                                <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
-                                <th>MFG NUMBER</th>
+                                <th>INVENT NUMBER</th>
                                 {{-- <th>STATUS</th> --}}
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
                                 @foreach ($machines as $machineget)
                                     <tr>
-                                        <td>{{ $machineget->invent_number }}</td>
+                                        <td>{{ $machineget->machine_number }}</td>
                                         <td>{{ $machineget->machine_name }}</td>
                                         <td>{{ $machineget->machine_type }}</td>
                                         <td>{{ $machineget->machine_brand }}</td>
-                                        <td>{{ $machineget->mfg_number }}</td>
+                                        {{-- <td>{{ $machineget->inv_number }}</td> --}}
+                                        <td>{{ $machineget->invent_number }}</td>
                                         <td>
                                             <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $machineget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
                                         </td>
