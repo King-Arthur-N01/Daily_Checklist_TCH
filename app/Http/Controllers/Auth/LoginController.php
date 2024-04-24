@@ -36,11 +36,11 @@ class LoginController extends Controller
     return redirect("login")->with('You are not allowed to access');
     }
     public function signout(){
-        Session::destroy();
+        Session::flush();
         Auth::logout();
     return redirect("login");
     }
     public function blockuser() {
-        return view('dashboard.view_blacklist.internetpositive1');
+        return view('dashboard.view_blacklist.internetpositive2');
     }
 }

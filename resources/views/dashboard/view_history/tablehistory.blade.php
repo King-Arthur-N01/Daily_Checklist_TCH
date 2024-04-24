@@ -61,7 +61,7 @@
                                         <td>{{ $recordsget->machine_name }}</td>
                                         <td>{{ $recordsget->machine_type }}</td>
                                         <td>{{ $recordsget->machine_number }}</td>
-                                        <td>{{ $recordsget->created_at }}</td>
+                                        <td>{{ $recordsget->getcreatedate }}</td>
                                         <td>
                                             <a class="btn btn-primary" href="{{ route('detailhistory', $recordsget->records_id) }}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
                                         </td>

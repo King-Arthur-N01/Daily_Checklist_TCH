@@ -13,7 +13,7 @@ class HistoryrecordsController extends Controller
     public function indextablehistory()
     {
         $joinrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();

@@ -10,6 +10,9 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportdataController extends Controller
 {
+    public function __construct(){
+        $this->middleware('permission:permit', ['only' => ['indextableimport']]);
+    }
     public function indextableimport()
     {
         $machines = DB::table('machines')

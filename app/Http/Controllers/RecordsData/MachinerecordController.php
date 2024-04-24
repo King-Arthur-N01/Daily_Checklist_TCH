@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 class MachinerecordController extends Controller
 {
+    public function __construct(){
+        $this->middleware('permission:#namapermission#', ['only' => ['#namafunction#']]);
+    }
     public function tablemachinerecord()
     {
         $machines = Machine::all();

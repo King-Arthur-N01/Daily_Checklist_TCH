@@ -20,24 +20,33 @@ class PermissionSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'view posts']);
-        Permission::create(['name' => 'create posts']);
-        Permission::create(['name' => 'edit posts']);
-        Permission::create(['name' => 'delete posts']);
-        Permission::create(['name' => 'publish posts']);
-        Permission::create(['name' => 'unpublish posts']);
+        Permission::create(['name' => 'view']);
+        Permission::create(['name' => 'create']);
+        Permission::create(['name' => 'edit']);
+        Permission::create(['name' => 'delete']);
+        Permission::create(['name' => 'approval']);
+        Permission::create(['name' => 'register']);
+        Permission::create(['name' => 'permit']);
+        Permission::create(['name' => 'restric']);
 
         //create roles and assign existing permissions
         $userRole = Role::create(['name' => 'user']);
-        $userRole->givePermissionTo('edit posts');
+        $userRole->givePermissionTo('view');
+        $userRole->givePermissionTo('create');
+
+        $leaderRole = Role::create(['name' => 'leader']);
+        $leaderRole->givePermissionTo('approval');
+        $leaderRole->givePermissionTo('register');
 
         $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo('view posts');
-        $adminRole->givePermissionTo('create posts');
-        $adminRole->givePermissionTo('edit posts');
-        $adminRole->givePermissionTo('delete posts');
-        $adminRole->givePermissionTo('publish posts');
-        $adminRole->givePermissionTo('unpublish posts');
+        $adminRole->givePermissionTo('view');
+        $adminRole->givePermissionTo('create');
+        $adminRole->givePermissionTo('edit');
+        $adminRole->givePermissionTo('delete');
+        $adminRole->givePermissionTo('approval');
+        $adminRole->givePermissionTo('register');
+        $adminRole->givePermissionTo('permit');
+        $adminRole->givePermissionTo('restric');
 
         // create demo users
         $admin = User::create([
@@ -48,9 +57,17 @@ class PermissionSeeder extends Seeder
         ]);
         $admin->assignRole('admin');
 
+        $leader = User::create([
+            'name' => 'Leader',
+            'nik' => '12345',
+            'department' => 'Engginer',
+            'password' => bcrypt('leader123'),
+        ]);
+        $leader->assignRole('leader');
+
         $user = User::create([
             'name' => 'User',
-            'nik' => '12345',
+            'nik' => '11111',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
         ]);

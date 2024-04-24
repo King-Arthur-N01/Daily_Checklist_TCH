@@ -9,7 +9,7 @@ use App\Parameter;
 use App\Metodecheck;
 use Maatwebsite\Excel\Concerns\ToModel;
 
-class Importdata implements ToModel
+class Importdata extends Model
 {
     public function import(array $row)
     {
@@ -27,20 +27,21 @@ class Importdata implements ToModel
                 'mfg_number' => $row[8],
                 'install_date' => $row[9]
             ]);
-        // table 2
-        }elseif ($row[0] == 'Condition2') {
+        }
+        //table 2
+        if ($row[0] == 'Condition2') {
             return new Componencheck([
                 'name_componencheck' => $row[10],
                 // Add more columns as needed
             ]);
         // table 3
-        }elseif ($row[0] == 'Condition3') {
+        }elseif ($row[1] == 'Condition3') {
             return new Parameter([
                 'name_parameter' => $row[11],
                 // Add more columns as needed
             ]);
         // table 4
-        }else {
+        }elseif ($row[2] == 'Condition4') {
             return new Metodecheck([
                 'name_metodecheck' => $row[12],
                 // Add more columns as needed
