@@ -73,7 +73,7 @@ Route::get('/editmachinedata/{id}','MachineData\ImportdataController@indexeditma
 Route::put('/editmachinedata/{id}','MachineData\ImportdataController@editmachineresult')->name('pusheditmachinedata');
 Route::get('/tablemachinedata','MachineData\ImportdataController@indextableimport')->name('managemachinedata');
 Route::get('/deletemachinedata/{id}','MachineData\ImportdataController@deletemachineresult')->name('deletemachinedata');
-Route::post('/pushfiles', 'MachineData\ImportdataController@uploaddata')->name('uploadfile');
+Route::post('/pushfiles', 'MachineData\ImportdataController@importdata')->name('uploadfile');
 // impor machine data route end
 
 // input data machine record route
@@ -88,3 +88,6 @@ Route::put('/addpreventivemachine','RecordsData\MachinerecordController@register
 Route::get('/tablehistory','RecordsData\HistoryrecordsController@indextablehistory')->name('historymachine');
 Route::get('/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
 // record data machine route end
+
+
+Route::get('/blacklist','Auth\LoginController@blockuser');

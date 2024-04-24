@@ -24,16 +24,52 @@ class ImportdataController extends Controller
             'machines' => $machines
         ]);
     }
-
-    // public function import(Request $request)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|mimes:xlsx,xls,csv'
-    //     ]);
-    //     $file = $request->file('file');
-    //     Excel::import(new Importdata, $file);
-    //     return redirect()->back()->with('success', 'Data imported successfully.');
-    // }
+    public function downloadExcel(Request $request, $type)
+	{
+		$data = Item::get()->toArray();
+		return Excel::create('itsolutionstuff_example', function($excel) use ($data) {
+			$excel->sheet('mySheet', function($sheet) use ($data)
+	        {
+				$sheet->fromArray($data);
+	        });
+		})->download($type);
+	}
+	public function importexcel(Request $request)
+	{
+		if($request->hasFile('file')){
+			$path = $request->file('file')->getRealPath();
+			$data = Excel::load($path, function($reader) {})->get();
+			if(!empty($data) && $data->count()){
+				foreach ($data->toArray() as $key => $value) {
+					if(!empty($value)){
+						foreach ($value as $v) {		
+							$insert[] = ['title' => $v['title'], 'description' => $v['description']];
+						}
+					}
+				}
+				if(!empty($insert)){
+                    Excel::insert($insert);
+					return back()->with('success','Insert Record successfully.');
+				}
+			}
+		}
+		return back()->with('error','Please Check your file, Something is wrong there.');
+	}
+    public function importdata(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+        $file = $request->file('file');
+        try {
+            Excel::import(new Importdata, $file->path());
+            return redirect()->back()->with('success', 'Data imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error importing data: '. $e->getMessage());
+        }
+    }
+    
+    
     // public function uploaddata(Request $request)
     // {
     //     date_default_timezone_set('Asia/Jakarta');
@@ -50,22 +86,20 @@ class ImportdataController extends Controller
     //     }
     //     return response()->json(['error' => 'No file selected.']);
     // }
-    public function uploaddata(Request $request)
-    {
-        date_default_timezone_set('Asia/Jakarta');
-
-        if (!$request->hasFile('file')) {
-            return response()->json(['error' => 'No file selected.']);
-        }
-        $file = $request->file('file');
-        $filename = date("Y-m-d H.i.s") . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('assets/uploads/'), $filename);
-        try {
-            // Import the data from the uploaded file
-            Excel::import(new Importdata, public_path('assets/uploads/' . $filename));
-            return response()->json(['success' => 'File uploaded successfully.']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error importing file: ' . $e->getMessage()]);
-        }
-    }
+    // public function uploaddata(Request $request)
+    // {
+    //     if (!$request->hasFile('file')) {
+    //         return response()->json(['error' => 'No file selected.']);
+    //     }
+    //     $file = $request->file('file');
+    //     $filename = date("Y-m-d H.i.s") . '.' . $file->getClientOriginalExtension();
+    //     $file->move(public_path('assets/uploads/'), $filename);
+    //     try {
+    //         // Import the data from the uploaded file
+    //         Excel::import(new Importdata, public_path('assets/uploads/' . $filename));
+    //         return response()->json(['success' => 'File uploaded successfully.']);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error importing file: ' . $e->getMessage()]);
+    //     }
+    // }
 }

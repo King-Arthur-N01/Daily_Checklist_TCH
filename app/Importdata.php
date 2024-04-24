@@ -3,16 +3,19 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Machines;
 use App\Componencheck;
 use App\Parameter;
 use App\Metodecheck;
-class Importdata extends Model
+use Maatwebsite\Excel\Concerns\ToModel;
+
+class Importdata implements ToModel
 {
     public function import(array $row)
     {
         // table 1
         if ($row[0] == 'Condition1') {
-            return new Componencheck([
+            return new Machines([
                 'id' => $row[0],
                 'invent_number' => $row[1],
                 'machine_number' => $row[2],
@@ -26,16 +29,20 @@ class Importdata extends Model
             ]);
         // table 2
         }elseif ($row[0] == 'Condition2') {
-            return new Parameter([
-                'column1' => $row[1],
-                'column2' => $row[2],
+            return new Componencheck([
+                'name_componencheck' => $row[10],
                 // Add more columns as needed
             ]);
         // table 3
+        }elseif ($row[0] == 'Condition3') {
+            return new Parameter([
+                'name_parameter' => $row[11],
+                // Add more columns as needed
+            ]);
+        // table 4
         }else {
             return new Metodecheck([
-                'column1' => $row[1],
-                'column2' => $row[2],
+                'name_metodecheck' => $row[12],
                 // Add more columns as needed
             ]);
         }

@@ -40,4 +40,7 @@ class LoginController extends Controller
         Auth::logout();
     return redirect("login");
     }
+    public function blockuser() {
+        return view('dashboard.view_blacklist.internetpositive1');
+    }
 }
