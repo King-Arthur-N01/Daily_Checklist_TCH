@@ -42,19 +42,6 @@ class MachinerecordController extends Controller
             'get_number'
         ]);
     }
-    // public function filter(Request $request)
-    // {
-    //     $query = Machinerecord::query();
-
-    //     if ($request->has('category')) {
-    //         $query->where('category', $request->category);
-    //     }
-
-    //     // Add more filters as needed...
-
-    //     $items = $query->get();
-    //     return response()->json($items);
-    // }
     public function registermachinerecord(Request $request)
     {
         $getuserid = Auth()->user()->id;
@@ -69,14 +56,14 @@ class MachinerecordController extends Controller
             if ($currenttime->diffInHours($lastsubmit) < 24) {
                 return redirect()->back()->with('error', 'You can submit the form again after 24 hours.');
             }
-        }else {
-            $StoreRecords = new Machinerecord();
-            $StoreRecords->machine_number2 = $request->input('machine_number2');
-            $StoreRecords->shift = $request->input('shift');
-            $StoreRecords->note = $request->input('note');
-            $StoreRecords->id_machine2 = $request->input('id_machine2');
-            $StoreRecords->id_user = $getuserid;
-            $StoreRecords->save();
+            }else {
+                $StoreRecords = new Machinerecord();
+                $StoreRecords->machine_number2 = $request->input('machine_number2');
+                $StoreRecords->shift = $request->input('shift');
+                $StoreRecords->note = $request->input('note');
+                $StoreRecords->id_machine2 = $request->input('id_machine2');
+                $StoreRecords->id_user = $getuserid;
+                $StoreRecords->save();
 
             // Get the ID of the newly created record
             $getrecordid = Machinerecord::latest('id')->first()->id;
@@ -94,9 +81,15 @@ class MachinerecordController extends Controller
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
-    public function edit(Machinerecord $machinerecord)
+    public function approve1machinerecord()
     {
-        //
+        $joinapprove1 = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate')
+            ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->orderBy('machinerecords.id', 'asc')
+            ->get();
+
+        return view('dashboard.view_recordmesin.tablekoreksi', ['joinapprove1' => $joinapprove1]);
     }
     public function destroy(Machinerecord $machinerecord)
     {

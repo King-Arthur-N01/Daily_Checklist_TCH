@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Table Preventive Mesin')
+@section('title', 'Table koreksi preventive')
 
 @section('content')
     <div class="row">
@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Table Input Checklist Mesin</h1>
+            <h1 class="h3 mb-2 text-gray-800">Table Koreksi Checklist Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div>
-                            <form action="{{ route('filtermachinerecord') }}" method="post">
+                            <form action="#" method="post">
                                 @csrf
                                 <div class="table-filter">
                                     <div class="col-4">
@@ -37,7 +37,7 @@
                                         <p class="mg-b-10">Status Mesin</p>
                                         <select class="form-control" name="sample" id="statusMachine">
                                             <option selected="selected">Select :</option>
-                                            <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
+                                            <option>Sudah Dipreventive</option>
                                             <option>Belum Dipreventive</option>
                                         </select>
                                     </div>
@@ -51,25 +51,24 @@
                     <div class="table-responsive">
                         <table class="table" id="dataTable" width="100%">
                             <thead>
-                                <th>NO MESIN</th>
+                                <th>NO PREVENTIVE</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
                                 <th>INVENT NUMBER</th>
-                                {{-- <th>STATUS</th> --}}
-                                <th>ACTION</th>
+                                <th>WAKTU PREVENTIVE</th>
                             </thead>
                             <tbody>
-                                @foreach ($machines as $machineget)
+                                @foreach ($joinapprove1 as $approval1)
                                     <tr>
-                                        <td>{{ $machineget->machine_number }}</td>
-                                        <td>{{ $machineget->machine_name }}</td>
-                                        <td>{{ $machineget->machine_type }}</td>
-                                        <td>{{ $machineget->machine_brand }}</td>
-                                        {{-- <td>{{ $machineget->inv_number }}</td> --}}
-                                        <td>{{ $machineget->invent_number }}</td>
+                                        <td>{{ $approval1->records_id }}</td>
+                                        <td>{{ $approval1->machine_name }}</td>
+                                        <td>{{ $approval1->machine_type }}</td>
+                                        <td>{{ $approval1->machine_brand }}</td>
+                                        <td>{{ $approval1->invent_number }}</td>
+                                        <td>{{ $approval1->getcreatedate }}</td>
                                         <td>
-                                            <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $machineget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                            <a class="btn btn-primary btn-sm" style="color:white" href="##"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
                                         </td>
                                     </tr>
                                 @endforeach

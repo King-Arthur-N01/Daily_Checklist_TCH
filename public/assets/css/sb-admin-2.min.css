@@ -415,7 +415,7 @@ h4 {
 
 .h5,
 h5 {
-    font-size: 1.25rem
+    font-size: 1.25rem;
 }
 
 .h6,
@@ -2186,6 +2186,10 @@ pre code {
     border: 1px solid #d1d3e2;
     border-radius: .35rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
+}
+
+.form-custom{
+    margin: 0px 0px 1px 0px;
 }
 
 .form_checkbox {
@@ -5100,7 +5104,7 @@ input[type=submit].btn-block {
 }
 
 .image-card-home {
-    height: 50px;
+    height: 55px;
 }
 
 .image-card-mini {
@@ -5167,10 +5171,17 @@ input[type=submit].btn-block {
 }
 
 .card-title {
-    margin-bottom: .75rem
+    /* font-size: small; */
+    /* margin-bottom: .75rem; */
 }
 
-.card-title-custom {}
+.center{
+    
+}
+
+.card-footer-item-custom{
+    margin: 2px 0px 2px 0px;
+}
 
 .card-title-head {}
 

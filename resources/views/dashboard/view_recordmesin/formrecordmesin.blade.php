@@ -121,12 +121,26 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="form-group">
-                                <div>
-                                    <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
-                                    <input type="hidden" name="id_machine2" value="{{$machine_id}}">
-                                </div>
+                            <div class="form-custom">
+                                <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                                <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
+                                <input type="hidden" name="id_machine2" value="{{$machine_id}}">
+                            </div>
+                            <div class="form-custom">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Disetujui oleh :</th>   
+                                            <th>Dikoresi oleh :</th>
+                                            <th>Dibuat oleh :</th>
+                                        </tr>
+                                        <tr>
+                                            <td>adsad</td>
+                                            <td>wfqfqfqf</td>
+                                            <td>painf0pa</td>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                             <div class="dt-buttons">
                                 <button type="submit" class="btn btn-space btn-primary">Submit</button>

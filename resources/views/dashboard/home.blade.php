@@ -3,39 +3,39 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Input Checklist</h5>
+                        <h5 class="card-title-head">Input Checklist Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('indexmachinerecord')}}">Input Preventive Harian Mesin &nbsp; <i class="fas fa-tasks"></i></a>
+                        <a class="card-title" href="{{route('indexmachinerecord')}}">Input Preventive Harian &nbsp; <i class="fas fa-tasks"></i></a>
                     </div>
                 </div>
             </div>
         </div>
         @can('register', Permission::class)
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Tambah Checklist</h5>
+                        <h5 class="card-title-head">Tambah Checklist Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/add_clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('managemachinedata')}}">Tambah Preventive Harian Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('managemachinedata')}}">Tambah Form Preventive &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
         </div>
         @endcan
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -45,14 +45,29 @@
                         <img class="image-card-home" src="{{asset('assets/icons/history_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Preventive &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body-custom">
+                    <div class="col-7">
+                        <h5 class="card-title-head">Approval Preventive Mesin</h5>
+                    </div>
+                    <div class="col-5" style="text-align: right">
+                        <img class="image-card-home" src="{{asset('assets/icons/approval_home.png')}}">
+                    </div>
+                    <div class="card-footer-item-custom col-12">
+                        <a class="card-title" href="#">Lihat Pending Approval &nbsp; <i class="fas fa-indent"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -67,7 +82,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -77,12 +92,12 @@
                         <img class="image-card-home" src="{{asset('assets/icons/inspection_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('managecomponencheck')}}">Tambah Componen Check &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('approve1machinerecord')}}">Tambah Componen Check &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6 mb-4">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -97,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6 mb-4">
+        {{-- <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -111,7 +126,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 

@@ -78,8 +78,8 @@ Route::post('/pushfiles', 'MachineData\ImportdataController@importdata')->name('
 
 // input data machine record route
 Route::get('/tablepreventivemachine','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
+Route::get('/tablecorrectedmachine','RecordsData\MachinerecordController@approve1machinerecord')->name('approve1machinerecord');
 Route::post('/tablepreventivemachine/filter','RecordData\MachinerecordController@filter')->name('filtermachinerecord');
-// Route::post('/addpreventivemachine','RecordsData\MachinerecordController@registerpreventivemachine')->name('pushpreventivemachine');
 Route::get('/addpreventivemachine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
 Route::put('/addpreventivemachine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 // input data machine record route end

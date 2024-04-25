@@ -100,7 +100,6 @@ class MachineController extends Controller
             'mfg_number' => 'required',
             'install_date'
         ]);
-        dd($request);
         $machines = Machine::find($id);
         $machines->update($request->all());
         // $machines->machine_code = $currentvalue;
