@@ -59,16 +59,16 @@
                                 <th>WAKTU PREVENTIVE</th>
                             </thead>
                             <tbody>
-                                @foreach ($joinapprove1 as $approval1)
+                                @foreach ($joindata as $getdata)
                                     <tr>
-                                        <td>{{ $approval1->records_id }}</td>
-                                        <td>{{ $approval1->machine_name }}</td>
-                                        <td>{{ $approval1->machine_type }}</td>
-                                        <td>{{ $approval1->machine_brand }}</td>
-                                        <td>{{ $approval1->invent_number }}</td>
-                                        <td>{{ $approval1->getcreatedate }}</td>
+                                        <td>{{ $getdata->records_id }}</td>
+                                        <td>{{ $getdata->machine_name }}</td>
+                                        <td>{{ $getdata->machine_type }}</td>
+                                        <td>{{ $getdata->machine_brand }}</td>
+                                        <td>{{ $getdata->invent_number }}</td>
+                                        <td>{{ $getdata->getcreatedate }}</td>
                                         <td>
-                                            <a class="btn btn-primary btn-sm" style="color:white" href="##"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                            <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -82,38 +82,111 @@
         <!-- end data table  -->
         <!-- ============================================================== -->
     </div>
+
+    <!-- Extra Large Modal -->
+    <div class="modal fade" id="ExtralargeModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Extra Large Modal</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        {{-- <table class="table table-bordered table-header" width="100%">
+                            <tbody>
+                                <tr>
+                                    <th>No. Invent Mesin :</th>
+                                    <th>{{ $detailrecords[0]->invent_number }}</th>
+                                    <th>Spec/Tonage :</th>
+                                    <th>{{ $detailrecords[0]->machine_spec }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Nama Mesin :</th>
+                                    <th>{{ $detailrecords[0]->machine_name }}</th>
+                                    <th>Buatan :</th>
+                                    <th>{{ $detailrecords[0]->machine_made }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Brand/Merk :</th>
+                                    <th>{{ $detailrecords[0]->machine_brand }}</th>
+                                    <th>Mfg.NO :</th>
+                                    <th>{{ $detailrecords[0]->mfg_number }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Model/Type :</th>
+                                    <th>{{ $detailrecords[0]->machine_type }}</th>
+                                    <th>Install Date :</th>
+                                    <th>{{ $detailrecords[0]->install_date }}</th>
+                                </tr>
+                                <tr>
+                                    <th>PIC :</th>
+                                    <th>{{ $historyrecords[0]->name }}</th>
+                                    <th>Waktu Preventive :</th>
+                                    <th>{{ $detailrecords[0]->created_at }}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="header-input">
+                            <a>Machine Number :</a>
+                            <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $detailrecords[0]->machine_number2 }}" placeholder="Nomor Mesin" readonly>
+                        </div> --}}
+                        <table class="table table-bordered" id="datatables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Nama Mesin</th>
+                                    <th>Bagian Yang Dicheck</th>
+                                    <th>Standart/Parameter</th>
+                                    <th>Metode Pengecekan</th>
+                                    <th>Action</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($combinedata as $row)
+                                <tr>
+                                    <td>{{ $row['machine_name'] }}</td>
+                                    <td>{{ $row['name_componencheck'] }}</td>
+                                    <td>{{ $row['name_parameter'] }}</td>
+                                    <td>{{ $row['name_metodecheck'] }}</td>
+                                    <td>{{ $row['operator_action'] }}</td>
+                                    <td>{{ $row['result'] }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <div>
+                                <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                                <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>#</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- End Extra Large Modal-->
 @endsection
 
 @push('style')
-    {{-- <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/jquery.dataTables.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/dataTables.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/buttons.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/select.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/fixedHeader.bootstrap4.css')}}"> --}}
+
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
-    {{-- <script src="{{asset('assets/vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/ajax/jszip.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/ajax/vfs_fonts.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.html5.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.print.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.colVis.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.rowGroup.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.select.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.fixedHeader.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/data-table.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
+
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
         $(function() {
             $(document).ready(function() { //script for search2.js
-            $('.select2').select2({
-                placeholder: 'Select :',
-                searchInputPlaceholder: 'Search'});
+                $('.select2').select2({
+                    placeholder: 'Select :',
+                    searchInputPlaceholder: 'Search'
+                });
             });
         });
     </script>
@@ -121,6 +194,40 @@
         $(document).ready(function() {
             $('#dataTable').DataTable();
         });
-
+    </script>
+    <script>
+    $(document).ready(function() {
+        $('#ExtralargeModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('fetchdatarecord') }}',
+                data: { id: id },
+                success: function(data) {
+                    var html = '';
+                    html += '<table class="table table-bordered">';
+                    html += '<tr><th>No. Invent Mesin :</th><td>' + data.detailrecords[0].invent_number + '</td></tr>';
+                    html += '<tr><th>Nama Mesin :</th><td>' + data.detailrecords[0].machine_name + '</td></tr>';
+                    html += '<tr><th>Spec/Tonage :</th><td>' + data.detailrecords[0].machine_spec + '</td></tr>';
+                    html += '</table>';
+                    html += '<h4>History Records</h4>';
+                    html += '<table class="table table-bordered">';
+                    $.each(data.combinedata, function(index, row) {
+                        html += '<tr>';
+                        html += '<td>' + row.machine_name + '</td>';
+                        html += '<td>' + row.name_componencheck + '</td>';
+                        html += '<td>' + row.name_parameter + '</td>';
+                        html += '<td>' + row.name_metodecheck + '</td>';
+                        html += '<td>' + row.operator_action + '</td>';
+                        html += '<td>' + row.result + '</td>';
+                        html += '</tr>';
+                    });
+                    html += '</table>';
+                    $('.modal-body').html(html);
+                }
+            });
+        });
+    });
     </script>
 @endpush

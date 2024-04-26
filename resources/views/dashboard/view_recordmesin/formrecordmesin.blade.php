@@ -130,14 +130,14 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Disetujui oleh :</th>   
-                                            <th>Dikoresi oleh :</th>
+                                            <th>Disetujui oleh :</th>
+                                            <th>Dikoreksi oleh :</th>
                                             <th>Dibuat oleh :</th>
                                         </tr>
                                         <tr>
-                                            <td>adsad</td>
-                                            <td>wfqfqfqf</td>
-                                            <td>painf0pa</td>
+                                            <td>Dummy data</td>
+                                            <td>Dummy data</td>
+                                            <td>Dummy data</td>
                                         </tr>
                                     </thead>
                                 </table>

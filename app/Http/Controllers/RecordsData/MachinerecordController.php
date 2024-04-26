@@ -80,16 +80,49 @@ class MachinerecordController extends Controller
         }
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
-
     public function approve1machinerecord()
     {
-        $joinapprove1 = DB::table('machinerecords')
+        $joindata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
 
-        return view('dashboard.view_recordmesin.tablekoreksi', ['joinapprove1' => $joinapprove1]);
+        $combinedata = $this->fetchdatarecord();
+        return view('dashboard.view_recordmesin.tablekoreksi', ['joindata' => $joindata,'combinedata' => $combinedata]);
+    }
+    public function fetchdatarecord()
+    {
+        $detailrecords = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
+            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+            ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+            ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+            ->get('machinerecords.id');
+
+        $historyrecords = DB::table('machinerecords')
+            ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'historyrecords.id_metodecheck as get_checks')
+            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
+            ->leftJoin('users', 'machinerecords.id_user', '=' ,'users.id')
+            ->get('mechinerecords.id');
+
+        $combinedata = [];
+        foreach ($detailrecords as $detail){
+            foreach ($historyrecords as $history){
+                if ($detail->checks_id == $history->get_checks){
+                    $combinedata[] = [
+                        'machine_name' => $detail->machine_name,
+                        'name_componencheck' => $detail->name_componencheck,
+                        'name_parameter' => $detail->name_parameter,
+                        'name_metodecheck' => $detail->name_metodecheck,
+                        'operator_action' => $history->operator_action,
+                        'result' => $history->result,
+                    ];
+                }
+            }
+        }
+        return $combinedata;
     }
     public function destroy(Machinerecord $machinerecord)
     {

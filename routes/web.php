@@ -77,11 +77,12 @@ Route::post('/pushfiles', 'MachineData\ImportdataController@importdata')->name('
 // impor machine data route end
 
 // input data machine record route
-Route::get('/tablepreventivemachine','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
-Route::get('/tablecorrectedmachine','RecordsData\MachinerecordController@approve1machinerecord')->name('approve1machinerecord');
-Route::post('/tablepreventivemachine/filter','RecordData\MachinerecordController@filter')->name('filtermachinerecord');
-Route::get('/addpreventivemachine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
-Route::put('/addpreventivemachine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
+Route::get('/tablepreventive','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
+Route::get('/machinerecord/approval1','RecordsData\MachinerecordController@approve1machinerecord')->name('approve1machinerecord');
+Route::get('/machinerecord/approval2','RecordsData\MachinerecordController@approve2machinerecord')->name('approve2machinerecord');
+Route::get('/machinerecord/fetch-data', 'RecordsData\MachinerecordController@fetchdatarecord')->name('fetchdatarecord');
+Route::get('/addpreventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
+Route::put('/addpreventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 // input data machine record route end
 
 // record data machine route

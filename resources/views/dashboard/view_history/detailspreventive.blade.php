@@ -77,11 +77,25 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="form-group">
-                            <div>
-                                <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
-                                <textarea class="form-control" id="input_note" type="text" value="{{ $detailrecords[0]->note }} "rows="6" cols="50" readonly>{{ $detailrecords[0]->note }}</textarea>
-                            </div>
+                        <div class="form-custom">
+                            <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                            <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>{{ $detailrecords[0]->note }}</textarea>
+                        </div>
+                        <div class="form-custom">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Disetujui oleh :</th>
+                                        <th>Dikoreksi oleh :</th>
+                                        <th>Dibuat oleh :</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Dummy data</td>
+                                        <td>Dummy data</td>
+                                        <td>Dummy data</td>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
                     </div>
                 </div>

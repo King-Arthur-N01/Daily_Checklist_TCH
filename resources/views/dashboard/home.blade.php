@@ -56,18 +56,33 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
+                        <h5 class="card-title-head">Checking Preventive Mesin</h5>
+                    </div>
+                    <div class="col-5" style="text-align: right">
+                        <img class="image-card-home" src="{{asset('assets/icons/checking_home.png')}}">
+                    </div>
+                    <div class="card-footer-item-custom col-12">
+                        <a class="card-title" href="{{route('approve1machinerecord')}}">Lihat Pending Check &nbsp; <i class="fas fa-indent"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body-custom">
+                    <div class="col-7">
                         <h5 class="card-title-head">Approval Preventive Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/approval_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="#">Lihat Pending Approval &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('approve2machinerecord')}}">Lihat Pending Approval &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-4 mb-4">
+        {{-- <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -111,7 +126,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         {{-- <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
