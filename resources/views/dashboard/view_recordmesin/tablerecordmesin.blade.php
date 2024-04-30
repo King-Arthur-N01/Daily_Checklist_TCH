@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div>
-                            <form action="{{ route('filtermachinerecord') }}" method="post">
+                            <form  method="post">
                                 @csrf
                                 <div class="table-filter">
                                     <div class="col-4">

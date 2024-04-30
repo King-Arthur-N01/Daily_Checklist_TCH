@@ -14,6 +14,7 @@ class Machinerecord extends Model
         'create_by',
         'corrected_by',
         'approve_by',
+        'record_time',
         'id_user',
         'create_at'
     ];

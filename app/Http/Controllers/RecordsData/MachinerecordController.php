@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Machine;
 use App\Machinerecord;
 use App\Historyrecords;
+use Illuminate\Broadcasting\Broadcasters\NullBroadcaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,25 +46,48 @@ class MachinerecordController extends Controller
     public function registermachinerecord(Request $request)
     {
         $getuserid = Auth()->user()->id;
-        // $getmachineid = Machine::where('id', $request->input('machine_number2'))->value('machine_number');
-        $lastsubmission = Machinerecord::where('id_user', $getuserid)->latest()->first();
+        $getmachineid = ($request->input('id_machine2'));
+        // Check the table to see if data has been filled in before
+        $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('record_time');
 
-        if ($lastsubmission) {
+        if ($lastsubmissiontime){
+            $lastsubmit = Carbon::parse($lastsubmissiontime);
             $currenttime = Carbon::now();
-            $lastsubmit = Carbon::parse($lastsubmission->create_at);
-
-            // Check if 24 hours have passed since the last submission
-            if ($currenttime->diffInHours($lastsubmit) < 24) {
+            if ($currenttime->diffInHours($lastsubmit) < 24 ){
                 return redirect()->back()->with('error', 'You can submit the form again after 24 hours.');
             }
-            }else {
+            else{
                 $StoreRecords = new Machinerecord();
                 $StoreRecords->machine_number2 = $request->input('machine_number2');
                 $StoreRecords->shift = $request->input('shift');
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine2 = $request->input('id_machine2');
+                $StoreRecords->record_time = $request->input('record_time');
                 $StoreRecords->id_user = $getuserid;
                 $StoreRecords->save();
+
+                // Get the ID of the newly created record
+                $getrecordid = Machinerecord::latest('id')->first()->id;
+
+                $metodecheck_id = $request->input('metodecheck_id', []);
+                foreach ($metodecheck_id as $key => $test) {
+                    $StoreHistory = new Historyrecords();
+                    $StoreHistory->id_metodecheck = $test;
+                    $StoreHistory->operator_action = $request->input('operator_action')[$key];
+                    $StoreHistory->result = $request->input('result')[$key];
+                    $StoreHistory->id_machinerecord = $getrecordid;
+                    $StoreHistory->save();
+                }
+            }
+        }elseif(!$lastsubmissiontime){
+            $StoreRecords = new Machinerecord();
+            $StoreRecords->machine_number2 = $request->input('machine_number2');
+            $StoreRecords->shift = $request->input('shift');
+            $StoreRecords->note = $request->input('note');
+            $StoreRecords->id_machine2 = $request->input('id_machine2');
+            $StoreRecords->record_time = $request->input('record_time');
+            $StoreRecords->id_user = $getuserid;
+            $StoreRecords->save();
 
             // Get the ID of the newly created record
             $getrecordid = Machinerecord::latest('id')->first()->id;
@@ -80,10 +104,15 @@ class MachinerecordController extends Controller
         }
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
+
+    // <<<============================================================================================>>>
+    // <<<===============================batas approval machine records===============================>>>
+    // <<<============================================================================================>>>
+
     public function approve1machinerecord()
     {
         $joindata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate', 'machinerecords.note as getnote')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
@@ -124,6 +153,10 @@ class MachinerecordController extends Controller
         }
         return $combinedata;
     }
+
+    // <<<============================================================================================>>>
+    // <<<=============================batas approval machine records end=============================>>>
+    // <<<============================================================================================>>>
     public function destroy(Machinerecord $machinerecord)
     {
         //

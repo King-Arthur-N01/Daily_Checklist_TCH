@@ -12,36 +12,6 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
-    // <<<============================================================================================>>>
-    // <<<====================================batas machine result====================================>>>
-    // <<<============================================================================================>>>
-    public function indextablemachineresult(){
-        $machines = DB::table('machines')
-        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
-        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-        ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-        ->orderBy('machines.id', 'asc')
-        ->get();
-        return view('dashboard.view_hasilmesin.tablemesinresult', ['machines' => $machines]);
-    }
-    public function indexregistermachineresult(){
-        $machines = Machine::all('machine_name', 'id');
-        $componenchecks = Componencheck::all('name_componencheck', 'id');
-        $parameters = Parameter::all('name_parameter', 'id');
-        $metodechecks = Metodecheck::all('name_metodecheck', 'id');
-
-        return view('dashboard.view_hasilmesin.addmesinresult',[
-            'machines' => $machines,
-            'componenchecks' => $componenchecks,
-            'parameters' => $parameters,
-            'metodechecks' => $metodechecks
-        ]);
-    }
-    // <<<============================================================================================>>>
-    // <<<==================================batas machine result end==================================>>>
-    // <<<============================================================================================>>>
-
     public function indextablemachine()
     {
         $machines=Machine::get();
