@@ -51,24 +51,27 @@
                     <div class="table-responsive">
                         <table class="table" id="dataTable" width="100%">
                             <thead>
-                                <th>NO PREVENTIVE</th>
+                                <th>CHECKPOINT NO.</th>
+                                <th>SHIFT</th>
+                                <th>PIC</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
-                                <th>INVENT NUMBER</th>
                                 <th>WAKTU PREVENTIVE</th>
+                                <th>ACTION</th>
                             </thead>
                             <tbody>
-                                @foreach ($joindata as $getdata)
+                                @foreach ($joindata as $getrecord)
                                     <tr>
-                                        <td>{{ $getdata->records_id }}</td>
-                                        <td>{{ $getdata->machine_name }}</td>
-                                        <td>{{ $getdata->machine_type }}</td>
-                                        <td>{{ $getdata->machine_brand }}</td>
-                                        <td>{{ $getdata->invent_number }}</td>
-                                        <td>{{ $getdata->getcreatedate }}</td>
+                                        <td>{{ $getrecord->records_id }}</td>
+                                        <td>{{ $getrecord->shift }} </td>
+                                        <td>{{ $getrecord->getpic }}</td>
+                                        <td>{{ $getrecord->machine_name }}</td>
+                                        <td>{{ $getrecord->machine_type }}</td>
+                                        <td>{{ $getrecord->machine_brand }}</td>
+                                        <td>{{ $getrecord->record_time }}</td>
                                         <td>
-                                            <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                            <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $getrecord->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -92,76 +95,7 @@
                     <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        {{-- <table class="table table-bordered table-header" width="100%">
-                            <tbody>
-                                <tr>
-                                    <th>No. Invent Mesin :</th>
-                                    <th>{{ $detailrecords[0]->invent_number }}</th>
-                                    <th>Spec/Tonage :</th>
-                                    <th>{{ $detailrecords[0]->machine_spec }}</th>
-                                </tr>
-                                <tr>
-                                    <th>Nama Mesin :</th>
-                                    <th>{{ $detailrecords[0]->machine_name }}</th>
-                                    <th>Buatan :</th>
-                                    <th>{{ $detailrecords[0]->machine_made }}</th>
-                                </tr>
-                                <tr>
-                                    <th>Brand/Merk :</th>
-                                    <th>{{ $detailrecords[0]->machine_brand }}</th>
-                                    <th>Mfg.NO :</th>
-                                    <th>{{ $detailrecords[0]->mfg_number }}</th>
-                                </tr>
-                                <tr>
-                                    <th>Model/Type :</th>
-                                    <th>{{ $detailrecords[0]->machine_type }}</th>
-                                    <th>Install Date :</th>
-                                    <th>{{ $detailrecords[0]->install_date }}</th>
-                                </tr>
-                                <tr>
-                                    <th>PIC :</th>
-                                    <th>{{ $historyrecords[0]->name }}</th>
-                                    <th>Waktu Preventive :</th>
-                                    <th>{{ $detailrecords[0]->created_at }}</th>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="header-input">
-                            <a>Machine Number :</a>
-                            <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $detailrecords[0]->machine_number2 }}" placeholder="Nomor Mesin" readonly>
-                        </div> --}}
-                        <table class="table table-bordered" id="datatables" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Nama Mesin</th>
-                                    <th>Bagian Yang Dicheck</th>
-                                    <th>Standart/Parameter</th>
-                                    <th>Metode Pengecekan</th>
-                                    <th>Action</th>
-                                    <th>Result</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($combinedata as $row)
-                                <tr>
-                                    <td>{{ $row['machine_name'] }}</td>
-                                    <td>{{ $row['name_componencheck'] }}</td>
-                                    <td>{{ $row['name_parameter'] }}</td>
-                                    <td>{{ $row['name_metodecheck'] }}</td>
-                                    <td>{{ $row['operator_action'] }}</td>
-                                    <td>{{ $row['result'] }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        <div class="form-group">
-                            <div>
-                                <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
-                                <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>#</textarea>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="modal-data"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -169,7 +103,8 @@
                 </div>
             </div>
         </div>
-    </div><!-- End Extra Large Modal-->
+    </div>
+    <!-- End Extra Large Modal-->
 @endsection
 
 @push('style')
@@ -202,8 +137,7 @@
             var id = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route('fetchdatarecord') }}',
-                data: { id: id },
+                url: '{{ route('fetchdatarecord', ':id') }}'.replace(':id', id),
                 success: function(data) {
                     var html = '';
                     html += '<table class="table table-bordered">';
@@ -213,6 +147,16 @@
                     html += '</table>';
                     html += '<h4>History Records</h4>';
                     html += '<table class="table table-bordered">';
+                    html += '<thead>';
+                    html += '<tr>';
+                    html += '<th>Nama Mesin</th>';
+                    html += '<th>Bagian Yang Dicheck</th>';
+                    html += '<th>Standart/Parameter</th>';
+                    html += '<th>Metode Pengecekan</th>';
+                    html += '<th>Action</th>';
+                    html += '<th>Result</th>';
+                    html += '</tr>';
+                    html += '</thead>';
                     $.each(data.combinedata, function(index, row) {
                         html += '<tr>';
                         html += '<td>' + row.machine_name + '</td>';
@@ -224,7 +168,11 @@
                         html += '</tr>';
                     });
                     html += '</table>';
-                    $('.modal-body').html(html);
+                    html += '<div class="form-custom">';
+                    html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
+                    html += '<textarea id="input_note" type="text" rows="6" cols="50" disable">' + data.detailrecords[0].note + '</textarea>';
+                    html += '</div>';
+                    $('#modal-data').html(html);
                 }
             });
         });

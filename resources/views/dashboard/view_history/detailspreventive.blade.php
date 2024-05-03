@@ -78,7 +78,7 @@
                             </tbody>
                         </table>
                         <div class="form-custom">
-                            <label for="input_note" class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                            <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                             <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>{{ $detailrecords[0]->note }}</textarea>
                         </div>
                         <div class="form-custom">

@@ -21,7 +21,7 @@ class CreateMachinerecordsTable extends Migration
             $table->string('create_by')->nullable();
             $table->string('corrected_by')->nullable();
             $table->string('approve_by')->nullable();
-            $table->timestamps('record_time');
+            $table->timestamp('record_time')->nullable();
             $table->timestamps();
         });
     }

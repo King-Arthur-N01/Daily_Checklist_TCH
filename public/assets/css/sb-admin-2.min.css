@@ -2190,6 +2190,7 @@ pre code {
 
 .form-custom{
     margin: 0px 0px 1px 0px;
+    display: grid;
 }
 
 .form_checkbox {
@@ -10809,7 +10810,7 @@ button.bg-dark:hover {
     }
 
     .text-sm-right {
-        text-align: right !important
+        text-align: right !important;
     }
 
     .text-sm-center {

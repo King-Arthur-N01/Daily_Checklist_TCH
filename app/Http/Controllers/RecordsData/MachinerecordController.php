@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use App\Machine;
 use App\Machinerecord;
 use App\Historyrecords;
-use Illuminate\Broadcasting\Broadcasters\NullBroadcaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -112,15 +111,15 @@ class MachinerecordController extends Controller
     public function approve1machinerecord()
     {
         $joindata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate', 'machinerecords.note as getnote')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getpic')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->join('users', 'machinerecords.id_user', '=', 'users.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
 
-        $combinedata = $this->fetchdatarecord();
-        return view('dashboard.view_recordmesin.tablekoreksi', ['joindata' => $joindata,'combinedata' => $combinedata]);
+        return view('dashboard.view_recordmesin.tablekoreksi', ['joindata' => $joindata]);
     }
-    public function fetchdatarecord()
+    public function fetchdatarecord($id)
     {
         $detailrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
@@ -128,12 +127,14 @@ class MachinerecordController extends Controller
             ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+            ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
         $historyrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users', 'machinerecords.id_user', '=' ,'users.id')
+            ->where('machinerecords.id', '=', $id)
             ->get('mechinerecords.id');
 
         $combinedata = [];
@@ -151,8 +152,24 @@ class MachinerecordController extends Controller
                 }
             }
         }
-        return $combinedata;
+        return response()->json(['detailrecords' => $detailrecords, 'historyrecords' => $historyrecords, 'combinedata' => $combinedata]);
     }
+    // public function registerpermit1(){
+    //     // dd(Auth::User()->level);
+    //     if (Auth::User()->level != "admin"){
+    //         abort(403);
+    //     }elseif (Auth::User()->status != "Active"){
+    //         Alert::error('Error','Your account is not active! Please contact the administrator.')->persistent("Close");
+    //         Alert::error('Error','Your account is not active! Please contact the administrator.')->persistent("Close");
+    //         Alert::error('Error','Your account is not active! Please contact the administrator.')->persistent("Close");
+    //         Alert::error('Error','Your account is not active! Please contact the admin.');
+    //         return redirect('/login');
+    //     } else {
+    //         $permits = Permit::all();
+    //         $employees = Employee::all();
+    //         return view ('pages.registerpermit1')->with('permits',$permits)->with('employees',$employees);
+    //     }
+    // }
 
     // <<<============================================================================================>>>
     // <<<=============================batas approval machine records end=============================>>>
