@@ -2189,7 +2189,7 @@ pre code {
 }
 
 .form-custom{
-    margin: 0px 0px 1px 0px;
+    margin: 15px 0px 15px 0px;
     display: grid;
 }
 
@@ -10801,7 +10801,9 @@ button.bg-dark:hover {
 }
 
 .text-center {
-    text-align: center !important
+    display: flex;
+    text-align: center !important;
+    flex-direction: column;
 }
 
 @media (min-width:576px) {
@@ -12367,8 +12369,9 @@ form.user .btn-user {
     color: #5a5c69;
     font-size: 7rem;
     position: relative;
-    line-height: 1;
-    width: 12.5rem
+    /* width: 12.5rem; */
+    height: 15rem;
+    text-align: center;
 }
 
 @-webkit-keyframes noise-anim {

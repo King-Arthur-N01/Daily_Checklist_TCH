@@ -18,9 +18,9 @@ class CreateMachinerecordsTable extends Migration
             $table->integer('shift')->nullable();
             $table->string('note')->nullable();
             $table->integer('machine_number2')->index();
-            $table->string('create_by')->nullable();
-            $table->string('corrected_by')->nullable();
-            $table->string('approve_by')->nullable();
+            $table->unsignedBigInteger('create_by')->nullable();
+            $table->unsignedBigInteger('corrected_by')->nullable();
+            $table->unsignedBigInteger('approve_by')->nullable();
             $table->timestamp('record_time')->nullable();
             $table->timestamps();
         });

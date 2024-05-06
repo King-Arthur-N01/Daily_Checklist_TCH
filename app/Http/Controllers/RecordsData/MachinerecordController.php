@@ -34,7 +34,10 @@ class MachinerecordController extends Controller
             ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
             ->where('machines.id', '=', $id)
             ->get();
-
+        if ($joinmachine->isEmpty()) {
+            // Return an error message or a default view
+            return view('dashboard.view_blockpage.404', ['message' => 'No machine record found.']);
+        }
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'joinmachine' => $joinmachine,
             'machine_id' => $id,
@@ -45,7 +48,6 @@ class MachinerecordController extends Controller
     public function registermachinerecord(Request $request)
     {
         $getuserid = Auth()->user()->id;
-        $getusername = Auth()->user()->name;
         $getmachineid = ($request->input('id_machine2'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('record_time');
@@ -63,8 +65,7 @@ class MachinerecordController extends Controller
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine2 = $request->input('id_machine2');
                 $StoreRecords->record_time = $request->input('record_time');
-                $StoreRecords->create_by = $getusername;
-                $StoreRecords->id_user = $getuserid;
+                $StoreRecords->create_by = $getuserid;
                 $StoreRecords->save();
 
                 // Get the ID of the newly created record
@@ -87,8 +88,7 @@ class MachinerecordController extends Controller
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine2 = $request->input('id_machine2');
             $StoreRecords->record_time = $request->input('record_time');
-            $StoreRecords->create_by = $getusername;
-            $StoreRecords->id_user = $getuserid;
+            $StoreRecords->create_by = $getuserid;
             $StoreRecords->save();
 
             // Get the ID of the newly created record
@@ -116,7 +116,7 @@ class MachinerecordController extends Controller
         $joindata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
-            ->join('users', 'machinerecords.id_user', '=', 'users.id')
+            ->join('users', 'machinerecords.create_by', '=', 'users.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
 
@@ -136,7 +136,7 @@ class MachinerecordController extends Controller
         $historyrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
-            ->leftJoin('users', 'machinerecords.id_user', '=' ,'users.id')
+            ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
             ->where('machinerecords.id', '=', $id)
             ->get('mechinerecords.id');
 

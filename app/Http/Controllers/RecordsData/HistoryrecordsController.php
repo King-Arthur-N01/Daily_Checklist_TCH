@@ -35,7 +35,7 @@ class HistoryrecordsController extends Controller
         $historyrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
-            ->leftJoin('users', 'machinerecords.id_user', '=' ,'users.id')
+            ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
             ->where('machinerecords.id', '=', $id)
             ->get();
 

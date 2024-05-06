@@ -61,20 +61,24 @@
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
-                                @foreach ($joindata as $getrecord)
-                                    <tr>
-                                        <td>{{ $getrecord->records_id }}</td>
-                                        <td>{{ $getrecord->shift }} </td>
-                                        <td>{{ $getrecord->getuser }}</td>
-                                        <td>{{ $getrecord->machine_name }}</td>
-                                        <td>{{ $getrecord->machine_type }}</td>
-                                        <td>{{ $getrecord->machine_brand }}</td>
-                                        <td>{{ $getrecord->record_time }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $getrecord->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                @if (isset($joindata) &&!empty($joindata))
+                                    @foreach ($joindata as $getrecord)
+                                        <tr>
+                                            <td>{{ $getrecord->records_id }}</td>
+                                            <td>{{ $getrecord->shift }} </td>
+                                            <td>{{ $getrecord->getuser }}</td>
+                                            <td>{{ $getrecord->machine_name }}</td>
+                                            <td>{{ $getrecord->machine_type }}</td>
+                                            <td>{{ $getrecord->machine_brand }}</td>
+                                            <td>{{ $getrecord->record_time }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $getrecord->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr><td>No data found.</td></tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -98,8 +102,9 @@
                     <div id="modal-data"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" id="saveButton" value="{{ $joindata->first()->records_id }}" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Reject</button>
+                    <button type="submit" class="btn btn-primary" id="saveButton" value="{{ $joindata->first()->records_id }}">Approve</button>
                 </div>
             </div>
         </div>
@@ -132,7 +137,7 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('#ExtralargeModal').on('show.bs.modal', function(event) {
+            $('#ExtralargeModal').on('shown.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var id = button.data('id');
                 $.ajax({
@@ -141,9 +146,10 @@
                     success: function(data) {
                         var html = '';
                         html += '<table class="table table-bordered">';
-                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.detailrecords[0].invent_number + '</td></tr>';
-                        html += '<tr><th>Nama Mesin :</th><td>' + data.detailrecords[0].machine_name + '</td></tr>';
-                        html += '<tr><th>Spec/Tonage :</th><td>' + data.detailrecords[0].machine_spec + '</td></tr>';
+                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.detailrecords[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.detailrecords[0].machine_spec + '</td></tr>';
+                        html += '<tr><th>Nama Mesin :</th><td>' + data.detailrecords[0].machine_name + '</td><th>Buatan :</th><td>' + data.detailrecords[0].machine_made + '</td></tr>';
+                        html += '<tr><th>Brand/Merk :</th><td>' + data.detailrecords[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.detailrecords[0].mfg_number + '</td></tr>';
+                        html += '<tr><th>Model/Type :</th><td>' + data.detailrecords[0].machine_type + '</td><th>Install Date :</th><td>' + data.detailrecords[0].install_date + '</td></tr>';
                         html += '</table>';
                         html += '<h4>History Records</h4>';
                         html += '<table class="table table-bordered" id="dataTables">';
@@ -182,23 +188,26 @@
                 var correctedBy = '{{ Auth::user()->id }}';
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route('registerapproval1', ':machineId') }}'.replace(':machineId', id),
+                    url: '{{ route('registerapproval1', ':machineId') }}'.replace(':machineId',id),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'corrected_by': correctedBy
                     },
-                    success: function(data) {
+                    success: function(response) {
                         if (response.success) {
-                            alert(response.success);
-                            console.log('Machine record saved successfully!');
-                            $('#ExtralargeModal').modal('hide');
+                            alert('Data was successfully updated.'); // Alert success message
                         } else {
-                            alert(response.error);
+                            alert('Failed to update data.'); // Alert failure message
                         }
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
                     },
                     error: function(xhr, status, error) {
-                        console.log('Error saving machine record: ' + error);
+                        alert('Error: Data failed to update.'); // Alert error message
+                        console.error('Error saving machine record: ' + error);
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }
+                }).always(function() {
+                    location.reload(); // Refresh the page whether success or error
                 });
             });
         });
