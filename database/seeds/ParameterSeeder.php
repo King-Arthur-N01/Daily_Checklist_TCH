@@ -181,7 +181,7 @@ class ParameterSeeder extends Seeder
         // 34.
         Parameter::create([
             'id_componencheck' => '32',
-            'name_parameter' => 'mat dengan air bersuhu 40°C',
+            'name_parameter' => 'Mat dengan air bersuhu 40°C',
         ]);
         // 35.
         Parameter::create([

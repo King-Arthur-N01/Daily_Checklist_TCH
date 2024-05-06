@@ -45,6 +45,7 @@ class MachinerecordController extends Controller
     public function registermachinerecord(Request $request)
     {
         $getuserid = Auth()->user()->id;
+        $getusername = Auth()->user()->name;
         $getmachineid = ($request->input('id_machine2'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('record_time');
@@ -62,6 +63,7 @@ class MachinerecordController extends Controller
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine2 = $request->input('id_machine2');
                 $StoreRecords->record_time = $request->input('record_time');
+                $StoreRecords->create_by = $getusername;
                 $StoreRecords->id_user = $getuserid;
                 $StoreRecords->save();
 
@@ -85,6 +87,7 @@ class MachinerecordController extends Controller
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine2 = $request->input('id_machine2');
             $StoreRecords->record_time = $request->input('record_time');
+            $StoreRecords->create_by = $getusername;
             $StoreRecords->id_user = $getuserid;
             $StoreRecords->save();
 
@@ -105,21 +108,21 @@ class MachinerecordController extends Controller
     }
 
     // <<<============================================================================================>>>
-    // <<<===============================batas approval machine records===============================>>>
+    // <<<==============================batas approval machine records 1==============================>>>
     // <<<============================================================================================>>>
 
     public function approve1machinerecord()
     {
         $joindata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getpic')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->join('users', 'machinerecords.id_user', '=', 'users.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
 
-        return view('dashboard.view_recordmesin.tablekoreksi', ['joindata' => $joindata]);
+        return view('dashboard.view_recordmesin.tableapproval1', ['joindata' => $joindata]);
     }
-    public function fetchdatarecord($id)
+    public function fetchdatarecord1($id)
     {
         $detailrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
@@ -152,27 +155,25 @@ class MachinerecordController extends Controller
                 }
             }
         }
-        return response()->json(['detailrecords' => $detailrecords, 'historyrecords' => $historyrecords, 'combinedata' => $combinedata]);
+        return response()->json([
+        'detailrecords' => $detailrecords,
+        'historyrecords' => $historyrecords,
+        'combinedata' => $combinedata
+        ]);
     }
-    // public function registerpermit1(){
-    //     // dd(Auth::User()->level);
-    //     if (Auth::User()->level != "admin"){
-    //         abort(403);
-    //     }elseif (Auth::User()->status != "Active"){
-    //         Alert::error('Error','Your account is not active! Please contact the administrator.')->persistent("Close");
-    //         Alert::error('Error','Your account is not active! Please contact the administrator.')->persistent("Close");
-    //         Alert::error('Error','Your account is not active! Please contact the administrator.')->persistent("Close");
-    //         Alert::error('Error','Your account is not active! Please contact the admin.');
-    //         return redirect('/login');
-    //     } else {
-    //         $permits = Permit::all();
-    //         $employees = Employee::all();
-    //         return view ('pages.registerpermit1')->with('permits',$permits)->with('employees',$employees);
-    //     }
-    // }
+    public function registerapproval1(Request $request, $id)
+    {
+        $request->validate([
+            'corrected_by' => 'required'
+        ]);
+        // dd($request);
+        $machineRecord = Machinerecord::find($id);
+        $machineRecord->update(['corrected_by' => $request->input('corrected_by')]);
+        return response()->json(['success' => 'Machine record updated successfully!']);
+    }
 
     // <<<============================================================================================>>>
-    // <<<=============================batas approval machine records end=============================>>>
+    // <<<============================batas approval machine records 1 end============================>>>
     // <<<============================================================================================>>>
     public function destroy(Machinerecord $machinerecord)
     {

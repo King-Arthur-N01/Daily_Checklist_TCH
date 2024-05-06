@@ -78,12 +78,20 @@ Route::post('/pushfiles', 'MachineData\ImportdataController@importdata')->name('
 
 // input data machine record route
 Route::get('/tablepreventive','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
-Route::get('/machinerecord/approval1','RecordsData\MachinerecordController@approve1machinerecord')->name('approve1machinerecord');
-Route::get('/machinerecord/approval2','RecordsData\MachinerecordController@approve2machinerecord')->name('approve2machinerecord');
-Route::get('/machinerecord/fetchdatarecord/{id}', 'RecordsData\MachinerecordController@fetchdatarecord')->name('fetchdatarecord');
 Route::get('/addpreventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
 Route::put('/addpreventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 // input data machine record route end
+
+// input data approval 1
+Route::get('/machinerecord/approval1','RecordsData\MachinerecordController@approve1machinerecord')->name('approve1machinerecord');
+Route::get('/machinerecord/approval1/{id}','RecordsData\MachinerecordController@fetchdatarecord1')->name('fetchdatarecord1');
+Route::post('/machinerecord/approval1/{id}','RecordsData\MachinerecordController@registerapproval1')->name('registerapproval1');
+// input data approval 1 end
+
+// input data approval 2
+Route::get('/machinerecord/approval2','RecordsData\MachinerecordController@approve2machinerecord')->name('approve2machinerecord');
+Route::get('/machinerecord/approval2/{id}','RecordsData\MachinerecordController@fetchdatarecord2')->name('fetchdatarecord2');
+// input data approval 2 end
 
 // record data machine route
 Route::get('/tablehistory','RecordsData\HistoryrecordsController@indextablehistory')->name('historymachine');

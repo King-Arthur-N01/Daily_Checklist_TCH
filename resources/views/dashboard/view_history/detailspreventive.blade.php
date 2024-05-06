@@ -53,7 +53,7 @@
                             <a>Machine Number :</a>
                             <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $detailrecords[0]->machine_number2 }}" placeholder="Nomor Mesin" readonly>
                         </div>
-                        <table class="table table-bordered" id="datatables" width="100%">
+                        <table class="table table-bordered" id="dataTables" width="100%">
                             <thead>
                                 <tr>
                                     <th>Nama Mesin</th>

@@ -65,7 +65,7 @@
                                     <tr>
                                         <td>{{ $getrecord->records_id }}</td>
                                         <td>{{ $getrecord->shift }} </td>
-                                        <td>{{ $getrecord->getpic }}</td>
+                                        <td>{{ $getrecord->getuser }}</td>
                                         <td>{{ $getrecord->machine_name }}</td>
                                         <td>{{ $getrecord->machine_type }}</td>
                                         <td>{{ $getrecord->machine_brand }}</td>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="submit" id="saveButton" value="{{ $joindata->first()->records_id }}" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -108,74 +108,99 @@
 @endsection
 
 @push('style')
-
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
-
-    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
-    <script>
+    <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/select2/js/select2.full.min.js')}}"></script> --}}
+    {{-- <script>
         $(function() {
             $(document).ready(function() { //script for search2.js
+                $('#dataTable').DataTable();
                 $('.select2').select2({
                     placeholder: 'Select :',
                     searchInputPlaceholder: 'Search'
                 });
             });
         });
-    </script>
+    </script> --}}
     <script>
         $(document).ready(function() {
             $('#dataTable').DataTable();
         });
     </script>
     <script>
-    $(document).ready(function() {
-        $('#ExtralargeModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var id = button.data('id');
-            $.ajax({
-                type: 'GET',
-                url: '{{ route('fetchdatarecord', ':id') }}'.replace(':id', id),
-                success: function(data) {
-                    var html = '';
-                    html += '<table class="table table-bordered">';
-                    html += '<tr><th>No. Invent Mesin :</th><td>' + data.detailrecords[0].invent_number + '</td></tr>';
-                    html += '<tr><th>Nama Mesin :</th><td>' + data.detailrecords[0].machine_name + '</td></tr>';
-                    html += '<tr><th>Spec/Tonage :</th><td>' + data.detailrecords[0].machine_spec + '</td></tr>';
-                    html += '</table>';
-                    html += '<h4>History Records</h4>';
-                    html += '<table class="table table-bordered">';
-                    html += '<thead>';
-                    html += '<tr>';
-                    html += '<th>Nama Mesin</th>';
-                    html += '<th>Bagian Yang Dicheck</th>';
-                    html += '<th>Standart/Parameter</th>';
-                    html += '<th>Metode Pengecekan</th>';
-                    html += '<th>Action</th>';
-                    html += '<th>Result</th>';
-                    html += '</tr>';
-                    html += '</thead>';
-                    $.each(data.combinedata, function(index, row) {
+        $(document).ready(function() {
+            $('#ExtralargeModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route('fetchdatarecord1', ':id') }}'.replace(':id', id),
+                    success: function(data) {
+                        var html = '';
+                        html += '<table class="table table-bordered">';
+                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.detailrecords[0].invent_number + '</td></tr>';
+                        html += '<tr><th>Nama Mesin :</th><td>' + data.detailrecords[0].machine_name + '</td></tr>';
+                        html += '<tr><th>Spec/Tonage :</th><td>' + data.detailrecords[0].machine_spec + '</td></tr>';
+                        html += '</table>';
+                        html += '<h4>History Records</h4>';
+                        html += '<table class="table table-bordered" id="dataTables">';
+                        html += '<thead>';
                         html += '<tr>';
-                        html += '<td>' + row.machine_name + '</td>';
-                        html += '<td>' + row.name_componencheck + '</td>';
-                        html += '<td>' + row.name_parameter + '</td>';
-                        html += '<td>' + row.name_metodecheck + '</td>';
-                        html += '<td>' + row.operator_action + '</td>';
-                        html += '<td>' + row.result + '</td>';
+                        html += '<th>Nama Mesin</th>';
+                        html += '<th>Bagian Yang Dicheck</th>';
+                        html += '<th>Standart/Parameter</th>';
+                        html += '<th>Metode Pengecekan</th>';
+                        html += '<th>Action</th>';
+                        html += '<th>Result</th>';
                         html += '</tr>';
-                    });
-                    html += '</table>';
-                    html += '<div class="form-custom">';
-                    html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
-                    html += '<textarea id="input_note" type="text" rows="6" cols="50" disable">' + data.detailrecords[0].note + '</textarea>';
-                    html += '</div>';
-                    $('#modal-data').html(html);
-                }
+                        html += '</thead>';
+                        $.each(data.combinedata, function(index, row) {
+                            html += '<tr>';
+                            html += '<td>' + row.machine_name + '</td>';
+                            html += '<td>' + row.name_componencheck + '</td>';
+                            html += '<td>' + row.name_parameter + '</td>';
+                            html += '<td>' + row.name_metodecheck + '</td>';
+                            html += '<td>' + row.operator_action + '</td>';
+                            html += '<td>' + row.result + '</td>';
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        html += '<div class="form-custom">';
+                        html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
+                        html += '<textarea id="input_note" type="text" rows="6" cols="50" disable>' + data.detailrecords[0].note + '</textarea>';
+                        html += '</div>';
+                        $('#modal-data').html(html);
+                        mergeCells();
+                    }
+                });
+            });
+            $('#saveButton').on('click', function() {
+                var id = $(this).val(); // Get the machine ID from the button that triggered the modal
+                var correctedBy = '{{ Auth::user()->id }}';
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('registerapproval1', ':machineId') }}'.replace(':machineId', id),
+                    data: {
+                        '_token': '{{ csrf_token() }}', // Include the CSRF token
+                        'corrected_by': correctedBy
+                    },
+                    success: function(data) {
+                        if (response.success) {
+                            alert(response.success);
+                            console.log('Machine record saved successfully!');
+                            $('#ExtralargeModal').modal('hide');
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error saving machine record: ' + error);
+                    }
+                });
             });
         });
-    });
     </script>
 @endpush

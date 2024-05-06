@@ -1,5 +1,5 @@
 function mergeCells() {
-    let db = document.getElementById("datatables");
+    let db = document.getElementById("dataTables");
     let dbRows = db.rows;
     let lastValue1 = "";
     let lastValue2 = "";
@@ -74,4 +74,3 @@ function mergeCells() {
     //     }
     // }
 }
-window.onload = mergeCells;
