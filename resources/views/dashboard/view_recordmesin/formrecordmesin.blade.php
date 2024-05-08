@@ -28,7 +28,7 @@
                         <form action="{{ route('pushuserinput') }}" id="registerform" method="post">
                             @csrf
                             @method('put')
-                            <table class="table table-bordered table-header">
+                            <table class="table table-header">
                                 <tbody>
                                     <tr>
                                         <th>No. Invent Mesin :</th>
@@ -66,7 +66,7 @@
                                     <input class="form-control" name="record_time" value="{{ $timenow }}" readonly>
                                 </div>
                             </div>
-                            <table class="table table-bordered" id="datatables" width="100%">
+                            <table class="table table-bordered" id="dataTables" width="100%">
                                 <thead>
                                     <tr>
                                         <th>Nama Mesin</th>
@@ -163,4 +163,9 @@
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/formalert.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            mergeCells();
+        });
+    </script>
 @endpush

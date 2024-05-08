@@ -120,8 +120,9 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            $('#dataTable').DataTable({ // Disable sorting for columns
+            columnDefs: [{"orderable": false, "targets": [5]}]
+            });
         });
-
     </script>
 @endpush

@@ -119,7 +119,7 @@ class MachinerecordController extends Controller
             ->join('users', 'machinerecords.create_by', '=', 'users.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
-
+        
         return view('dashboard.view_recordmesin.tableapproval1', ['joindata' => $joindata]);
     }
     public function fetchdatarecord1($id)
@@ -164,11 +164,18 @@ class MachinerecordController extends Controller
     public function registerapproval1(Request $request, $id)
     {
         $request->validate([
-            'corrected_by' => 'required'
+            'corrected_by' => 'equired'
         ]);
-        // dd($request);
         $machineRecord = Machinerecord::find($id);
+
+        if (!$machineRecord) {
+            return response()->json(['error' => 'Machine record not found'], 404);
+        }
+        if ($machineRecord->corrected_by) {
+            return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
+        }
         $machineRecord->update(['corrected_by' => $request->input('corrected_by')]);
+
         return response()->json(['success' => 'Machine record updated successfully!']);
     }
 

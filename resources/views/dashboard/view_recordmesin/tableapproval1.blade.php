@@ -49,7 +49,7 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table" id="dataTable" width="100%">
+                        <table class="table table-bordered" id="preventiveTables" width="100%">
                             <thead>
                                 <th>CHECKPOINT NO.</th>
                                 <th>SHIFT</th>
@@ -58,6 +58,7 @@
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
                                 <th>WAKTU PREVENTIVE</th>
+                                <th>STATUS</th>
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
@@ -71,6 +72,7 @@
                                             <td>{{ $getrecord->machine_type }}</td>
                                             <td>{{ $getrecord->machine_brand }}</td>
                                             <td>{{ $getrecord->record_time }}</td>
+                                            <td>{{ $getrecord->corrected_by }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $getrecord->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                             </td>
@@ -118,11 +120,11 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/filtertable1.js')}}"></script>
     {{-- <script src="{{ asset('assets/vendor/select2/js/select2.full.min.js')}}"></script> --}}
     {{-- <script>
         $(function() {
             $(document).ready(function() { //script for search2.js
-                $('#dataTable').DataTable();
                 $('.select2').select2({
                     placeholder: 'Select :',
                     searchInputPlaceholder: 'Search'
@@ -132,7 +134,7 @@
     </script> --}}
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            $('#preventiveTables').DataTable();
         });
     </script>
     <script>

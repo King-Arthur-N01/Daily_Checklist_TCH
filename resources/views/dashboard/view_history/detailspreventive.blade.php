@@ -15,7 +15,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-header" width="100%">
+                        <table class="table table-header" width="100%">
                             <tbody>
                                 <tr>
                                     <th>No. Invent Mesin :</th>
@@ -113,4 +113,9 @@
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script> --}}
+    <script>
+        $(document).ready(function() {
+            mergeCells();
+        });
+    </script>
 @endpush
