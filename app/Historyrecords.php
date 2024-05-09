@@ -12,4 +12,9 @@ class Historyrecords extends Model
     'result',
     'id_machinerecord'
     ];
+
+    public function getparentmachinerecord()
+    {
+        return $this->hasMany(Machinerecord::class);
+    }
 }

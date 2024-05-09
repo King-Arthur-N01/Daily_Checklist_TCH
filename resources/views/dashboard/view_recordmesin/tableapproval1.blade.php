@@ -16,33 +16,30 @@
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div>
-                            <form action="#" method="post">
-                                @csrf
-                                <div class="table-filter">
-                                    <div class="col-4">
-                                        <p class="mg-b-10">Nama Mesin</p>
-                                        <select class="form-control select2" name="" id="category-input-machinename">
-                                            <option selected="selected" value="">Select :</option>
-                                            <option></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-4">
-                                        <p class="mg-b-10">Input Nomor Mesin </p>
-                                        <select class="form-control select2" name="" id="category-input-machinecode">
-                                            <option selected="selected" value="">Select :</option>
-                                            <option></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-4">
-                                        <p class="mg-b-10">Status Mesin</p>
-                                        <select class="form-control" name="sample" id="statusMachine">
-                                            <option selected="selected">Select :</option>
-                                            <option>Sudah Dipreventive</option>
-                                            <option>Belum Dipreventive</option>
-                                        </select>
-                                    </div>
+                            <div class="table-filter">
+                                <div class="col-4">
+                                    <p class="mg-b-10">Nama Mesin</p>
+                                    <select class="form-control select2" name="" id="category-input-machinename">
+                                        <option selected="selected" value="">Select :</option>
+                                        <option></option>
+                                    </select>
                                 </div>
-                            </form>
+                                <div class="col-4">
+                                    <p class="mg-b-10">Input Nomor Mesin </p>
+                                    <select class="form-control select2" name="" id="category-input-machinecode">
+                                        <option selected="selected" value="">Select :</option>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <p class="mg-b-10">Status Mesin</p>
+                                    <select class="form-control" name="sample" id="statusMachine">
+                                        <option selected="selected">Select :</option>
+                                        <option>Sudah Dipreventive</option>
+                                        <option>Belum Dipreventive</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     @if (session('success'))
@@ -62,19 +59,19 @@
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
-                                @if (isset($joindata) &&!empty($joindata))
-                                    @foreach ($joindata as $getrecord)
+                                @if (isset($getrecords) &&!empty($getrecords))
+                                    @foreach ($getrecords as $viewrecords)
                                         <tr>
-                                            <td>{{ $getrecord->records_id }}</td>
-                                            <td>{{ $getrecord->shift }} </td>
-                                            <td>{{ $getrecord->getuser }}</td>
-                                            <td>{{ $getrecord->machine_name }}</td>
-                                            <td>{{ $getrecord->machine_type }}</td>
-                                            <td>{{ $getrecord->machine_brand }}</td>
-                                            <td>{{ $getrecord->record_time }}</td>
-                                            <td>{{ $getrecord->corrected_by }}</td>
+                                            <td>{{ $viewrecords->records_id }}</td>
+                                            <td>{{ $viewrecords->shift }} </td>
+                                            <td>{{ $viewrecords->getuser }}</td>
+                                            <td>{{ $viewrecords->machine_name }}</td>
+                                            <td>{{ $viewrecords->machine_type }}</td>
+                                            <td>{{ $viewrecords->machine_brand }}</td>
+                                            <td>{{ $viewrecords->record_time }}</td>
+                                            <td>{{ $viewrecords->corrected_by }}</td>
                                             <td>
-                                                <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $getrecord->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                                <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -103,11 +100,15 @@
                 <div class="modal-body">
                     <div id="modal-data"></div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Reject</button>
-                    <button type="submit" class="btn btn-primary" id="saveButton" value="{{ $joindata->first()->records_id }}">Approve</button>
-                </div>
+                <form action="{{ route('pushcorrection', $getrecords->records_id) }}" method="post">
+                    @csrf
+                    @method('put')
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="rejectButton" value="#">Reject</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton" data-id="{{ $viewrecords->records_id }}">Approve</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -134,7 +135,9 @@
     </script> --}}
     <script>
         $(document).ready(function() {
-            $('#preventiveTables').DataTable();
+            $('#preventiveTables').DataTable({ // Disable sorting for columns
+            columnDefs: [{"orderable": false, "targets": [8]}]
+            });
         });
     </script>
     <script>
@@ -144,14 +147,14 @@
                 var id = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchdatarecord1', ':id') }}'.replace(':id', id),
+                    url: '{{ route('fetchcorrection', ':id') }}'.replace(':id', id),
                     success: function(data) {
                         var html = '';
                         html += '<table class="table table-bordered">';
-                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.detailrecords[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.detailrecords[0].machine_spec + '</td></tr>';
-                        html += '<tr><th>Nama Mesin :</th><td>' + data.detailrecords[0].machine_name + '</td><th>Buatan :</th><td>' + data.detailrecords[0].machine_made + '</td></tr>';
-                        html += '<tr><th>Brand/Merk :</th><td>' + data.detailrecords[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.detailrecords[0].mfg_number + '</td></tr>';
-                        html += '<tr><th>Model/Type :</th><td>' + data.detailrecords[0].machine_type + '</td><th>Install Date :</th><td>' + data.detailrecords[0].install_date + '</td></tr>';
+                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.machinedata[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.machinedata[0].machine_spec + '</td></tr>';
+                        html += '<tr><th>Nama Mesin :</th><td>' + data.machinedata[0].machine_name + '</td><th>Buatan :</th><td>' + data.machinedata[0].machine_made + '</td></tr>';
+                        html += '<tr><th>Brand/Merk :</th><td>' + data.machinedata[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.machinedata[0].mfg_number + '</td></tr>';
+                        html += '<tr><th>Model/Type :</th><td>' + data.machinedata[0].machine_type + '</td><th>Install Date :</th><td>' + data.machinedata[0].install_date + '</td></tr>';
                         html += '</table>';
                         html += '<h4>History Records</h4>';
                         html += '<table class="table table-bordered" id="dataTables">';
@@ -178,7 +181,7 @@
                         html += '</table>';
                         html += '<div class="form-custom">';
                         html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
-                        html += '<textarea id="input_note" type="text" rows="6" cols="50" disable>' + data.detailrecords[0].note + '</textarea>';
+                        html += '<textarea id="input_note" type="text" rows="6" cols="50" disable>' + data.machinedata[0].note + '</textarea>';
                         html += '</div>';
                         $('#modal-data').html(html);
                         mergeCells();
@@ -190,7 +193,8 @@
                 var correctedBy = '{{ Auth::user()->id }}';
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route('registerapproval1', ':machineId') }}'.replace(':machineId',id),
+                    method: 'put'
+                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id',id),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'corrected_by': correctedBy

@@ -4,7 +4,8 @@ table.dataTable {
     margin-bottom: 6px !important;
     max-width: none !important;
     border-collapse: separate !important;
-    border-spacing: 0
+    border-spacing: 0;
+    /* font-size: smaller; */
 }
 
 table.dataTable td,

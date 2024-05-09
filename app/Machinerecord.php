@@ -31,4 +31,8 @@ class Machinerecord extends Model
     {
         return $this->hasMany(User::class);
     }
+    public function getchildernhistoryrecord()
+    {
+        return $this->belongsTo(Historyrecords::class);
+    }
 }

@@ -111,20 +111,20 @@ class MachinerecordController extends Controller
     // <<<==============================batas approval machine records 1==============================>>>
     // <<<============================================================================================>>>
 
-    public function approve1machinerecord()
+    public function tablecorrection()
     {
-        $joindata = DB::table('machinerecords')
+        $getrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->join('users', 'machinerecords.create_by', '=', 'users.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
-        
-        return view('dashboard.view_recordmesin.tableapproval1', ['joindata' => $joindata]);
+
+        return view('dashboard.view_recordmesin.tableapproval1', ['getrecords' => $getrecords]);
     }
-    public function fetchdatarecord1($id)
+    public function getdatarecord1($id)
     {
-        $detailrecords = DB::table('machinerecords')
+        $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
             ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
@@ -133,7 +133,7 @@ class MachinerecordController extends Controller
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
-        $historyrecords = DB::table('machinerecords')
+        $recordsdata = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
@@ -141,46 +141,57 @@ class MachinerecordController extends Controller
             ->get('mechinerecords.id');
 
         $combinedata = [];
-        foreach ($detailrecords as $detail){
-            foreach ($historyrecords as $history){
-                if ($detail->checks_id == $history->get_checks){
+        foreach ($machinedata as $getmachine){
+            foreach ($recordsdata as $getrecords){
+                if ($getmachine->checks_id == $getrecords->get_checks){
                     $combinedata[] = [
-                        'machine_name' => $detail->machine_name,
-                        'name_componencheck' => $detail->name_componencheck,
-                        'name_parameter' => $detail->name_parameter,
-                        'name_metodecheck' => $detail->name_metodecheck,
-                        'operator_action' => $history->operator_action,
-                        'result' => $history->result,
+                        'machine_name' => $getmachine->machine_name,
+                        'name_componencheck' => $getmachine->name_componencheck,
+                        'name_parameter' => $getmachine->name_parameter,
+                        'name_metodecheck' => $getmachine->name_metodecheck,
+                        'operator_action' => $getrecords->operator_action,
+                        'result' => $getrecords->result,
                     ];
                 }
             }
         }
         return response()->json([
-        'detailrecords' => $detailrecords,
-        'historyrecords' => $historyrecords,
+        'machinedata' => $machinedata,
+        'recordsdata' => $recordsdata,
         'combinedata' => $combinedata
         ]);
     }
-    public function registerapproval1(Request $request, $id)
+    public function registercorrection(Request $request, $id)
     {
         $request->validate([
-            'corrected_by' => 'equired'
+            'corrected_by' => 'required'
         ]);
-        $machineRecord = Machinerecord::find($id);
+        $machinerecord = Machinerecord::find($id);
 
-        if (!$machineRecord) {
+        if (!$machinerecord) {
             return response()->json(['error' => 'Machine record not found'], 404);
         }
-        if ($machineRecord->corrected_by) {
+        else if ($machinerecord->corrected_by) {
             return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
         }
-        $machineRecord->update(['corrected_by' => $request->input('corrected_by')]);
+        $machinerecord->update(['corrected_by' => $request->input('corrected_by')]);
 
         return response()->json(['success' => 'Machine record updated successfully!']);
     }
 
     // <<<============================================================================================>>>
     // <<<============================batas approval machine records 1 end============================>>>
+    // <<<============================================================================================>>>
+
+
+    // <<<============================================================================================>>>
+    // <<<==============================batas approval machine records 2==============================>>>
+    // <<<============================================================================================>>>
+
+
+
+    // <<<============================================================================================>>>
+    // <<<============================batas approval machine records 2 end============================>>>
     // <<<============================================================================================>>>
     public function destroy(Machinerecord $machinerecord)
     {
