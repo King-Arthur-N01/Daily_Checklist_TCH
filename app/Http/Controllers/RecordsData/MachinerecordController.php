@@ -122,7 +122,7 @@ class MachinerecordController extends Controller
 
         return view('dashboard.view_recordmesin.tableapproval1', ['getrecords' => $getrecords]);
     }
-    public function getdatarecord1($id)
+    public function fetchdatarecord($id) // this code for ajax modal html
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
@@ -134,7 +134,7 @@ class MachinerecordController extends Controller
             ->get('machinerecords.id');
 
         $recordsdata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'historyrecords.id_metodecheck as get_checks')
+            ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'machinerecords.id as get_id', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
             ->where('machinerecords.id', '=', $id)
@@ -161,7 +161,7 @@ class MachinerecordController extends Controller
         'combinedata' => $combinedata
         ]);
     }
-    public function registercorrection(Request $request, $id)
+    public function registercorrection(Request $request, $id) // this code for ajax send request
     {
         $request->validate([
             'corrected_by' => 'required'

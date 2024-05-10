@@ -71,7 +71,7 @@
                                             <td>{{ $viewrecords->record_time }}</td>
                                             <td>{{ $viewrecords->corrected_by }}</td>
                                             <td>
-                                                <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                                <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -100,15 +100,11 @@
                 <div class="modal-body">
                     <div id="modal-data"></div>
                 </div>
-                <form action="{{ route('pushcorrection', $getrecords->records_id) }}" method="post">
-                    @csrf
-                    @method('put')
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="rejectButton" value="#">Reject</button>
-                        <button type="submit" class="btn btn-primary" id="saveButton" data-id="{{ $viewrecords->records_id }}">Approve</button>
-                    </div>
-                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="rejectButton">Reject</button>
+                    <button type="submit" class="btn btn-primary" id="saveButton">Approve</button>
+                </div>
             </div>
         </div>
     </div>
@@ -122,17 +118,6 @@
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/filtertable1.js')}}"></script>
-    {{-- <script src="{{ asset('assets/vendor/select2/js/select2.full.min.js')}}"></script> --}}
-    {{-- <script>
-        $(function() {
-            $(document).ready(function() { //script for search2.js
-                $('.select2').select2({
-                    placeholder: 'Select :',
-                    searchInputPlaceholder: 'Search'
-                });
-            });
-        });
-    </script> --}}
     <script>
         $(document).ready(function() {
             $('#preventiveTables').DataTable({ // Disable sorting for columns
@@ -181,20 +166,24 @@
                         html += '</table>';
                         html += '<div class="form-custom">';
                         html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
-                        html += '<textarea id="input_note" type="text" rows="6" cols="50" disable>' + data.machinedata[0].note + '</textarea>';
+                        html += '<textarea id="input_note" type="text" rows="6" cols="50" readonly>' + data.machinedata[0].note + '</textarea>';
                         html += '</div>';
                         $('#modal-data').html(html);
                         mergeCells();
                     }
                 });
             });
+            $(".btn-Id").on('click', function() {
+                console.log($(this).attr("data-id"));
+                $("#rejectButton").attr("value",$(this).attr("data-id"));
+                $("#saveButton").attr("value",$(this).attr("data-id"));
+            });
             $('#saveButton').on('click', function() {
-                var id = $(this).val(); // Get the machine ID from the button that triggered the modal
+                var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
                 var correctedBy = '{{ Auth::user()->id }}';
                 $.ajax({
-                    type: 'POST',
-                    method: 'put'
-                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id',id),
+                    type: 'PUT',
+                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id',machineId),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'corrected_by': correctedBy

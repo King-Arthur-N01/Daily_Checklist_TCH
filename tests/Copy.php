@@ -498,3 +498,10 @@ $(document).ready(function() {
         });
     });
 });
+
+
+$(".btn-show").on('click', function() {
+    console.log($(this).attr("data-id"));
+    $("#rejectButton").attr("value",$(this).attr("data-id")); 
+    $("#saveButton").attr("value",$(this).attr("data-id")); 
+});
