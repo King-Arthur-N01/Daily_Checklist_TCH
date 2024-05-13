@@ -86,6 +86,7 @@ Route::put('/addpreventive/machine','RecordsData\MachinerecordController@registe
 Route::get('/machinerecord/correction','RecordsData\MachinerecordController@tablecorrection')->name('viewcorrection');
 Route::get('/machinerecord/correction/{id}','RecordsData\MachinerecordController@fetchdatarecord')->name('fetchcorrection');
 Route::put('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('pushcorrection');
+Route::put('/machinerecord/rejection/{id}','RecordsData\MachinerecordController@rejectcorrection')->name('pushreject');
 // input data approval 1 end
 
 // input data approval 2

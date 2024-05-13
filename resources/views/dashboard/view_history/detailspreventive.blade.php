@@ -90,9 +90,9 @@
                                         <th>Dibuat oleh :</th>
                                     </tr>
                                     <tr>
-                                        <td>Dummy data</td>
-                                        <td>Dummy data</td>
-                                        <td>Dummy data</td>
+                                        <td>{{ $historyrecords[0]->approve_by }}</td>
+                                        <td>{{ $historyrecords[0]->corrected_by }}</td>
+                                        <td>{{ $historyrecords[0]->name }}</td>
                                     </tr>
                                 </thead>
                             </table>

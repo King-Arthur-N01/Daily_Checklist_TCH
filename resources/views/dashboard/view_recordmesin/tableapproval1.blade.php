@@ -48,7 +48,7 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="preventiveTables" width="100%">
                             <thead>
-                                <th>CHECKPOINT NO.</th>
+                                <th>NO.</th>
                                 <th>SHIFT</th>
                                 <th>PIC</th>
                                 <th>NAMA MESIN</th>
@@ -56,6 +56,7 @@
                                 <th>BRAND</th>
                                 <th>WAKTU PREVENTIVE</th>
                                 <th>STATUS</th>
+                                <th style="display: none;">REJECT</th>
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
@@ -70,6 +71,7 @@
                                             <td>{{ $viewrecords->machine_brand }}</td>
                                             <td>{{ $viewrecords->record_time }}</td>
                                             <td>{{ $viewrecords->corrected_by }}</td>
+                                            <td style="display: none;">{{ $viewrecords->reject_by }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                             </td>
@@ -102,7 +104,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="rejectButton">Reject</button>
+                    <button type="submit" class="btn btn-danger" id="rejectButton">Reject</button>
                     <button type="submit" class="btn btn-primary" id="saveButton">Approve</button>
                 </div>
             </div>
@@ -187,6 +189,33 @@
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'corrected_by': correctedBy
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Data was successfully updated.'); // Alert success message
+                        } else {
+                            alert('Failed to update data.'); // Alert failure message
+                        }
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error: Data failed to update.'); // Alert error message
+                        console.error('Error saving machine record: ' + error);
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
+                    }
+                }).always(function() {
+                    location.reload(); // Refresh the page whether success or error
+                });
+            });
+            $('#rejectButton').on('click', function() {
+                var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
+                var rejectBy = '{{ Auth::user()->id }}';
+                $.ajax({
+                    type: 'PUT',
+                    url: '{{ route('pushreject', ':id') }}'.replace(':id',machineId),
+                    data: {
+                        '_token': '{{ csrf_token() }}', // Include the CSRF token
+                        'reject_by': rejectBy
                     },
                     success: function(response) {
                         if (response.success) {

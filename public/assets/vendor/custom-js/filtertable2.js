@@ -1,12 +1,18 @@
-$(document).ready(function() {
-    $('#preventiveTables tr').each(function() {
-      var statusCell = $(this).find('td:eq(7)'); // Assuming the 'status' column is the 7th column (0-indexed)
-      var status = statusCell.text().trim();
+function mergeCells() {
+    var table = document.getElementById("myTable");
+    var rows = table.getElementsByTagName("tr");
 
-      if (status === '') {
-        statusCell.text('BELUM DI SETUJUI');
-      } else {
-        statusCell.text('SUDAH DI SETUJUI');
-      }
-    });
-  });
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var cells = row.getElementsByTagName("td");
+        var column1Value = cells[0].textContent;
+        var column2Value = cells[1].textContent;
+
+        if (
+            column1Value === "your_filter_criteria_1" &&
+            column2Value === "your_filter_criteria_2"
+        ) {
+            row.style.backgroundColor = "red";
+        }
+    }
+}

@@ -113,6 +113,7 @@ class MachinerecordController extends Controller
 
     public function tablecorrection()
     {
+
         $getrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
@@ -120,7 +121,9 @@ class MachinerecordController extends Controller
             ->orderBy('machinerecords.id', 'asc')
             ->get();
 
-        return view('dashboard.view_recordmesin.tableapproval1', ['getrecords' => $getrecords]);
+        return view('dashboard.view_recordmesin.tableapproval1', [
+            'getrecords' => $getrecords
+        ]);
     }
     public function fetchdatarecord($id) // this code for ajax modal html
     {
@@ -167,14 +170,37 @@ class MachinerecordController extends Controller
             'corrected_by' => 'required'
         ]);
         $machinerecord = Machinerecord::find($id);
+        if ($machinerecord->reject_by){
+            return response()->json(['error' => 'Data update failed. Record has been reject by someone else.'], 422);
+            if (!$machinerecord) {
+                return response()->json(['error' => 'Record not found !!!!'], 404);
+            }
+            else if ($machinerecord->corrected_by) {
+                return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
+            }
+        }
 
-        if (!$machinerecord) {
-            return response()->json(['error' => 'Machine record not found'], 404);
-        }
-        else if ($machinerecord->corrected_by) {
-            return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
-        }
         $machinerecord->update(['corrected_by' => $request->input('corrected_by')]);
+
+        return response()->json(['success' => 'Machine record updated successfully!']);
+    }
+    public function rejectcorrection(Request $request, $id) // this code for ajax send request
+    {
+        $request->validate([
+            'reject_by' => 'required'
+        ]);
+        $machinerecord = Machinerecord::find($id);
+
+        if ($machinerecord->corrected_by) {
+            return response()->json(['error' => 'Data update failed. Record has been approve by someone else.'], 422);
+            if (!$machinerecord) {
+                return response()->json(['error' => 'Machine record not found'], 404);
+            }
+            else if ($machinerecord->reject_by) {
+                return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
+            }
+        }
+        $machinerecord->update(['reject_by' => $request->input('reject_by')]);
 
         return response()->json(['success' => 'Machine record updated successfully!']);
     }

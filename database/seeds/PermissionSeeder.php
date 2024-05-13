@@ -66,8 +66,25 @@ class PermissionSeeder extends Seeder
         $leader->assignRole('leader');
 
         $user = User::create([
-            'name' => 'User',
+            'name' => 'User 1',
             'nik' => '11111',
+            'department' => 'Engginer',
+            'password' => bcrypt('user123'),
+        ]);
+        $user->assignRole('user');
+
+        $user = User::create([
+            'name' => 'User 2',
+            'nik' => '22222',
+            'department' => 'Engginer',
+            'password' => bcrypt('user123'),
+        ]);
+        $user->assignRole('user');
+
+        $user = User::create([
+            'name' => 'User 3',
+            'nik' => '33333',
+            'status' => '0',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
         ]);
