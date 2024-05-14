@@ -5176,7 +5176,7 @@ input[type=submit].btn-block {
 }
 
 .center{
-    
+
 }
 
 .card-footer-item-custom{
@@ -5699,7 +5699,7 @@ a.badge-dark:focus {
 .alert {
     position: relative;
     padding: .75rem 1.25rem;
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
     border: 1px solid transparent;
     border-radius: .35rem
 }
@@ -6370,6 +6370,8 @@ a.close.disabled {
     overflow: hidden;
     outline: 0
 }
+
+.modal-alert{font-size: medium;}
 
 .modal-dialog {
     position: relative;
@@ -12115,6 +12117,30 @@ a:focus {
     color: rgba(255, 255, 255, .5)
 }
 
+.btn-close {
+    background: url("../icons/btn_close.svg") center no-repeat;
+    background-size: 35%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    padding: 1.5rem;
+    --bs-btn-close-color: #000;
+    --bs-btn-close-opacity: 0.5;
+    --bs-btn-close-hover-opacity: 0.75;
+    --bs-btn-close-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    --bs-btn-close-focus-opacity: 1;
+    --bs-btn-close-disabled-opacity: 0.25;
+    --bs-btn-close-white-filter: invert(1) grayscale(100%) brightness(200%);
+    box-sizing: content-box;
+    /* width: 1em; */
+    /* height: 1em; */
+    color: var(--bs-btn-close-color);
+    /* background: transparent var(--bs-btn-close-bg) center / 1em auto no-repeat; */
+    border: 0;
+    border-radius: .375rem;
+    opacity: var(--bs-btn-close-opacity);
+}
 .btn-circle {
     border-radius: 100%;
     height: 2.5rem;

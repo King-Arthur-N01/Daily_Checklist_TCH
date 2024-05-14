@@ -15,30 +15,28 @@
                 </div>
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
-                        <div>
-                            <div class="table-filter">
-                                <div class="col-4">
-                                    <p class="mg-b-10">Nama Mesin</p>
-                                    <select class="form-control select2" name="" id="category-input-machinename">
-                                        <option selected="selected" value="">Select :</option>
-                                        <option></option>
-                                    </select>
-                                </div>
-                                <div class="col-4">
-                                    <p class="mg-b-10">Input Nomor Mesin </p>
-                                    <select class="form-control select2" name="" id="category-input-machinecode">
-                                        <option selected="selected" value="">Select :</option>
-                                        <option></option>
-                                    </select>
-                                </div>
-                                <div class="col-4">
-                                    <p class="mg-b-10">Status Mesin</p>
-                                    <select class="form-control" name="sample" id="statusMachine">
-                                        <option selected="selected">Select :</option>
-                                        <option>Sudah Dipreventive</option>
-                                        <option>Belum Dipreventive</option>
-                                    </select>
-                                </div>
+                        <div class="table-filter">
+                            <div class="col-4">
+                                <p class="mg-b-10">Nama Mesin</p>
+                                <select class="form-control select2" name="" id="category-input-machinename">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <select class="form-control select2" name="" id="category-input-machinecode">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Status Mesin</p>
+                                <select class="form-control" name="sample" id="statusMachine">
+                                    <option selected="selected">Select :</option>
+                                    <option>Sudah Dipreventive</option>
+                                    <option>Belum Dipreventive</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -60,7 +58,7 @@
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
-                                @if (isset($getrecords) &&!empty($getrecords))
+                                @if (isset($getrecords) && !empty($getrecords))
                                     @foreach ($getrecords as $viewrecords)
                                         <tr>
                                             <td>{{ $viewrecords->records_id }}</td>
@@ -78,7 +76,9 @@
                                         </tr>
                                     @endforeach
                                 @else
-                                    <tr><td>No data found.</td></tr>
+                                    <tr>
+                                        <td>No data found.</td>
+                                    </tr>
                                 @endif
                             </tbody>
                         </table>
@@ -104,13 +104,62 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger" id="rejectButton">Reject</button>
-                    <button type="submit" class="btn btn-primary" id="saveButton">Approve</button>
+                    <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" data-target="#rejectModal">Reject</button>
+                    <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal" data-target="#successModal">Approve</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- End Extra Large Modal-->
+
+    <!-- Alert Success Modal -->
+    <div  id="successModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <i class="modal-alert">Data Preventive was successfully ACCEPTED</i>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Success Modal -->
+
+    <!-- Alert Warning Modal -->
+    <div  id="rejectModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <i class="modal-alert">Data Preventive was successfully REJECT</i>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Warning Modal -->
+
+    <!-- Alert Danger Modal -->
+    <div  id="rejectModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-octagon me-1"></i>
+                        <i class="modal-alert">Failed to update data !!!!</i>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Danger Modal -->
+
 @endsection
 
 @push('style')
@@ -119,11 +168,12 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
-    <script src="{{ asset('assets/vendor/custom-js/filtertable1.js')}}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('#preventiveTables').DataTable({ // Disable sorting for columns
-            columnDefs: [{"orderable": false, "targets": [8]}]
+                columnDefs: [{"orderable": false, "targets": [8]
+                }]
             });
         });
     </script>
@@ -177,32 +227,32 @@
             });
             $(".btn-Id").on('click', function() {
                 console.log($(this).attr("data-id"));
-                $("#rejectButton").attr("value",$(this).attr("data-id"));
-                $("#saveButton").attr("value",$(this).attr("data-id"));
+                $("#rejectButton").attr("value", $(this).attr("data-id"));
+                $("#saveButton").attr("value", $(this).attr("data-id"));
             });
             $('#saveButton').on('click', function() {
                 var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
                 var correctedBy = '{{ Auth::user()->id }}';
                 $.ajax({
                     type: 'PUT',
-                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id',machineId),
+                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id', machineId),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'corrected_by': correctedBy
                     },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Data was successfully updated.'); // Alert success message
-                        } else {
-                            alert('Failed to update data.'); // Alert failure message
-                        }
-                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Error: Data failed to update.'); // Alert error message
-                        console.error('Error saving machine record: ' + error);
-                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
-                    }
+                    // success: function(response) {
+                    //     if (response.success) {
+                    //         alert('Data was successfully updated.'); // Alert success message
+                    //     } else {
+                    //         alert('Failed to update data.'); // Alert failure message
+                    //     }
+                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                    // },
+                    // error: function(xhr, status, error) {
+                    //     alert('Error: Data failed to update.'); // Alert error message
+                    //     console.error('Error saving machine record: ' + error);
+                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on error
+                    // }
                 }).always(function() {
                     location.reload(); // Refresh the page whether success or error
                 });
@@ -212,28 +262,29 @@
                 var rejectBy = '{{ Auth::user()->id }}';
                 $.ajax({
                     type: 'PUT',
-                    url: '{{ route('pushreject', ':id') }}'.replace(':id',machineId),
+                    url: '{{ route('pushreject', ':id') }}'.replace(':id', machineId),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'reject_by': rejectBy
                     },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Data was successfully updated.'); // Alert success message
-                        } else {
-                            alert('Failed to update data.'); // Alert failure message
-                        }
-                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Error: Data failed to update.'); // Alert error message
-                        console.error('Error saving machine record: ' + error);
-                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
-                    }
+                    // success: function(response) {
+                    //     if (response.success) {
+                    //         alert('Data was successfully updated.'); // Alert success message
+                    //     } else {
+                    //         alert('Failed to update data.'); // Alert failure message
+                    //     }
+                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                    // },
+                    // error: function(xhr, status, error) {
+                    //     alert('Error: Data failed to update.'); // Alert error message
+                    //     console.error('Error saving machine record: ' + error);
+                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on error
+                    // }
                 }).always(function() {
                     location.reload(); // Refresh the page whether success or error
                 });
             });
+
         });
     </script>
 @endpush
