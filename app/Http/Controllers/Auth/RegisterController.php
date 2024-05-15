@@ -17,9 +17,9 @@ class RegisterController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
     public function __construct()
     {
-        $this->middleware('permission:view posts', ['only' => ['indexregistration']]);
-        $this->middleware('permission:create posts', ['only' => ['createuser']]);
-        $this->middleware('permission:delete posts', ['only' => ['deleteuser']]);
+        $this->middleware('permission:manageuser', ['only' => ['indexregistration']]);
+        $this->middleware('permission:create', ['only' => ['authenticatecreate']]);
+        $this->middleware('permission:delete', ['only' => ['deleteuser']]);
     }
     public function readusertable()
     {
@@ -43,9 +43,16 @@ class RegisterController extends Controller
             'department' => ['required','string','max:255'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
+
+        // Check if user with same NIK already exists
+        $existinguser = User::where('nik', $request->input('nik'))->first();
+
+        if ($existinguser) {
+            return response()->json(['error' => 'This USER already exists!'], 422);
+        }
         $data = $request->all();
-        $check = $this->createuser($data);
-        return redirect("manageuser")->withSuccess('Data telah diinput');
+        $user = $this->createuser($data);
+        return response()->json(['success' => 'USER account created successfully!']);
     }
     protected function createuser(array $data)
     {

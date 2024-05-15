@@ -250,7 +250,7 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>Profile
                                 </a>
-                                @can('permit', Permission::class)
+                                @can('manageuser', Permission::class)
                                 <a class="dropdown-item" href="{{route('manageuser')}}">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>Manage Account
                                 </a>

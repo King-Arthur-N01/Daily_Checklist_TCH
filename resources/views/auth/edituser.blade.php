@@ -17,7 +17,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
                                     <div>
-                                        <input class="form-control form-control-user" type="text" name="name" placeholder="Username">
+                                        <input class="form-control form-control-user" type="text" name="name" placeholder="Username" value="{{$users->name}}">
                                     </div>
                                 </div>
                             </div>
@@ -25,7 +25,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
-                                        <input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                        <input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK" value="{{$users->nik}}">
                                     </div>
                                 </div>
                             </div>
@@ -35,7 +35,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
                                     <div>
-                                        <select selected="selected" class="form-control" name="status" id="category-input">
+                                        <select selected="selected" class="form-control" name="status" id="category-input" value="{{$users->status}}">
                                             <option value="1">Aktif</option>
                                             <option value="0">Nonaktif</option>
                                         </select>
@@ -46,7 +46,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
                                     <div>
-                                        <input class="form-control form-control-user" type="text" name="department" placeholder="Department">
+                                        <input class="form-control form-control-user" type="text" name="department" placeholder="Department" value="{{$users->department}}">
                                     </div>
                                 </div>
                             </div>
@@ -56,9 +56,9 @@
                                 <div class="form-group">
                                     <div>
                                         <label class="col-form-label text-sm-right"
-                                            style="margin-left: 4px;">Password</label>
+                                            style="margin-left: 4px;">Old Password</label>
                                         <div class="form-group" style="margin: 0px;">
-                                            <input class="form-control" type="password" name="password" required placeholder="Password Min:6 digits" id="password">
+                                            <input class="form-control" type="password" name="old_password" required placeholder="Konfirmasi Password" id="old_password">
                                         </div>
                                     </div>
                                     @error('password')
@@ -71,7 +71,7 @@
                                     <div>
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>
                                         <div class="form-group" style="margin: 0px;">
-                                            <input class="form-control" type="password" name="password_confirmation" placeholder="Confirm Password" id="confirm_password">
+                                            <input class="form-control" type="password" name="new_password" placeholder="Password Min:6 digits" id="new_password">
                                         </div>
                                     </div>
                                 </div>

@@ -3,6 +3,7 @@
 
 @section('content')
     <div class="row">
+        @can('viewtable_form', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
@@ -18,7 +19,8 @@
                 </div>
             </div>
         </div>
-        @can('register', Permission::class)
+        @endcan
+        @can('managemachine', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
@@ -35,6 +37,7 @@
             </div>
         </div>
         @endcan
+        @can('viewtable_records', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
@@ -50,8 +53,10 @@
                 </div>
             </div>
         </div>
+        @endcan
     </div>
     <div class="row">
+        @can('corrected_records', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
@@ -67,6 +72,8 @@
                 </div>
             </div>
         </div>
+        @endcan
+        @can('approval_records', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
@@ -82,6 +89,7 @@
                 </div>
             </div>
         </div>
+        @endcan
         {{-- <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">

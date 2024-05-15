@@ -110,18 +110,13 @@
     <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
-        $(function() {
-            $(document).ready(function() { //script for search2.js
-            $('.select2').select2({
-                placeholder: 'Select :',
-                searchInputPlaceholder: 'Search'});
-            });
-        });
-    </script>
-    <script>
         $(document).ready(function() {
             $('#dataTable').DataTable({ // Disable sorting for columns
             columnDefs: [{"orderable": false, "targets": [5]}]
+            });
+            $('.select2').select2({
+                placeholder: 'Select :',
+                searchInputPlaceholder: 'Search'
             });
         });
     </script>

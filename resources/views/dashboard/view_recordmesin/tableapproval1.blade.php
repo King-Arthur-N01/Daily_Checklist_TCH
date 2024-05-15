@@ -40,9 +40,6 @@
                             </div>
                         </div>
                     </div>
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered" id="preventiveTables" width="100%">
                             <thead>
@@ -104,8 +101,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" data-target="#rejectModal">Reject</button>
-                    <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal" data-target="#successModal">Approve</button>
+                    <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" onclick="return confirm('Apakah sudah yakin untuk di REJECT?')">Reject</button>
+                    <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Approve</button>
                 </div>
             </div>
         </div>
@@ -113,7 +110,7 @@
     <!-- End Extra Large Modal-->
 
     <!-- Alert Success Modal -->
-    <div  id="successModal" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
@@ -128,13 +125,13 @@
     </div>
     <!-- End Alert Success Modal -->
 
-    <!-- Alert Warning Modal -->
-    <div  id="rejectModal" tabindex="-1" aria-modal="true" role="dialog">
+    <!-- Alert Reject Modal -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle me-1"></i>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-1"></i>
                         <i class="modal-alert">Data Preventive was successfully REJECT</i>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -142,16 +139,32 @@
             </div>
         </div>
     </div>
-    <!-- End Alert Warning Modal -->
+    <!-- End Alert Reject Modal -->
+
+    <!-- Alert Notification Modal -->
+    <div class="modal fade" id="nontifModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle me-1"></i>
+                        <i class="modal-alert">Data update failed. Record already corrected by someone else.</i>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Notification Modal -->
 
     <!-- Alert Danger Modal -->
-    <div  id="rejectModal" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal fade" id="failedModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-octagon me-1"></i>
-                        <i class="modal-alert">Failed to update data !!!!</i>
+                        <i class="modal-alert">Data Preventive failed to be updated !!!!</i>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -240,19 +253,19 @@
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'corrected_by': correctedBy
                     },
-                    // success: function(response) {
-                    //     if (response.success) {
-                    //         alert('Data was successfully updated.'); // Alert success message
-                    //     } else {
-                    //         alert('Failed to update data.'); // Alert failure message
-                    //     }
-                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on success
-                    // },
-                    // error: function(xhr, status, error) {
-                    //     alert('Error: Data failed to update.'); // Alert error message
-                    //     console.error('Error saving machine record: ' + error);
-                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on error
-                    // }
+                    success: function(response) {
+                        if (response.success) {
+                            $('#successModal').modal('show'); // Show success modal
+                        } else {
+                            $('#failedModal').modal('show'); // Show failed modal
+                        }
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                    },
+                    error: function(xhr, status, error) {
+                        $('#nontifModal').modal('show'); // Show success modal
+                        console.error('Error saving machine record: ' + error);
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
+                    }
                 }).always(function() {
                     location.reload(); // Refresh the page whether success or error
                 });
@@ -267,19 +280,19 @@
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'reject_by': rejectBy
                     },
-                    // success: function(response) {
-                    //     if (response.success) {
-                    //         alert('Data was successfully updated.'); // Alert success message
-                    //     } else {
-                    //         alert('Failed to update data.'); // Alert failure message
-                    //     }
-                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on success
-                    // },
-                    // error: function(xhr, status, error) {
-                    //     alert('Error: Data failed to update.'); // Alert error message
-                    //     console.error('Error saving machine record: ' + error);
-                    //     $('#ExtralargeModal').modal('hide'); // Hide modal on error
-                    // }
+                    success: function(response) {
+                        if (response.success) {
+                            $('#rejectModal').modal('show'); // Show success modal
+                        } else {
+                            $('#failedModal').modal('show'); // Show failed modal
+                        }
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error: Data failed to update.');
+                        console.error('Error saving machine record: ' + error);
+                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
+                    }
                 }).always(function() {
                     location.reload(); // Refresh the page whether success or error
                 });
