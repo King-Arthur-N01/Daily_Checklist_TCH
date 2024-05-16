@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success mb-2">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
                         <table class="table" id="dataTable" width="100%">

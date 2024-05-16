@@ -14,9 +14,6 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
                     <div class="table-history">
                         <div class="col-4">
                             <p class="mg-b-10">Input Nama Mesin</p>
@@ -44,13 +41,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive ">
-                        <table class="table" id="datatables" width="100%" cellspacing="0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="historyTables" width="100%">
                             <thead>
                                 <th>Checkpoint NO.</th>
                                 <th>Nama Mesin</th>
                                 <th>Type Mesin</th>
                                 <th>Nomor Mesin</th>
+                                <th colspan="3">Status</th>
                                 <th>Date</th>
                                 <th>Action</th>
                             </thead>
@@ -62,6 +60,10 @@
                                             <td>{{ $recordsget->machine_name }}</td>
                                             <td>{{ $recordsget->machine_type }}</td>
                                             <td>{{ $recordsget->machine_number }}</td>
+                                            <td style="display: none;">{{ $recordsget->getcorrected }}</td>
+                                            <td style="display: none;">{{ $recordsget->getapprove }}</td>
+                                            <td style="display: none;">{{ $recordsget->getreject }}</td>
+                                            <td id="columnStatus"></td>
                                             <td>{{ $recordsget->getcreatedate }}</td>
                                             <td>
                                                 <a class="btn btn-primary" href="{{ route('detailhistory', $recordsget->records_id) }}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
@@ -108,19 +110,36 @@
         })(window.jQuery);
     </script>
     <script>
-        $(function() {
+        $(document).ready(function() {
             $('#datetimepicker').datetimepicker({ //script for calendar.js
                 datepicker: true,
                 timepicker: true,
                 format: 'm/d/Y h:i A',
                 step: 60 // Set the step interval for hour and minute selection
             });
-
-            $(document).ready(function() { //script for search2.js
             $('.select2').select2({
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'});
             });
-        });
+            $('#historyTables tr').each(function() {
+                var correctCell = $(this).find('td:eq(4)');
+                var approveCell = $(this).find('td:eq(5)');
+                var rejectCell = $(this).find('td:eq(6)');
+                var statusCell = $(this).find('td:eq(7)');
+                var correct = correctCell.text().trim();
+                var approve = approveCell.text().trim();
+                var reject = rejectCell.text().trim();
+                if (reject !== '') {
+                    statusCell.text('SUDAH DI REJECT')
+                } else if (approve === '') {
+                    statusCell.text('BELUM DI SETUJUI');
+                } else if (approve !== '') {
+                    statusCell.text('SUDAH DI SETUJUI');
+                } else if (correct === '') {
+                    statusCell.text('BELUM DI KOREKSI');
+                } else if (correct !== '') {
+                    statusCell.text('SUDAH DI KOREKSI');
+                }
+            });
     </script>
 @endpush

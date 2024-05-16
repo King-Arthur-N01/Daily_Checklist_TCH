@@ -505,3 +505,24 @@ $(".btn-show").on('click', function() {
     $("#rejectButton").attr("value",$(this).attr("data-id")); 
     $("#saveButton").attr("value",$(this).attr("data-id")); 
 });
+
+
+$('#historyTables tr').each(function() {
+    var correctCell = $(this).find('td:eq(4)');
+    var approveCell = $(this).find('td:eq(5)');
+    var rejectCell = $(this).find('td:eq(6)');
+    var correct = correctCell.text().trim();
+    var approve = approveCell.text().trim();
+    var reject = rejectCell.text().trim();
+    if (correct === '') {
+        correctCell.text('BELUM DI KOREKSI');
+    } else if (correct !== '') {
+        approveCell.text('SUDAH DI KOREKSI');
+    } else if (approve === '') {
+        approveCell.text('BELUM DI SETUJUI');
+    } else if (approve !== '') {
+        approveCell.text('SUDAH DI SETUJUI');
+    } else if (reject !== '') {
+        rejectCell.text('SUDAH DI REJECT')
+    }
+});

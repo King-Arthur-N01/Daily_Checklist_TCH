@@ -2151,7 +2151,7 @@ pre code {
 
 .table-filter{
     display: flex;
-    margin: 0px 0px 25px 0px;
+    margin: 0px 0px 15px 0px;
     flex-direction: row;
 }
 

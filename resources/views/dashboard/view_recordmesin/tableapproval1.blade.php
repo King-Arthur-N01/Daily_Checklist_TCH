@@ -267,7 +267,9 @@
                         $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }
                 }).always(function() {
-                    location.reload(); // Refresh the page whether success or error
+                    setTimeout(function() {
+                        location.reload(); // Refresh the page after a 2-second delay
+                    }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
             $('#rejectButton').on('click', function() {
@@ -294,7 +296,9 @@
                         $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }
                 }).always(function() {
-                    location.reload(); // Refresh the page whether success or error
+                    setTimeout(function() {
+                        location.reload(); // Refresh the page after a 2-second delay
+                    }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
 
