@@ -113,7 +113,6 @@ class MachinerecordController extends Controller
 
     public function tablecorrection()
     {
-
         $getrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
             ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
@@ -125,7 +124,7 @@ class MachinerecordController extends Controller
             'getrecords' => $getrecords
         ]);
     }
-    public function fetchdatarecord($id) // this code for ajax modal html
+    public function fetchdatacorrection($id) // this code for ajax modal html
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
@@ -136,12 +135,12 @@ class MachinerecordController extends Controller
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
-        $recordsdata = DB::table('machinerecords')
+            $recordsdata = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'machinerecords.id as get_id', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
             ->where('machinerecords.id', '=', $id)
-            ->get('mechinerecords.id');
+            ->get('machinerecords.id');
 
         $combinedata = [];
         foreach ($machinedata as $getmachine){
@@ -159,15 +158,15 @@ class MachinerecordController extends Controller
             }
         }
         return response()->json([
-        'machinedata' => $machinedata,
-        'recordsdata' => $recordsdata,
-        'combinedata' => $combinedata
+            'machinedata' => $machinedata,
+            'recordsdata' => $recordsdata,
+            'combinedata' => $combinedata
         ]);
     }
     public function registercorrection(Request $request, $id) // this code for ajax send request
     {
         $request->validate([
-            'corrected_by' => 'required'
+            'correct_by' => 'required'
         ]);
         $machinerecord = Machinerecord::find($id);
         if ($machinerecord->reject_by){
@@ -175,13 +174,12 @@ class MachinerecordController extends Controller
             if (!$machinerecord) {
                 return response()->json(['error' => 'Record not found !!!!'], 404);
             }
-            else if ($machinerecord->corrected_by) {
+            else if ($machinerecord->correct_by) {
                 return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
             }
         }
 
-        $machinerecord->update(['corrected_by' => $request->input('corrected_by')]);
-
+        $machinerecord->update(['correct_by' => $request->input('correct_by')]);
         return response()->json(['success' => 'Machine record updated successfully!']);
     }
     public function rejectcorrection(Request $request, $id) // this code for ajax send request
@@ -191,7 +189,7 @@ class MachinerecordController extends Controller
         ]);
         $machinerecord = Machinerecord::find($id);
 
-        if ($machinerecord->corrected_by) {
+        if ($machinerecord->correct_by) {
             return response()->json(['error' => 'Data update failed. Record has been approve by someone else.'], 422);
             if (!$machinerecord) {
                 return response()->json(['error' => 'Machine record not found'], 404);
@@ -200,8 +198,8 @@ class MachinerecordController extends Controller
                 return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
             }
         }
-        $machinerecord->update(['reject_by' => $request->input('reject_by')]);
 
+        $machinerecord->update(['reject_by' => $request->input('reject_by')]);
         return response()->json(['success' => 'Machine record updated successfully!']);
     }
 
@@ -214,7 +212,100 @@ class MachinerecordController extends Controller
     // <<<==============================batas approval machine records 2==============================>>>
     // <<<============================================================================================>>>
 
+    public function tableapproval()
+    {
+        $getrecords = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
+            ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->join('users', 'machinerecords.create_by', '=', 'users.id')
+            ->orderBy('machinerecords.id', 'asc')
+            ->get();
 
+        return view('dashboard.view_recordmesin.tableapproval2', [
+            'getrecords' => $getrecords
+        ]);
+    }
+    public function fetchdataapproval($id) // this code for ajax modal html
+    {
+        $machinedata = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
+            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+            ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+            ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+            ->where('machinerecords.id', '=', $id)
+            ->get('machinerecords.id');
+
+        $recordsdata = DB::table('machinerecords')
+            ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'machinerecords.id as get_id', 'historyrecords.id_metodecheck as get_checks')
+            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
+            ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
+            ->where('machinerecords.id', '=', $id)
+            ->get('machinerecords.id');
+
+        $combinedata = [];
+        foreach ($machinedata as $getmachine){
+            foreach ($recordsdata as $getrecords){
+                if ($getmachine->checks_id == $getrecords->get_checks){
+                    $combinedata[] = [
+                        'machine_name' => $getmachine->machine_name,
+                        'name_componencheck' => $getmachine->name_componencheck,
+                        'name_parameter' => $getmachine->name_parameter,
+                        'name_metodecheck' => $getmachine->name_metodecheck,
+                        'operator_action' => $getrecords->operator_action,
+                        'result' => $getrecords->result,
+                    ];
+                }
+            }
+        }
+        return response()->json([
+            'machinedata' => $machinedata,
+            'recordsdata' => $recordsdata,
+            'combinedata' => $combinedata
+        ]);
+    }
+    public function registerapproval(Request $request, $id) // this code for ajax send request
+    {
+        $request->validate([
+            'approve_by' => 'required'
+        ]);
+        $machinerecord = Machinerecord::find($id);
+        if ($machinerecord->reject_by){
+            return response()->json(['error' => 'Data update failed. Record has been reject by someone else.'], 422);
+            if (!$machinerecord) {
+                return response()->json(['error' => 'Record not found !!!!'], 404);
+            }
+            else if ($machinerecord->approve_by) {
+                return response()->json(['error' => 'Data update failed. Record already approve by someone else.'], 422);
+            }
+            else if (!$machinerecord->correct_by){
+                return response()->json(['error' => 'Data update failed. Record has not been corrected by anyone else.'], 422);
+            }
+        } 
+
+        $machinerecord->update(['approve_by' => $request->input('approve_by')]);
+        return response()->json(['success' => 'Machine record updated successfully!']);
+    }
+    public function rejectapproval(Request $request, $id) // this code for ajax send request
+    {
+        $request->validate([
+            'reject_by' => 'required'
+        ]);
+        $machinerecord = Machinerecord::find($id);
+
+        if ($machinerecord->correct_by) {
+            return response()->json(['error' => 'Data update failed. Record has been approve by someone else.'], 422);
+            if (!$machinerecord) {
+                return response()->json(['error' => 'Machine record not found'], 404);
+            }
+            else if ($machinerecord->reject_by) {
+                return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
+            }
+        }
+
+        $machinerecord->update(['reject_by' => $request->input('reject_by')]);
+        return response()->json(['success' => 'Machine record updated successfully!']);
+    }
 
     // <<<============================================================================================>>>
     // <<<============================batas approval machine records 2 end============================>>>

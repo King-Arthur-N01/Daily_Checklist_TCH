@@ -84,7 +84,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/approval_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="#">Lihat Pending Approval &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('viewapproval')}}">Lihat Pending Approval &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>

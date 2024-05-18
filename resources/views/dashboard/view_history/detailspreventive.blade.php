@@ -93,7 +93,7 @@
                                     <tr>
                                         <td>{{ $historyrecords[0]->reject_by_name }}</td>
                                         <td>{{ $historyrecords[0]->approve_by_name }}</td>
-                                        <td>{{ $historyrecords[0]->corrected_by_name }}</td>
+                                        <td>{{ $historyrecords[0]->correct_by_name }}</td>
                                         <td>{{ $historyrecords[0]->create_by_name }}</td>
                                     </tr>
                                 </thead>

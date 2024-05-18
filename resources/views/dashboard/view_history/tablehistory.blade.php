@@ -48,7 +48,7 @@
                                 <th>Nama Mesin</th>
                                 <th>Type Mesin</th>
                                 <th>Nomor Mesin</th>
-                                <th colspan="3">Status</th>
+                                <th colspan="2">Status</th>
                                 <th>Date</th>
                                 <th>Action</th>
                             </thead>
@@ -60,10 +60,11 @@
                                             <td>{{ $recordsget->machine_name }}</td>
                                             <td>{{ $recordsget->machine_type }}</td>
                                             <td>{{ $recordsget->machine_number }}</td>
-                                            <td style="display: none;">{{ $recordsget->getcorrected }}</td>
+                                            <td style="display: none;">{{ $recordsget->getcorrect }}</td>
                                             <td style="display: none;">{{ $recordsget->getapprove }}</td>
                                             <td style="display: none;">{{ $recordsget->getreject }}</td>
-                                            <td id="columnStatus"></td>
+                                            <td></td>
+                                            <td></td>
                                             <td>{{ $recordsget->getcreatedate }}</td>
                                             <td>
                                                 <a class="btn btn-primary" href="{{ route('detailhistory', $recordsget->records_id) }}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
@@ -125,20 +126,26 @@
                 var correctCell = $(this).find('td:eq(4)');
                 var approveCell = $(this).find('td:eq(5)');
                 var rejectCell = $(this).find('td:eq(6)');
-                var statusCell = $(this).find('td:eq(7)');
+                var statusCell1 = $(this).find('td:eq(7)');
+                var statusCell2 = $(this).find('td:eq(8)');
                 var correct = correctCell.text().trim();
                 var approve = approveCell.text().trim();
                 var reject = rejectCell.text().trim();
                 if (reject !== '') {
-                    statusCell.text('SUDAH DI REJECT')
-                } else if (approve === '') {
-                    statusCell.text('BELUM DI SETUJUI');
-                } else if (approve !== '') {
-                    statusCell.text('SUDAH DI SETUJUI');
-                } else if (correct === '') {
-                    statusCell.text('BELUM DI KOREKSI');
-                } else if (correct !== '') {
-                    statusCell.text('SUDAH DI KOREKSI');
+                    statusCell1.text('SUDAH DI REJECT')
+                    statusCell2.text('SUDAH DI REJECT')
+                    $(this).css("background-color", "rgba(255, 0, 0, 0.2)");
+                }  else if (correct !== '' && approve !== '') {
+                    statusCell1.text('SUDAH DI KOREKSI');
+                    statusCell2.text('SUDAH DI SETUJUI');
+                    $(this).css("background-color", "rgba( 0, 0, 255, 0.2)");
+                } else if (correct !== '' && approve === '') {
+                    statusCell1.text('SUDAH DI KOREKSI');
+                    statusCell2.text('BELUM DI SETUJUI');
+                    $(this).css("background-color", "rgba( 0, 255, 0, 0.2)");
+                } else if (correct === '' && approve === '') {
+                    statusCell1.text('BELUM DI KOREKSI');
+                    statusCell2.text('BELUM DI SETUJUI');
                 }
             });
     </script>

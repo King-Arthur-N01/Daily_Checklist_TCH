@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="preventiveTables" width="100%">
+                        <table class="table table-bordered" id="preventiveTables1" width="100%">
                             <thead>
                                 <th>NO.</th>
                                 <th>SHIFT</th>
@@ -65,7 +65,7 @@
                                             <td>{{ $viewrecords->machine_type }}</td>
                                             <td>{{ $viewrecords->machine_brand }}</td>
                                             <td>{{ $viewrecords->record_time }}</td>
-                                            <td>{{ $viewrecords->corrected_by }}</td>
+                                            <td>{{ $viewrecords->correct_by }}</td>
                                             <td style="display: none;">{{ $viewrecords->reject_by }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
@@ -102,7 +102,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" onclick="return confirm('Apakah sudah yakin untuk di REJECT?')">Reject</button>
-                    <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Approve</button>
+                    <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                 </div>
             </div>
         </div>
@@ -184,7 +184,7 @@
     <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#preventiveTables').DataTable({ // Disable sorting for columns
+            $('#preventiveTables1').DataTable({ // Disable sorting for columns
                 columnDefs: [{"orderable": false, "targets": [8]
                 }]
             });
@@ -233,6 +233,24 @@
                         html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
                         html += '<textarea id="input_note" type="text" rows="6" cols="50" readonly>' + data.machinedata[0].note + '</textarea>';
                         html += '</div>';
+                        html += '<div class="form-custom">';
+                        html += '<table class="table table-bordered" id="userTable">';
+                        html += '<thead>';
+                        html += '<tr>';
+                        html += '<th>Direject oleh :</th>';
+                        html += '<th>Disetujui oleh :</th>';
+                        html += '<th>Dikoreksi oleh :</th>';
+                        html += '<th>Dibuat oleh :</th>';
+                        html += '</tr>';
+                        html += '<tr>';
+                        html += '<td>' + data.recordsdata[0].reject_by + '</td>';
+                        html += '<td>' + data.recordsdata[0].approve_by + '</td>';
+                        html += '<td>' + data.recordsdata[0].correct_by + '</td>';
+                        html += '<td>' + data.recordsdata[0].create_by + '</td>';
+                        html += '</tr>';
+                        html += '</thead>';
+                        html += '</table>';
+                        html += '</div>';
                         $('#modal-data').html(html);
                         mergeCells();
                     }
@@ -251,7 +269,7 @@
                     url: '{{ route('pushcorrection', ':id') }}'.replace(':id', machineId),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
-                        'corrected_by': correctedBy
+                        'correct_by': correctedBy
                     },
                     success: function(response) {
                         if (response.success) {
@@ -262,7 +280,7 @@
                         $('#ExtralargeModal').modal('hide'); // Hide modal on success
                     },
                     error: function(xhr, status, error) {
-                        $('#nontifModal').modal('show'); // Show success modal
+                        $('#nontifModal').modal('show'); // Show nontif modal
                         console.error('Error saving machine record: ' + error);
                         $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }
@@ -277,7 +295,7 @@
                 var rejectBy = '{{ Auth::user()->id }}';
                 $.ajax({
                     type: 'PUT',
-                    url: '{{ route('pushreject', ':id') }}'.replace(':id', machineId),
+                    url: '{{ route('pushreject1', ':id') }}'.replace(':id', machineId),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                         'reject_by': rejectBy
@@ -291,7 +309,7 @@
                         $('#ExtralargeModal').modal('hide'); // Hide modal on success
                     },
                     error: function(xhr, status, error) {
-                        alert('Error: Data failed to update.');
+                        $('#nontifModal').modal('show'); // Show nontif modal
                         console.error('Error saving machine record: ' + error);
                         $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }

@@ -145,8 +145,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-space btn-primary" id="submitButton" onclick="return confirm('Apakah sudah yakin mengisi data dengan benar?')">Submit</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-space btn-primary" id="submitButton" onclick="return confirm('Apakah sudah yakin mengisi data dengan benar?')">Submit</button>
                 </div>
             </div>
         </div>

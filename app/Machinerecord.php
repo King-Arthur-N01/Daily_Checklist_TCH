@@ -13,7 +13,7 @@ class Machinerecord extends Model
         'id_machine2',
         'reject_by',
         'create_by',
-        'corrected_by',
+        'correct_by',
         'approve_by',
         'record_time',
     ];

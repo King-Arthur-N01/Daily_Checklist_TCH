@@ -33,7 +33,7 @@ class CreateRelationTable extends Migration
             $table->foreign('create_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
         });
         Schema::table('machinerecords', function (Blueprint $table){
-            $table->foreign('corrected_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('correct_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
         });
         Schema::table('machinerecords', function (Blueprint $table){
             $table->foreign('approve_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
