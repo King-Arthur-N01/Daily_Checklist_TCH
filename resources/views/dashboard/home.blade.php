@@ -67,7 +67,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/checking_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('viewcorrection')}}">Lihat Pending Check &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('viewcorrection')}}">Lihat Pending Check &nbsp; <i class="bi bi-clipboard2-check-fill"></i></a>
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/approval_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('viewapproval')}}">Lihat Pending Approval &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('viewapproval')}}">Lihat Pending Approval &nbsp; <i class="bi bi-clipboard2-check-fill"></i></a>
                     </div>
                 </div>
             </div>

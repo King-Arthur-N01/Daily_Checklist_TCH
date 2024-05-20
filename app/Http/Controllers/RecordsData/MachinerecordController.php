@@ -51,7 +51,7 @@ class MachinerecordController extends Controller
         $getmachineid = ($request->input('id_machine2'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('record_time');
-
+        dd($lastsubmissiontime);
         if ($lastsubmissiontime){
             $lastsubmit = Carbon::parse($lastsubmissiontime);
             $currenttime = Carbon::now();
@@ -81,7 +81,7 @@ class MachinerecordController extends Controller
                     $StoreHistory->save();
                 }
             }
-        }elseif(!$lastsubmissiontime){
+        }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
             $StoreRecords->machine_number2 = $request->input('machine_number2');
             $StoreRecords->shift = $request->input('shift');
@@ -169,18 +169,20 @@ class MachinerecordController extends Controller
             'correct_by' => 'required'
         ]);
         $machinerecord = Machinerecord::find($id);
-        if ($machinerecord->reject_by){
-            return response()->json(['error' => 'Data update failed. Record has been reject by someone else.'], 422);
+        if (!$machinerecord->reject_by){
             if (!$machinerecord) {
                 return response()->json(['error' => 'Record not found !!!!'], 404);
             }
             else if ($machinerecord->correct_by) {
                 return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
             }
+            else {
+                $machinerecord->update(['correct_by' => $request->input('correct_by')]);
+            }
+        } else if ($machinerecord->reject_by) {
+            return response()->json(['error' => 'Data update failed. Record has been reject by someone else.'], 422);
         }
-
-        $machinerecord->update(['correct_by' => $request->input('correct_by')]);
-        return response()->json(['success' => 'Machine record updated successfully!']);
+        return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
     }
     public function rejectcorrection(Request $request, $id) // this code for ajax send request
     {
@@ -189,18 +191,20 @@ class MachinerecordController extends Controller
         ]);
         $machinerecord = Machinerecord::find($id);
 
-        if ($machinerecord->correct_by) {
-            return response()->json(['error' => 'Data update failed. Record has been approve by someone else.'], 422);
+        if (!$machinerecord->correct_by) {
             if (!$machinerecord) {
                 return response()->json(['error' => 'Machine record not found'], 404);
             }
             else if ($machinerecord->reject_by) {
                 return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
             }
+            else {
+                $machinerecord->update(['reject_by' => $request->input('reject_by')]);
+            }
+        } else if ($machinerecord->correct_by) {
+            return response()->json(['error' => 'Data update failed. Record has been corrected by someone else.'], 422);
         }
-
-        $machinerecord->update(['reject_by' => $request->input('reject_by')]);
-        return response()->json(['success' => 'Machine record updated successfully!']);
+        return response()->json(['success' => 'Data Preventive was successfully REJECT!']);
     }
 
     // <<<============================================================================================>>>
@@ -270,21 +274,23 @@ class MachinerecordController extends Controller
             'approve_by' => 'required'
         ]);
         $machinerecord = Machinerecord::find($id);
-        if ($machinerecord->reject_by){
-            return response()->json(['error' => 'Data update failed. Record has been reject by someone else.'], 422);
+        if (!$machinerecord->reject_by) {
             if (!$machinerecord) {
-                return response()->json(['error' => 'Record not found !!!!'], 404);
+                return response()->json(['error' => 'Data record not found !!!!'], 404);
+            }
+            else if (!$machinerecord->correct_by) {
+                return response()->json(['error' => 'Data update failed. Record has not been corrected by someone else.'], 422);
             }
             else if ($machinerecord->approve_by) {
-                return response()->json(['error' => 'Data update failed. Record already approve by someone else.'], 422);
+                return response()->json(['error' => 'Data update failed. Record already been approved by someone else.'], 422);
             }
-            else if (!$machinerecord->correct_by){
-                return response()->json(['error' => 'Data update failed. Record has not been corrected by anyone else.'], 422);
+            else {
+                $machinerecord->update(['approve_by' => $request->input('approve_by')]);
             }
-        } 
-
-        $machinerecord->update(['approve_by' => $request->input('approve_by')]);
-        return response()->json(['success' => 'Machine record updated successfully!']);
+        } else if ($machinerecord->reject_by) {
+            return response()->json(['error' => 'Data update failed. Record already rejected previously by someone else.'], 422);
+        }
+        return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
     }
     public function rejectapproval(Request $request, $id) // this code for ajax send request
     {
@@ -292,19 +298,23 @@ class MachinerecordController extends Controller
             'reject_by' => 'required'
         ]);
         $machinerecord = Machinerecord::find($id);
-
-        if ($machinerecord->correct_by) {
-            return response()->json(['error' => 'Data update failed. Record has been approve by someone else.'], 422);
+        if (!$machinerecord->approve_by) {
             if (!$machinerecord) {
-                return response()->json(['error' => 'Machine record not found'], 404);
+                return response()->json(['error' => 'Data record not found !!!!'], 404);
+            }
+            else if (!$machinerecord->correct_by) {
+                return response()->json(['error' => 'Data update failed. Record has not been corrected previously by someone else.'], 422);
             }
             else if ($machinerecord->reject_by) {
                 return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
             }
+            else {
+                $machinerecord->update(['reject_by' => $request->input('reject_by')]);
+            }
+        } else if ($machinerecord->approve_by) {
+            return response()->json(['error' => 'Data update failed. Record already been approved previously.'], 422);
         }
-
-        $machinerecord->update(['reject_by' => $request->input('reject_by')]);
-        return response()->json(['success' => 'Machine record updated successfully!']);
+        return response()->json(['success' => 'Data Preventive was successfully REJECT!']);
     }
 
     // <<<============================================================================================>>>

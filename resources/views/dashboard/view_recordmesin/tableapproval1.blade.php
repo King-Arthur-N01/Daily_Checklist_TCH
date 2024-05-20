@@ -116,7 +116,7 @@
                 <div class="modal-body">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle me-1"></i>
-                        <i class="modal-alert">Data Preventive was successfully ACCEPTED</i>
+                        <span id="successText" class="modal-alert"></span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -125,37 +125,21 @@
     </div>
     <!-- End Alert Success Modal -->
 
-    <!-- Alert Reject Modal -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" aria-modal="true" role="dialog">
+    <!-- Alert Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle me-1"></i>
-                        <i class="modal-alert">Data Preventive was successfully REJECT</i>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <span id="warningText" class="modal-alert"></span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Alert Reject Modal -->
-
-    <!-- Alert Notification Modal -->
-    <div class="modal fade" id="nontifModal" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        <i class="bi bi-info-circle me-1"></i>
-                        <i class="modal-alert">Data update failed. Record already corrected by someone else.</i>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Alert Notification Modal -->
+    <!-- End Alert Warning Modal -->
 
     <!-- Alert Danger Modal -->
     <div class="modal fade" id="failedModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -164,7 +148,7 @@
                 <div class="modal-body">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-octagon me-1"></i>
-                        <i class="modal-alert">Data Preventive failed to be updated !!!!</i>
+                        <i class="modal-alert">Data Preventive FAILED to be updated !!!!</i>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -273,6 +257,8 @@
                     },
                     success: function(response) {
                         if (response.success) {
+                            const successMessage = response.success;
+                            $('#successText').text(successMessage);
                             $('#successModal').modal('show'); // Show success modal
                         } else {
                             $('#failedModal').modal('show'); // Show failed modal
@@ -280,7 +266,14 @@
                         $('#ExtralargeModal').modal('hide'); // Hide modal on success
                     },
                     error: function(xhr, status, error) {
-                        $('#nontifModal').modal('show'); // Show nontif modal
+                        var warningMessage = xhr.responseText;
+                        try {
+                            warningMessage = JSON.parse(xhr.responseText).error;
+                        } catch (e) {
+                            console.error('Error parsing error message:', e);
+                        }
+                        $('#warningText').text(warningMessage); // Set the error message in the modal
+                        $('#warningModal').modal('show'); // Show error modal
                         console.error('Error saving machine record: ' + error);
                         $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }
@@ -302,14 +295,23 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            $('#rejectModal').modal('show'); // Show success modal
+                            const successMessage = response.success;
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show'); // Show success modal
                         } else {
                             $('#failedModal').modal('show'); // Show failed modal
                         }
                         $('#ExtralargeModal').modal('hide'); // Hide modal on success
                     },
                     error: function(xhr, status, error) {
-                        $('#nontifModal').modal('show'); // Show nontif modal
+                        var warningMessage = xhr.responseText;
+                        try {
+                            warningMessage = JSON.parse(xhr.responseText).error;
+                        } catch (e) {
+                            console.error('Error parsing error message:', e);
+                        }
+                        $('#warningText').text(warningMessage); // Set the error message in the modal
+                        $('#warningModal').modal('show'); // Show error modal
                         console.error('Error saving machine record: ' + error);
                         $('#ExtralargeModal').modal('hide'); // Hide modal on error
                     }
