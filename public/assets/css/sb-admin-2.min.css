@@ -247,6 +247,24 @@ button {
     border-radius: 0
 }
 
+.form-buttons{
+    width: 80%;
+    background-color: #4e73df;
+    color: white;
+    padding: 10px 20px;
+    margin: 0px 0px 10px 0px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-text-stroke-width: thin;
+    text-align: center;
+}
+
+.column-button{
+    display: flex;
+    justify-content: center;
+}
+
 .option-button{
 
 }

@@ -142,8 +142,8 @@
                                     </thead>
                                 </table>
                             </div>
-                            <div class="dt-buttons">
-                                <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                            <div class="column-button">
+                                <button type="submit" class="form-buttons">Submit</button>
                             </div>
                         </form>
                     </div>

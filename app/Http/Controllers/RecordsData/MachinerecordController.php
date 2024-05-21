@@ -51,7 +51,7 @@ class MachinerecordController extends Controller
         $getmachineid = ($request->input('id_machine2'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('record_time');
-        dd($lastsubmissiontime);
+
         if ($lastsubmissiontime){
             $lastsubmit = Carbon::parse($lastsubmissiontime);
             $currenttime = Carbon::now();
