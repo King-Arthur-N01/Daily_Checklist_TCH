@@ -22,10 +22,9 @@ Route::get ('/home', 'HomeController@index')->name('home');
 Route::get ('/login','Auth\LoginController@indexlogin')->name('login');
 Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin');
 Route::get ('/manageuser','Auth\RegisterController@readusertable')->name('manageuser');
-Route::get ('/manageuser/register','Auth\RegisterController@indexregistration')->name('registeruser');
 Route::post('/manageuser/register','Auth\RegisterController@authenticatecreate')->name('pushregisteruser');
-Route::get ('/manageuser/updateuser/{id}','Auth\RegisterController@indexedit')->name('edituser');
-Route::put ('/manageuser/updateuser/{id}','Auth\RegisterController@authenticateedit')->name('pushedituser');
+Route::get ('/manageuser/{id}','Auth\RegisterController@fetchdatauser')->name('fetchedituser');
+Route::put ('/manageuser/{id}','Auth\RegisterController@authenticateedit')->name('pushedituser');
 Route::get ('/manageuser/userdelete/{id}','Auth\RegisterController@deleteuser')->name('deleteaccount');
 Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end

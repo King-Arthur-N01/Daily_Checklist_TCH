@@ -18,22 +18,19 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('permission:manageuser', ['only' => ['readusertable']]);
-        $this->middleware('permission:create', ['only' => ['authenticatecreate']]);
-        $this->middleware('permission:delete', ['only' => ['deleteuser']]);
+        $this->middleware('permission:manageuser', ['only' => ['authenticatecreate']]);
+        $this->middleware('permission:manageuser', ['only' => ['authenticateedit']]);
+        $this->middleware('permission:manageuser', ['only' => ['deleteuser']]);
     }
     public function readusertable()
     {
         $users=User::get();
         return view('auth.tableuser',['users'=>$users]);
     }
-    public function indexregistration()
+    public function fetchdatauser($id)
     {
-        return view('auth.register');
-    }
-    public function indexedit($id)
-    {
-        $users=User::find($id);
-        return view('auth.edituser',['users'=>$users]);
+        $getusers=User::find($id);
+        return response()->json(['getusers' => $getusers]);
     }
     public function authenticatecreate(Request $request)
     {
@@ -67,14 +64,12 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'unique:users'],
             'status' => ['required', 'boolean'],
             'department' => ['required'],
-            'password' => ['required', 'string', 'min:6', 'confirmed']
         ]);
         $user = User::find($id);
         $user->update($request->all());
-        return redirect()->route("manageuser")->withSuccess('User updated successfully.');
+        return response()->json(['success' => 'USER account update successfully!']);
     }
     public function deleteuser($id){
         User::where('id',$id)->delete();
