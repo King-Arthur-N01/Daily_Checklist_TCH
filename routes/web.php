@@ -36,6 +36,9 @@ Route::post('/tablemachine/addmachine','MachineData\MachineController@registerma
 Route::get ('/tablemachine/editmachine/{id}','MachineData\MachineController@indexupdatemachine')->name('editmachine');
 Route::put ('/tablemachine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('pusheditmachine');
 Route::get ('/tablemachine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
+
+Route::get ('/tablemachinedata','MachineData\MachineController@indextableimport')->name('managemachinedata');
+Route::post('/tablemachinedata/pushfiles', 'MachineData\MachineController@importdata')->name('uploadfile');
 // macine route end
 
 // componencheck route
@@ -64,16 +67,6 @@ Route::put('/editmethod/{id}','MachineData\MetodecheckController@editmethod')->n
 Route::get('/tablemethod','MachineData\MetodecheckController@indextablemethod')->name('managemethod');
 Route::get('/deletemethod/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
 // metodecheck route end
-
-// import machine data route
-Route::get ('/tablemachinedata','MachineData\ImportdataController@indextableimport')->name('managemachinedata');
-Route::get ('/tablemachinedata/addmachinedata','MachineData\ImportdataController@indextableimport')->name('addmachinedata');
-Route::post('/tablemachinedata/addmachinedata','MachineData\ImportdataController@registermachineresult')->name('pushmachinedata');
-Route::get ('/tablemachinedata/editmachinedata/{id}','MachineData\ImportdataController@indexeditmachineresult')->name('editmachinedata');
-Route::put ('/tablemachinedata/editmachinedata/{id}','MachineData\ImportdataController@editmachineresult')->name('pusheditmachinedata');
-Route::get ('/tablemachinedata/deletemachinedata/{id}','MachineData\ImportdataController@deletemachineresult')->name('deletemachinedata');
-Route::post('/tablemachinedata/pushfiles', 'MachineData\ImportdataController@importdata')->name('uploadfile');
-// impor machine data route end
 
 // input data machine record
 Route::get('/tablepreventive','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');

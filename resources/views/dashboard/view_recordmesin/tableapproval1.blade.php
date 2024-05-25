@@ -101,7 +101,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" onclick="return confirm('Apakah sudah yakin untuk di REJECT?')">Reject</button>
+                    <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" onclick="return confirmReject()">Reject</button>
                     <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                 </div>
             </div>
@@ -283,7 +283,17 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
+            function confirmReject() {
+                if (confirm('Apakah sudah yakin untuk di REJECT?')) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
             $('#rejectButton').on('click', function() {
+                if (!confirmReject()) {
+                    return;
+                }
                 var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
                 var rejectBy = '{{ Auth::user()->id }}';
                 $.ajax({
@@ -321,6 +331,7 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
+
         });
     </script>
 @endpush
