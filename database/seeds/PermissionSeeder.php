@@ -20,12 +20,14 @@ class PermissionSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'create_form']);
-        Permission::create(['name' => 'viewtable_form']);
-        Permission::create(['name' => 'edit_form']);
+        // Permission::create(['name' => 'create_form']);
+        // Permission::create(['name' => 'viewtable_form']);
+        // Permission::create(['name' => 'edit_form']);
+
+        Permission::create(['name' => 'create_records']);
+        Permission::create(['name' => 'edit_records']);
         Permission::create(['name' => 'viewtable_records']);
         Permission::create(['name' => 'delete_records']);
-        Permission::create(['name' => 'reject_records']);
         Permission::create(['name' => 'corrected_records']);
         Permission::create(['name' => 'approval_records']);
         Permission::create(['name' => 'managemachine']);
@@ -34,32 +36,48 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'restric']);
 
         //create roles and assign existing permissions
-        $userRole = Role::create(['name' => 'user']);
-        $userRole->givePermissionTo('viewtable_form');
-        $userRole->givePermissionTo('create_form');
-        $userRole->givePermissionTo('edit_form');
+        $operatorRole = Role::create(['name' => 'operator']);
+        $operatorRole->givePermissionTo('create_records');
+        $operatorRole->givePermissionTo('viewtable_records');
+
+        $leaderRole = Role::create(['name' => 'leader']);
+        $leaderRole->givePermissionTo('create_records');
+        $leaderRole->givePermissionTo('edit_records');
+        $leaderRole->givePermissionTo('viewtable_records');
+        $leaderRole->givePermissionTo('corrected_records');
+        $leaderRole->givePermissionTo('managemachine');
 
         $foremanRole = Role::create(['name' => 'foreman']);
-        $foremanRole->givePermissionTo('viewtable_form');
-        $foremanRole->givePermissionTo('edit_form');
-        $foremanRole->givePermissionTo('delete_records');
+        $foremanRole->givePermissionTo('create_records');
+        $foremanRole->givePermissionTo('edit_records');
+        $foremanRole->givePermissionTo('viewtable_records');
         $foremanRole->givePermissionTo('corrected_records');
-        $foremanRole->givePermissionTo('reject_records');
         $foremanRole->givePermissionTo('managemachine');
+        $foremanRole->givePermissionTo('manageuser');
+
+        $supervisorRole = Role::create(['name' => 'supervisor']);
+        $supervisorRole->givePermissionTo('create_records');
+        $supervisorRole->givePermissionTo('edit_records');
+        $supervisorRole->givePermissionTo('delete_records');
+        $supervisorRole->givePermissionTo('corrected_records');
+        $supervisorRole->givePermissionTo('approval_records');
+        $supervisorRole->givePermissionTo('manageuser');
 
         $managerRole = Role::create(['name' => 'manager']);
-        $managerRole->givePermissionTo('viewtable_records');
+        $managerRole->givePermissionTo('create_records');
+        $managerRole->givePermissionTo('edit_records');
+        $managerRole->givePermissionTo('edit_records');
+        $managerRole->givePermissionTo('delete_records');
+        $managerRole->givePermissionTo('corrected_records');
         $managerRole->givePermissionTo('approval_records');
-        $managerRole->givePermissionTo('reject_records');
+        $managerRole->givePermissionTo('managemachine');
         $managerRole->givePermissionTo('manageuser');
 
         $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo('create_form');
-        $adminRole->givePermissionTo('viewtable_form');
-        $adminRole->givePermissionTo('edit_form');
+        $adminRole->givePermissionTo('create_records');
+        $adminRole->givePermissionTo('edit_records');
         $adminRole->givePermissionTo('viewtable_records');
         $adminRole->givePermissionTo('delete_records');
-        $adminRole->givePermissionTo('reject_records');
         $adminRole->givePermissionTo('corrected_records');
         $adminRole->givePermissionTo('approval_records');
         $adminRole->givePermissionTo('managemachine');
@@ -76,54 +94,70 @@ class PermissionSeeder extends Seeder
         ]);
         $admin->assignRole('admin');
 
-        $foreman = User::create([
-            'name' => 'foreman',
-            'nik' => '12345',
-            'department' => 'Engginer',
-            'password' => bcrypt('foreman123'),
-        ]);
-        $foreman->assignRole('foreman');
-
         $manager = User::create([
-            'name' => 'manager',
+            'name' => 'Manager',
             'nik' => '00000',
             'department' => 'Engginer',
             'password' => bcrypt('manager123'),
         ]);
         $manager->assignRole('manager');
 
-        $user = User::create([
-            'name' => 'User 1',
+        $supervisor = User::create([
+            'name' => 'Supervisor',
             'nik' => '11111',
             'department' => 'Engginer',
-            'password' => bcrypt('user123'),
+            'password' => bcrypt('supervisor123'),
         ]);
-        $user->assignRole('user');
+        $supervisor->assignRole('supervisor');
 
-        $user = User::create([
-            'name' => 'User 2',
+        $foreman = User::create([
+            'name' => 'Foreman',
             'nik' => '22222',
             'department' => 'Engginer',
-            'password' => bcrypt('user123'),
+            'password' => bcrypt('foreman123'),
         ]);
-        $user->assignRole('user');
+        $foreman->assignRole('foreman');
 
-        $user = User::create([
-            'name' => 'User 3',
+        $leader = User::create([
+            'name' => 'Leader',
             'nik' => '33333',
-            'status' => '0',
             'department' => 'Engginer',
-            'password' => bcrypt('user123'),
+            'password' => bcrypt('leader123'),
         ]);
-        $user->assignRole('user');
+        $leader->assignRole('leader');
 
-        $user = User::create([
-            'name' => 'User 4',
-            'nik' => '44444',
+        $operator = User::create([
+            'name' => 'Operator 1',
+            'nik' => '98765',
+            'department' => 'Engginer',
+            'password' => bcrypt('user123'),
+        ]);
+        $operator->assignRole('operator');
+
+        $operator = User::create([
+            'name' => 'Operator 2',
+            'nik' => '12345',
+            'department' => 'Engginer',
+            'password' => bcrypt('user123'),
+        ]);
+        $operator->assignRole('operator');
+
+        $operator = User::create([
+            'name' => 'Operator 3',
+            'nik' => '13812',
             'status' => '0',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
         ]);
-        $user->assignRole('user');
+        $operator->assignRole('operator');
+
+        $operator = User::create([
+            'name' => 'Operator 4',
+            'nik' => '10243',
+            'status' => '0',
+            'department' => 'Engginer',
+            'password' => bcrypt('user123'),
+        ]);
+        $operator->assignRole('operator');
     }
 }

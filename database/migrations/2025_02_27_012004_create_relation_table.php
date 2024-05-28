@@ -44,6 +44,9 @@ class CreateRelationTable extends Migration
         Schema::table('historyrecords', function (Blueprint $table){
             $table->foreignId('id_machinerecord')->identity('1,1')->references('id')->on('machinerecords')->onDelete('cascade')->unique();
         });
+        Schema::table('historyrecords', function (Blueprint $table){
+            $table->foreignId('id_metodecheck')->identity('1,1')->references('id')->on('metodechecks')->onDelete('cascade');
+        });
     }
 
     /**

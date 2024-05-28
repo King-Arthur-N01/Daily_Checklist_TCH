@@ -17,4 +17,8 @@ class Historyrecords extends Model
     {
         return $this->hasMany(Machinerecord::class);
     }
+    public function getchildrenmetode()
+    {
+        return $this->belongsTo(Metodecheck::class);
+    }
 }

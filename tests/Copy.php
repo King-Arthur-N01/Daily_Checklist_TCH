@@ -502,8 +502,8 @@ $(document).ready(function() {
 
 $(".btn-show").on('click', function() {
     console.log($(this).attr("data-id"));
-    $("#rejectButton").attr("value",$(this).attr("data-id")); 
-    $("#saveButton").attr("value",$(this).attr("data-id")); 
+    $("#rejectButton").attr("value",$(this).attr("data-id"));
+    $("#saveButton").attr("value",$(this).attr("data-id"));
 });
 
 
@@ -568,3 +568,77 @@ public function fetchdataapproval($id) // this code for ajax modal html
         'combinedata' => $combinedata
         ]);
     }
+
+    <table class="table table-bordered">
+    <tr>
+        <th>No. Invent Mesin :</th>
+        <td>{{ $machinedata[0].invent_number }}</td>
+        <th>Spec/Tonage :</th>
+        <td>{{ $machinedata[0].machine_spec }}</td>
+    </tr>
+    <tr>
+        <th>Nama Mesin :</th>
+        <td>{{ $machinedata[0].machine_name }}</td>
+        <th>Buatan :</th>
+        <td>{{ $machinedata[0].machine_made }}</td>
+    </tr>
+    <tr>
+        <th>Brand/Merk :</th>
+        <td>{{ $machinedata[0].machine_brand }}</td>
+        <th>Mfg.NO :</th>
+        <td>{{ $machinedata[0].mfg_number }}</td>
+    </tr>
+    <tr>
+        <th>Model/Type :</th>
+        <td>{{ $machinedata[0].machine_type }}</td>
+        <th>Install Date :</th>
+        <td>{{ $machinedata[0].install_date }}</td>
+    </tr>
+</table>
+<h4>History Records</h4>
+<table class="table table-bordered" id="dataTables">
+    <thead>
+        <tr>
+            <th>Nama Mesin</th>
+            <th>Bagian Yang Dicheck</th>
+            <th>Standart/Parameter</th>
+            <th>Metode Pengecekan</th>
+            <th>Action</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each $combinedata}}
+        <tr>
+            <td>{{machine_name}}</td>
+            <td>{{name_componencheck}}</td>
+            <td>{{name_parameter}}</td>
+            <td>{{name_metodecheck}}</td>
+            <td>{{operator_action}}</td>
+            <td>{{result}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<div class="form-custom">
+    <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
+    <textarea id="input_note" type="text" rows="6" cols="50" readonly>{{ $machinedata[0].note }}</textarea>
+</div>
+<div class="form-custom">
+    <table class="table table-bordered" id="userTable">
+        <thead>
+            <tr>
+                <th>Direject oleh :</th>
+                <th>Disetujui oleh :</th>
+                <th>Dikoreksi oleh :</th>
+                <th>Dibuat oleh :</th>
+            </tr>
+            <tr>
+                <td>{{ $recordsdata[0].modify_by }}</td>
+                <td>{{ $recordsdata[0].approve_by }}</td>
+                <td>{{ $recordsdata[0].correct_by }}</td>
+                <td>{{ $recordsdata[0].create_by }}</td>
+            </tr>
+        </thead>
+    </table>
+</div>

@@ -25,10 +25,7 @@ class MachinerecordController extends Controller
         $timenow = Carbon::now();
 
         $joinmachine = DB::table('machines')
-            ->select(
-                'machines.*','componenchecks.*','parameters.*','metodechecks.*',
-                /*alias for formrecordmesin*/
-                'machines.machine_number as get_number','metodechecks.id as metodecheck_id')
+            ->select('machines.*','componenchecks.*','parameters.*','metodechecks.*','metodechecks.id as metodecheck_id')
             ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
             ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
@@ -177,7 +174,10 @@ class MachinerecordController extends Controller
                 return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
             }
             else {
-                $machinerecord->update(['correct_by' => $request->input('correct_by')]);
+                $machinerecord->update([
+                    'correct_by' => $request->input('correct_by'),
+                    'note' => $request->input('note')
+                ]);
             }
         } else if ($machinerecord->reject_by) {
             return response()->json(['error' => 'Data update failed. Record has been reject by someone else.'], 422);
@@ -285,7 +285,10 @@ class MachinerecordController extends Controller
                 return response()->json(['error' => 'Data update failed. Record already been approved by someone else.'], 422);
             }
             else {
-                $machinerecord->update(['approve_by' => $request->input('approve_by')]);
+                $machinerecord->update([
+                    'correct_by' => $request->input('correct_by'),
+                    'note' => $request->input('note')
+                ]);
             }
         } else if ($machinerecord->reject_by) {
             return response()->json(['error' => 'Data update failed. Record already rejected previously by someone else.'], 422);

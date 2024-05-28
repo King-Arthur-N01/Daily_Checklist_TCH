@@ -172,10 +172,6 @@
                 columnDefs: [{"orderable": false, "targets": [8]
                 }]
             });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
             $('#ExtralargeModal').on('shown.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var id = button.data('id');
@@ -331,7 +327,6 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
-
         });
     </script>
 @endpush
