@@ -89,21 +89,25 @@
                                                 <div id="select-style-radio"
                                                     style="display: flex; justify-content: center;">
                                                     {{-- <label>Select an option:</label> --}}
-                                                    <div class="option">
+                                                    <div class="option btn-option">
+                                                        <label for="option1">check</label>
                                                         <input type="radio" name="operator_action[{{$key}}]" value="check" id="option1">
-                                                        <img class="image-card-mini" src="{{ asset('assets/icons/magnifying-glass.png') }}">
+                                                        {{-- <img class="image-card-mini" src="{{ asset('assets/icons/magnifying-glass.png') }}"> --}}
                                                     </div>
-                                                    <div class="option">
+                                                    <div class="option btn-option">
+                                                        <label for="option2">cleaning</label>
                                                         <input type="radio" name="operator_action[{{$key}}]" value="cleaning" id="option2">
-                                                        <img class="image-card-mini"src="{{ asset('assets/icons/dust.png') }}">
+                                                        {{-- <img class="image-card-mini"src="{{ asset('assets/icons/dust.png') }}"> --}}
                                                     </div>
-                                                    <div class="option">
+                                                    <div class="option btn-option">
+                                                        <label for="option3">adjust</label>
                                                         <input type="radio" name="operator_action[{{$key}}]" value="adjust" id="option3">
-                                                        <img class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}">
+                                                        {{-- <img class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}"> --}}
                                                     </div>
-                                                    <div class="option">
+                                                    <div class="option btn-option">
+                                                        <label for="option4">replace</label>
                                                         <input type="radio" name="operator_action[{{$key}}]" value="replace" id="option4">
-                                                        <img class="image-card-mini" src="{{ asset('assets/icons/replacement.png') }}">
+                                                        {{-- <img class="image-card-mini" src="{{ asset('assets/icons/replacement.png') }}"> --}}
                                                     </div>
                                                 </div>
                                             </td>

@@ -101,7 +101,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger" id="rejectButton" data-toggle="modal" onclick="return confirmReject()">Reject</button>
+                    <button type="submit" class="btn btn-danger" id="deleteButton" data-toggle="modal">Delete</button>
                     <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                 </div>
             </div>
@@ -211,7 +211,7 @@
                         html += '</table>';
                         html += '<div class="form-custom">';
                         html += '<label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>';
-                        html += '<textarea id="input_note" type="text" rows="6" cols="50" readonly>' + data.machinedata[0].note + '</textarea>';
+                        html += '<textarea id="input_note" type="text" rows="6" cols="50">' + data.machinedata[0].note + '</textarea>';
                         html += '</div>';
                         html += '<div class="form-custom">';
                         html += '<table class="table table-bordered" id="userTable">';
@@ -238,18 +238,20 @@
             });
             $(".btn-Id").on('click', function() {
                 console.log($(this).attr("data-id"));
-                $("#rejectButton").attr("value", $(this).attr("data-id"));
+                $("#deleteButton").attr("value", $(this).attr("data-id"));
                 $("#saveButton").attr("value", $(this).attr("data-id"));
             });
             $('#saveButton').on('click', function() {
                 var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
+                var note = $('#input_note').val();
                 var correctedBy = '{{ Auth::user()->id }}';
                 $.ajax({
                     type: 'PUT',
                     url: '{{ route('pushcorrection', ':id') }}'.replace(':id', machineId),
                     data: {
                         '_token': '{{ csrf_token() }}', // Include the CSRF token
-                        'correct_by': correctedBy
+                        'correct_by': correctedBy,
+                        'note': note
                     },
                     success: function(response) {
                         if (response.success) {
@@ -279,53 +281,45 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
-            function confirmReject() {
-                if (confirm('Apakah sudah yakin untuk di REJECT?')) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            $('#rejectButton').on('click', function() {
-                if (!confirmReject()) {
-                    return;
-                }
+            $('#deleteButton').on('click', function() {
                 var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
-                var rejectBy = '{{ Auth::user()->id }}';
-                $.ajax({
-                    type: 'PUT',
-                    url: '{{ route('pushreject1', ':id') }}'.replace(':id', machineId),
-                    data: {
-                        '_token': '{{ csrf_token() }}', // Include the CSRF token
-                        'reject_by': rejectBy
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            const successMessage = response.success;
-                            $('#successText').text(successMessage);
-                            $('#successModal').modal('show'); // Show success modal
-                        } else {
-                            $('#failedModal').modal('show'); // Show failed modal
+                if (confirm("Are you sure you want to delete this record?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{ route('removecorrect', ':id') }}'.replace(':id', machineId),
+                        data: {
+                            '_token': '{{ csrf_token() }}', // Include the CSRF token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                const successMessage = response.success;
+                                $('#successText').text(successMessage);
+                                $('#successModal').modal('show'); // Show success modal
+                            } else {
+                                $('#failedModal').modal('show'); // Show failed modal
+                            }
+                            $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                        },
+                        error: function(xhr, status, error) {
+                            var warningMessage = xhr.responseText;
+                            try {
+                                warningMessage = JSON.parse(xhr.responseText).error;
+                            } catch (e) {
+                                console.error('Error parsing error message:', e);
+                            }
+                            $('#warningText').text(warningMessage); // Set the error message in the modal
+                            $('#warningModal').modal('show'); // Show error modal
+                            console.error('Error saving machine record: ' + error);
+                            $('#ExtralargeModal').modal('hide'); // Hide modal on error
                         }
-                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        var warningMessage = xhr.responseText;
-                        try {
-                            warningMessage = JSON.parse(xhr.responseText).error;
-                        } catch (e) {
-                            console.error('Error parsing error message:', e);
-                        }
-                        $('#warningText').text(warningMessage); // Set the error message in the modal
-                        $('#warningModal').modal('show'); // Show error modal
-                        console.error('Error saving machine record: ' + error);
-                        $('#ExtralargeModal').modal('hide'); // Hide modal on error
-                    }
-                }).always(function() {
-                    setTimeout(function() {
-                        location.reload(); // Refresh the page after a 2-second delay
-                    }, 2000); // 2000 milliseconds = 2 seconds
-                });
+                    }).always(function() {
+                        setTimeout(function() {
+                            location.reload(); // Refresh the page after a 2-second delay
+                        }, 2000); // 2000 milliseconds = 2 seconds
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
+                }
             });
         });
     </script>

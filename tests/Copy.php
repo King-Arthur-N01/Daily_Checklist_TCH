@@ -642,3 +642,47 @@ public function fetchdataapproval($id) // this code for ajax modal html
         </thead>
     </table>
 </div>
+
+
+
+$('#rejectButton').on('click', function() {
+    if (!confirmReject()) {
+        return;
+    }
+    var machineId = $(this).val(); // Get the machine ID from the button that triggered the modal
+    var rejectBy = '{{ Auth::user()->id }}';
+    $.ajax({
+        type: 'PUT',
+        url: '{{ route('pushreject1', ':id') }}'.replace(':id', machineId),
+        data: {
+            '_token': '{{ csrf_token() }}', // Include the CSRF token
+            'reject_by': rejectBy
+        },
+        success: function(response) {
+            if (response.success) {
+                const successMessage = response.success;
+                $('#successText').text(successMessage);
+                $('#successModal').modal('show'); // Show success modal
+            } else {
+                $('#failedModal').modal('show'); // Show failed modal
+            }
+            $('#ExtralargeModal').modal('hide'); // Hide modal on success
+        },
+        error: function(xhr, status, error) {
+            var warningMessage = xhr.responseText;
+            try {
+                warningMessage = JSON.parse(xhr.responseText).error;
+            } catch (e) {
+                console.error('Error parsing error message:', e);
+            }
+            $('#warningText').text(warningMessage); // Set the error message in the modal
+            $('#warningModal').modal('show'); // Show error modal
+            console.error('Error saving machine record: ' + error);
+            $('#ExtralargeModal').modal('hide'); // Hide modal on error
+        }
+    }).always(function() {
+        setTimeout(function() {
+            location.reload(); // Refresh the page after a 2-second delay
+        }, 2000); // 2000 milliseconds = 2 seconds
+    });
+});

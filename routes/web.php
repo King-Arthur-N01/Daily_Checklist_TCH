@@ -78,14 +78,14 @@ Route::put('/tablepreventive/addpreventive/machine','RecordsData\MachinerecordCo
 Route::get('/machinerecord/correction','RecordsData\MachinerecordController@tablecorrection')->name('viewcorrection');
 Route::get('/machinerecord/correction/{id}','RecordsData\MachinerecordController@fetchdatacorrection')->name('fetchcorrection');
 Route::put('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('pushcorrection');
-Route::put('/machinerecord/correction/reject/{id}','RecordsData\MachinerecordController@rejectcorrection')->name('pushreject1');
+Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrect');
 // input data correction 1 end
 
 // input data approval 2
 Route::get('/machinerecord/approval','RecordsData\MachinerecordController@tableapproval')->name('viewapproval');
 Route::get('/machinerecord/approval/{id}','RecordsData\MachinerecordController@fetchdataapproval')->name('fetchapproval');
 Route::put('/machinerecord/approval/{id}','RecordsData\MachinerecordController@registerapproval')->name('pushapproval');
-Route::put('/machinerecord/approval/reject/{id}','RecordsData\MachinerecordController@rejectapproval')->name('pushreject2');
+Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordController@deleteapproval')->name('removeapprove');
 // input data approval 2 end
 
 // record data machine route

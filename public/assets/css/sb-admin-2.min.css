@@ -2764,6 +2764,15 @@ textarea.form-control.is-invalid {
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
 }
 
+.btn-option{
+    display: grid;
+    smaller;
+    justify-content: center;
+    align-content: center;
+    border-style: ridge;
+    font-size: smaller;
+}
+
 @media (prefers-reduced-motion:reduce) {
     .btn {
         transition: none
