@@ -2,6 +2,8 @@
 @section('title', 'Table Standart Checkpoint Machine')
 
 @section('content')
+
+{{-- here is the code for view --}}
     <div class="row">
         <div class="container-fluid">
             <!-- Page Heading -->
@@ -99,20 +101,69 @@
                 </div>
                 <div class="modal-body">
                     <form id="formData">
+                        @csrf
                         <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
                         <p>Part Number<mark>|</mark>Line Name<mark>|</mark>Line Group<mark>|</mark>∑ Bersih<mark>|</mark>C.T (Detik)<mark>|</mark>Member Diluar Line</p>
                         <label for="importExle" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
-                        <input type="file" name="fileupload" id="importExle" hidden accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        <input type="file" name="file" id="importExle" hidden accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitButtonAjax">Save changes</button>
+                    <button type="submit" class="btn btn-primary" id="uploadButton">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- End Large Modal-->
+
+    <!-- Alert Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <span id="successText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Success Modal -->
+
+    <!-- Alert Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <span id="warningText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Warning Modal -->
+
+    <!-- Alert Danger Modal -->
+    <div class="modal fade" id="failedModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-octagon me-1"></i>
+                        <i class="modal-alert">Data Preventive FAILED to be upload !!!!</i>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Danger Modal -->
 @endsection
 
 @push('style')
@@ -123,30 +174,30 @@
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/filtertable2.js')}}"></script>
     <script>
-        $(document).ready(function() {
-            $('#submitButtonAjax').click(function() {
-                var file = $('#importExle')[0].files[0];
-                var formData = new FormData();
-                formData.append('file', file);
+        $(document).ready(function () {
+            $('#uploadButton').on('click', function (e) {
+                let formData = new FormData(document.getElementById('formData'));
                 $.ajax({
-                    url: "{{ route('uploadfile') }}",
-                    method: 'POST',
+                    type: 'POST',
+                    url: '{{ route('uploadfile') }}',
                     data: formData,
                     contentType: false,
                     processData: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.success) {
-                            alert(response.success);
-                            $('#largeModal').modal('hide');
-                        } else {
-                            alert(response.error);
+                            const successMessage = response.success;
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
                         }
+                        $('#ExtralargeModal').modal('hide');
                     },
-                    error: function(error) {
-                        console.log(error.responseText);
+                    error: function (xhr, status, error, response) {
+                        if (response.xhr) {
+                            const warningMessage = response.error;
+                            $('#warningText').text(warningMessage);
+                            $('#failedModal').modal('show');
+                        }
+                        $('#ExtralargeModal').modal('hide');
                     }
                 });
             });

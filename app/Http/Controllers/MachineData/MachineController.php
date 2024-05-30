@@ -125,16 +125,33 @@ class MachineController extends Controller
     public function importdata(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv'
+            'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        $file = $request->file('file');
+        // dd($request->file('file'));
         try {
-            Excel::import(new Machine, $file->path());
-            return redirect()->back()->with('success', 'Data imported successfully.');
+            $machinedata = Excel::import(new Machine, $request->file('file'));
+            // dd($machinedata);
+            // $machinedata = $this->insertmachinedata($row);
+            return response()->json(['success' => 'Data imported successfully!']);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error importing data: '. $e->getMessage());
+            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
         }
     }
+
+    // private function insertmachinedata($data)
+    // {
+    //     return [
+    //         'invent_number' => $data['Nomor Invent'],
+    //         'machine_number' => $data['Nomor Mesin'],
+    //         'machine_name' => $data['Nama Mesin'],
+    //         'machine_brand' => $data['Brand/Merk'],
+    //         'machine_type' => $data['Model/Type'],
+    //         'machine_spec' => $data['Spec/Tonage'],
+    //         'machine_made' => $data['Buatan'],
+    //         'mfg_number' => $data['MFG Number'],
+    //         'install_date' => $data['Install Date']
+    //     ];
+    // }
     // <<<============================================================================================>>>
     // <<<===============================batas import machine data end================================>>>
     // <<<============================================================================================>>>

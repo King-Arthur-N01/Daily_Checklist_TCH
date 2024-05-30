@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="row">
-        @can('viewtable_records', Permission::class)
+        @can('create_records', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">

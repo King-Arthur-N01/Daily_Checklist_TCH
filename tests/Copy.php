@@ -686,3 +686,18 @@ $('#rejectButton').on('click', function() {
         }, 2000); // 2000 milliseconds = 2 seconds
     });
 });
+
+
+public function importdata(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        dd($request->file('file'));
+        try {
+            Excel::import(new Machine, $request->file('file'));
+            return response()->json(['success' => 'Data imported successfully!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
+        }
+    }

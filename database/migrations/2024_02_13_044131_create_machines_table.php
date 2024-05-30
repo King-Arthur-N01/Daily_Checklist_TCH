@@ -21,7 +21,7 @@ class CreateMachinesTable extends Migration
             $table->string('machine_spec')->nullable();
             $table->string('machine_made')->nullable();
             $table->string('mfg_number');
-            $table->date('install_date');
+            $table->string('install_date');
             $table->timestamps();
         });
     }
