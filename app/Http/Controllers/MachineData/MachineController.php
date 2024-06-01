@@ -89,17 +89,8 @@ class MachineController extends Controller
     // <<<============================================================================================>>>
     public function indextableimport()
     {
-        $machines = DB::table('machines')
-        ->select('machines.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
-        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-        ->orderBy('machines.id', 'asc')
-        ->get();
-
-        return view('dashboard.view_importdata.tableimportdata',[
-            'machines' => $machines
-        ]);
+        $machines=Machine::get();
+        return view('dashboard.view_importdata.tableimportdata',['machines' => $machines]);
     }
     public function importexcel(Request $request)
 	{
@@ -129,9 +120,8 @@ class MachineController extends Controller
         ]);
         // dd($request->file('file'));
         try {
-            $machinedata = Excel::import(new Machine, $request->file('file'));
-            // dd($machinedata);
-            // $machinedata = $this->insertmachinedata($row);
+            Excel::import(new Machine, $request->file('file'));
+
             return response()->json(['success' => 'Data imported successfully!']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);

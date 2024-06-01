@@ -701,3 +701,98 @@ public function importdata(Request $request)
             return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
         }
     }
+
+    // <<<============================================================================================>>>
+    // <<<================================batas import data controller================================>>>
+    // <<<============================================================================================>>>
+
+    public function import_excel(REQUEST $request){
+        //check izin yang bisa mengakses
+        $check_permission = CustomHelper::check_role("staff",session('role'));
+        if(!$check_permission){
+            return redirect()->back();
+        }
+        $base64Data = $request->input('import_excel'); // Ambil data Base64 dari permintaan
+        //cek kevalitan base 64
+        if ($base64Data) {
+            // Dekode data Base64 menjadi bentuk biner
+            $decodedData = base64_decode($base64Data);
+            // Buat temporary file untuk menyimpan data Excel yang didekode
+            $tempFile = tempnam(sys_get_temp_dir(), 'decoded_excel');
+            file_put_contents($tempFile, $decodedData);
+            // Impor data dari file Excel menggunakan Laravel Excel
+            $import = new MasterPartImports();
+            Excel::import($import, $tempFile);
+            // Hapus temporary file
+            unlink($tempFile);
+            return response()->json(['message' => 'Data berhasil diimpor ke database.']);
+        }
+        return response()->json(['message' => 'Data Base64 tidak ditemukan atau tidak valid.'], 400);
+    }
+    // <<<============================================================================================>>>
+    // <<<================================batas import controller end=================================>>>
+    // <<<============================================================================================>>>
+
+
+
+
+
+    // <<<============================================================================================>>>
+    // <<<==================================batas import data models==================================>>>
+    // <<<============================================================================================>>>
+
+    class MasterPartImports implements ToModel
+    {
+        public function model(array $row)
+        {
+            $partNumber = $row[0];
+
+            $data = [
+                'line_name' => $row[1],
+                'line_group' => $row[2],
+                'net_amount' => $row[3],
+                'ct_second' => $row[4],
+                'member_out_line' => $row[5],
+            ];
+
+            MasterPart::updateOrCreate(['part_number' => $partNumber], $data);
+
+            // Jika Anda ingin mengembalikan model, Anda bisa gunakan ini
+            return MasterPart::where('part_number', $partNumber)->first();
+        }
+    }
+    // <<<============================================================================================>>>
+    // <<<==================================batas import data models==================================>>>
+    // <<<============================================================================================>>>
+
+        $('#uploadButton').on('click', function (e) {
+                var fileInput = document.getElementById("importExcel");
+                var file = fileInput.files[0];
+                var formData = new FormData();
+                formData.append('file', file);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('uploadfile') }}',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            const successMessage = response.success;
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
+                        }
+                        $('#ExtralargeModal').modal('hide');
+                    },
+                    error: function (status, error, response) {
+                        if (response.error) {
+                            const warningMessage = response.error;
+                            $('#failedext').text(warningMessage);
+                            $('#failedModal').modal('show');
+                        }
+                        $('#ExtralargeModal').modal('hide');
+                    }
+                });
+            });
+        });

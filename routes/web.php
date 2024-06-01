@@ -38,7 +38,7 @@ Route::put ('/tablemachine/editmachine/{id}','MachineData\MachineController@upda
 Route::get ('/tablemachine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
 
 Route::get ('/tablemachinedata','MachineData\MachineController@indextableimport')->name('managemachinedata');
-Route::post('/tablemachinedata/pushfiles', 'MachineData\MachineController@importdata')->name('uploadfile');
+Route::post('/tablemachinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
 // macine route end
 
 // componencheck route

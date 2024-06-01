@@ -61,25 +61,27 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="datatables" width="100%" cellspacing="0">
                             <thead>
+                                <th>Nomor Invent</th>
                                 <th>Nama Mesin</th>
-                                <th>Bagian Yang Dicheck</th>
-                                <th>Standart/Parameter</th>
-                                <th>Metode Pengecekan</th>
+                                <th>Brand/Merk</th>
+                                <th>Model/Type</th>
+                                <th>Buatan</th>
                                 <th>Action</th>
                             </thead>
                             <tbody>
                                 @foreach ($machines as $machineget)
                                     <tr>
+                                        <td>{{$machineget->invent_number}}</td>
                                         <td>{{$machineget->machine_name}}</td>
-                                        <td>{{$machineget->name_componencheck}}</td>
-                                        <td>{{$machineget->name_parameter}}</td>
-                                        <td>{{$machineget->name_metodecheck}}</td>
+                                        <td>{{$machineget->machine_brand}}</td>
+                                        <td>{{$machineget->machine_type}}</td>
+                                        <td>{{$machineget->machine_made}}</td>
                                         <td>
                                             <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                             <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
                                                 <a class="dropdown-item-custom-edit" style="text-align: center" href="#"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
-                                                <a class="dropdown-item-custom-delete" style="text-align: center" href="#" onclick="return confirm('Yakin Hapus?')"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
+                                                <a class="dropdown-item-custom-delete" style="text-align: center" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
                                             </div>
                                         </td>
                                     </tr>
@@ -100,12 +102,12 @@
                     <h5 class="modal-title">Upload File</h5>
                 </div>
                 <div class="modal-body">
-                    <form id="formData">
+                    <form id="formData" enctype="multipart/form-data">
                         @csrf
                         <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
                         <p>Part Number<mark>|</mark>Line Name<mark>|</mark>Line Group<mark>|</mark>∑ Bersih<mark>|</mark>C.T (Detik)<mark>|</mark>Member Diluar Line</p>
                         <label for="importExle" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
-                        <input type="file" name="file" id="importExle" hidden accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        <input type="file" name="file" id="importExle" hidden>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -133,22 +135,6 @@
     </div>
     <!-- End Alert Success Modal -->
 
-    <!-- Alert Warning Modal -->
-    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle me-1"></i>
-                        <span id="warningText" class="modal-alert"></span>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Alert Warning Modal -->
-
     <!-- Alert Danger Modal -->
     <div class="modal fade" id="failedModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -156,7 +142,7 @@
                 <div class="modal-body">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-octagon me-1"></i>
-                        <i class="modal-alert">Data Preventive FAILED to be upload !!!!</i>
+                        <span id="failedText" class="modal-alert"></span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -170,17 +156,29 @@
 @endpush
 
 @push('script')
-    <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script> --}}
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
-    <script src="{{ asset('assets/vendor/custom-js/filtertable2.js')}}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/filtertable2.js')}}"></script> --}}
     <script>
         $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
             $('#uploadButton').on('click', function (e) {
-                let formData = new FormData(document.getElementById('formData'));
+                e.preventDefault();
+                var file = $('#importExle')[0].files[0];
+                var formData = new FormData();
+                formData.append('file', file);
+                // var formData = new FormData(document.getElementById('#importExle'));
                 $.ajax({
                     type: 'POST',
                     url: '{{ route('uploadfile') }}',
-                    data: formData,
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        formData
+                    },
                     contentType: false,
                     processData: false,
                     success: function (response) {
@@ -191,10 +189,10 @@
                         }
                         $('#ExtralargeModal').modal('hide');
                     },
-                    error: function (xhr, status, error, response) {
-                        if (response.xhr) {
+                    error: function (status, error, response) {
+                        if (response.error) {
                             const warningMessage = response.error;
-                            $('#warningText').text(warningMessage);
+                            $('#failedext').text(warningMessage);
                             $('#failedModal').modal('show');
                         }
                         $('#ExtralargeModal').modal('hide');

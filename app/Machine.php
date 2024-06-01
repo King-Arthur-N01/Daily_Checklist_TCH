@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Componencheck;
 use App\Parameter;
 use App\Metodecheck;
-// use Maatwebsite\Excel\Concerns\Model;
-// use Maatwebsite\Excel\Concerns\WithHeadingRow;
+
 class Machine extends Model
 {
     protected $fillable = [
@@ -21,19 +20,6 @@ class Machine extends Model
         'mfg_number',
         'install_date'
     ];
-    public function model(array $row)
-    {
-        return new Machine([
-            'nomor_invent' => $row['nomor_invent'],
-            'nama_mesin' => $row['nama_mesin'],
-            'brand_merk' => $row['brand_merk'],
-            'model_type' => $row['model_type'],
-            'spec_tonage' => $row['spec_tonage'],
-            'buatan' => $row['buatan'],
-            'mfg_number' => $row['mfg_number'],
-            'install_date' => $row['install_date'],
-        ]);
-    }
     public function getchilderncomponen()
     {
         return $this->belongsTo(Componencheck::class);
