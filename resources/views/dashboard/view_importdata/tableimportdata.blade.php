@@ -102,12 +102,12 @@
                     <h5 class="modal-title">Upload File</h5>
                 </div>
                 <div class="modal-body">
-                    <form id="formData" enctype="multipart/form-data">
+                    <form id="formData">
                         @csrf
                         <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
                         <p>Part Number<mark>|</mark>Line Name<mark>|</mark>Line Group<mark>|</mark>∑ Bersih<mark>|</mark>C.T (Detik)<mark>|</mark>Member Diluar Line</p>
-                        <label for="importExle" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
-                        <input type="file" name="file" id="importExle" hidden>
+                        <label for="importExcel" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
+                        <input type="file" name="fileupload" id="importExcel" hidden>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -159,6 +159,54 @@
     {{-- <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script> --}}
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/custom-js/filtertable2.js')}}"></script> --}}
+    {{-- <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('#uploadButton').on('click', function (e) {
+                var fileInput = document.getElementById("fileupload");
+                var file = fileInput.files[0];
+                var formData = new FormData();
+
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        var base64String = event.target.result.split(",")[1];
+                        file = base64String
+                        $.ajax({
+                            type: "POST",
+                            url: "{{route('uploadfile')}}",
+                            data: {
+                                "fileupload" : file,
+                                "_token": '{{ csrf_token() }}'
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    const successMessage = response.success;
+                                    $('#successText').text(successMessage);
+                                    $('#successModal').modal('show');
+                                }
+                                $('#ExtralargeModal').modal('hide');
+                            },
+                            error: function (status, error, response) {
+                                if (response.error) {
+                                    const warningMessage = response.error;
+                                    $('#failedext').text(warningMessage);
+                                    $('#failedModal').modal('show');
+                                }
+                                $('#ExtralargeModal').modal('hide');
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script> --}}
+
     <script>
         $(document).ready(function () {
             $.ajaxSetup({
@@ -168,17 +216,14 @@
             });
             $('#uploadButton').on('click', function (e) {
                 e.preventDefault();
-                var file = $('#importExle')[0].files[0];
+                var file = $('#importExcel')[0].files[0];
                 var formData = new FormData();
                 formData.append('file', file);
-                // var formData = new FormData(document.getElementById('#importExle'));
+
                 $.ajax({
-                    type: 'POST',
-                    url: '{{ route('uploadfile') }}',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        formData
-                    },
+                    type: "POST",
+                    url: "{{ route('uploadfile') }}",
+                    data: formData,
                     contentType: false,
                     processData: false,
                     success: function (response) {
@@ -199,20 +244,16 @@
                     }
                 });
             });
-        });
-    </script>
-    <script>
-        const filterButton = document.getElementById("filterButton");
-        const filterCard = document.getElementById("filterCard");
-
-        filterButton.addEventListener("click", () => {
-        if (filterCard.style.display === "none") {
-            $(filterCard).fadeIn(1000);
-            filterCard.style.display = "block";
-        } else {
-            $(filterCard).fadeOut(1000);
-            filterCard.style.display = "none";
-        }
+            $('#filterButton').on('click', function () {
+            const filterCard = document.getElementById("filterCard");
+            if ($filterCard.css('display') === 'none') {
+                $filterCard.fadeIn(1000);
+                $filterCard.css('display', 'block');
+            } else {
+                $filterCard.fadeOut(1000);
+                $filterCard.css('display', 'none');
+            }
+            });
         });
     </script>
 @endpush

@@ -1,6 +1,6 @@
 window.onload = function () {
     const customButton = document.getElementById("customButton");
-    const myFile = document.getElementById("importExle");
+    const myFile = document.getElementById("importExcel");
 
     customButton.addEventListener("click", (event) => {
         event.preventDefault(); // Prevent the default action

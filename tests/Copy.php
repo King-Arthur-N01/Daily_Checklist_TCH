@@ -796,3 +796,55 @@ public function importdata(Request $request)
                 });
             });
         });
+
+
+        <script>
+        $(document).ready(function () {
+            const filterButton = document.getElementById("filterButton");
+            const filterCard = document.getElementById("filterCard");
+
+            filterButton.addEventListener("click", () => {
+                if (filterCard.style.display === "none") {
+                    $(filterCard).fadeIn(1000);
+                    filterCard.style.display = "block";
+                } else {
+                    $(filterCard).fadeOut(1000);
+                    filterCard.style.display = "none";
+                }
+            });
+            $('#uploadButton').on('click', function (e) {
+                var fileInput = document.getElementById("importExcel");
+                var file = fileInput.files[0];
+                var formData = new FormData();
+
+                if (file) {
+                    formData.append('importExcel', file);
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('uploadfile') }}",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                const successMessage = response.success;
+                                $('#successText').text(successMessage);
+                                $('#successModal').modal('show');
+                            }
+                            $('#ExtralargeModal').modal('hide');
+                        },
+                        error: function (xhr, status, error) {
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                                const warningMessage = xhr.responseJSON.error;
+                                $('#failedText').text(warningMessage);
+                                $('#failedModal').modal('show');
+                            }
+                            $('#ExtralargeModal').modal('hide');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
