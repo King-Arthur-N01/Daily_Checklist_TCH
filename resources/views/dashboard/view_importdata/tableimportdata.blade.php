@@ -242,10 +242,14 @@
                         }
                         $('#ExtralargeModal').modal('hide');
                     }
+                }).always(function() {
+                        setTimeout(function() {
+                        location.reload(); // Refresh the page after a 2-second delay
+                    }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
             $('#filterButton').on('click', function () {
-            const filterCard = document.getElementById("filterCard");
+            const filterCard = document.getElementById("#filterCard");
             if ($filterCard.css('display') === 'none') {
                 $filterCard.fadeIn(1000);
                 $filterCard.css('display', 'block');

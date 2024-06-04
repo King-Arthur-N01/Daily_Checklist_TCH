@@ -7,9 +7,15 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Facades\Log;
 class Importdata implements ToModel
 {
+    private $isFirstRow = true;
+
     public function model(array $row)
     {
-        Log::info('Importing row: ', $row);
+        if ($this->isFirstRow) {
+            $this->isFirstRow = false;
+            return null; // Skip the header row
+        }
+        Log::info('Row headers: ' . implode(', ', array_keys($row)));
         try {
             return new Machine([
                 'invent_number'  => $row[1],
@@ -27,50 +33,4 @@ class Importdata implements ToModel
             return null;
         }
     }
-    // public function model(array $row)
-    // {
-    //     Log::info('Row keys: ' . implode(', ', array_keys($row)));
-
-    //     if (!isset($row['Number'])) {
-    //         Log::error('Undefined index: Number', ['row' => $row]);
-    //         return null;
-    //     }
-
-    //     $datarow = $row['Number'];
-
-    //     $data = [
-    //         'invent_number' => $row['Invent Number'],
-    //         'machine_name'   => $row['Machine Number'],
-    //         'machine_brand'  => $row['Machine Brand'],
-    //         'machine_type'   => $row['Machine Type'],
-    //         'machine_spec'   => $row['Machine Spec'],
-    //         'machine_made'   => $row['Machine Made'],
-    //         'mfg_number'     => $row['MFG Number'],
-    //         'install_date'   => $row['Install Date']
-    //     ];
-
-    //     Machine::updateOrCreate(['invent_number' => $datarow], $data);
-    //     return Machine::where('invent_number', $datarow)->first();
-    // }
-    // public function model(array $row)
-    // {
-    //     // Check if 'Invent Number' key exists
-    //     if (!isset($row['Invent Number'])) {
-    //         Log::error('Error importing row: Undefined index: Invent Number');
-    //         return null;
-    //     }
-
-    //     // Import data into the model
-    //     return new Machine([
-    //         'invent_number'  => $row['Invent Number'],
-    //         'machine_number' => $row['Machine Number'],
-    //         'machine_name'   => $row['Machine Name'],
-    //         'machine_brand'  => $row['Machine Brand'],
-    //         'machine_type'   => $row['Machine Type'],
-    //         'machine_spec'   => $row['Machine Spec'],
-    //         'machine_made'   => $row['Machine Made'],
-    //         'mfg_number'     => $row['MFG Number'],
-    //         'install_date'   => $row['Install Date']
-    //     ]);
-    // }
 }

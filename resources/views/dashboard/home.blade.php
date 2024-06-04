@@ -25,7 +25,7 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Tambah Checklist Mesin</h5>
+                        <h5 class="card-title-head">Tambah Checksheet Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/add_clipboard_home.png')}}">
