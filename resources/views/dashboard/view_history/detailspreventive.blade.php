@@ -66,14 +66,14 @@
                             </thead>
                             <tbody>
                                 @foreach ($combinedata as $row)
-                                <tr>
-                                    <td>{{ $row['machine_name'] }}</td>
-                                    <td>{{ $row['name_componencheck'] }}</td>
-                                    <td>{{ $row['name_parameter'] }}</td>
-                                    <td>{{ $row['name_metodecheck'] }}</td>
-                                    <td>{{ $row['operator_action'] }}</td>
-                                    <td>{{ $row['result'] }}</td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ $row['machine_name'] }}</td>
+                                        <td>{{ $row['name_componencheck'] }}</td>
+                                        <td>{{ $row['name_parameter'] }}</td>
+                                        <td>{{ $row['name_metodecheck'] }}</td>
+                                        <td>{{ $row['operator_action'] }}</td>
+                                        <td>{{ $row['result'] }}</td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>

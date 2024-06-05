@@ -59,7 +59,7 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="datatables" width="100%" cellspacing="0">
+                        <table class="table table-bordered" id="machineTables" width="100%">
                             <thead>
                                 <th>Nomor Invent</th>
                                 <th>Nama Mesin</th>
@@ -69,23 +69,29 @@
                                 <th>Action</th>
                             </thead>
                             <tbody>
-                                @foreach ($machines as $machineget)
+                                @if (isset($machines) && !empty($machines))
+                                    @foreach ($machines as $machineget)
+                                        <tr>
+                                            <td>{{$machineget->invent_number}}</td>
+                                            <td>{{$machineget->machine_name}}</td>
+                                            <td>{{$machineget->machine_brand}}</td>
+                                            <td>{{$machineget->machine_type}}</td>
+                                            <td>{{$machineget->machine_made}}</td>
+                                            <td>
+                                                <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                                <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item-custom-detail" href="#"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">Detail</a>
+                                                    <a class="dropdown-item-custom-edit" href="{{ route('addproperty', $machineget->id)}}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
+                                                    <a class="dropdown-item-custom-delete" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
                                     <tr>
-                                        <td>{{$machineget->invent_number}}</td>
-                                        <td>{{$machineget->machine_name}}</td>
-                                        <td>{{$machineget->machine_brand}}</td>
-                                        <td>{{$machineget->machine_type}}</td>
-                                        <td>{{$machineget->machine_made}}</td>
-                                        <td>
-                                            <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="#"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                                <a class="dropdown-item-custom-edit" style="text-align: center" href="#"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
-                                                <a class="dropdown-item-custom-delete" style="text-align: center" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
-                                            </div>
-                                        </td>
+                                        <td>No data found.</td>
                                     </tr>
-                                @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -156,59 +162,13 @@
 @endpush
 
 @push('script')
-    {{-- <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script> --}}
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
-    {{-- <script src="{{ asset('assets/vendor/custom-js/filtertable2.js')}}"></script> --}}
-    {{-- <script>
-        $(document).ready(function () {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $('#uploadButton').on('click', function (e) {
-                var fileInput = document.getElementById("fileupload");
-                var file = fileInput.files[0];
-                var formData = new FormData();
-
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(event) {
-                        var base64String = event.target.result.split(",")[1];
-                        file = base64String
-                        $.ajax({
-                            type: "POST",
-                            url: "{{route('uploadfile')}}",
-                            data: {
-                                "fileupload" : file,
-                                "_token": '{{ csrf_token() }}'
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    const successMessage = response.success;
-                                    $('#successText').text(successMessage);
-                                    $('#successModal').modal('show');
-                                }
-                                $('#ExtralargeModal').modal('hide');
-                            },
-                            error: function (status, error, response) {
-                                if (response.error) {
-                                    const warningMessage = response.error;
-                                    $('#failedext').text(warningMessage);
-                                    $('#failedModal').modal('show');
-                                }
-                                $('#ExtralargeModal').modal('hide');
-                            }
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-    </script> --}}
-
     <script>
         $(document).ready(function () {
+            $('#machineTables').DataTable({ // Disable sorting for columns
+                columnDefs: [{"orderable": false, "targets": [5]
+                }]
+            });
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -212,9 +212,9 @@
                         html += '<div class="form-group">';
                         html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>';
                         html += '<div>';
-                        html += '<select selected="selected" class="form-control" name="status" id="category-input" value="'+ data.getusers.status +'">';
-                        html += '<option value="1">Aktif</option>';
-                        html += '<option value="0">Nonaktif</option>';
+                        html += '<select class="form-control" name="status" id="category-input">';
+                        html += '<option value="1" ' + (data.getusers.status == 1 ? 'selected' : '') + '>Aktif</option>';
+                        html += '<option value="0" ' + (data.getusers.status == 0 ? 'selected' : '') + '>Nonaktif</option>';
                         html += '</select>';
                         html += '</div>';
                         html += '</div>';

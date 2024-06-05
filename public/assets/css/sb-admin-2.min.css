@@ -2766,7 +2766,6 @@ textarea.form-control.is-invalid {
 
 .btn-option{
     display: grid;
-    smaller;
     justify-content: center;
     align-content: center;
     border-style: ridge;
@@ -3722,6 +3721,19 @@ input[type=submit].btn-block {
     border: 0
 }
 
+.dropdown-item-custom-detail{
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #3a3b45;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #42fb2a;
+    border: 0
+}
+
 .dropdown-item-custom-edit {
     display: block;
     width: 100%;
@@ -3729,7 +3741,7 @@ input[type=submit].btn-block {
     clear: both;
     font-weight: 400;
     color: #3a3b45;
-    text-align: inherit;
+    text-align: center;
     white-space: nowrap;
     background-color: #5969ff;
     border: 0
@@ -3742,7 +3754,7 @@ input[type=submit].btn-block {
     clear: both;
     font-weight: 400;
     color: #3a3b45;
-    text-align: inherit;
+    text-align: center;
     white-space: nowrap;
     background-color: #ef172c;
     border: 0
@@ -3917,6 +3929,45 @@ input[type=submit].btn-block {
     flex-wrap: wrap;
     align-items: stretch;
     width: 100%
+}
+
+.dynamic-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dynamic-input-group input {
+    padding: 10px;
+    font-size: 16px;
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.dynamic-button-delete {
+    background-color: #d9534f;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.dynamic-button-add {
+    background-color: #0275d8;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.dynamic-button-add:hover, .dynamic-button-delete:hover {
+    opacity: 0.8;
 }
 
 .input-group>.custom-file,

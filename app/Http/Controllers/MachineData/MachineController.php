@@ -92,56 +92,11 @@ class MachineController extends Controller
         $machines=Machine::get();
         return view('dashboard.view_importdata.tableimportdata',['machines' => $machines]);
     }
-    public function importexcel(Request $request)
-	{
-		if($request->hasFile('file')){
-			$path = $request->file('file')->getRealPath();
-			$data = Excel::load($path, function($reader) {})->get();
-			if(!empty($data) && $data->count()){
-				foreach ($data->toArray() as $key => $value) {
-					if(!empty($value)){
-						foreach ($value as $v) {
-							$insert[] = ['title' => $v['title'], 'description' => $v['description']];
-						}
-					}
-				}
-				if(!empty($insert)){
-                    Excel::insert($insert);
-					return back()->with('success','Insert Record successfully.');
-				}
-			}
-		}
-		return back()->with('error','Please Check your file, Something is wrong there.');
-	}
-    public function importdata(Request $request)
+    public function addmachineproperty($id)
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
-        ]);
-        // dd($request->file('file'));
-        try {
-            Excel::import(new Machine, $request->file('file'));
-
-            return response()->json(['success' => 'Data imported successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
-        }
+        $machines=Machine::find($id);
+        return view('dashboard.view_mesin.machineproperty',['machines' => $machines]);
     }
-
-    // private function insertmachinedata($data)
-    // {
-    //     return [
-    //         'invent_number' => $data['Nomor Invent'],
-    //         'machine_number' => $data['Nomor Mesin'],
-    //         'machine_name' => $data['Nama Mesin'],
-    //         'machine_brand' => $data['Brand/Merk'],
-    //         'machine_type' => $data['Model/Type'],
-    //         'machine_spec' => $data['Spec/Tonage'],
-    //         'machine_made' => $data['Buatan'],
-    //         'mfg_number' => $data['MFG Number'],
-    //         'install_date' => $data['Install Date']
-    //     ];
-    // }
     // <<<============================================================================================>>>
     // <<<===============================batas import machine data end================================>>>
     // <<<============================================================================================>>>
