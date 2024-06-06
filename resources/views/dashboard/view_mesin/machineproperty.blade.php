@@ -57,33 +57,36 @@
                                         <td>
                                             <div id="inputContainer1">
                                                 <div class="dynamic-input-group">
-                                                    <input type="text">
-                                                    <button class="dynamic-button-add" id="addInputBtn1">Add</button>
-                                                    <button class="dynamic-button-delete" onclick="removeInput(this)">Remove</button>
+                                                    <input class="col-12" type="text" placeholder="Example : Push Button">
+                                                    <button class="btn btn-success btn-circle btn-sm" id="addInputBtn1"><i class="fas fa-plus"></i></button>
+                                                    <button class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this)"><i class="fas fa-trash-alt"></i></button>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div id="inputContainer2">
                                                 <div class="dynamic-input-group">
-                                                    <input type="text">
-                                                    <button class="dynamic-button-add" id="addInputBtn2">Add</button>
-                                                    <button class="dynamic-button-delete" onclick="removeInput(this)">Remove</button>
+                                                    <input class="col-12" type="text" placeholder="Example : Berfungsi dengan baik">
+                                                    <button class="btn btn-success btn-circle btn-sm" id="addInputBtn2"><i class="fas fa-plus"></i></button>
+                                                    <button class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this)"><i class="fas fa-trash-alt"></i></button>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div id="inputContainer3">
                                                 <div class="dynamic-input-group">
-                                                    <input type="text">
-                                                    <button class="dynamic-button-add" id="addInputBtn3">Add</button>
-                                                    <button class="dynamic-button-delete" onclick="removeInput(this)">Remove</button>
+                                                    <input class="col-12" type="text" placeholder="Example : Dioperasikan">
+                                                    <button class="btn btn-success btn-circle btn-sm" id="addInputBtn3"><i class="fas fa-plus"></i></button>
+                                                    <button class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this)"><i class="fas fa-trash-alt"></i></button>
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="column-button">
+                                <button type="submit" class="form-buttons">Submit</button>
+                            </div>
                         </form>
                     </div>
                 </div>

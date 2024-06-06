@@ -80,9 +80,9 @@
                                             <td>
                                                 <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item-custom-detail" href="#"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">Detail</a>
-                                                    <a class="dropdown-item-custom-edit" href="{{ route('addproperty', $machineget->id)}}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">Edit</a>
-                                                    <a class="dropdown-item-custom-delete" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">Delete</a>
+                                                    <a class="dropdown-item-custom-detail" href="#"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                                    <a class="dropdown-item-custom-edit" href="{{ route('addproperty', $machineget->id)}}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                                    <a class="dropdown-item-custom-delete" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                                 </div>
                                             </td>
                                         </tr>

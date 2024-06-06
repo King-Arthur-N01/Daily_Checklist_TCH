@@ -75,6 +75,7 @@ body {
     color: #858796;
     /* text-align: center; */
     background-color: #fff;
+    sidebar-toggled: true;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -3933,17 +3934,18 @@ input[type=submit].btn-block {
 
 .dynamic-input-group {
     display: flex;
-    align-items: center;
     margin-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .dynamic-input-group input {
     padding: 10px;
-    font-size: 16px;
+    font-size: 14px;
     flex-grow: 1;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
 }
 
 .dynamic-button-delete {
@@ -11751,6 +11753,7 @@ a:focus {
 .sidebar {
     width: 6.5rem;
     min-height: 100vh
+    toggled: true;
 }
 
 .sidebar .nav-item {

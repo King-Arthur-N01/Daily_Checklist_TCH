@@ -59,6 +59,7 @@ class PermissionSeeder extends Seeder
         $supervisorRole->givePermissionTo('create_records');
         $supervisorRole->givePermissionTo('edit_records');
         $supervisorRole->givePermissionTo('delete_records');
+        $supervisorRole->givePermissionTo('viewtable_records');
         $supervisorRole->givePermissionTo('corrected_records');
         $supervisorRole->givePermissionTo('approval_records');
         $supervisorRole->givePermissionTo('manageuser');
@@ -68,6 +69,7 @@ class PermissionSeeder extends Seeder
         $managerRole->givePermissionTo('edit_records');
         $managerRole->givePermissionTo('edit_records');
         $managerRole->givePermissionTo('delete_records');
+        $managerRole->givePermissionTo('viewtable_records');
         $managerRole->givePermissionTo('corrected_records');
         $managerRole->givePermissionTo('approval_records');
         $managerRole->givePermissionTo('managemachine');

@@ -2,10 +2,12 @@ document.getElementById("addInputBtn1").addEventListener("click", function (even
     event.preventDefault(); // Prevent the form from submitting
     addInput("inputContainer1");
 });
+
 document.getElementById("addInputBtn2").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the form from submitting
     addInput("inputContainer2");
 });
+
 document.getElementById("addInputBtn3").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent the form from submitting
     addInput("inputContainer3");
@@ -16,17 +18,18 @@ function addInput(containerId) {
     newInputGroup.className = "dynamic-input-group";
     const newInput = document.createElement("input");
     newInput.type = "text";
-    newInput.value = "Type Here!";
+    newInput.className = "col-12";
+    newInput.placeholder = "Input text";
     const addButton = document.createElement("button");
-    addButton.className = "dynamic-button-add";
-    addButton.innerText = "Add";
+    addButton.className = "btn btn-success btn-circle btn-sm";
+    addButton.innerHTML = '<i class="fas fa-plus"></i>';
     addButton.addEventListener("click", function (event) {
         event.preventDefault(); // Prevent the form from submitting
         addInput(containerId);
     });
     const removeButton = document.createElement("button");
-    removeButton.className = "dynamic-button-delete";
-    removeButton.innerText = "Remove";
+    removeButton.className = "btn btn-danger btn-circle btn-sm";
+    removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
     removeButton.onclick = function () {
         removeInput(this);
     };
