@@ -18,7 +18,7 @@ class LoginController extends Controller
         return view('auth.login');
     }
     public function authenticateuser(Request $request)
-    {
+{
     $request->validate([
         'nik' => 'required',
         'password' => 'required',
@@ -28,15 +28,15 @@ class LoginController extends Controller
     $user = User::where('nik', $credentials['nik'])->first();
 
     if (!$user) {
-        return redirect("login")->with('Login details are not valid');
+        return redirect("login")->with('error', 'Login details are not valid');
     }
-    if (!$user->status) {
-        return redirect("login")->with('Error', 'Your account is not active! Please contact the administrator.');
+    if ($user->status == false) {
+        return redirect("login")->with('error', 'Your account is not active! Please contact the administrator.');
     }
     if (Auth::attempt($credentials)) {
-        return redirect()->intended('home')->with('Signed in');
+        return redirect()->intended('home')->with('success', 'Signed in');
     }
-    return redirect("login")->with('Login details are not valid');
+    return redirect("login")->with('error', 'Login details are not valid');
 }
     public function successlogin(){
         if (Auth::check()) {

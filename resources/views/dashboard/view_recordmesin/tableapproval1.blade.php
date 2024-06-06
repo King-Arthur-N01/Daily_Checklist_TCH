@@ -101,7 +101,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    @can('delete_records', Permission::class)
                     <button type="submit" class="btn btn-danger" id="deleteButton" data-toggle="modal">Delete</button>
+                    @endcan
                     <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                 </div>
             </div>
@@ -217,13 +219,11 @@
                         html += '<table class="table table-bordered" id="userTable">';
                         html += '<thead>';
                         html += '<tr>';
-                        html += '<th>Direject oleh :</th>';
                         html += '<th>Disetujui oleh :</th>';
                         html += '<th>Dikoreksi oleh :</th>';
                         html += '<th>Dibuat oleh :</th>';
                         html += '</tr>';
                         html += '<tr>';
-                        html += '<td>' + data.recordsdata[0].reject_by + '</td>';
                         html += '<td>' + data.recordsdata[0].approve_by + '</td>';
                         html += '<td>' + data.recordsdata[0].correct_by + '</td>';
                         html += '<td>' + data.recordsdata[0].create_by + '</td>';

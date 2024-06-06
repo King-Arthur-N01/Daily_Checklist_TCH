@@ -24,7 +24,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
-                                        <input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                        <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK">
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                                     <div>
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
                                         <div class="form-group" style="margin: 0px;">
-                                            <input class="form-control" type="password" name="password" required placeholder="Password Min:6 digits" id="password">
+                                            <input class="form-control" type="password" name="password" required placeholder="Password" id="password">
                                         </div>
                                     </div>
                                     @error('password')

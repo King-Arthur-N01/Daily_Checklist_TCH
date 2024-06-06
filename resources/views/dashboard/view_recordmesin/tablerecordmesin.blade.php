@@ -45,9 +45,16 @@
                             </form>
                         </div>
                     </div>
-                    @if (session('success'))
-                        <div class="alert alert-success mb-2">{{ session('success') }}</div>
-                    @endif
+                    <div id="successMessages">
+                        @if (session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
+                    </div>
+                    <div id="errorMessages">
+                        @if (session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
+                    </div>
                     <div class="table-responsive">
                         <table class="table" id="dataTable" width="100%">
                             <thead>

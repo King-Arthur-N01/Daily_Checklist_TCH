@@ -53,7 +53,7 @@ class MachinerecordController extends Controller
             $lastsubmit = Carbon::parse($lastsubmissiontime);
             $currenttime = Carbon::now();
             if ($currenttime->diffInHours($lastsubmit) < 24 ){
-                return redirect()->back()->with('error', 'You can submit the form again after 24 hours.');
+                return redirect()->route('indexmachinerecord')->with('error', 'You can submit the form again after 24 hours.');
             }
             else{
                 $StoreRecords = new Machinerecord();

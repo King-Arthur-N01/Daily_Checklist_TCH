@@ -42,7 +42,9 @@
                                             <input type="nik" name="nik" class="form-control form-control-user" id="exampleInputEmail" placeholder="Enter NIK Number...">
                                         </div>
                                         @error('nik')
-                                            <strong>{{ $message }}</strong>
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
                                         @enderror
                                         <div class="form-group">
                                             <input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
@@ -53,7 +55,6 @@
                                             </span>
                                         @enderror
                                         <button class="btn btn-primary btn-user btn-block">Login</button>
-                                        <hr>
                                     </form>
                                 </div>
                             </div>
@@ -63,6 +64,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Alert Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Warning Modal -->
+
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -72,7 +89,13 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets/js/sb-admin-2.min.js') }}"></script>
-
+    <script>
+        $(document).ready(function() {
+            @if(session('error'))
+                $('#warningModal').modal('show');
+            @endif
+        });
+    </script>
 </body>
 
 </html>
