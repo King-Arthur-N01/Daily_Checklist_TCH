@@ -12,14 +12,14 @@ class MetodecheckController extends Controller
 {
     public function indextablemethod()
     {
-        $machines = DB::table('machines')
-        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        $machineproperties = DB::table('machineproperties')
+        ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_machine')
         ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
         ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-        ->select( 'machines.*', 'metodechecks.*', 'parameters.*', 'componenchecks.*')
-        ->orderBy('machines.id', 'asc')
+        ->select( 'machineproperties.*', 'metodechecks.*', 'parameters.*', 'componenchecks.*')
+        ->orderBy('machineproperties.id', 'asc')
         ->get();
-        return view ('dashboard.view_metode.tablemethod',['machines'=>$machines]);
+        return view ('dashboard.view_metode.tablemethod',['machineproperty'=>$machineproperties]);
     }
     public function indexregistermethod()
     {

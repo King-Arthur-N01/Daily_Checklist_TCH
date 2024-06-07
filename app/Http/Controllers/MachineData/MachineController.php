@@ -4,9 +4,6 @@ namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
 use App\Machine;
-use App\Componencheck;
-use App\Parameter;
-use App\Metodecheck;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;

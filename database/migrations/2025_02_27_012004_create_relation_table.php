@@ -15,7 +15,7 @@ class CreateRelationTable extends Migration
     public function up()
     {
         Schema::table('componenchecks', function (Blueprint $table){
-            $table->foreignId('id_machine')->identity('1,1')->references('id')->on('machines')->onDelete('cascade')->unique();
+            $table->foreignId('id_property2')->identity('1,1')->references('id')->on('machineproperties')->onDelete('cascade')->unique();
         });
         Schema::table( 'parameters',function(Blueprint $table){
             $table->foreignId('id_componencheck')->Identity('1,1')->references('id')->on('componenchecks')->onDelete('cascade')->unique();
@@ -27,19 +27,16 @@ class CreateRelationTable extends Migration
             $table->foreign('machine_number2')->identity('1,1')->references('machine_number')->on('machines')->onDelete('cascade');
         });
         Schema::table('machinerecords', function (Blueprint $table){
-            $table->foreignId('id_machine2')->identity('1,1')->references('id')->on('machines')->onDelete('cascade')->unique();
+            $table->foreignId('id_machine')->identity('1,1')->references('id')->on('machines')->onDelete('cascade')->unique();
         });
-        Schema::table('machinerecords', function (Blueprint $table){
-            $table->foreign('create_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
-        });
+        // Schema::table('machinerecords', function (Blueprint $table){
+        //     $table->foreign('create_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        // });
         Schema::table('machinerecords', function (Blueprint $table){
             $table->foreign('correct_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
         });
         Schema::table('machinerecords', function (Blueprint $table){
             $table->foreign('approve_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
-        });
-        Schema::table('machinerecords', function (Blueprint $table){
-            $table->foreign('reject_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
         });
         Schema::table('historyrecords', function (Blueprint $table){
             $table->foreignId('id_machinerecord')->identity('1,1')->references('id')->on('machinerecords')->onDelete('cascade')->unique();

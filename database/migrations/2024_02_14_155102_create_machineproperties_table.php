@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateComponenchecksTable extends Migration
+class CreateMachinepropertiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateComponenchecksTable extends Migration
      */
     public function up()
     {
-        Schema::create('componenchecks', function (Blueprint $table) {
+        Schema::create('machineproperties', function (Blueprint $table) {
             $table->id();
-            $table->string('name_componencheck');
+            $table->string('standart_name');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateComponenchecksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('componenchecks');
+        Schema::dropIfExists('machineproperties');
     }
 }

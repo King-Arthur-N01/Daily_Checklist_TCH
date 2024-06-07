@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Componencheck extends Model
 {
     protected $fillable = [
-        'id_machine',
+        'id_property2',
         'name_componencheck'
     ];
-    public function getparentmachine()
+    public function getparentproperty()
     {
-        return $this->hasMany(Machine::class);
+        return $this->hasMany(Machineproperty::class);
     }
     public function getchildernparameter()
     {

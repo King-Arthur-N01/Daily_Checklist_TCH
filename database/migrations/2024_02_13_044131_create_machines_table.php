@@ -12,9 +12,8 @@ class CreateMachinesTable extends Migration
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
-            // $table->integer('machine_code')->unique()->index()->default('0');
             $table->string('invent_number')->unique();
-            $table->integer('machine_number')->index();
+            $table->string('machine_number')->index();
             $table->string('machine_name');
             $table->string('machine_brand')->nullable();
             $table->string('machine_type')->nullable();
@@ -22,6 +21,7 @@ class CreateMachinesTable extends Migration
             $table->string('machine_made')->nullable();
             $table->string('mfg_number');
             $table->string('install_date');
+            $table->unsignedBigInteger('id_property')->nullable();
             $table->timestamps();
         });
     }

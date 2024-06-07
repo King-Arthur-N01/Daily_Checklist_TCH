@@ -14,7 +14,7 @@ class HistoryrecordsController extends Controller
     {
         $joinrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate', 'machinerecords.create_by as getusercreate', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove', 'machinerecords.reject_by as getreject')
-            ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
 
@@ -25,7 +25,7 @@ class HistoryrecordsController extends Controller
     {
         $detailrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
-            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->leftJoin('machines', 'machinerecords.id_machine', '=', 'machines.id')
             ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
