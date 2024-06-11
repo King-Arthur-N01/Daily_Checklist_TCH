@@ -122,7 +122,7 @@ class MachinerecordController extends Controller
             'getrecords' => $getrecords
         ]);
     }
-    public function fetchdatacorrection($id) // this code for ajax modal html
+    public function fetchdatacorrection($id)
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')

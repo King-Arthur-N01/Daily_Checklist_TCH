@@ -7,7 +7,7 @@
     <div class="row">
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Tambah Checklist Machine</h1>
+            <h1 class="h3 mb-2 text-gray-800">Tambah Checklist Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-filter" id="filterCard" style="display: none;">
                     <div class="card-header py-3">
@@ -80,8 +80,8 @@
                                             <td>
                                                 <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item-custom-detail" href="#"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                                    <a class="dropdown-item-custom-edit" href="{{ route('addproperty', $machineget->id)}}"><img style="height: 20px"src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                                    <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                                    <a class="dropdown-item-custom-edit" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
                                                     <a class="dropdown-item-custom-delete" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                                 </div>
                                             </td>
@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Large Modal -->
+    <!-- Upload Modal -->
     <div class="modal fade" id="largeModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -111,7 +111,7 @@
                     <form id="formData">
                         @csrf
                         <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
-                        <p>Part Number<mark>|</mark>Line Name<mark>|</mark>Line Group<mark>|</mark>∑ Bersih<mark>|</mark>C.T (Detik)<mark>|</mark>Member Diluar Line</p>
+                        <p class="text-upload-header">No.<mark>|</mark>No.Invent Mesin<mark>|</mark>No.Mesin<mark>|</mark>Nama Mesin<mark>|</mark>Brand/Merk<mark>|</mark>Model/Type<mark>|</mark>Spec/Tonnage<mark>|</mark>Buatan<mark>|</mark>MFG No.<mark>|</mark>Install Date</p>
                         <label for="importExcel" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
                         <input type="file" name="fileupload" id="importExcel" hidden>
                     </form>
@@ -123,7 +123,26 @@
             </div>
         </div>
     </div>
-    <!-- End Large Modal-->
+    <!-- End Upload Modal-->
+
+    <!-- View Machine Property Modal -->
+    <div class="modal fade" id="ExtralargeModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Preventive Mesin</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-data"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End View Machine Property Modal-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -162,9 +181,11 @@
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script>
         $(document).ready(function () {
+            //fungsi fillter header table
             $('#machineTables').DataTable({ // Disable sorting for columns
                 columnDefs: [{"orderable": false, "targets": [5]
                 }]
@@ -174,12 +195,12 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            //fungsi upload button untuk upload mesin
             $('#uploadButton').on('click', function (e) {
                 e.preventDefault();
                 var file = $('#importExcel')[0].files[0];
                 var formData = new FormData();
                 formData.append('file', file);
-
                 $.ajax({
                     type: "POST",
                     url: "{{ route('uploadfile') }}",
@@ -208,6 +229,46 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
+            //fungsi button get detail mesin
+            $('#ExtralargeModal').on('shown.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route('fetchproperty', ':id') }}'.replace(':id', id),
+                    success: function(data) {
+                        var html = '';
+                        html += '<table class="table table-bordered">';
+                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.fetchmachines[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.fetchmachines[0].machine_spec + '</td></tr>';
+                        html += '<tr><th>Nama Mesin :</th><td>' + data.fetchmachines[0].machine_name + '</td><th>Buatan :</th><td>' + data.fetchmachines[0].machine_made + '</td></tr>';
+                        html += '<tr><th>Brand/Merk :</th><td>' + data.fetchmachines[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.fetchmachines[0].mfg_number + '</td></tr>';
+                        html += '<tr><th>Model/Type :</th><td>' + data.fetchmachines[0].machine_type + '</td><th>Install Date :</th><td>' + data.fetchmachines[0].install_date + '</td></tr>';
+                        html += '</table>';
+                        html += '<h5>Standart Mesin</h5>';
+                        html += '<table class="table table-bordered" id="dataTables">';
+                        html += '<thead>';
+                        html += '<tr>';
+                        html += '<th>Nama Mesin</th>';
+                        html += '<th>Bagian Yang Dicheck</th>';
+                        html += '<th>Standart/Parameter</th>';
+                        html += '<th>Metode Pengecekan</th>';
+                        html += '</tr>';
+                        html += '</thead>';
+                        $.each(data.fetchmachines, function(index, row) {
+                            html += '<tr>';
+                            html += '<td>' + row.machine_name + '</td>';
+                            html += '<td>' + row.name_componencheck + '</td>';
+                            html += '<td>' + row.name_parameter + '</td>';
+                            html += '<td>' + row.name_metodecheck + '</td>';
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        $('#modal-data').html(html);
+                        mergeCells();
+                    }
+                });
+            });
+            //fungsi fillter button
             $('#filterButton').on('click', function () {
             const filterCard = document.getElementById("#filterCard");
             if ($filterCard.css('display') === 'none') {

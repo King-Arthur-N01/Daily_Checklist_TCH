@@ -37,23 +37,21 @@
             </div>
         </div>
         @endcan
-        @can('viewtable_records', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Lihat Riwayat Mesin</h5>
+                        <h5 class="card-title-head">Tambah Standart Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{asset('assets/icons/history_home.png')}}">
+                        <img class="image-card-home" src="{{asset('assets/icons/add_task_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Preventive &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('indexproperty')}}">Tambah Standarisasi Mesin &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-        @endcan
     </div>
     <div class="row">
         @can('corrected_records', Permission::class)
@@ -90,22 +88,24 @@
             </div>
         </div>
         @endcan
-        {{-- <div class="col-xl-4 col-md-4 mb-4">
+        @can('viewtable_records', Permission::class)
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Tambah Machine</h5>
+                        <h5 class="card-title-head">Lihat Riwayat Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{asset('assets/icons/add_task_home.png')}}">
+                        <img class="image-card-home" src="{{asset('assets/icons/history_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('managemachine')}}">Tambah Kategori Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Preventive &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-4 mb-4">
+        @endcan
+        {{-- <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -134,8 +134,8 @@
                     </div>
                 </div>
             </div>
-        </div> --}}
-        {{-- <div class="col-xl-4 col-md-4 mb-4">
+        </div>
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">

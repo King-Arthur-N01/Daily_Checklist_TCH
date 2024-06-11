@@ -37,10 +37,19 @@ Route::get ('/tablemachine/editmachine/{id}','MachineData\MachineController@inde
 Route::put ('/tablemachine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('pusheditmachine');
 Route::get ('/tablemachine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
 
-Route::get ('/tablemachinedata','MachineData\MachineController@indextableimport')->name('managemachinedata');
+Route::get ('/tablemachinedata','MachineData\ImportdataController@indexmachineimport')->name('managemachinedata');
 Route::post('/tablemachinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
-Route::get ('/tablemachinedata/addmachineproperty/{id}','MachineData\MachineController@addmachineproperty')->name('addproperty');
-// macine route end
+Route::get('/tablemachinedata/fetch/{id}','MachinesData\MachineController@fetchdataproperty')->name('fetchproperty');
+// machine route end
+
+// machine property route
+Route::get('/machineproperty/index','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
+// Route::post('/machineproperty','MachineData\MachinepropertyController@registermethod')->name('pushmethod');
+// Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@indexeditmethod')->name('editmethod');
+// Route::put('/machineproperty/{id}','MachineData\MachinepropertyController@editmethod')->name('pusheditmethod');
+// Route::get('/machineproperty','MachineData\MachinepropertyController@indextablemethod')->name('managemethod');
+// Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@deletemethod')->name('deletemethod');
+// machine property route end
 
 // componencheck route
 Route::get('/addcomponencheck','MachineData\ComponencheckController@indexregistercomponencheck')->name('addcomponencheck');

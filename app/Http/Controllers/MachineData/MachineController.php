@@ -4,7 +4,6 @@ namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
 use App\Machine;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -82,12 +81,22 @@ class MachineController extends Controller
     }
 
     // <<<============================================================================================>>>
-    // <<<=================================batas import machine data==================================>>>
+    // <<<==============================batas upload/import machine data==============================>>>
     // <<<============================================================================================>>>
-    public function indextableimport()
+    
+    
+    // fungsi get data ajax modal untuk lihat property mesin
+    public function fetchdataproperty($id)
     {
-        $machines=Machine::get();
-        return view('dashboard.view_importdata.tableimportdata',['machines' => $machines]);
+        $fetchmachines = DB::table('machines')
+        ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+        ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+        ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+        ->where('machines.id', '=', $id)
+        ->get();
+        return response()->json(['fetchmachines' => $fetchmachines]);
     }
     public function addmachineproperty($id)
     {
@@ -95,6 +104,6 @@ class MachineController extends Controller
         return view('dashboard.view_mesin.machineproperty',['machines' => $machines]);
     }
     // <<<============================================================================================>>>
-    // <<<===============================batas import machine data end================================>>>
+    // <<<============================batas upload/import machine data end============================>>>
     // <<<============================================================================================>>>
 }

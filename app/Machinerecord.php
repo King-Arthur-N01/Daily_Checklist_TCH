@@ -11,7 +11,6 @@ class Machinerecord extends Model
         'shift',
         'note',
         'id_machine',
-        'reject_by',
         'create_by',
         'correct_by',
         'approve_by',

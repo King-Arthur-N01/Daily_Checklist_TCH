@@ -2190,6 +2190,10 @@ pre code {
     margin: 0px 0px 15px 0px;
 }
 
+.text-upload-header{
+    font-size: smaller;
+}
+
 .form-control {
     display: block;
     width: 100%;

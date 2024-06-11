@@ -15,7 +15,7 @@ class CreateMachinepropertiesTable extends Migration
     {
         Schema::create('machineproperties', function (Blueprint $table) {
             $table->id();
-            $table->string('standart_name');
+            $table->string('name_property');
             $table->timestamps();
         });
     }

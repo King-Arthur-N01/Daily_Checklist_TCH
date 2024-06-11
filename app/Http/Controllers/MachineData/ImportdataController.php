@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Imports\Importdata;
+use App\Machine;
 use Maatwebsite\Excel\Facades\Excel;
 class ImportdataController extends Controller
 {
+    // fungsi index view upload data mesin
+    public function indexmachineimport()
+    {
+        $machines=Machine::get();
+        return view('dashboard.view_importdata.indeximportdata',['machines' => $machines]);
+    }
+    // fungsi upload data excel ke model
     public function importdata(Request $request)
     {
         $request->validate([

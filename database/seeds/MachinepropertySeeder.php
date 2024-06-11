@@ -14,15 +14,15 @@ class MachinepropertySeeder extends Seeder
     {
         // 1.
         Machineproperty::create([
-            'standart_name' => 'WELD MACHINE'
+            'name_property' => 'WELD MACHINE'
         ]);
         // 2.
         Machineproperty::create([
-            'standart_name' => 'STAMP MACHINE'
+            'name_property' => 'STAMP MACHINE'
         ]);
         // 3.
         Machineproperty::create([
-            'standart_name' => 'COMPRESSOR MACHINE'
+            'name_property' => 'COMPRESSOR MACHINE'
         ]);
     }
 }

@@ -15,7 +15,7 @@ class Importdata implements ToModel
             $this->isFirstRow = false;
             return null; // Skip the header row
         }
-        Log::info('Row headers: ' . implode(', ', array_keys($row)));
+        // Log::info('Row headers: ' . implode(', ', array_keys($row)));
         try {
             return new Machine([
                 'invent_number'  => $row[1],
