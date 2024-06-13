@@ -105,7 +105,9 @@
             </div>
         </div>
         @endcan
-        {{-- <div class="col-xl-4 col-md-4 mb-4">
+    </div>
+    {{-- <div class="row">
+        <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -115,7 +117,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/inspection_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('approve1machinerecord')}}">Tambah Componen Check &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('managemachine')}}">Tambah Componen Check &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
@@ -149,8 +151,8 @@
                     </div>
                 </div>
             </div>
-        </div> --}}
-    </div>
+        </div>
+    </div> --}}
 @endsection
 
 @push('script')

@@ -11,30 +11,30 @@ use Illuminate\View\Component;
 
 class ParameterController extends Controller
 {
-    public function indextableparameter()
+    public function indexparameter()
     {
-        $machines = DB::table('machines')
-        ->join('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+        $parameters = DB::table('machineproperties')
+        ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
         ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-        ->select('machines.*','parameters.*', 'componenchecks.*')
-        ->orderBy('machines.id', 'asc')
+        ->select('machineproperties.*','parameters.*', 'componenchecks.*')
+        ->orderBy('machineproperties.id', 'asc')
         ->get();
-        return view ('dashboard.view_parameter.tableparameter',['machines'=>$machines]);
+        return view ('dashboard.view_parameter.tableparameter',['parameters'=>$parameters]);
     }
-    public function indexregisterparameter()
+    public function registerparameter()
     {
         $componenchecks = Componencheck::all('name_componencheck', 'id');
         return view ('dashboard.view_parameter.addparameter',['componenchecks'=>$componenchecks]);
     }
 
-    public function indexeditparameter($id)
+    public function editparameter($id)
     {
         $componenchecks = Componencheck::all('name_componencheck', 'id');
         $parameters=Parameter::find($id);
         return view ('dashboard.view_parameter.editparameter',['parameters'=>$parameters,'componenchecks'=>$componenchecks]);
     }
 
-    public function registerparameter(Request $request)
+    public function pushregisterparameter(Request $request)
     {
         $request->validate([
             'id_componencheck'  => 'required',
@@ -44,7 +44,7 @@ class ParameterController extends Controller
         return redirect()->route("manageparameter")->withSuccess('Parameter added successfully.');
     }
 
-    public function editparameter(Request $request, $id)
+    public function pusheditparameter(Request $request, $id)
     {
         $request->validate([
             'name_parameter' => 'required|max:255'

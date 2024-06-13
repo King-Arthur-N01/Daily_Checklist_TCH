@@ -128,7 +128,7 @@ class PermissionSeeder extends Seeder
 
         $operator = User::create([
             'name' => 'Operator 1',
-            'nik' => '09876',
+            'nik' => '123456789',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
         ]);
@@ -144,7 +144,7 @@ class PermissionSeeder extends Seeder
 
         $operator = User::create([
             'name' => 'Operator 3',
-            'nik' => '13812',
+            'nik' => '13579',
             'status' => '0',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
@@ -153,7 +153,7 @@ class PermissionSeeder extends Seeder
 
         $operator = User::create([
             'name' => 'Operator 4',
-            'nik' => '10243',
+            'nik' => '24680',
             'status' => '0',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),

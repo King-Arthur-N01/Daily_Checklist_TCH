@@ -9,24 +9,24 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
-    public function indextablemachine()
+    public function indexmachine()
     {
         $machines=Machine::get();
         return view ('dashboard.view_mesin.tablemachine',['machines'=>$machines]);
     }
 
-    public function indexregistermachine()
+    public function registermachine()
     {
         return view ('dashboard.view_mesin.addmachine');
     }
 
-    public function indexupdatemachine($id)
+    public function updatemachine($id)
     {
         $machines=Machine::find($id);
         return view ('dashboard.view_mesin.editmachine',['machines'=>$machines]);
     }
 
-    public function registermachine(Request $request)
+    public function pushregistermachine(Request $request)
     {
         // $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
         // if (isset($lastMachineCode)) {
@@ -54,7 +54,7 @@ class MachineController extends Controller
         return redirect()->route("managemachine")->withSuccess('Machine added successfully.');
     }
 
-    public function updatemachine(Request $request, $id)
+    public function pushupdatemachine(Request $request, $id)
     {
         $request->validate([
             'invent_number' => 'required',
@@ -84,20 +84,6 @@ class MachineController extends Controller
     // <<<==============================batas upload/import machine data==============================>>>
     // <<<============================================================================================>>>
     
-    
-    // fungsi get data ajax modal untuk lihat property mesin
-    public function fetchdataproperty($id)
-    {
-        $fetchmachines = DB::table('machines')
-        ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-        ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-        ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
-        ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-        ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-        ->where('machines.id', '=', $id)
-        ->get();
-        return response()->json(['fetchmachines' => $fetchmachines]);
-    }
     public function addmachineproperty($id)
     {
         $machines=Machine::find($id);

@@ -30,20 +30,20 @@ Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end
 
 // machine route
-Route::get ('/tablemachine','MachineData\MachineController@indextablemachine')->name('managemachine');
-Route::get ('/tablemachine/addmachine','MachineData\MachineController@indexregistermachine')->name('addmachine');
-Route::post('/tablemachine/addmachine','MachineData\MachineController@registermachine')->name('pushmachine');
-Route::get ('/tablemachine/editmachine/{id}','MachineData\MachineController@indexupdatemachine')->name('editmachine');
-Route::put ('/tablemachine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('pusheditmachine');
-Route::get ('/tablemachine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
+Route::get ('/machine','MachineData\MachineController@indexmachine')->name('managemachine');
+Route::get ('/machine/addmachine','MachineData\MachineController@registermachine')->name('addmachine');
+Route::post('/machine/addmachine','MachineData\MachineController@pushregistermachine')->name('pushmachine');
+Route::get ('/machine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
+Route::put ('/machine/editmachine/{id}','MachineData\MachineController@pushupdatemachine')->name('pusheditmachine');
+Route::get ('/machine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
 
-Route::get ('/tablemachinedata','MachineData\ImportdataController@indexmachineimport')->name('managemachinedata');
-Route::post('/tablemachinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
-Route::get('/tablemachinedata/fetch/{id}','MachinesData\MachineController@fetchdataproperty')->name('fetchproperty');
+Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('managemachinedata');
+Route::post('/machinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
+Route::get ('/machinedata/fetch/{id}','MachineData\ImportdataController@fetchdataproperty')->name('fetchproperty');
 // machine route end
 
 // machine property route
-Route::get('/machineproperty/index','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
+Route::get('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
 // Route::post('/machineproperty','MachineData\MachinepropertyController@registermethod')->name('pushmethod');
 // Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@indexeditmethod')->name('editmethod');
 // Route::put('/machineproperty/{id}','MachineData\MachinepropertyController@editmethod')->name('pusheditmethod');
@@ -52,55 +52,55 @@ Route::get('/machineproperty/index','MachineData\MachinepropertyController@index
 // machine property route end
 
 // componencheck route
-Route::get('/addcomponencheck','MachineData\ComponencheckController@indexregistercomponencheck')->name('addcomponencheck');
-Route::post('/addcomponencheck','MachineData\ComponencheckController@registercomponencheck')->name('pushcomponencheck');
-Route::get('/editcomponencheck/{id}','MachineData\ComponencheckController@indexeditcomponencheck')->name('editcomponencheck');
-Route::put('/editcomponencheck/{id}','MachineData\ComponencheckController@editcomponencheck')->name('pusheditcomponencheck');
-Route::get('/tablecomponencheck','MachineData\ComponencheckController@indextablecomponencheck')->name('managecomponencheck');
-Route::get('/deletecomponencheck/{id}','MachineData\ComponencheckController@deletecomponencheck')->name('deletecomponencheck');
+Route::get ('/componencheck','MachineData\ComponencheckController@indexcomponencheck')->name('managecomponencheck');
+Route::get ('/componencheck/add','MachineData\ComponencheckController@registercomponencheck')->name('addcomponencheck');
+Route::post('/componencheck/add','MachineData\ComponencheckController@pushregistercomponencheck')->name('pushcomponencheck');
+Route::get ('/componencheck/edit/{id}','MachineData\ComponencheckController@editcomponencheck')->name('editcomponencheck');
+Route::put ('/componencheck/edit/{id}','MachineData\ComponencheckController@pusheditcomponencheck')->name('pusheditcomponencheck');
+Route::get ('/componencheck/delete/{id}','MachineData\ComponencheckController@deletecomponencheck')->name('deletecomponencheck');
 // componencheck route end
 
 // parameter route
-Route::get('/addparameter','MachineData\ParameterController@indexregisterparameter')->name('addparameter');
-Route::post('/addparameter','MachineData\ParameterController@registerparameter')->name('pushparameter');
-Route::get('/editparameter/{id}','MachineData\ParameterController@indexeditparameter')->name('editparameter');
-Route::put('/editparameter/{id}','MachineData\ParameterController@editparameter')->name('pusheditparameter');
-Route::get('/tableparameter','MachineData\ParameterController@indextableparameter')->name('manageparameter');
-Route::get('/deleteparameter/{id}','MachineData\ParameterController@deleteparameter')->name('deleteparameter');
+Route::get ('/parameter','MachineData\ParameterController@indexparameter')->name('manageparameter');
+Route::get ('/parameter/add','MachineData\ParameterController@registerparameter')->name('addparameter');
+Route::post('/parameter/add','MachineData\ParameterController@pushregisterparameter')->name('pushparameter');
+Route::get ('/parameter/edit/{id}','MachineData\ParameterController@editparameter')->name('editparameter');
+Route::put ('/parameter/edit/{id}','MachineData\ParameterController@pusheditparameter')->name('pusheditparameter');
+Route::get ('/parameter/delete/{id}','MachineData\ParameterController@deleteparameter')->name('deleteparameter');
 // parameter route end
 
 // metodecheck route
-Route::get('/addmethod','MachineData\MetodecheckController@indexregistermethod')->name('addmethod');
-Route::post('/addmethod','MachineData\MetodecheckController@registermethod')->name('pushmethod');
-Route::get('/editmethod/{id}','MachineData\MetodecheckController@indexeditmethod')->name('editmethod');
-Route::put('/editmethod/{id}','MachineData\MetodecheckController@editmethod')->name('pusheditmethod');
-Route::get('/tablemethod','MachineData\MetodecheckController@indextablemethod')->name('managemethod');
-Route::get('/deletemethod/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
+Route::get ('/methodecheck','MachineData\MetodecheckController@indexmethod')->name('managemethod');
+Route::get ('/methodecheck/add','MachineData\MetodecheckController@registermethod')->name('addmethod');
+Route::post('/methodecheck/add','MachineData\MetodecheckController@pushregistermethod')->name('pushmethod');
+Route::get ('/methodecheck/edit/{id}','MachineData\MetodecheckController@editmethod')->name('editmethod');
+Route::put ('/methodecheck/edit/{id}','MachineData\MetodecheckController@pusheditmethod')->name('pusheditmethod');
+Route::get ('/methodecheck/delete/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
 // metodecheck route end
 
 // input data machine record
-Route::get('/tablepreventive','RecordsData\MachinerecordController@tablemachinerecord')->name('indexmachinerecord');
-Route::get('/tablepreventive/addpreventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
-Route::put('/tablepreventive/addpreventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
+Route::get('/machinerecord/preventive','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
+Route::get('/machinerecord/preventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
+Route::put('/machinerecord/preventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 // input data machine record end
 
 // input data correction 1
-Route::get('/machinerecord/correction','RecordsData\MachinerecordController@tablecorrection')->name('viewcorrection');
+Route::get('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('viewcorrection');
 Route::get('/machinerecord/correction/{id}','RecordsData\MachinerecordController@fetchdatacorrection')->name('fetchcorrection');
 Route::put('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('pushcorrection');
 Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrect');
 // input data correction 1 end
 
 // input data approval 2
-Route::get('/machinerecord/approval','RecordsData\MachinerecordController@tableapproval')->name('viewapproval');
+Route::get('/machinerecord/approval','RecordsData\MachinerecordController@indexapproval')->name('viewapproval');
 Route::get('/machinerecord/approval/{id}','RecordsData\MachinerecordController@fetchdataapproval')->name('fetchapproval');
 Route::put('/machinerecord/approval/{id}','RecordsData\MachinerecordController@registerapproval')->name('pushapproval');
 Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordController@deleteapproval')->name('removeapprove');
 // input data approval 2 end
 
 // record data machine route
-Route::get('/tablehistory','RecordsData\HistoryrecordsController@indextablehistory')->name('historymachine');
-Route::get('/tablehistory/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
+Route::get('/historyrecord','RecordsData\HistoryrecordsController@indexhistory')->name('historymachine');
+Route::get('/historyrecord/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
 // record data machine route end
 
 

@@ -10,31 +10,31 @@ use Illuminate\Http\Request;
 
 class MetodecheckController extends Controller
 {
-    public function indextablemethod()
+    public function indexmethod()
     {
-        $machineproperties = DB::table('machineproperties')
-        ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_machine')
+        $metodechecks = DB::table('machineproperties')
+        ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
         ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
         ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
         ->select( 'machineproperties.*', 'metodechecks.*', 'parameters.*', 'componenchecks.*')
         ->orderBy('machineproperties.id', 'asc')
         ->get();
-        return view ('dashboard.view_metode.tablemethod',['machineproperty'=>$machineproperties]);
+        return view ('dashboard.view_metode.tablemethod',['metodechecks'=>$metodechecks]);
     }
-    public function indexregistermethod()
+    public function registermethod()
     {
         $parameters = Parameter::all('name_parameter', 'id');
         return view ('dashboard.view_metode.addmethod',['parameters'=>$parameters]);
     }
 
-    public function indexeditmethod($id)
+    public function editmethod($id)
     {
         $parameters = Parameter::all('name_parameter', 'id');
         $metodechecks=Metodecheck::find($id);
         return view ('dashboard.view_metode.editmethod',['metodechecks'=>$metodechecks,'parameters'=>$parameters]);
     }
 
-    public function registermethod(Request $request)
+    public function pushregistermethod(Request $request)
     {
         $request->validate([
             'id_parameter' => 'required',
@@ -44,13 +44,13 @@ class MetodecheckController extends Controller
         return redirect()->route("managemethod")->withSuccess('Machine added successfully.');
     }
 
-    public function editmethod(Request $request, $id)
+    public function pusheditmethod(Request $request, $id)
     {
         $request->validate([
             'name_metodecheck' => 'required|max:255'
         ]);
-        $Metodechecks = Metodecheck::find($id);
-        $Metodechecks->update($request->all());
+        $metodechecks = Metodecheck::find($id);
+        $metodechecks->update($request->all());
         return redirect()->route("managemethod")->withSuccess('Items updated successfully.');
     }
 

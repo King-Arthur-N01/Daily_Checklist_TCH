@@ -175,6 +175,22 @@
         </div>
     </div>
     <!-- End Alert Danger Modal -->
+
+    <!-- Alert Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <span id="warningText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Warning Modal -->
 @endsection
 
 @push('style')
@@ -237,34 +253,42 @@
                     type: 'GET',
                     url: '{{ route('fetchproperty', ':id') }}'.replace(':id', id),
                     success: function(data) {
-                        var html = '';
-                        html += '<table class="table table-bordered">';
-                        html += '<tr><th>No. Invent Mesin :</th><td>' + data.fetchmachines[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.fetchmachines[0].machine_spec + '</td></tr>';
-                        html += '<tr><th>Nama Mesin :</th><td>' + data.fetchmachines[0].machine_name + '</td><th>Buatan :</th><td>' + data.fetchmachines[0].machine_made + '</td></tr>';
-                        html += '<tr><th>Brand/Merk :</th><td>' + data.fetchmachines[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.fetchmachines[0].mfg_number + '</td></tr>';
-                        html += '<tr><th>Model/Type :</th><td>' + data.fetchmachines[0].machine_type + '</td><th>Install Date :</th><td>' + data.fetchmachines[0].install_date + '</td></tr>';
-                        html += '</table>';
-                        html += '<h5>Standart Mesin</h5>';
-                        html += '<table class="table table-bordered" id="dataTables">';
-                        html += '<thead>';
-                        html += '<tr>';
-                        html += '<th>Nama Mesin</th>';
-                        html += '<th>Bagian Yang Dicheck</th>';
-                        html += '<th>Standart/Parameter</th>';
-                        html += '<th>Metode Pengecekan</th>';
-                        html += '</tr>';
-                        html += '</thead>';
-                        $.each(data.fetchmachines, function(index, row) {
+                        if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
+                            $('#modal-data').html('<h4 style="text-align: center;">Error data property mesin belum tersedia!</h4>');
+                        } else {
+                            var html = '';
+                            html += '<table class="table table-bordered">';
+                            html += '<tr><th>No. Invent Mesin :</th><td>' + data.fetchmachines[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.fetchmachines[0].machine_spec + '</td></tr>';
+                            html += '<tr><th>Nama Mesin :</th><td>' + data.fetchmachines[0].machine_name + '</td><th>Buatan :</th><td>' + data.fetchmachines[0].machine_made + '</td></tr>';
+                            html += '<tr><th>Brand/Merk :</th><td>' + data.fetchmachines[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.fetchmachines[0].mfg_number + '</td></tr>';
+                            html += '<tr><th>Model/Type :</th><td>' + data.fetchmachines[0].machine_type + '</td><th>Install Date :</th><td>' + data.fetchmachines[0].install_date + '</td></tr>';
+                            html += '</table>';
+                            html += '<h5>Standart Mesin</h5>';
+                            html += '<table class="table table-bordered" id="dataTables">';
+                            html += '<thead>';
                             html += '<tr>';
-                            html += '<td>' + row.machine_name + '</td>';
-                            html += '<td>' + row.name_componencheck + '</td>';
-                            html += '<td>' + row.name_parameter + '</td>';
-                            html += '<td>' + row.name_metodecheck + '</td>';
+                            html += '<th>Nama Mesin</th>';
+                            html += '<th>Bagian Yang Dicheck</th>';
+                            html += '<th>Standart/Parameter</th>';
+                            html += '<th>Metode Pengecekan</th>';
                             html += '</tr>';
-                        });
-                        html += '</table>';
+                            html += '</thead>';
+                            $.each(data.fetchmachines, function(index, row) {
+                                html += '<tr>';
+                                html += '<td>' + row.machine_name + '</td>';
+                                html += '<td>' + row.name_componencheck + '</td>';
+                                html += '<td>' + row.name_parameter + '</td>';
+                                html += '<td>' + row.name_metodecheck + '</td>';
+                                html += '</tr>';
+                            });
+                            html += '</table>';
+                        }
                         $('#modal-data').html(html);
                         mergeCells();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('error:', error);
+                        $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
                     }
                 });
             });

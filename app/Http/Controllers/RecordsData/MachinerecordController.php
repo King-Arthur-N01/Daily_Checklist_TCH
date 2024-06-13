@@ -12,14 +12,17 @@ use Illuminate\Support\Facades\DB;
 
 class MachinerecordController extends Controller
 {
+    // fungsi untuk permission
     public function __construct(){
         $this->middleware('permission:#namapermission#', ['only' => ['#namafunction#']]);
     }
-    public function tablemachinerecord()
+    // fungsi untuk melihat table preventive mesin
+    public function indexmachinerecord()
     {
         $machines = Machine::all();
         return view('dashboard.view_recordmesin.tablerecordmesin', ['machines' => $machines]);
     }
+    // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
     {
         $timenow = Carbon::now();
@@ -43,6 +46,7 @@ class MachinerecordController extends Controller
             'get_number'
         ]);
     }
+    // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function registermachinerecord(Request $request)
     {
         $getuserid = Auth()->user()->id;
@@ -109,7 +113,8 @@ class MachinerecordController extends Controller
     // <<<==============================batas approval machine records 1==============================>>>
     // <<<============================================================================================>>>
 
-    public function tablecorrection()
+    // index tampilan untuk koreksi preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
+    public function indexcorrection()
     {
         $getrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
@@ -122,18 +127,20 @@ class MachinerecordController extends Controller
             'getrecords' => $getrecords
         ]);
     }
+    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database
     public function fetchdatacorrection($id)
     {
         $machinedata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
+            ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
             ->leftJoin('machines', 'machinerecords.id_machine', '=', 'machines.id')
-            ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+            ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
-            $recordsdata = DB::table('machinerecords')
+        $recordsdata = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'machinerecords.id as get_id', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
@@ -161,7 +168,8 @@ class MachinerecordController extends Controller
             'combinedata' => $combinedata
         ]);
     }
-    public function registercorrection(Request $request, $id) // this code for ajax send request
+    // fungsi untuk mensetujui dan meregister hasil preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
+    public function registercorrection(Request $request, $id)
     {
         $request->validate([
             'correct_by' => 'required'
@@ -203,6 +211,8 @@ class MachinerecordController extends Controller
     //     }
     //     return response()->json(['success' => 'Data Preventive was successfully REJECT!']);
     // }
+
+    // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
     public function deletecorrection($id) {
         $deleterecords = Machinerecord::where('id', $id)->delete();
 
@@ -221,7 +231,8 @@ class MachinerecordController extends Controller
     // <<<==============================batas approval machine records 2==============================>>>
     // <<<============================================================================================>>>
 
-    public function tableapproval()
+    // index tampilan untuk koreksi preventive mesin [supervisor + ass.manager + manager only]
+    public function indexapproval()
     {
         $getrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
@@ -234,12 +245,14 @@ class MachinerecordController extends Controller
             'getrecords' => $getrecords
         ]);
     }
+    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database
     public function fetchdataapproval($id) // this code for ajax modal html
     {
         $machinedata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
+            ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
             ->leftJoin('machines', 'machinerecords.id_machine', '=', 'machines.id')
-            ->leftJoin('componenchecks', 'machines.id', '=', 'componenchecks.id_machine')
+            ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
             ->where('machinerecords.id', '=', $id)
@@ -273,7 +286,8 @@ class MachinerecordController extends Controller
             'combinedata' => $combinedata
         ]);
     }
-    public function registerapproval(Request $request, $id) // this code for ajax send request
+    // fungsi untuk mensetujui dan meregister hasil preventive mesin [supervisor + ass.manager + manager only]
+    public function registerapproval(Request $request, $id)
     {
         $request->validate([
             'approve_by' => 'required'
@@ -290,7 +304,7 @@ class MachinerecordController extends Controller
         }
         else {
             $machinerecord->update([
-                'correct_by' => $request->input('correct_by'),
+                'approve_by' => $request->input('approve_by'),
                 'note' => $request->input('note')
             ]);
         }
@@ -320,6 +334,8 @@ class MachinerecordController extends Controller
     //     }
     //     return response()->json(['success' => 'Data Preventive was successfully REJECT!']);
     // }
+
+    // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
     public function deleteapproval($id) {
         $deleterecords = Machinerecord::where('id', $id)->delete();
 

@@ -51,7 +51,6 @@
                                 <th>BRAND</th>
                                 <th>WAKTU PREVENTIVE</th>
                                 <th>STATUS</th>
-                                <th style="display: none;">REJECT</th>
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
@@ -66,7 +65,6 @@
                                             <td>{{ $viewrecords->machine_brand }}</td>
                                             <td>{{ $viewrecords->record_time }}</td>
                                             <td>{{ $viewrecords->approve_by }}</td>
-                                            <td style="display: none;">{{ $viewrecords->reject_by }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                             </td>

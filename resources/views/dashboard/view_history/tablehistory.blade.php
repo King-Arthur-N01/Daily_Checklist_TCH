@@ -62,7 +62,6 @@
                                             <td>{{ $recordsget->machine_number }}</td>
                                             <td style="display: none;">{{ $recordsget->getcorrect }}</td>
                                             <td style="display: none;">{{ $recordsget->getapprove }}</td>
-                                            <td style="display: none;">{{ $recordsget->getreject }}</td>
                                             <td></td>
                                             <td></td>
                                             <td>{{ $recordsget->getcreatedate }}</td>
@@ -122,30 +121,25 @@
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'});
             });
+            // fungsi table untuk melihat status dari sebuah preventive
             $('#historyTables tr').each(function() {
                 var correctCell = $(this).find('td:eq(4)');
                 var approveCell = $(this).find('td:eq(5)');
-                var rejectCell = $(this).find('td:eq(6)');
-                var statusCell1 = $(this).find('td:eq(7)');
-                var statusCell2 = $(this).find('td:eq(8)');
+                var statusCell1 = $(this).find('td:eq(6)');
+                var statusCell2 = $(this).find('td:eq(7)');
                 var correct = correctCell.text().trim();
                 var approve = approveCell.text().trim();
-                var reject = rejectCell.text().trim();
-                if (reject !== '') {
-                    statusCell1.text('SUDAH DI REJECT')
-                    statusCell2.text('SUDAH DI REJECT')
-                    $(this).css("background-color", "rgba(255, 0, 0, 0.2)");
-                }  else if (correct !== '' && approve !== '') {
-                    statusCell1.text('SUDAH DI KOREKSI');
-                    statusCell2.text('SUDAH DI SETUJUI');
+                if (correct !== '' && approve !== '') {
+                    statusCell1.text('BELUM DI KOREKSI');
+                    statusCell2.text('BELUM DI SETUJUI');
                     $(this).css("background-color", "rgba( 0, 0, 255, 0.2)");
                 } else if (correct !== '' && approve === '') {
                     statusCell1.text('SUDAH DI KOREKSI');
                     statusCell2.text('BELUM DI SETUJUI');
                     $(this).css("background-color", "rgba( 0, 255, 0, 0.2)");
                 } else if (correct === '' && approve === '') {
-                    statusCell1.text('BELUM DI KOREKSI');
-                    statusCell2.text('BELUM DI SETUJUI');
+                    statusCell1.text('SUDAH DI KOREKSI');
+                    statusCell2.text('SUDAH DI SETUJUI');
                 }
             });
     </script>
