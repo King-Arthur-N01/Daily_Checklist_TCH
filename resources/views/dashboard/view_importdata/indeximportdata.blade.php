@@ -7,7 +7,7 @@
     <div class="row">
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Tambah Checklist Mesin</h1>
+            <h1 class="h3 mb-2 text-gray-800">Tambah Data Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-filter" id="filterCard" style="display: none;">
                     <div class="card-header py-3">

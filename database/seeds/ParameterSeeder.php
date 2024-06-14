@@ -303,5 +303,85 @@ class ParameterSeeder extends Seeder
             'id_componencheck' => '32',
             'name_parameter' => 'Total oil capacity = 24ltr',
         ]);
+        // 59.
+        Parameter::create([
+            'id_componencheck' => '33',
+            'name_parameter' => 'Berfungsi baik',
+        ]);
+        // 60.
+        Parameter::create([
+            'id_componencheck' => '33',
+            'name_parameter' => '380 volt / 3 phasa',
+        ]);
+        // 61.
+        Parameter::create([
+            'id_componencheck' => '33',
+            'name_parameter' => 'Terisolasi baik & tidak putus',
+        ]);
+        // 62.
+        Parameter::create([
+            'id_componencheck' => '33',
+            'name_parameter' => 'Terhubung normal',
+        ]);
+        // 63.
+        Parameter::create([
+            'id_componencheck' => '33',
+            'name_parameter' => 'Berfungsi baik',
+        ]);
+        // 64.
+         Parameter::create([
+            'id_componencheck' => '34',
+            'name_parameter' => 'Berfungsi baik',
+        ]);
+        // 65.
+        Parameter::create([
+            'id_componencheck' => '34',
+            'name_parameter' => 'Tombol berfungsi baik',
+        ]);
+        // 66.
+        Parameter::create([
+            'id_componencheck' => '34',
+            'name_parameter' => 'Kencang tidak slip',
+        ]);
+        // 67.
+        Parameter::create([
+            'id_componencheck' => '34',
+            'name_parameter' => 'Berfungsi normal',
+        ]);
+        // 68.
+        Parameter::create([
+            'id_componencheck' => '35',
+            'name_parameter' => 'Berputar seimbang/halus',
+        ]);
+        // 69.
+        Parameter::create([
+            'id_componencheck' => '35',
+            'name_parameter' => 'Tidak kendor',
+        ]);
+        // 70.
+        Parameter::create([
+            'id_componencheck' => '35',
+            'name_parameter' => 'Normal',
+        ]);
+        // 71.
+        Parameter::create([
+            'id_componencheck' => '35',
+            'name_parameter' => 'Bolt pengunci harus berfungsi',
+        ]);
+        // 72.
+        Parameter::create([
+            'id_componencheck' => '36',
+            'name_parameter' => 'Berpelumas grease / oli',
+        ]);
+        // 73.
+        Parameter::create([
+            'id_componencheck' => '36',
+            'name_parameter' => 'Berpelumas grease / oli',
+        ]);
+        // 74.
+        Parameter::create([
+            'id_componencheck' => '36',
+            'name_parameter' => 'Berpelumas grease / oli',
+        ]);
     }
 }

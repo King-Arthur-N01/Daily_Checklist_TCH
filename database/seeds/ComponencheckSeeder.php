@@ -194,5 +194,25 @@ class ComponencheckSeeder extends Seeder
             'id_property2' => '3',
             'name_componencheck' => 'Oli',
         ]);
+        // 33.
+        Componencheck::create([
+            'id_property2' => '2',
+            'name_componencheck' => 'Electric System 1. MCCB / Breacker 2.Tegangan Listrik 3.Jaringan kabel listrik 4.Terminasi / sambungan 5.Kontraktor',
+        ]);
+        // 34.
+        Componencheck::create([
+            'id_property2' => '2',
+            'name_componencheck' => 'Operational Control 1.Power Feed Transmission 2.Supply Switch 3.Spindle brake and lock 4.Ram control Handle',
+        ]);
+        // 35.
+        Componencheck::create([
+            'id_property2' => '2',
+            'name_componencheck' => 'Motor 1.Pully 2.Belt 3.Speed 4.Bolt',
+        ]);
+        // 36.
+        Componencheck::create([
+            'id_property2' => '2',
+            'name_componencheck' => 'Lubrication 1.Bearing 2.Gear shaft 3.Sliding',
+        ]);
     }
 }

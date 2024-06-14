@@ -18,7 +18,7 @@ class MachinepropertySeeder extends Seeder
         ]);
         // 2.
         Machineproperty::create([
-            'name_property' => 'STAMP MACHINE'
+            'name_property' => 'TAPPING MACHINE'
         ]);
         // 3.
         Machineproperty::create([

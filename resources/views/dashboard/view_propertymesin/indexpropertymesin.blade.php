@@ -26,10 +26,10 @@
                         <table class="table table-bordered" id="propertyTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th>ID</th>
                                     <th>Nama Standart Mesin</th>
-                                    <th>Jumlah Component Yang Dicheck</th>
-                                    <th>Jumlah Standart/Parameter Mesin</th>
+                                    <th>Jumlah Componencheck</th>
+                                    <th>Jumlah Standart/Parameter</th>
                                     <th>Jumlah Metode Pengecekan</th>
                                     <th>Action</th>
                                 </tr>
@@ -37,11 +37,11 @@
                             <tbody>
                                 @foreach ($joinproperty as $propertyget)
                                     <tr>
-                                        <td>{{ $propertyget->property_id }}</td>
+                                        <td>{{ $propertyget->id }}</td>
                                         <td>{{ $propertyget->name_property }}</td>
-                                        <td>{{ $propertyget->name_componencheck }}</td>
-                                        <td>{{ $propertyget->name_parameter }}</td>
-                                        <td>{{ $propertyget->name_metodecheck }}</td>
+                                        <td>{{ $propertyget->componencheck_count }}</td>
+                                        <td>{{ $propertyget->parameter_count }}</td>
+                                        <td>{{ $propertyget->metodecheck_count }}</td>
                                         <td>
                                             <a class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $propertyget->id }}" data-target="#EditModal">Edit</a>
                                             <a class="btn btn-danger btn-sm" style="color:white" href="#" onclick="return confirm('Yakin Hapus?')">Delete</a>

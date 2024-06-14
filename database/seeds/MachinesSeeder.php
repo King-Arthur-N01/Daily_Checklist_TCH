@@ -15,7 +15,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '1',
             'invent_number' => 'E-JG-09-0013',
-            'machine_number'=> 'R.10',
+            'machine_number'=> 'S.10',
             'machine_name'  => 'INVERTER WELD',
             'machine_brand' => 'OTC',
             'machine_type'  => 'DM-350',
@@ -28,7 +28,7 @@ class MachinesSeeder extends Seeder
         Machine::create([
             // 'machine_code'  => '2',
             'invent_number' => 'E-JG-09-0014',
-            'machine_number'=> 'R.15',
+            'machine_number'=> 'S.15',
             'machine_name'  => 'INVERTER WELD',
             'machine_brand' => 'PANASONIC',
             'machine_type'  => 'YD-350GR3',

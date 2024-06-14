@@ -2773,7 +2773,7 @@ textarea.form-control.is-invalid {
     display: grid;
     justify-content: center;
     align-content: center;
-    /* border-style: ridge; */
+    border-style: ridge;
     font-size: smaller;
 }
 

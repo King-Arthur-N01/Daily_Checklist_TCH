@@ -77,7 +77,7 @@ class MachinerecordController extends Controller
                 foreach ($metodecheck_id as $key => $test) {
                     $StoreHistory = new Historyrecords();
                     $StoreHistory->id_metodecheck = $test;
-                    $StoreHistory->operator_action = $request->input('operator_action')[$key];
+                    $StoreHistory->operator_action = implode(',', $request->input('operator_action')[$key]);
                     $StoreHistory->result = $request->input('result')[$key];
                     $StoreHistory->id_machinerecord = $getrecordid;
                     $StoreHistory->save();
@@ -100,7 +100,7 @@ class MachinerecordController extends Controller
             foreach ($metodecheck_id as $key => $test) {
                 $StoreHistory = new Historyrecords();
                 $StoreHistory->id_metodecheck = $test;
-                $StoreHistory->operator_action = $request->input('operator_action')[$key];
+                $StoreHistory->operator_action = implode(',', $request->input('operator_action')[$key]);
                 $StoreHistory->result = $request->input('result')[$key];
                 $StoreHistory->id_machinerecord = $getrecordid;
                 $StoreHistory->save();
