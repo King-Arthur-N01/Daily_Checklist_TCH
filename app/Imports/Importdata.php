@@ -19,7 +19,7 @@ class Importdata implements ToModel
         try {
             return new Machine([
                 'invent_number'  => $row[1],
-                'machine_number' => (int) $row[2],
+                'machine_number' => $row[2],
                 'machine_name'   => $row[3],
                 'machine_brand'  => $row[4],
                 'machine_type'   => $row[5],

@@ -133,14 +133,16 @@
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Disetujui oleh :</th>
-                                            <th>Dikoreksi oleh :</th>
-                                            <th>Dibuat oleh :</th>
+                                            <th>PIC 1 :</th>
+                                            <th>PIC 2 :</th>
+                                            <th>PIC 3 :</th>
+                                            <th>PIC 4 :</th>
                                         </tr>
                                         <tr>
-                                            <td>Dummy data</td>
-                                            <td>Dummy data</td>
                                             <td>{{ Auth::user()->name }}</td>
+                                            <td><input class="form-control"></td>
+                                            <td><input class="form-control"></td>
+                                            <td><input class="form-control"></td>
                                         </tr>
                                     </thead>
                                 </table>

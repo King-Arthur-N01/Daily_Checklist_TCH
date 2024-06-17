@@ -14,10 +14,23 @@ class ImportdataController extends Controller
     // fungsi index upload data mesin
     public function indeximport()
     {
-        $machines=Machine::get();
+        $machines = Machine::get();
         return view('dashboard.view_importdata.indeximportdata',['machines' => $machines]);
     }
-    // fungsi ajax untuk menlihat property mesin
+    public function fetchtableimport()
+    {
+        try {
+            $fetchtable = DB::table('machines')
+            ->select('machines.*', 'machineproperties.*')
+            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->orderBy('machines.id', 'asc')
+            ->get();
+            return response()->json(['fetchtable' => $fetchtable]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+    // fungsi ajax untuk melihat property mesin
     public function fetchdataproperty($id)
     {
         try {

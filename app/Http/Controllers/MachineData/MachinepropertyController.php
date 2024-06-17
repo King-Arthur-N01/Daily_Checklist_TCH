@@ -20,4 +20,7 @@ class MachinepropertyController extends Controller
             ->get();
         return view('dashboard.view_propertymesin.indexpropertymesin', ['joinproperty' => $joinproperty]);
     }
+    public function addproperty(){
+        
+    }
 }

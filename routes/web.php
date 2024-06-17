@@ -36,11 +36,14 @@ Route::post('/machine/addmachine','MachineData\MachineController@pushregistermac
 Route::get ('/machine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::put ('/machine/editmachine/{id}','MachineData\MachineController@pushupdatemachine')->name('pusheditmachine');
 Route::get ('/machine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
+// machine route end
 
+// machine import route
 Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('managemachinedata');
+Route::get ('/machinedata/fetchproperty/{id}','MachineData\ImportdataController@fetchtableimport')->name('fetchtable');
 Route::post('/machinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
 Route::get ('/machinedata/fetch/{id}','MachineData\ImportdataController@fetchdataproperty')->name('fetchproperty');
-// machine route end
+// machine import route end
 
 // machine property route
 Route::get('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');

@@ -108,7 +108,6 @@ class MachinerecordController extends Controller
         }
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
-
     // <<<============================================================================================>>>
     // <<<==============================batas approval machine records 1==============================>>>
     // <<<============================================================================================>>>
