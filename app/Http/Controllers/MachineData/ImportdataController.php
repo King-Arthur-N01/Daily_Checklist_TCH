@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Imports\Importdata;
 use App\Machine;
+use App\Machineproperty;
 use Maatwebsite\Excel\Facades\Excel;
 class ImportdataController extends Controller
 {
@@ -17,15 +18,13 @@ class ImportdataController extends Controller
         $machines = Machine::get();
         return view('dashboard.view_importdata.indeximportdata',['machines' => $machines]);
     }
-    public function fetchtableimport()
+    public function fetchtableimport($id)
     {
         try {
-            $fetchtable = DB::table('machines')
-            ->select('machines.*', 'machineproperties.*')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->orderBy('machines.id', 'asc')
-            ->get();
-            return response()->json(['fetchtable' => $fetchtable]);
+            // dd($id);
+            $fetchtable = Machineproperty::find($id);
+            // $fetchtable = Machineproperty::find($id);
+            return response()->json(['name_property' => $fetchtable->name_property]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }

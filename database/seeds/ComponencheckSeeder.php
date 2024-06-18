@@ -51,20 +51,20 @@ class ComponencheckSeeder extends Seeder
             'id_property2' => '1',
             'name_componencheck' => 'Wire feed Unit',
         ]);
-        //8.
+        // 8.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Gas Hose ( Pipa Karet )',
+            'name_componencheck' => 'Coaxial Kabel Power',
         ]);
         // 9.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Welding Kabel Power',
+            'name_componencheck' => 'Gas Hose ( Pipa Karet )',
         ]);
         // 10.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Cam & proximity switch',
+            'name_componencheck' => 'Welding Kabel Power',
         ]);
         // 11.
         Componencheck::create([
@@ -86,32 +86,32 @@ class ComponencheckSeeder extends Seeder
             'id_property2' => '1',
             'name_componencheck' => 'Reeder Termination',
         ]);
-        // 14.
+        // 15.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Panel Listrik',
         ]);
-        // 15.
+        // 16.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Kabel External ( Luar )',
         ]);
-        // 16.
+        // 17.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Sambungan Kabel',
         ]);
-        // 17.
+        // 18.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Torch Mount',
         ]);
-        // 18.
+        // 19.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Torch Aiming point',
         ]);
-        // 19.
+        // 20.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Welding torch
@@ -120,58 +120,58 @@ class ComponencheckSeeder extends Seeder
                                     - Noozle
                                     - Torch Mounted',
         ]);
-        // 20.
+        // 21.
         Componencheck::create([
             'id_property2' => '1',
             'name_componencheck' => 'Wire feed Unit',
         ]);
-        // 21.
-        Componencheck::create([
-            'id_property2' => '1',
-            'name_componencheck' => 'Gas Hose ( Pipa Karet )',
-        ]);
         // 22.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Welding Kabel Power',
+            'name_componencheck' => 'Coaxial Kabel Power',
         ]);
         // 23.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Cam & proximity switch',
+            'name_componencheck' => 'Gas Hose ( Pipa Karet )',
         ]);
         // 24.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Feeder Terminal',
+            'name_componencheck' => 'Welding Kabel Power',
         ]);
         // 25.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Indicator system 1.ARC Control / ARC Force 2.Initial / Crater Curr 3.Start On - Of button 4.On - of Gas 5.On - of Wire dir 6.On - of Crater 7.Job Control',
+            'name_componencheck' => 'Feeder Terminal',
         ]);
         // 26.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Volt Control & Digital Counter',
+            'name_componencheck' => 'Indicator system 1.ARC Control / ARC Force 2.Initial / Crater Curr 3.Start On - Of button 4.On - of Gas 5.On - of Wire dir 6.On - of Crater 7.Job Control',
         ]);
         // 27.
         Componencheck::create([
             'id_property2' => '1',
-            'name_componencheck' => 'Reeder Termination',
+            'name_componencheck' => 'Volt Control & Digital Counter',
         ]);
         // 28.
+        Componencheck::create([
+            'id_property2' => '1',
+            'name_componencheck' => 'Reeder Termination',
+        ]);
+        // 29.
         Componencheck::create([
             'id_property2' => '3',
             'name_componencheck' => 'Sambungan terminal elektrik',
         ]);
-        // 29.
+        // 30.
         Componencheck::create([
             'id_property2' => '3',
             'name_componencheck' => '-Level fluida
                                     -Fillter mat',
         ]);
-        // 30.
+        // 31.
         Componencheck::create([
             'id_property2' => '3',
             'name_componencheck' => 'Ditunjukan oleh sigma control
@@ -182,34 +182,34 @@ class ComponencheckSeeder extends Seeder
 
                                     -Cartridge saringan udara',
         ]);
-        // 31.
+        // 32.
         Componencheck::create([
             'id_property2' => '3',
             'name_componencheck' => '-Pendinginan udara & fluida
 
                                     -Saringan udara',
         ]);
-        // 32.
+        // 33.
         Componencheck::create([
             'id_property2' => '3',
             'name_componencheck' => 'Oli',
         ]);
-        // 33.
+        // 34.
         Componencheck::create([
             'id_property2' => '2',
             'name_componencheck' => 'Electric System 1. MCCB / Breacker 2.Tegangan Listrik 3.Jaringan kabel listrik 4.Terminasi / sambungan 5.Kontraktor',
         ]);
-        // 34.
+        // 35.
         Componencheck::create([
             'id_property2' => '2',
             'name_componencheck' => 'Operational Control 1.Power Feed Transmission 2.Supply Switch 3.Spindle brake and lock 4.Ram control Handle',
         ]);
-        // 35.
+        // 36.
         Componencheck::create([
             'id_property2' => '2',
             'name_componencheck' => 'Motor 1.Pully 2.Belt 3.Speed 4.Bolt',
         ]);
-        // 36.
+        // 37.
         Componencheck::create([
             'id_property2' => '2',
             'name_componencheck' => 'Lubrication 1.Bearing 2.Gear shaft 3.Sliding',

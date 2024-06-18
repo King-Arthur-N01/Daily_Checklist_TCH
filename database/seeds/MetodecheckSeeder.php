@@ -255,12 +255,12 @@ class MetodecheckSeeder extends Seeder
         // 49.
         Metodecheck::create([
             'id_parameter' => '49',
-            'name_metodecheck' => 'Disemprot angin',
+            'name_metodecheck' => 'Disemprot angin/cuci dengan air',
         ]);
         // 50.
         Metodecheck::create([
             'id_parameter' => '50',
-            'name_metodecheck' => 'Cuci dengan air',
+            'name_metodecheck' => 'Lihat sigma control',
         ]);
         // 51.
         Metodecheck::create([
@@ -280,37 +280,37 @@ class MetodecheckSeeder extends Seeder
         // 54.
         Metodecheck::create([
             'id_parameter' => '54',
-            'name_metodecheck' => 'Lihat sigma control',
+            'name_metodecheck' => 'Dilihat/dibersihkan',
         ]);
         // 55.
         Metodecheck::create([
             'id_parameter' => '55',
-            'name_metodecheck' => 'Dilihat/dibersihkan',
+            'name_metodecheck' => 'Bersihkan/ganti',
         ]);
         // 56.
         Metodecheck::create([
             'id_parameter' => '56',
-            'name_metodecheck' => 'Bersihkan/ganti',
+            'name_metodecheck' => 'Ganti/test lab',
         ]);
         // 57.
         Metodecheck::create([
             'id_parameter' => '57',
-            'name_metodecheck' => 'Ganti/test lab',
+            'name_metodecheck' => 'Lihat indikator oli',
         ]);
         // 58.
         Metodecheck::create([
             'id_parameter' => '58',
-            'name_metodecheck' => 'Lihat indikator oli',
+            'name_metodecheck' => 'Dioperasikan',
         ]);
         // 59.
         Metodecheck::create([
             'id_parameter' => '59',
-            'name_metodecheck' => 'Dioperasikan',
+            'name_metodecheck' => 'Ditester',
         ]);
         // 60.
         Metodecheck::create([
             'id_parameter' => '60',
-            'name_metodecheck' => 'Ditester ',
+            'name_metodecheck' => 'Dilihat',
         ]);
         // 61.
         Metodecheck::create([
@@ -320,7 +320,7 @@ class MetodecheckSeeder extends Seeder
         // 62.
         Metodecheck::create([
             'id_parameter' => '62',
-            'name_metodecheck' => 'Dilihat',
+            'name_metodecheck' => 'Dioperasikan',
         ]);
         // 63.
         Metodecheck::create([
@@ -345,17 +345,17 @@ class MetodecheckSeeder extends Seeder
         // 67.
         Metodecheck::create([
             'id_parameter' => '67',
-            'name_metodecheck' => 'Dioperasikan',
+            'name_metodecheck' => 'Diraba',
         ]);
         // 68.
         Metodecheck::create([
             'id_parameter' => '68',
-            'name_metodecheck' => 'Diraba',
+            'name_metodecheck' => 'Ditekan dgn tangan',
         ]);
         // 69.
         Metodecheck::create([
             'id_parameter' => '69',
-            'name_metodecheck' => 'Ditekan dgn tangan',
+            'name_metodecheck' => 'Dioperasikan',
         ]);
         // 70.
         Metodecheck::create([
@@ -365,21 +365,16 @@ class MetodecheckSeeder extends Seeder
         // 71.
         Metodecheck::create([
             'id_parameter' => '71',
-            'name_metodecheck' => 'Dioperasikan',
+            'name_metodecheck' => 'Dilihat',
         ]);
         // 72.
         Metodecheck::create([
-            'id_parameter' => '71',
+            'id_parameter' => '72',
             'name_metodecheck' => 'Dilihat',
         ]);
         // 73.
         Metodecheck::create([
-            'id_parameter' => '71',
-            'name_metodecheck' => 'Dilihat',
-        ]);
-        // 74.
-        Metodecheck::create([
-            'id_parameter' => '71',
+            'id_parameter' => '73',
             'name_metodecheck' => 'Dilihat',
         ]);
     }

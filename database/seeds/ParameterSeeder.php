@@ -175,212 +175,207 @@ class ParameterSeeder extends Seeder
         ]);
         // 33.
         Parameter::create([
-            'id_componencheck' => '20',
+            'id_componencheck' => '21',
             'name_parameter' => 'Bersih dan berfungsi baik',
         ]);
         // 34.
         Parameter::create([
-            'id_componencheck' => '21',
+            'id_componencheck' => '22',
             'name_parameter' => 'Kabel satu sumbu / tidak bengkok',
         ]);
         // 35.
         Parameter::create([
-            'id_componencheck' => '22',
+            'id_componencheck' => '23',
             'name_parameter' => 'Berfungsi normal ',
         ]);
         // 36.
         Parameter::create([
-            'id_componencheck' => '23',
+            'id_componencheck' => '24',
             'name_parameter' => 'Tidak ada kebocoran gas',
         ]);
         // 37.
         Parameter::create([
-            'id_componencheck' => '24',
-            'name_parameter' => 'Terpasang kencang ',
+            'id_componencheck' => '25',
+            'name_parameter' => 'Terpasang kencang',
         ]);
         // 38.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 39.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 40.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi Baik',
         ]);
         // 41.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 42.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 43.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 44.
         Parameter::create([
-            'id_componencheck' => '25',
+            'id_componencheck' => '26',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 45.
         Parameter::create([
-            'id_componencheck' => '26',
+            'id_componencheck' => '27',
             'name_parameter' => 'Bersih dari oli , debu dll',
         ]);
         // 46.
         Parameter::create([
-            'id_componencheck' => '27',
+            'id_componencheck' => '28',
             'name_parameter' => 'Bersih dari kotoran',
         ]);
         // 47.
         Parameter::create([
-            'id_componencheck' => '28',
+            'id_componencheck' => '29',
             'name_parameter' => 'Terhubung kencang',
         ]);
         // 48.
         Parameter::create([
-            'id_componencheck' => '29',
+            'id_componencheck' => '30',
             'name_parameter' => 'Level fluida pada level optimum',
         ]);
         // 49.
         Parameter::create([
-            'id_componencheck' => '29',
-            'name_parameter' => 'Dibersihkan dari debu',
+            'id_componencheck' => '30',
+            'name_parameter' => 'Dibersihkan dari debu(Bersihkan material dengan air bersuhu 40°C)',
         ]);
         // 50.
         Parameter::create([
-            'id_componencheck' => '29',
-            'name_parameter' => 'Mat dengan air bersuhu 40°C',
+            'id_componencheck' => '31',
+            'name_parameter' => 'Ganti jika ada indicator disigma control',
         ]);
         // 51.
         Parameter::create([
-            'id_componencheck' => '30',
+            'id_componencheck' => '31',
             'name_parameter' => 'Ganti jika ada indicator disigma control',
         ]);
         // 52.
         Parameter::create([
-            'id_componencheck' => '30',
+            'id_componencheck' => '31',
             'name_parameter' => 'Ganti jika ada indicator disigma control',
         ]);
         // 53.
         Parameter::create([
-            'id_componencheck' => '30',
-            'name_parameter' => 'Ganti jika ada indicator disigma control',
+            'id_componencheck' => '31',
+            'name_parameter' => 'Ganti cardridge setelah pemakaian 2 tahun',
         ]);
         // 54.
         Parameter::create([
-            'id_componencheck' => '30',
-            'name_parameter' => 'Ganti cardridge setelah pemakaian 2 tahun',
+            'id_componencheck' => '32',
+            'name_parameter' => 'Cek apakah ada yang tersumbat atau tidak',
         ]);
         // 55.
         Parameter::create([
-            'id_componencheck' => '31',
-            'name_parameter' => 'Cek apakah ada yang tersumbat atau tidak',
+            'id_componencheck' => '32',
+            'name_parameter' => 'Ganti saringan udara atau dibersihkan dengan vacum cleaner',
         ]);
         // 56.
         Parameter::create([
-            'id_componencheck' => '31',
-            'name_parameter' => 'Ganti saringan udara atau dibersihkan dengan vacum cleaner',
+            'id_componencheck' => '33',
+            'name_parameter' => 'Ganti oli tergantung derajat kontamins diudara atau suhu lingkungan (max = 45°C min = 3°C)',
         ]);
         // 57.
         Parameter::create([
-            'id_componencheck' => '32',
-            'name_parameter' => 'Ganti oli tergantung derajat kontsmins diudara atau suhu lingkungan (max = 45°C min = 3°C)',
+            'id_componencheck' => '33',
+            'name_parameter' => 'Total oil capacity = 24ltr',
         ]);
         // 58.
         Parameter::create([
-            'id_componencheck' => '32',
-            'name_parameter' => 'Total oil capacity = 24ltr',
+            'id_componencheck' => '34',
+            'name_parameter' => 'Berfungsi baik',
         ]);
         // 59.
         Parameter::create([
-            'id_componencheck' => '33',
-            'name_parameter' => 'Berfungsi baik',
+            'id_componencheck' => '34',
+            'name_parameter' => '380 volt / 3 phasa',
         ]);
         // 60.
         Parameter::create([
-            'id_componencheck' => '33',
-            'name_parameter' => '380 volt / 3 phasa',
+            'id_componencheck' => '34',
+            'name_parameter' => 'Terisolasi baik & tidak putus',
         ]);
         // 61.
         Parameter::create([
-            'id_componencheck' => '33',
-            'name_parameter' => 'Terisolasi baik & tidak putus',
+            'id_componencheck' => '34',
+            'name_parameter' => 'Terhubung normal',
         ]);
         // 62.
         Parameter::create([
-            'id_componencheck' => '33',
-            'name_parameter' => 'Terhubung normal',
+            'id_componencheck' => '34',
+            'name_parameter' => 'Berfungsi baik',
         ]);
         // 63.
-        Parameter::create([
-            'id_componencheck' => '33',
+         Parameter::create([
+            'id_componencheck' => '35',
             'name_parameter' => 'Berfungsi baik',
         ]);
         // 64.
-         Parameter::create([
-            'id_componencheck' => '34',
-            'name_parameter' => 'Berfungsi baik',
+        Parameter::create([
+            'id_componencheck' => '35',
+            'name_parameter' => 'Tombol berfungsi baik',
         ]);
         // 65.
         Parameter::create([
-            'id_componencheck' => '34',
-            'name_parameter' => 'Tombol berfungsi baik',
+            'id_componencheck' => '35',
+            'name_parameter' => 'Kencang tidak slip',
         ]);
         // 66.
         Parameter::create([
-            'id_componencheck' => '34',
-            'name_parameter' => 'Kencang tidak slip',
+            'id_componencheck' => '35',
+            'name_parameter' => 'Berfungsi normal',
         ]);
         // 67.
         Parameter::create([
-            'id_componencheck' => '34',
-            'name_parameter' => 'Berfungsi normal',
+            'id_componencheck' => '36',
+            'name_parameter' => 'Berputar seimbang/halus',
         ]);
         // 68.
         Parameter::create([
-            'id_componencheck' => '35',
-            'name_parameter' => 'Berputar seimbang/halus',
+            'id_componencheck' => '36',
+            'name_parameter' => 'Tidak kendor',
         ]);
         // 69.
         Parameter::create([
-            'id_componencheck' => '35',
-            'name_parameter' => 'Tidak kendor',
+            'id_componencheck' => '36',
+            'name_parameter' => 'Normal',
         ]);
         // 70.
         Parameter::create([
-            'id_componencheck' => '35',
-            'name_parameter' => 'Normal',
+            'id_componencheck' => '36',
+            'name_parameter' => 'Bolt pengunci harus berfungsi',
         ]);
         // 71.
         Parameter::create([
-            'id_componencheck' => '35',
-            'name_parameter' => 'Bolt pengunci harus berfungsi',
+            'id_componencheck' => '37',
+            'name_parameter' => 'Berpelumas grease / oli',
         ]);
         // 72.
         Parameter::create([
-            'id_componencheck' => '36',
+            'id_componencheck' => '37',
             'name_parameter' => 'Berpelumas grease / oli',
         ]);
         // 73.
         Parameter::create([
-            'id_componencheck' => '36',
-            'name_parameter' => 'Berpelumas grease / oli',
-        ]);
-        // 74.
-        Parameter::create([
-            'id_componencheck' => '36',
+            'id_componencheck' => '37',
             'name_parameter' => 'Berpelumas grease / oli',
         ]);
     }
