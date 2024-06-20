@@ -21,9 +21,7 @@ class ImportdataController extends Controller
     public function fetchtableimport($id)
     {
         try {
-            // dd($id);
             $fetchtable = Machineproperty::find($id);
-            // $fetchtable = Machineproperty::find($id);
             return response()->json(['name_property' => $fetchtable->name_property]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);

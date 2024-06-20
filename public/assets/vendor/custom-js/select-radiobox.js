@@ -1,18 +1,18 @@
-const selectStyleRadio = document.getElementById("select-style-radio");
-const radioButtons = selectStyleRadio.querySelectorAll('input[type="radio"]');
+const selectStyleCheckbox = document.getElementById("select-style-checkbox");
+const checkboxButtons = selectStyleCheckbox.querySelectorAll('input[type="checkbox"]');
 
-// Add event listener to each radio button
-radioButtons.forEach((radio) => {
-    radio.addEventListener("change", () => {
+// Add event listener to each checkbox button
+checkboxButtons.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
         // Remove 'selected' class from all options
-        radioButtons.forEach((radio) => {
-            radio.closest(".option").classList.remove("selected");
+        checkboxButtons.forEach((checkbox) => {
+            checkbox.closest(".option").classList.remove("selected");
         });
 
         // Add 'selected' class to the selected option
-        radio.closest(".option").classList.add("selected");
+        checkbox.closest(".option").classList.add("selected");
     });
 });
 
 // Set initial selected option
-radioButtons[0].dispatchEvent(new Event("change"));
+checkboxButtons[0].dispatchEvent(new Event("change"));

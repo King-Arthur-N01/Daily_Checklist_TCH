@@ -139,10 +139,10 @@
                                             <th>PIC 4 :</th>
                                         </tr>
                                         <tr>
-                                            <td>{{ Auth::user()->name }}</td>
-                                            <td><input class="form-control"></td>
-                                            <td><input class="form-control"></td>
-                                            <td><input class="form-control"></td>
+                                            <td><input class="form-control" name="create_by" value="{{ Auth::user()->name }}" readonly></td>
+                                            <td><input class="form-control" name="create_by"></td>
+                                            <td><input class="form-control" name="create_by"></td>
+                                            <td><input class="form-control" name="create_by"></td>
                                         </tr>
                                     </thead>
                                 </table>
@@ -167,7 +167,7 @@
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/formalert.js') }}"></script>
-    <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script> --}}
     <script>
         $(document).ready(function() {
             mergeCells();

@@ -52,8 +52,8 @@
                                         </td>
                                         <td>{{ $userget->created_at }}</td>
                                         <td>
-                                            <a class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $userget->id }}" data-target="#EditModal">Edit</a>
-                                            <a class="btn btn-danger btn-sm" style="color:white" href="#" onclick="return confirm('Yakin Hapus?')">Delete</a>
+                                            <button class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $userget->id }}" data-target="#EditModal">Edit</button>
+                                            <button class="btn btn-danger btn-sm deleteButton" style="color:white" data-id="{{ $userget->id }}">Delete</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -91,7 +91,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
                                     <div>
-                                        <input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK">
+                                        <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK">
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +123,7 @@
                                     <div>
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
                                         <div class="form-group" style="margin: 0px;">
-                                            <input class="form-control" type="password" name="password" required placeholder="Password Min:6 digits" id="password">
+                                            <input class="form-control" type="password" name="password" required placeholder="Enter Password" id="password">
                                         </div>
                                     </div>
                                     @error('password')
@@ -146,7 +146,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="registerButton" onclick="return confirm('Apakah sudah yakin mengisi data dengan benar?')">Submit</button>
+                    <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="registerButton">Submit</button>
                 </div>
             </div>
         </div>
@@ -180,6 +180,12 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            $(".btn-Id").on('click', function() {
+                var userId = $(this).data("id");
+                $("#editButton").val(userId);
+                $("#deleteButton").data("id", userId); // Updated to use data attribute
+            });
+            // kode $ajax untuk menampilkan menu edit
             $('#EditModal').on('shown.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var id = button.data('id');
@@ -187,114 +193,112 @@
                     type: 'GET',
                     url: '{{ route('fetchedituser', ':id') }}'.replace(':id', id),
                     success: function(data) {
-                        var html = '';
-                        html += '<form id="editform" method="post">';
-                        html += '<div class="row" align-items="center">';
-                        html += '<div class="col-xl-6">';
-                        html += '<div class="form-group">';
-                        html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>';
-                        html += '<div>';
-                        html += '<input class="form-control form-control-user" type="text" name="name" placeholder="Username" value="'+ data.getusers.name +'">';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '<div class="col-xl-6">';
-                        html += '<div class="form-group">';
-                        html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>';
-                        html += '<div>';
-                        html += '<input class="form-control form-control-user" type="text" name="nik" data-parsley-maxlength="5" placeholder="NIK" value="'+ data.getusers.nik +'" readonly>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '<div class="row" align-items="center">';
-                        html += '<div class="col-xl-6">';
-                        html += '<div class="form-group">';
-                        html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>';
-                        html += '<div>';
-                        html += '<select class="form-control" name="status" id="category-input">';
-                        html += '<option value="1" ' + (data.getusers.status == 1 ? 'selected' : '') + '>Aktif</option>';
-                        html += '<option value="0" ' + (data.getusers.status == 0 ? 'selected' : '') + '>Nonaktif</option>';
-                        html += '</select>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '<div class="col-xl-6">';
-                        html += '<div class="form-group">';
-                        html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>';
-                        html += '<div>';
-                        html += '<input class="form-control form-control-user" type="text" name="department" placeholder="Department" value="'+ data.getusers.department +'">';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '<div class="row" align-items="center">';
-                        html += '<div class="col-xl-6">';
-                        html += '<div class="form-group">';
-                        html += '<div>';
-                        html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>';
-                        html += '<div class="form-group" style="margin: 0px;">';
-                        html += '<input class="form-control" type="password" required placeholder="Password Min:6 digits" id="password" value="'+ data.getusers.password +'" readonly>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '<div class="col-xl-6">';
-                        html += '<div class="form-group">';
-                        html += '<div>';
-                        html += '<label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>';
-                        html += '<div class="form-group" style="margin: 0px;">';
-                        html += '<input class="form-control" type="password" placeholder="Confirm Password" id="confirm_password" value="'+ data.getusers.password +'" readonly>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</form>';
+                    var html = `
+                        <form id="editform" method="post">
+                        <div class="row align-items-center">
+                            <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
+                                <input class="form-control form-control-user" type="text" name="name" placeholder="Username" value="${data.getusers.name}">
+                            </div>
+                            </div>
+                            <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
+                                <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK" value="${data.getusers.nik}">
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
+                                <select class="form-control" name="status" id="category-input">
+                                    <option value="1" ${data.getusers.status == 1 ? 'selected' : ''}>Aktif</option>
+                                    <option value="0" ${data.getusers.status == 0 ? 'selected' : ''}>Nonaktif</option>
+                                </select>
+                            </div>
+                            </div>
+                            <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
+                                <input class="form-control form-control-user" type="text" name="department" placeholder="Department" value="${data.getusers.department}">
+                            </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
+                                <input class="form-control" type="password" required placeholder="Password Min:6 digits" id="password" value="${data.getusers.password}" readonly>
+                            </div>
+                            </div>
+                            <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>
+                                <input class="form-control" type="password" placeholder="Confirm Password" id="confirm_password" value="${data.getusers.password}" readonly>
+                            </div>
+                            </div>
+                        </div>
+                        </form>
+                    `;
                         $('#modaledit-data').html(html);
                     }
                 });
             });
-            $(".btn-Id").on('click', function() {
-                console.log($(this).attr("data-id"));
-                $("#editButton").attr("value", $(this).attr("data-id"));
-            });
+            // kode $ajax untuk mengirim request register user baru
             $('#registerButton').on('click', function(e) {
                 e.preventDefault();
                 var formData = {
-                    '_token': '{{ csrf_token() }}',
                     'name': $('input[name="name"]').val(),
                     'nik': $('input[name="nik"]').val(),
+                    'status': $('select[name="status"]').val(),
                     'department': $('input[name="department"]').val(),
-                    'status': $('select[name="status"]').val()
+                    'password': $('input[name="password"]').val(),
+                    'password_confirmation': $('input[name="password_confirmation"]').val()
                 };
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('pushregisteruser') }}',
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            alert('USER was successfully added.'); // Alert success message
-                        } else {
-                            alert('Error: USER failed to register.'); // Alert failure message
+                if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route('pushregisteruser') }}',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'name': formData.name,
+                            'nik': formData.nik,
+                            'status': formData.status,
+                            'department': formData.department,
+                            'password': formData.password,
+                            'password_confirmation': formData.password_confirmation
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('USER was successfully added.'); // Alert success message
+                            } else {
+                                alert(
+                                'Error: USER failed to register.'); // Alert failure message
+                            }
+                            $('#RegisterModal').modal('hide'); // Hide modal on success
+                        },
+                        error: function(xhr, status, error) {
+                            if (xhr.status === 422) {
+                                alert(xhr.responseJSON.errors); // Alert error message
+                            } else {
+                                alert(
+                                'An error occurred while registering the USER.'); // Alert error message
+                                console.error('Error register USER: ' + error);
+                            }
+                            $('#RegisterModal').modal('hide'); // Hide modal on error
                         }
-                        $('#RegisterModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 422) {
-                            alert(xhr.responseJSON.error); // Alert error message
-                        } else {
-                            alert('An error occurred while registering the USER.'); // Alert error message
-                            console.error('Error register USER: ' + error);
-                        }
-                        $('#RegisterModal').modal('hide'); // Hide modal on error
-                    }
-                }).always(function() {
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                });
+                    }).always(function() {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
+                }
             });
+            // kode $ajax untuk mengirim request edit user
             $('#editButton').on('click', function() {
                 var formData = $('#editform').serialize();
                 var userId = $(this).val();
@@ -321,6 +325,36 @@
                         location.reload();
                     }, 1000);
                 });
+            });
+            // kode $ajax untuk menghapus user
+            $(document).on('click', '.deleteButton', function(e) {
+                e.preventDefault();
+                var userId = $(this).data("id");
+                if (confirm("Apakah yakin menghapus user ini?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: "{{ route('removeuser', ':id') }}".replace(':id', userId),
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        }
+                    }).done(function(response) {
+                        if (response.success) {
+                            alert('USER was successfully delete!.'); // Alert success message
+                        } else {
+                            alert('Error: USER failed to delete.'); // Alert failure message
+                        }
+                        $('#ExtralargeModal').modal('hide');
+                    }).fail(function(xhr, status, error) {
+                        alert('This USER has been deleted by someone!'); // Alert error message
+                        $('#EditModal').modal('hide'); // Hide modal on error
+                    }).always(function() {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
+                }
             });
         });
     </script>

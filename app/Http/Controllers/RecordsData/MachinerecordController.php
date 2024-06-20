@@ -49,7 +49,7 @@ class MachinerecordController extends Controller
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function registermachinerecord(Request $request)
     {
-        $getuserid = Auth()->user()->id;
+        // dd($request);
         $getmachineid = ($request->input('id_machine'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine', $getmachineid)->value('record_time');
@@ -67,7 +67,7 @@ class MachinerecordController extends Controller
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine = $request->input('id_machine');
                 $StoreRecords->record_time = $request->input('record_time');
-                $StoreRecords->create_by = $getuserid;
+                $StoreRecords->create_by = $request->input('create_by');
                 $StoreRecords->save();
 
                 // Get the ID of the newly created record
@@ -90,7 +90,7 @@ class MachinerecordController extends Controller
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine = $request->input('id_machine');
             $StoreRecords->record_time = $request->input('record_time');
-            $StoreRecords->create_by = $getuserid;
+            $StoreRecords->create_by = $request->input('create_by');
             $StoreRecords->save();
 
             // Get the ID of the newly created record

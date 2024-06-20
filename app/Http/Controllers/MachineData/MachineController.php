@@ -74,10 +74,14 @@ class MachineController extends Controller
         return redirect()->route("managemachine")->withSuccess('Machine updated successfully.');
     }
 
-    public function deletemachine($id)
-    {
-        Machine::where('id',$id)->delete();
-        return redirect()->route("managemachine")->with('success', 'Machine deleted successfully');
+    public function deletemachine($id) {
+        $deletemachine = Machine::where('id', $id)->delete();
+
+        if ($deletemachine > 0) {
+            return response()->json(['success' => 'Data mesin berhasil dihapus!']);
+        } else {
+            return response()->json(['error' => 'Data mesin gagal dihapus.'], 422);
+        }
     }
 
     // <<<============================================================================================>>>

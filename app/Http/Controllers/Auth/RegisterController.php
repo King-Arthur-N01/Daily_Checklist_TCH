@@ -34,8 +34,9 @@ class RegisterController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'unique:users'],
+            'status' => ['required', 'boolean'],
             'department' => ['required','string','max:255'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'password' => ['required', 'string', 'confirmed'],
         ]);
 
         // Check if user with same NIK already exists
@@ -53,6 +54,7 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'nik' => $data['nik'],
+            'status' => $data['status'],
             'department' =>  $data['department'],
             'password' => Hash::make($data['password']),
         ]);
@@ -61,6 +63,7 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'nik' => ['required', 'string'],
             'status' => ['required', 'boolean'],
             'department' => ['required'],
         ]);
@@ -68,8 +71,17 @@ class RegisterController extends Controller
         $user->update($request->all());
         return response()->json(['success' => 'USER account update successfully!']);
     }
-    public function deleteuser($id){
-        User::where('id',$id)->delete();
-        return back()->with('success','User berhasil dihapus');
+    // public function deleteuser($id){
+    //     User::where('id',$id)->delete();
+    //     return back()->with('success','User berhasil dihapus');
+    // }
+    public function deleteuser($id) {
+        $deleteuser = User::where('id', $id)->delete();
+
+        if ($deleteuser > 0) {
+            return response()->json(['success' => 'Data user berhasil dihapus.']);
+        } else {
+            return response()->json(['error' => 'Data user gagal dihapus!'], 422);
+        }
     }
 }

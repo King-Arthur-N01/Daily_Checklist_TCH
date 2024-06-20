@@ -25,7 +25,7 @@ Route::get ('/manageuser','Auth\RegisterController@readusertable')->name('manage
 Route::post('/manageuser/register','Auth\RegisterController@authenticatecreate')->name('pushregisteruser');
 Route::get ('/manageuser/{id}','Auth\RegisterController@fetchdatauser')->name('fetchedituser');
 Route::put ('/manageuser/{id}','Auth\RegisterController@authenticateedit')->name('pushedituser');
-Route::get ('/manageuser/userdelete/{id}','Auth\RegisterController@deleteuser')->name('deleteaccount');
+Route::delete ('/manageuser/userdelete/{id}','Auth\RegisterController@deleteuser')->name('removeuser');
 Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end
 
@@ -35,7 +35,7 @@ Route::get ('/machine/addmachine','MachineData\MachineController@registermachine
 Route::post('/machine/addmachine','MachineData\MachineController@pushregistermachine')->name('pushmachine');
 Route::get ('/machine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::put ('/machine/editmachine/{id}','MachineData\MachineController@pushupdatemachine')->name('pusheditmachine');
-Route::get ('/machine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('deletemachine');
+Route::delete('/machine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
 // machine route end
 
 // machine import route

@@ -2,7 +2,6 @@
 @section('title', 'Table Standart Checkpoint Machine')
 
 @section('content')
-{{-- here is the code for view --}}
     <div class="row">
         <div class="container-fluid">
             <!-- Page Heading -->
@@ -64,7 +63,6 @@
                                 <th>Nama Mesin</th>
                                 <th>Brand/Merk</th>
                                 <th>Model/Type</th>
-                                <th>Buatan</th>
                                 <th>Standarisasi</th>
                                 <th>Action</th>
                             </thead>
@@ -72,29 +70,28 @@
                                 @if (isset($machines) && !empty($machines))
                                     @foreach ($machines as $machineget)
                                         <tr>
-                                            <td>{{$machineget->invent_number}}</td>
-                                            <td>{{$machineget->machine_name}}</td>
-                                            <td>{{$machineget->machine_brand}}</td>
-                                            <td>{{$machineget->machine_type}}</td>
-                                            <td>{{$machineget->machine_made}}</td>
+                                            <td>{{ $machineget->invent_number }}</td>
+                                            <td>{{ $machineget->machine_name }}</td>
+                                            <td>{{ $machineget->machine_brand }}</td>
+                                            <td>{{ $machineget->machine_type }}</td>
                                             @if (empty($machineget->id_property))
                                                 <td>Belum ada standarisasi</td>
                                             @else
-                                                <td data-id="{{$machineget->id_property}}">{{$machineget->id_property}}</td>
+                                                <td data-id="{{ $machineget->id_property }}">{{ $machineget->id_property }}</td>
                                             @endif
                                             <td>
                                                 <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                                     <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
                                                     <a class="dropdown-item-custom-edit" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                                    <a class="dropdown-item-custom-delete" href="#"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                                    <a class="dropdown-item-custom-delete" id="deleteButton" data-id="{{ $machineget->id }}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                                 </div>
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="7">No data found.</td>
+                                        <td>No data found.</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -205,10 +202,12 @@
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             //fungsi fillter header table
             $('#importTables').DataTable({ // Disable sorting for columns
-                columnDefs: [{"orderable": false, "targets": [6]
+                columnDefs: [{
+                    "orderable": false,
+                    "targets": [5]
                 }]
             });
             $.ajaxSetup({
@@ -216,9 +215,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
             //fungsi upload button untuk upload mesin
-            $('#uploadButton').on('click', function (e) {
+            $('#uploadButton').on('click', function(e) {
                 e.preventDefault();
                 var file = $('#importExcel')[0].files[0];
                 var formData = new FormData();
@@ -229,7 +227,7 @@
                     data: formData,
                     contentType: false,
                     processData: false,
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             const successMessage = response.success;
                             $('#successText').text(successMessage);
@@ -237,7 +235,7 @@
                         }
                         $('#ExtralargeModal').modal('hide');
                     },
-                    error: function (status, error, response) {
+                    error: function(status, error, response) {
                         if (response.error) {
                             const warningMessage = response.error;
                             $('#failedText').text(warningMessage);
@@ -246,52 +244,109 @@
                         $('#ExtralargeModal').modal('hide');
                     }
                 }).always(function() {
-                        setTimeout(function() {
+                    setTimeout(function() {
                         location.reload(); // Refresh the page after a 2-second delay
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
-
+            // fungsi delete button untuk hapus mesin
+            $('#deleteButton').on('click', function(e) {
+                e.preventDefault();
+                var machineId = $(this).attr("data-id");
+                if (confirm("Apakah yakin menghapus mesin ini?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: "{{ route('removemachine', ':id') }}".replace(':id', machineId),
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        }
+                    }).done(function(response) {
+                        if (response.success.trim()) {
+                            const successMessage = response.success.trim();
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
+                        }
+                        $('#ExtralargeModal').modal('hide');
+                    }).fail(function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        const warningMessage = xhr.statusText;
+                        $('#failedText').text(warningMessage);
+                        $('#failedModal').modal('show');
+                    }).always(function() {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
+                }
+            });
             //fungsi button get detail mesin
             $('#ExtralargeModal').on('shown.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var id = button.data('id');
+                const button = $(event.relatedTarget);
+                const id = button.data('id');
                 $.ajax({
                     type: 'GET',
                     url: '{{ route('fetchproperty', ':id') }}'.replace(':id', id),
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
-                            $('#modal-data').html('<h4 style="text-align: center;">Error data property mesin belum tersedia!</h4>');
+                            $('#modal-data').html(
+                                '<h4 style="text-align: center;">Error data property mesin belum tersedia!</h4>'
+                                );
                         } else {
-                            var html = '';
-                            html += '<table class="table table-bordered">';
-                            html += '<tr><th>No. Invent Mesin :</th><td>' + data.fetchmachines[0].invent_number + '</td><th>Spec/Tonage :</th><td>' + data.fetchmachines[0].machine_spec + '</td></tr>';
-                            html += '<tr><th>Nama Mesin :</th><td>' + data.fetchmachines[0].machine_name + '</td><th>Buatan :</th><td>' + data.fetchmachines[0].machine_made + '</td></tr>';
-                            html += '<tr><th>Brand/Merk :</th><td>' + data.fetchmachines[0].machine_brand + '</td><th>Mfg.NO :</th><td>' + data.fetchmachines[0].mfg_number + '</td></tr>';
-                            html += '<tr><th>Model/Type :</th><td>' + data.fetchmachines[0].machine_type + '</td><th>Install Date :</th><td>' + data.fetchmachines[0].install_date + '</td></tr>';
-                            html += '</table>';
-                            html += '<h5>Standart Mesin</h5>';
-                            html += '<table class="table table-bordered" id="dataTables">';
-                            html += '<thead>';
-                            html += '<tr>';
-                            html += '<th>Nama Mesin</th>';
-                            html += '<th>Bagian Yang Dicheck</th>';
-                            html += '<th>Standart/Parameter</th>';
-                            html += '<th>Metode Pengecekan</th>';
-                            html += '</tr>';
-                            html += '</thead>';
-                            $.each(data.fetchmachines, function(index, row) {
-                                html += '<tr>';
-                                html += '<td>' + row.machine_name + '</td>';
-                                html += '<td>' + row.name_componencheck + '</td>';
-                                html += '<td>' + row.name_parameter + '</td>';
-                                html += '<td>' + row.name_metodecheck + '</td>';
-                                html += '</tr>';
-                            });
-                            html += '</table>';
-                        }
+                            const machine = data.fetchmachines[0];
+                            const html = `
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>No. Invent Mesin :</th>
+                                <td>${machine.invent_number}</td>
+                                <th>Spec/Tonage :</th>
+                                <td>${machine.machine_spec}</td>
+                            </tr>
+                            <tr>
+                                <th>Nama Mesin :</th>
+                                <td>${machine.machine_name}</td>
+                                <th>Buatan :</th>
+                                <td>${machine.machine_made}</td>
+                            </tr>
+                            <tr>
+                                <th>Brand/Merk :</th>
+                                <td>${machine.machine_brand}</td>
+                                <th>Mfg.NO :</th>
+                                <td>${machine.mfg_number}</td>
+                            </tr>
+                            <tr>
+                                <th>Model/Type :</th>
+                                <td>${machine.machine_type}</td>
+                                <th>Install Date :</th>
+                                <td>${machine.install_date}</td>
+                            </tr>
+                        </table>
+                        <h5>Standart Mesin</h5>
+                        <table class="table table-bordered" id="dataTables">
+                            <thead>
+                                <tr>
+                                    <th>Nama Mesin</th>
+                                    <th>Bagian Yang Dicheck</th>
+                                    <th>Standart/Parameter</th>
+                                    <th>Metode Pengecekan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            ${data.fetchmachines.map(machine => `
+                                    <tr>
+                                    <td>${machine.machine_name}</td>
+                                    <td>${machine.name_componencheck}</td>
+                                    <td>${machine.name_parameter}</td>
+                                    <td>${machine.name_metodecheck}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        `;
                         $('#modal-data').html(html);
                         mergeCells();
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.error('error:', error);
@@ -299,40 +354,39 @@
                     }
                 });
             });
-            // Replace IDs with names in the 5th column
+            // fungsi get status standarisasi mesin melalui ajax
             var table = $('#importTables').DataTable();
-            table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
                 var row = this.node();
-                var idCell = $(row).find('td').eq(5);
+                var idCell = $(row).find('td').eq(4);
                 var id = idCell.data('id');
                 if (id) {
                     $.ajax({
                         type: 'GET',
                         url: '{{ route('fetchtable', ':id') }}'.replace(':id', id),
-                        success: function (data) {
+                        success: function(data) {
                             if (data.name_property) {
                                 idCell.text(data.name_property);
                             } else {
-                                idCell.text('Unknown Name');
+                                idCell.text('Belum ada standarisasi');
                             }
                         },
-                        error: function () {
+                        error: function() {
                             idCell.text('Error fetching name');
                         }
                     });
                 }
             });
-
             //fungsi fillter button
-            $('#filterButton').on('click', function () {
-            const filterCard = document.getElementById("filterCard");
-            if ($(filterCard).css('display') === 'none') {
-                $(filterCard).fadeIn(1000);
-                $(filterCard).css('display', 'block');
-            } else {
-                $(filterCard).fadeOut(1000);
-                $(filterCard).css('display', 'none');
-            }
+            $('#filterButton').on('click', function() {
+                const filterCard = document.getElementById("filterCard");
+                if ($(filterCard).css('display') === 'none') {
+                    $(filterCard).fadeIn(1000);
+                    $(filterCard).css('display', 'block');
+                } else {
+                    $(filterCard).fadeOut(1000);
+                    $(filterCard).css('display', 'none');
+                }
             });
         });
     </script>
