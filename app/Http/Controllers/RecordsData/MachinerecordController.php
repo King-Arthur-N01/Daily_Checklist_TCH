@@ -4,6 +4,7 @@ namespace App\Http\Controllers\RecordsData;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use App\User;
 use App\Machine;
 use App\Machinerecord;
 use App\Historyrecords;
@@ -25,6 +26,7 @@ class MachinerecordController extends Controller
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
     {
+        $users = User::get();
         $timenow = Carbon::now();
 
         $joinmachine = DB::table('machines')
@@ -43,13 +45,13 @@ class MachinerecordController extends Controller
             'joinmachine' => $joinmachine,
             'machine_id' => $id,
             'timenow' => $timenow,
+            'users' => $users,
             'get_number'
         ]);
     }
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function registermachinerecord(Request $request)
     {
-        // dd($request);
         $getmachineid = ($request->input('id_machine'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine', $getmachineid)->value('record_time');
@@ -67,7 +69,7 @@ class MachinerecordController extends Controller
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine = $request->input('id_machine');
                 $StoreRecords->record_time = $request->input('record_time');
-                $StoreRecords->create_by = $request->input('create_by');
+                $StoreRecords->create_by = $request->input('combined_create_by');
                 $StoreRecords->save();
 
                 // Get the ID of the newly created record
@@ -90,7 +92,7 @@ class MachinerecordController extends Controller
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine = $request->input('id_machine');
             $StoreRecords->record_time = $request->input('record_time');
-            $StoreRecords->create_by = $request->input('create_by');
+            $StoreRecords->create_by = $request->input('combined_create_by');
             $StoreRecords->save();
 
             // Get the ID of the newly created record

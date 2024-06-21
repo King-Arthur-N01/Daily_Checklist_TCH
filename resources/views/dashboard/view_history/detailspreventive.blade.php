@@ -85,13 +85,11 @@
                             <table class="table table-bordered" id="userTable">
                                 <thead>
                                     <tr>
-                                        <th>Direject oleh :</th>
                                         <th>Disetujui oleh :</th>
                                         <th>Dikoreksi oleh :</th>
                                         <th>Dibuat oleh :</th>
                                     </tr>
                                     <tr>
-                                        <td>{{ $historyrecords[0]->reject_by_name }}</td>
                                         <td>{{ $historyrecords[0]->approve_by_name }}</td>
                                         <td>{{ $historyrecords[0]->correct_by_name }}</td>
                                         <td>{{ $historyrecords[0]->create_by_name }}</td>

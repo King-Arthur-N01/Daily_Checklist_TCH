@@ -85,39 +85,38 @@
                                             <td>{{ $recordsget->name_parameter }}</td>
                                             <td>{{ $recordsget->name_metodecheck }}</td>
                                             <td>
-                                                <input type="hidden" name="metodecheck_id[{{$key}}]" id="metodecheck_id[{{$key}}]" value="{{$recordsget->metodecheck_id}}" required>
+                                                <input type="hidden" name="metodecheck_id[{{ $key }}]" id="metodecheck_id[{{ $key }}]" value="{{ $recordsget->metodecheck_id }}" required>
                                                 <div id="select-style-checkbox" style="display: flex; justify-content: center;">
                                                     {{-- <label>Select an option:</label> --}}
                                                     <div class="option btn-option">
                                                         <label for="option1">check</label>
-                                                        <input type="checkbox" name="operator_action[{{$key}}][]" value="check" id="option1">
+                                                        <input type="checkbox" name="operator_action[{{ $key }}][]" value="check" id="option1">
                                                         {{-- <img class="image-card-mini" src="{{ asset('assets/icons/magnifying-glass.png') }}"> --}}
                                                     </div>
                                                     <div class="option btn-option">
                                                         <label for="option2">cleaning</label>
-                                                        <input type="checkbox" name="operator_action[{{$key}}][]" value="cleaning" id="option2">
+                                                        <input type="checkbox" name="operator_action[{{ $key }}][]" value="cleaning" id="option2">
                                                         {{-- <img class="image-card-mini"src="{{ asset('assets/icons/dust.png') }}"> --}}
                                                     </div>
                                                     <div class="option btn-option">
                                                         <label for="option3">adjust</label>
-                                                        <input type="checkbox" name="operator_action[{{$key}}][]" value="adjust" id="option3">
+                                                        <input type="checkbox" name="operator_action[{{ $key }}][]" value="adjust" id="option3">
                                                         {{-- <img class="image-card-mini"src="{{ asset('assets/icons/adjust.png') }}"> --}}
                                                     </div>
                                                     <div class="option btn-option">
                                                         <label for="option4">replace</label>
-                                                        <input type="checkbox" name="operator_action[{{$key}}][]" value="replace" id="option4">
+                                                        <input type="checkbox" name="operator_action[{{ $key }}][]" value="replace" id="option4">
                                                         {{-- <img class="image-card-mini" src="{{ asset('assets/icons/replacement.png') }}"> --}}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div>
-                                                    <select name="result[{{$key}}]" id="result[{{$key}}]" required>
+                                                    <select name="result[{{ $key }}]" id="result[{{ $key }}]" required>
                                                         <option label="Result" disabled selected></option>
                                                         <option value="good">OK</option>
                                                         <option value="not good">NG</option>
                                                     </select>
-                                                    <input type="hidden" name="id_metodecheck">
                                                 </div>
                                             </td>
                                         </tr>
@@ -128,25 +127,51 @@
                                 <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                 <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
                                 <input type="hidden" name="id_machine" value="{{ $machine_id }}">
+                                <input type="hidden" name="combined_create_by" id="combined_create_by">
                             </div>
-                            <div class="form-custom">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>PIC 1 :</th>
-                                            <th>PIC 2 :</th>
-                                            <th>PIC 3 :</th>
-                                            <th>PIC 4 :</th>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="form-control" name="create_by" value="{{ Auth::user()->name }}" readonly></td>
-                                            <td><input class="form-control" name="create_by"></td>
-                                            <td><input class="form-control" name="create_by"></td>
-                                            <td><input class="form-control" name="create_by"></td>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered" id="userTables">
+                                        <thead>
+                                            <tr>
+                                                <th>PIC 1 :</th>
+                                                <th>PIC 2 :</th>
+                                                <th>PIC 3 :</th>
+                                                <th>PIC 4 :</th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <select class="form-control select2-no-search" id="create_by_1" readonly>
+                                                        <option value="{{ Auth::user()->id }}">{{ Auth::user()->name }}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control select2" id="create_by_2">
+                                                        <option selected="selected" value="0">Tidak ada</option>
+                                                        @foreach ($users as $getuser)
+                                                            <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control select2" id="create_by_3">
+                                                        <option selected="selected" value="0">Tidak ada</option>
+                                                        @foreach ($users as $getuser)
+                                                            <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control select2" id="create_by_4">
+                                                        <option selected="selected" value="0">Tidak ada</option>
+                                                        @foreach ($users as $getuser)
+                                                            <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             <div class="column-button">
                                 <button type="submit" class="form-buttons">Submit</button>
                             </div>
@@ -162,14 +187,40 @@
 @endsection
 
 @push('style')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/formalert.js') }}"></script>
-    {{-- <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script> --}}
+    <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script>
+    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
+    <script>
+        // Additional code for adding placeholder in search box of select2
+        (function($) {
+            var Defaults = $.fn.select2.amd.require('select2/defaults');
+            $.extend(Defaults.defaults, {
+                searchInputPlaceholder: ''
+            });
+            var SearchDropdown = $.fn.select2.amd.require('select2/dropdown/search');
+            var _renderSearchDropdown = SearchDropdown.prototype.render;
+            SearchDropdown.prototype.render = function(decorated) {
+                // invoke parent method
+                var $rendered = _renderSearchDropdown.apply(this, Array.prototype.slice.apply(arguments));
+                this.$search.attr('placeholder', this.options.get('searchInputPlaceholder'));
+                return $rendered;
+            };
+        })(window.jQuery);
+    </script>
     <script>
         $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'Select :',
+                searchInputPlaceholder: 'Search'
+            });
+            combineCreateByValues();
+            disableDoubleSelect()
             mergeCells();
         });
     </script>

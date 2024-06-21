@@ -36,12 +36,11 @@ class HistoryrecordsController extends Controller
             ->get();
 
         $historyrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'users_create.name as create_by_name', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'users_reject.name as reject_by_name', 'historyrecords.id_metodecheck as get_checks')
+            ->select('machinerecords.*', 'historyrecords.*', 'users_create.name as create_by_name', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users as users_create', 'machinerecords.create_by', '=' ,'users_create.id')
             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
-            ->leftJoin('users as users_reject', 'machinerecords.reject_by', '=' ,'users_reject.id')
             ->where('machinerecords.id', '=', $id)
             ->get();
 
