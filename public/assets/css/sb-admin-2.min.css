@@ -1849,6 +1849,10 @@ pre code {
     border: 1px solid #e3e6f0;
 }
 
+.table-custom {
+    text-align: center;
+}
+
 .table-bordered td,
 .table-bordered th {
     border: 1px solid #e3e6f0;

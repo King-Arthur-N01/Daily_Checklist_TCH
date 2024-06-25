@@ -130,16 +130,16 @@
                 var correct = correctCell.text().trim();
                 var approve = approveCell.text().trim();
                 if (correct !== '' && approve !== '') {
-                    statusCell1.text('BELUM DI KOREKSI');
-                    statusCell2.text('BELUM DI SETUJUI');
+                    statusCell1.text('SUDAH DI KOREKSI');
+                    statusCell2.text('SUDAH DI SETUJUI');
                     $(this).css("background-color", "rgba( 0, 0, 255, 0.2)");
                 } else if (correct !== '' && approve === '') {
                     statusCell1.text('SUDAH DI KOREKSI');
                     statusCell2.text('BELUM DI SETUJUI');
                     $(this).css("background-color", "rgba( 0, 255, 0, 0.2)");
                 } else if (correct === '' && approve === '') {
-                    statusCell1.text('SUDAH DI KOREKSI');
-                    statusCell2.text('SUDAH DI SETUJUI');
+                    statusCell1.text('BELUM DI KOREKSI');
+                    statusCell2.text('BELUM DI SETUJUI');
                 }
             });
     </script>

@@ -17,6 +17,7 @@ class CreateHistoryrecordsTable extends Migration
             $table->id();
             $table->text('operator_action');
             $table->string('result');
+            $table->integer('id_metodecheck');
             $table->timestamps();
         });
     }

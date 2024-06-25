@@ -22,7 +22,7 @@ class HistoryrecordsController extends Controller
         return view('dashboard.view_history.tablehistory', ['joinrecords' => $joinrecords]);
     }
 
-    // fungsi tampilan formulir $ajax untuk melihat riwayat dan status preventive mesin (record mesin)
+    // fungsi tampilan formulir untuk melihat riwayat dan status preventive mesin (record mesin)
     public function viewdetails($id)
     {
         $detailrecords = DB::table('machinerecords')
@@ -36,13 +36,19 @@ class HistoryrecordsController extends Controller
             ->get();
 
         $historyrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'users_create.name as create_by_name', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
+            ->select('machinerecords.*', 'historyrecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
-            ->leftJoin('users as users_create', 'machinerecords.create_by', '=' ,'users_create.id')
             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)
             ->get();
+
+        $usernames = [];
+        $combineuser = $detailrecords->first()->create_by;
+        $splituser = explode(',', $combineuser);
+        foreach ($splituser as $eachuserid){
+            $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+        }
 
         $combinedata = [];
         foreach ($detailrecords as $detail){
@@ -59,10 +65,12 @@ class HistoryrecordsController extends Controller
                 }
             }
         }
+
         return view('dashboard.view_history.detailspreventive', [
             'detailrecords' => $detailrecords,
             'historyrecords' => $historyrecords,
             'combinedata' => $combinedata,
+            'usernames' => $usernames,
         ]);
     }
 

@@ -43,7 +43,7 @@
                                 </tr>
                                 <tr>
                                     <th>PIC :</th>
-                                    <th>{{ $historyrecords[0]->create_by_name }}</th>
+                                    <th>asfada</th>
                                     <th>Waktu Preventive :</th>
                                     <th>{{ $detailrecords[0]->created_at }}</th>
                                 </tr>
@@ -82,17 +82,19 @@
                             <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>{{ $detailrecords[0]->note }}</textarea>
                         </div>
                         <div class="form-custom">
-                            <table class="table table-bordered" id="userTable">
+                            <table class="table table-bordered table-custom" id="userTable">
                                 <thead>
                                     <tr>
                                         <th>Disetujui oleh :</th>
                                         <th>Dikoreksi oleh :</th>
-                                        <th>Dibuat oleh :</th>
+                                        <th colspan="4">Dibuat oleh :</th>
                                     </tr>
                                     <tr>
                                         <td>{{ $historyrecords[0]->approve_by_name }}</td>
                                         <td>{{ $historyrecords[0]->correct_by_name }}</td>
-                                        <td>{{ $historyrecords[0]->create_by_name }}</td>
+                                        @foreach ($usernames as $get_user_id)
+                                            <td>{{ $get_user_id }}</td>
+                                        @endforeach
                                     </tr>
                                 </thead>
                             </table>
