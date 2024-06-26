@@ -146,7 +146,7 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control select2" id="create_by_2">
-                                                        <option selected="selected" value="0">Tidak ada</option>
+                                                        <option selected="selected">Tidak ada</option>
                                                         @foreach ($users as $getuser)
                                                             <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
                                                         @endforeach
@@ -154,7 +154,7 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control select2" id="create_by_3">
-                                                        <option selected="selected" value="0">Tidak ada</option>
+                                                        <option selected="selected">Tidak ada</option>
                                                         @foreach ($users as $getuser)
                                                             <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
                                                         @endforeach
@@ -162,7 +162,7 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control select2" id="create_by_4">
-                                                        <option selected="selected" value="0">Tidak ada</option>
+                                                        <option selected="selected">Tidak ada</option>
                                                         @foreach ($users as $getuser)
                                                             <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
                                                         @endforeach

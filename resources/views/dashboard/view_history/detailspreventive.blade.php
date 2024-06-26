@@ -43,7 +43,7 @@
                                 </tr>
                                 <tr>
                                     <th>PIC :</th>
-                                    <th>asfada</th>
+                                    <th>{{ $joinuser }}</th>
                                     <th>Waktu Preventive :</th>
                                     <th>{{ $detailrecords[0]->created_at }}</th>
                                 </tr>

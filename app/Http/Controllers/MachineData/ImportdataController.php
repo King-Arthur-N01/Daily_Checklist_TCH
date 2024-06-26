@@ -18,7 +18,7 @@ class ImportdataController extends Controller
         $machines = Machine::get();
         return view('dashboard.view_importdata.indeximportdata',['machines' => $machines]);
     }
-    public function fetchtableimport($id)
+    public function gettableimport($id)
     {
         try {
             $fetchtable = Machineproperty::find($id);
@@ -28,7 +28,7 @@ class ImportdataController extends Controller
         }
     }
     // fungsi ajax untuk melihat property mesin
-    public function fetchdataproperty($id)
+    public function viewproperty($id)
     {
         try {
             $fetchmachines = DB::table('machines')
@@ -44,6 +44,21 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+    // fungsi fetchdata setiap mesin
+    public function registerproperty($id)
+    {
+        try {
+            $fetchmachine = Machine::find($id);
+            $fetchproperty = Machineproperty::get();
+            return response()->json([
+                'fetchmachine' => $fetchmachine,
+                'fetchproperty' => $fetchproperty
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     // fungsi upload data excel ke database
     public function importdata(Request $request)
     {

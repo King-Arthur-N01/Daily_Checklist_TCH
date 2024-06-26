@@ -47,7 +47,7 @@
                 <div class="card-body">
                     <div class="div-tables">
                         <div class="col-sm-6 col-md-6">
-                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#largeModal"><i class="fas fa-clipboard-check"></i>&nbsp; Tambah Checksheet Mesin</button>
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-clipboard-check"></i>&nbsp; Tambah Checksheet Mesin</button>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
@@ -83,7 +83,7 @@
                                                 <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                                     <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                                    <a class="dropdown-item-custom-edit" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
                                                     <a class="dropdown-item-custom-delete" id="deleteButton" data-id="{{ $machineget->id }}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                                 </div>
                                             </td>
@@ -103,7 +103,7 @@
     </div>
 
     <!-- Upload Modal -->
-    <div class="modal fade" id="largeModal" tabindex="-1">
+    <div class="modal fade" id="uploadModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -127,16 +127,28 @@
     </div>
     <!-- End Upload Modal-->
 
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_edit">
+                </div>
+                <div class="modal-body" id="modal_data_edit">
+                </div>
+                <div class="modal-footer" id="modal_button_edit">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Modal-->
+
     <!-- View Machine Property Modal -->
     <div class="modal fade" id="ExtralargeModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detail Preventive Mesin</h5>
-                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                <div class="modal-header" id="modal_title_view">
                 </div>
-                <div class="modal-body">
-                    <div id="modal-data"></div>
+                <div class="modal-body" id="modal_data_view">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -249,6 +261,65 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
+            $('#editModal').on('shown.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const id = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route("fetchdataproperty", ':id') }}'
+                        .replace(':id', id),
+                    success: function(data) {
+                        let options = '';
+                        if (Array.isArray(data.fetchproperty)) {
+                            $.each(data.fetchproperty, function(index, fetchtable) {
+                                options += `<option value="${fetchtable.id}">${fetchtable.name_property}</option>`;
+                            });
+                        } else {
+                            console.error('fetchproperty is not an array:', data.fetchproperty);
+                        }
+                        const header_modal = `
+                            <h5 class="modal-title">Standarisasi Mesin</h5>
+                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                        `;
+                        const data_modal = `
+                            <table class="table table-bordered" id="importTables" width="100%">
+                                <thead>
+                                    <th>Nomor Invent</th>
+                                    <th>Nama Mesin</th>
+                                    <th>Brand/Merk</th>
+                                    <th>Model/Type</th>
+                                    <th>Standarisasi</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${data.fetchmachine.invent_number}</td>
+                                        <td>${data.fetchmachine.machine_name}</td>
+                                        <td>${data.fetchmachine.machine_brand}</td>
+                                        <td>${data.fetchmachine.machine_type}</td>
+                                        <td>
+                                            <select class="form-control select2" id="getproperty">
+                                                <option value="">Tidak ada</option>
+                                                ${options}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `;
+                        const button_modal = `
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="propertyButton">Save changes</button>
+                        `;
+                        $('#modal_title_edit').html(header_modal);
+                        $('#modal_data_edit').html(data_modal);
+                        $('#modal_button_edit').html(button_modal);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('error:', error);
+                        $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                    }
+                });
+            });
             // fungsi delete button untuk hapus mesin
             $('#deleteButton').on('click', function(e) {
                 e.preventDefault();
@@ -266,7 +337,7 @@
                             $('#successText').text(successMessage);
                             $('#successModal').modal('show');
                         }
-                        $('#ExtralargeModal').modal('hide');
+                        $('#successModal').modal('hide');
                     }).fail(function(xhr, status, error) {
                         console.error(xhr.responseText);
                         const warningMessage = xhr.statusText;
@@ -287,7 +358,7 @@
                 const id = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchproperty', ':id') }}'.replace(':id', id),
+                    url: '{{ route("fetchviewproperty", ':id') }}'.replace(':id', id),
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
                             $('#modal-data').html(
@@ -295,56 +366,61 @@
                                 );
                         } else {
                             const machine = data.fetchmachines[0];
-                            const html = `
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>No. Invent Mesin :</th>
-                                <td>${machine.invent_number}</td>
-                                <th>Spec/Tonage :</th>
-                                <td>${machine.machine_spec}</td>
-                            </tr>
-                            <tr>
-                                <th>Nama Mesin :</th>
-                                <td>${machine.machine_name}</td>
-                                <th>Buatan :</th>
-                                <td>${machine.machine_made}</td>
-                            </tr>
-                            <tr>
-                                <th>Brand/Merk :</th>
-                                <td>${machine.machine_brand}</td>
-                                <th>Mfg.NO :</th>
-                                <td>${machine.mfg_number}</td>
-                            </tr>
-                            <tr>
-                                <th>Model/Type :</th>
-                                <td>${machine.machine_type}</td>
-                                <th>Install Date :</th>
-                                <td>${machine.install_date}</td>
-                            </tr>
-                        </table>
-                        <h5>Standart Mesin</h5>
-                        <table class="table table-bordered" id="dataTables">
-                            <thead>
-                                <tr>
-                                    <th>Nama Mesin</th>
-                                    <th>Bagian Yang Dicheck</th>
-                                    <th>Standart/Parameter</th>
-                                    <th>Metode Pengecekan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            ${data.fetchmachines.map(machine => `
+                            const header_modal = `
+                                <h5 class="modal-title">Detail Preventive Mesin</h5>
+                                <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                            `;
+                            const data_modal = `
+                                <table class="table table-bordered">
                                     <tr>
-                                    <td>${machine.machine_name}</td>
-                                    <td>${machine.name_componencheck}</td>
-                                    <td>${machine.name_parameter}</td>
-                                    <td>${machine.name_metodecheck}</td>
+                                        <th>No. Invent Mesin :</th>
+                                        <td>${machine.invent_number}</td>
+                                        <th>Spec/Tonage :</th>
+                                        <td>${machine.machine_spec}</td>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                        `;
-                        $('#modal-data').html(html);
+                                    <tr>
+                                        <th>Nama Mesin :</th>
+                                        <td>${machine.machine_name}</td>
+                                        <th>Buatan :</th>
+                                        <td>${machine.machine_made}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Brand/Merk :</th>
+                                        <td>${machine.machine_brand}</td>
+                                        <th>Mfg.NO :</th>
+                                        <td>${machine.mfg_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Model/Type :</th>
+                                        <td>${machine.machine_type}</td>
+                                        <th>Install Date :</th>
+                                        <td>${machine.install_date}</td>
+                                    </tr>
+                                </table>
+                                <h5>Standart Mesin</h5>
+                                <table class="table table-bordered" id="dataTables">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Mesin</th>
+                                            <th>Bagian Yang Dicheck</th>
+                                            <th>Standart/Parameter</th>
+                                            <th>Metode Pengecekan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    ${data.fetchmachines.map(machine => `
+                                            <tr>
+                                            <td>${machine.machine_name}</td>
+                                            <td>${machine.name_componencheck}</td>
+                                            <td>${machine.name_parameter}</td>
+                                            <td>${machine.name_metodecheck}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            `;
+                        $('#modal_title_view').html(header_modal);
+                        $('#modal_data_view').html(data_modal);
                         mergeCells();
                         }
                     },
@@ -363,7 +439,7 @@
                 if (id) {
                     $.ajax({
                         type: 'GET',
-                        url: '{{ route('fetchtable', ':id') }}'.replace(':id', id),
+                        url: '{{ route("fetchtableproperty", ':id') }}'.replace(':id', id),
                         success: function(data) {
                             if (data.name_property) {
                                 idCell.text(data.name_property);

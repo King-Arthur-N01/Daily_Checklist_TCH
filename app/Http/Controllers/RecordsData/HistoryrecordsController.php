@@ -49,6 +49,7 @@ class HistoryrecordsController extends Controller
         foreach ($splituser as $eachuserid){
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
         }
+        $joinuser = implode(',', $usernames);
 
         $combinedata = [];
         foreach ($detailrecords as $detail){
@@ -71,6 +72,7 @@ class HistoryrecordsController extends Controller
             'historyrecords' => $historyrecords,
             'combinedata' => $combinedata,
             'usernames' => $usernames,
+            'joinuser' => $joinuser
         ]);
     }
 

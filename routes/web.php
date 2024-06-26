@@ -40,9 +40,10 @@ Route::delete('/machine/deletemachine/{id}','MachineData\MachineController@delet
 
 // machine import route
 Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('managemachinedata');
-Route::get ('/machinedata/fetchproperty/{id}','MachineData\ImportdataController@fetchtableimport')->name('fetchtable');
 Route::post('/machinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
-Route::get ('/machinedata/fetch/{id}','MachineData\ImportdataController@fetchdataproperty')->name('fetchproperty');
+Route::get ('/machinedata/fetch/table/{id}','MachineData\ImportdataController@gettableimport')->name('fetchtableproperty');
+Route::get ('/machinedata/fetch/view/{id}','MachineData\ImportdataController@viewproperty')->name('fetchviewproperty');
+Route::get ('/machinedata/fetch/data/{id}','MachineData\ImportdataController@registerproperty')->name('fetchdataproperty');
 // machine import route end
 
 // machine property route
