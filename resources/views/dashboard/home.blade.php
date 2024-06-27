@@ -37,6 +37,7 @@
             </div>
         </div>
         @endcan
+        @can('managemachine', Permission::class)
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
@@ -52,6 +53,7 @@
                 </div>
             </div>
         </div>
+        @endcan
     </div>
     <div class="row">
         @can('corrected_records', Permission::class)
@@ -59,7 +61,7 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Checking Preventive Mesin</h5>
+                        <h5 class="card-title-head">Koreksi Preventive Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/checking_home.png')}}">
@@ -76,7 +78,7 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Approval Preventive Mesin</h5>
+                        <h5 class="card-title-head">Setujui Preventive Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/approval_home.png')}}">

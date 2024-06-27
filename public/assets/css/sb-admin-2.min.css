@@ -6464,7 +6464,9 @@ a.close.disabled {
     outline: 0
 }
 
-.modal-alert{font-size: medium;}
+.modal-alert{
+    font-size: medium;
+}
 
 .modal-dialog {
     position: relative;
@@ -6549,7 +6551,7 @@ a.close.disabled {
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: .3rem;
+    border-radius: 10px;
     outline: 0
 }
 
@@ -6577,8 +6579,9 @@ a.close.disabled {
     justify-content: space-between;
     padding: 1rem 1rem;
     border-bottom: 1px solid #e3e6f0;
-    border-top-left-radius: calc(.3rem - 1px);
-    border-top-right-radius: calc(.3rem - 1px)
+    border-radius: 10px 10px 0px 0px;
+    /* border-top-right-radius: calc(.3rem - 1px); */
+    background-color: #4e73df;
 }
 
 .modal-header .close {
@@ -6587,6 +6590,8 @@ a.close.disabled {
 }
 
 .modal-title {
+    font-weight: bold;
+    color: white;
     margin-bottom: 0;
     line-height: 1.5
 }

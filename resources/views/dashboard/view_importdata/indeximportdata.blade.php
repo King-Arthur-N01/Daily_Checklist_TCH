@@ -7,39 +7,41 @@
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Tambah Data Mesin</h1>
             <div class="card shadow mt-4 mb-4">
-                <div class="card-filter" id="filterCard" style="display: none;">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
-                    </div>
-                    <form action="#" method="post" style="margin-top: 10px">
-                        @csrf
-                        <div class="table-filter">
-                            <div class="dataTables_filter col-4" id="dataTable_filter">
-                                <p class="mg-b-10">Input Nama Mesin</p>
-                                <input class="form-control" id="searchInput" type="search" aria-controls="dataTable" placeholder="Search here"></input>
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Input Nomor Mesin </p>
-                                <select class="form-control select2" name="" id="category-input-machinecode">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
-                                <div class="wd-250 mg-b-20">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-calendar-alt"></i>
+                <div class="collapse" id="filterCard">
+                    <div class="card card-filter">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+                        </div>
+                        <form action="#" method="post" style="margin-top: 10px">
+                            @csrf
+                            <div class="table-filter">
+                                <div class="dataTables_filter col-4" id="dataTable_filter">
+                                    <p class="mg-b-10">Input Nama Mesin</p>
+                                    <input class="form-control" id="searchInput" type="search" aria-controls="dataTable" placeholder="Search here"></input>
+                                </div>
+                                <div class="col-4">
+                                    <p class="mg-b-10">Input Nomor Mesin </p>
+                                    <select class="form-control select2" name="" id="category-input-machinecode">
+                                        <option selected="selected" value="">Select :</option>
+                                        <option></option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
+                                    <div class="wd-250 mg-b-20">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </div>
                                             </div>
+                                            <input type="text" id="datetimepicker" class="form-control">
                                         </div>
-                                        <input type="text" id="datetimepicker" class="form-control">
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
@@ -263,11 +265,10 @@
             });
             $('#editModal').on('shown.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
-                const id = button.data('id');
+                const machineId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("fetchdataproperty", ':id') }}'
-                        .replace(':id', id),
+                    url: '{{ route('fetchviewproperty', ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
@@ -278,7 +279,7 @@
                             console.error('fetchproperty is not an array:', data.fetchproperty);
                         }
                         const header_modal = `
-                            <h5 class="modal-title">Standarisasi Mesin</h5>
+                            <h6 class="modal-title">Standarisasi Mesin</h6>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
                         const data_modal = `
@@ -288,7 +289,6 @@
                                     <th>Nama Mesin</th>
                                     <th>Brand/Merk</th>
                                     <th>Model/Type</th>
-                                    <th>Standarisasi</th>
                                 </thead>
                                 <tbody>
                                     <tr>
@@ -296,23 +296,67 @@
                                         <td>${data.fetchmachine.machine_name}</td>
                                         <td>${data.fetchmachine.machine_brand}</td>
                                         <td>${data.fetchmachine.machine_type}</td>
-                                        <td>
-                                            <select class="form-control select2" id="getproperty">
-                                                <option value="">Tidak ada</option>
-                                                ${options}
-                                            </select>
-                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">Standarisasi</th>
+                                    </tr>
+                                    <tr>
+                                    <td colspan="4">
+                                        <select class="form-control select2" id="getproperty">
+                                            <option value="">Tidak ada</option>
+                                            ${options}
+                                        </select>
+                                    </td>
                                     </tr>
                                 </tbody>
                             </table>
                         `;
                         const button_modal = `
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="propertyButton">Save changes</button>
+                            <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
                         `;
                         $('#modal_title_edit').html(header_modal);
                         $('#modal_data_edit').html(data_modal);
                         $('#modal_button_edit').html(button_modal);
+
+                        // Add event listener to save button
+                        $('#saveButton').on('click', function() {
+                            var idProperty = $('#getproperty').val();
+                            $.ajax({
+                                type: 'PUT',
+                                url: '{{ route('fetchdataproperty', ':id') }}'
+                                    .replace(':id', machineId),
+                                data: {
+                                    '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                    'id_property': idProperty
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        const successMessage = response.success;
+                                        $('#successText').text(successMessage);
+                                        $('#successModal').modal('show'); // Show success modal
+                                    }
+                                    $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                                },
+                                error: function(xhr, status, error) {
+                                    var warningMessage = xhr.responseText;
+                                    try {
+                                        warningMessage = JSON.parse(xhr.responseText).error;
+                                    } catch (e) {
+                                        console.error('Error parsing error message:',e);
+                                    }
+                                    $('#failedText').text(
+                                        warningMessage); // Set the error message in the modal
+                                    $('#failedModal').modal('show'); // Show error modal
+                                        console.error('Error saving machine record: ' + error);
+                                    $('#editModal').modal('hide'); // Hide modal on error
+                                }
+                            }).always(function() {
+                                setTimeout(function() {
+                                    location.reload(); // Refresh the page after a 2-second delay
+                                }, 2000); // 2000 milliseconds = 2 seconds
+                            });
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.error('error:', error);
@@ -322,8 +366,8 @@
             });
             // fungsi delete button untuk hapus mesin
             $('#deleteButton').on('click', function(e) {
-                e.preventDefault();
-                var machineId = $(this).attr("data-id");
+                const button = $(event.relatedTarget);
+                const machineId = button.data('id');
                 if (confirm("Apakah yakin menghapus mesin ini?")) {
                     $.ajax({
                         type: 'DELETE',
@@ -358,16 +402,16 @@
                 const id = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("fetchviewproperty", ':id') }}'.replace(':id', id),
+                    url: '{{ route('fetchdetailproperty', ':id') }}'.replace(':id', id),
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
-                            $('#modal-data').html(
+                            $('#modal_data_view').html(
                                 '<h4 style="text-align: center;">Error data property mesin belum tersedia!</h4>'
-                                );
+                            );
                         } else {
                             const machine = data.fetchmachines[0];
                             const header_modal = `
-                                <h5 class="modal-title">Detail Preventive Mesin</h5>
+                                <h6 class="modal-title">Detail Preventive Mesin</h6>
                                 <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                             `;
                             const data_modal = `
@@ -410,18 +454,18 @@
                                     <tbody>
                                     ${data.fetchmachines.map(machine => `
                                             <tr>
-                                            <td>${machine.machine_name}</td>
-                                            <td>${machine.name_componencheck}</td>
-                                            <td>${machine.name_parameter}</td>
-                                            <td>${machine.name_metodecheck}</td>
+                                                <td>${machine.machine_name}</td>
+                                                <td>${machine.name_componencheck}</td>
+                                                <td>${machine.name_parameter}</td>
+                                                <td>${machine.name_metodecheck}</td>
                                             </tr>
                                         `).join('')}
                                     </tbody>
                                 </table>
                             `;
-                        $('#modal_title_view').html(header_modal);
-                        $('#modal_data_view').html(data_modal);
-                        mergeCells();
+                            $('#modal_title_view').html(header_modal);
+                            $('#modal_data_view').html(data_modal);
+                            mergeCells();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -439,7 +483,7 @@
                 if (id) {
                     $.ajax({
                         type: 'GET',
-                        url: '{{ route("fetchtableproperty", ':id') }}'.replace(':id', id),
+                        url: '{{ route('fetchtableproperty', ':id') }}'.replace(':id', id),
                         success: function(data) {
                             if (data.name_property) {
                                 idCell.text(data.name_property);
@@ -453,15 +497,13 @@
                     });
                 }
             });
-            //fungsi fillter button
+            //fungsi filter button
             $('#filterButton').on('click', function() {
-                const filterCard = document.getElementById("filterCard");
-                if ($(filterCard).css('display') === 'none') {
-                    $(filterCard).fadeIn(1000);
-                    $(filterCard).css('display', 'block');
+                const filterCard = $('#filterCard');
+                if (filterCard.hasClass('show')) {
+                    filterCard.collapse('hide');
                 } else {
-                    $(filterCard).fadeOut(1000);
-                    $(filterCard).css('display', 'none');
+                    filterCard.collapse('show');
                 }
             });
         });

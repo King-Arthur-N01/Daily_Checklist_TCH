@@ -28,7 +28,7 @@ class ImportdataController extends Controller
         }
     }
     // fungsi ajax untuk melihat property mesin
-    public function viewproperty($id)
+    public function detailproperty($id)
     {
         try {
             $fetchmachines = DB::table('machines')
@@ -45,7 +45,7 @@ class ImportdataController extends Controller
         }
     }
     // fungsi fetchdata setiap mesin
-    public function registerproperty($id)
+    public function viewproperty($id)
     {
         try {
             $fetchmachine = Machine::find($id);
@@ -58,7 +58,23 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
-
+    // fungsi untuk mengupload data mesin
+    public function registerproperty(Request $request, $id)
+    {
+        $request->validate([
+            'id_property' => 'required'
+        ]);
+        $registerproperty = Machine::find($id);
+        if (!$registerproperty) {
+            return response()->json(['error' => 'Data mesin tidak berhasil ditemukan !!!!'], 404);
+        }
+        else {
+            $registerproperty->update([
+                'id_property' => $request->input('id_property')
+            ]);
+        }
+        return response()->json(['success' => 'Standarisasi mesin berhasil di UPDATE!']);
+    }
     // fungsi upload data excel ke database
     public function importdata(Request $request)
     {
