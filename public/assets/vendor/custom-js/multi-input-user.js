@@ -4,7 +4,8 @@ function combineCreateByValues() {
     const createBy3 = document.getElementById("create_by_3").value;
     const createBy4 = document.getElementById("create_by_4").value;
 
-    const combinedValue = `${createBy1},${createBy2},${createBy3},${createBy4}`;
+    const values = [createBy1, createBy2, createBy3, createBy4].filter(value => value !== '0');
+    const combinedValue = values.join(',');
     document.getElementById("combined_create_by").value = combinedValue;
 }
 // Ensure the combined value is set before form submission

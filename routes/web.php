@@ -84,29 +84,30 @@ Route::get ('/methodecheck/delete/{id}','MachineData\MetodecheckController@delet
 // metodecheck route end
 
 // input data machine record
-Route::get('/machinerecord/preventive','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get('/machinerecord/preventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
-Route::put('/machinerecord/preventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
+Route::get ('/machinerecord/preventive','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
+Route::get ('/machinerecord/preventive/fetch/{id}','RecordsData\MachinerecordController@gettablerecord')->name('fetchtablerecord');
+Route::get ('/machinerecord/preventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
+Route::put ('/machinerecord/preventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
 // input data machine record end
 
 // input data correction 1
-Route::get('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('viewcorrection');
-Route::get('/machinerecord/correction/{id}','RecordsData\MachinerecordController@fetchdatacorrection')->name('fetchcorrection');
-Route::put('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('pushcorrection');
+Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('viewcorrection');
+Route::get ('/machinerecord/correction/{id}','RecordsData\MachinerecordController@fetchdatacorrection')->name('fetchcorrection');
+Route::put ('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('pushcorrection');
 Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrect');
 // input data correction 1 end
 
 // input data approval 2
-Route::get('/machinerecord/approval','RecordsData\MachinerecordController@indexapproval')->name('viewapproval');
-Route::get('/machinerecord/approval/{id}','RecordsData\MachinerecordController@fetchdataapproval')->name('fetchapproval');
-Route::put('/machinerecord/approval/{id}','RecordsData\MachinerecordController@registerapproval')->name('pushapproval');
+Route::get ('/machinerecord/approval','RecordsData\MachinerecordController@indexapproval')->name('viewapproval');
+Route::get ('/machinerecord/approval/{id}','RecordsData\MachinerecordController@fetchdataapproval')->name('fetchapproval');
+Route::put ('/machinerecord/approval/{id}','RecordsData\MachinerecordController@registerapproval')->name('pushapproval');
 Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordController@deleteapproval')->name('removeapprove');
 // input data approval 2 end
 
 // record data machine route
-Route::get('/historyrecord','RecordsData\HistoryrecordsController@indexhistory')->name('historymachine');
-Route::get('/historyrecord/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
+Route::get ('/historyrecord','RecordsData\HistoryrecordsController@indexhistory')->name('historymachine');
+Route::get ('/historyrecord/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
 // record data machine route end
 
 
-Route::get('/blacklist','Auth\LoginController@blockuser');
+Route::get ('/blacklist','Auth\LoginController@blockuser');

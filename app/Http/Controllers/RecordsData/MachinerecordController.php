@@ -23,6 +23,24 @@ class MachinerecordController extends Controller
         $machines = Machine::all();
         return view('dashboard.view_recordmesin.tablerecordmesin', ['machines' => $machines]);
     }
+    public function gettablerecord($id) {
+        $currenttime = Carbon::now();
+        try {
+            // Fetch the latest record for the given machine ID
+            $lastrecord = Machinerecord::where('id_machine', $id)->orderBy('record_time', 'desc')->first();
+            if ($lastrecord) {
+                $lasttime = Carbon::parse($lastrecord->record_time);
+                $totaltime = $currenttime->diff($lasttime);
+                $gettotaltime = $totaltime->format('%h:%I:%S');
+                return response()->json(['gettotaltime' => $gettotaltime]);
+            } else {
+                return response()->json(['error' => 'No records found for the given machine ID'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+    
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
     {

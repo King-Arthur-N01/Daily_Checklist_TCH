@@ -56,27 +56,31 @@
                         @endif
                     </div>
                     <div class="table-responsive">
-                        <table class="table" id="dataTable" width="100%">
+                        <table class="table" id="recordTables" width="100%">
                             <thead>
                                 <th>NO MESIN</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
-                                <th>INVENT NUMBER</th>
-                                {{-- <th>STATUS</th> --}}
+                                {{-- <th>INVENT NUMBER</th> --}}
+                                <th>STATUS</th>
                                 <th>ACTION</th>
                             </thead>
                             <tbody>
-                                @foreach ($machines as $machineget)
+                                @foreach ($machines as $getmachine)
                                     <tr>
-                                        <td>{{ $machineget->machine_number }}</td>
-                                        <td>{{ $machineget->machine_name }}</td>
-                                        <td>{{ $machineget->machine_type }}</td>
-                                        <td>{{ $machineget->machine_brand }}</td>
-                                        {{-- <td>{{ $machineget->inv_number }}</td> --}}
-                                        <td>{{ $machineget->invent_number }}</td>
+                                        <td>{{ $getmachine->machine_number }}</td>
+                                        <td>{{ $getmachine->machine_name }}</td>
+                                        <td>{{ $getmachine->machine_type }}</td>
+                                        <td>{{ $getmachine->machine_brand }}</td>
+                                        @if (empty($getmachine->id_property))
+                                            <td>Belum ada standarisasi mesin</td>
+                                        @else
+                                            <td data-id="{{ $getmachine->id_property }}">{{ $getmachine->id_property }}</td>
+                                        @endif
+                                        {{-- <td>{{ $getmachine->invent_number }}</td> --}}
                                         <td>
-                                            <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $machineget->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                            <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $getmachine->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -118,12 +122,35 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable({ // Disable sorting for columns
+            $('#recordsTable').DataTable({ // Disable sorting for columns
             columnDefs: [{"orderable": false, "targets": [5]}]
             });
             $('.select2').select2({
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
+            });
+            // fungsi get status waktu terakhir preventive mesin melalui ajax
+            var table = $('#recordTables').DataTable();
+            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                var row = this.node();
+                var idCell = $(row).find('td').eq(4);
+                var id = idCell.data('id');
+                if (id) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{ route('fetchtablerecord', ':id') }}'.replace(':id', id),
+                        success: function(data) {
+                            if (data.gettotaltime) {
+                                idCell.text('Terakhir kali preventive ' + data.gettotaltime);
+                            } else {
+                                idCell.text('Error fetching data');
+                            }
+                        },
+                        error: function() {
+                            idCell.text('Belum pernah dilakukan preventive');
+                        }
+                    });
+                }
             });
         });
     </script>

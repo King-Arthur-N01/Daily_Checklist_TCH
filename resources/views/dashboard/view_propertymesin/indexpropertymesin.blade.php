@@ -11,7 +11,7 @@
             <h1 class="h3 mb-2 text-gray-800">Bordered Table</h1>
             <div class="col-sm-12 col-md-12">
                 <div class="dt-buttons">
-                    <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#RegisterModal" tabindex="0">+ Tambah User</a>
+                    <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#RegisterModal" tabindex="0">+ Standarisasi mesin</a>
                 </div>
             </div>
             <div class="card shadow mt-4 mb-4">
