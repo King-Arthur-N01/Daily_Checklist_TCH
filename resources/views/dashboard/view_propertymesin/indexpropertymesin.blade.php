@@ -11,7 +11,7 @@
             <h1 class="h3 mb-2 text-gray-800">Bordered Table</h1>
             <div class="col-sm-12 col-md-12">
                 <div class="dt-buttons">
-                    <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#RegisterModal" tabindex="0">+ Standarisasi mesin</a>
+                    <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#registerModal" tabindex="0">+ Standarisasi mesin</a>
                 </div>
             </div>
             <div class="card shadow mt-4 mb-4">
@@ -58,81 +58,115 @@
         <!-- end basic table  -->
         <!-- ============================================================== -->
     </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Standarisasi</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerform" method="post">
+                        <div class="form-group">
+                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Standarisasi</label>
+                            <div>
+                                <input class="form-control form-control-user" type="text" name="name_property" placeholder="Nama Standarisasi">
+                            </div>
+                        </div>
+                        <table class="table table-bordered" id="dataTables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Bagian Yang Dicheck</th>
+                                    <th>Standart/Parameter</th>
+                                    <th>Metode Pengecekan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div id="inputContainer1">
+                                            <div class="dynamic-input-group">
+                                                <input class="col-12" type="text" name="bagian_yang_dicheck[]" placeholder="Example : Push Button">
+                                                <a class="btn btn-success btn-circle btn-sm" id="addInputBtn1"><i class="fas fa-plus"></i></a>
+                                                <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainer1')"><i class="fas fa-trash-alt"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="inputContainer2">
+                                            <div class="dynamic-input-group">
+                                                <input class="col-12" type="text" name="standart_parameter[]" placeholder="Example : Berfungsi dengan baik">
+                                                <a class="btn btn-success btn-circle btn-sm" id="addInputBtn2"><i class="fas fa-plus"></i></a>
+                                                <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainer2')"><i class="fas fa-trash-alt"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="inputContainer3">
+                                            <div class="dynamic-input-group">
+                                                <input class="col-12" type="text" name="metode_pengecekan[]" placeholder="Example : Dioperasikan">
+                                                <a class="btn btn-success btn-circle btn-sm" id="addInputBtn3"><i class="fas fa-plus"></i></a>
+                                                <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainer3')"><i class="fas fa-trash-alt"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="column-button">
+                            <button type="submit" class="form-buttons">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="registerButton">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Register Modal-->
 @endsection
 
 @push('style')
 @endpush
 
 @push('script')
-    <script>
-        $(document).ready(function() {
-            $(".btn-Id").on('click', function() {
-                console.log($(this).attr("data-id"));
-                $("#editButton").attr("value", $(this).attr("data-id"));
-            });
-            $('#registerButton').on('click', function(e) {
-                e.preventDefault();
-                var formData = {
-                    '_token': '{{ csrf_token() }}',
-                    'name': $('input[name="name"]').val(),
-                    'nik': $('input[name="nik"]').val(),
-                    'department': $('input[name="department"]').val(),
-                    'status': $('select[name="status"]').val()
-                };
-                $.ajax({
-                    type: 'POST',
-                    url: '{{ route('pushregisteruser') }}',
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            alert('USER was successfully added.'); // Alert success message
-                        } else {
-                            alert('Error: USER failed to register.'); // Alert failure message
-                        }
-                        $('#RegisterModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.status === 422) {
-                            alert(xhr.responseJSON.error); // Alert error message
-                        } else {
-                            alert('An error occurred while registering the USER.'); // Alert error message
-                            console.error('Error register USER: ' + error);
-                        }
-                        $('#RegisterModal').modal('hide'); // Hide modal on error
-                    }
-                }).always(function() {
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                });
-            });
-            $('#editButton').on('click', function() {
-                var formData = $('#editform').serialize();
-                var userId = $(this).val();
-                formData += '&_token={{ csrf_token() }}'; // Add CSRF token
-                $.ajax({
-                    type: 'PUT',
-                    url: '{{ route('pushedituser', ':id') }}'.replace(':id', userId),
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            alert('USER was successfully update.'); // Alert success message
-                        } else {
-                            alert('Error: USER failed to update.'); // Alert failure message
-                        }
-                        $('#EditModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        alert('This USER already exists!'); // Alert error message
-                        console.error('Error update USER: ' + error);
-                        $('#EditModal').modal('hide'); // Hide modal on error
-                    }
-                }).always(function() {
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                });
+<script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('#registerform').on('submit', function(event) {
+            event.preventDefault();
+            // Serialize each group of dynamic inputs separately
+            var bagianYangDicheck = $("input[name='bagian_yang_dicheck[]']").map(function() {return $(this).val();}).get();
+            var standartParameter = $("input[name='standart_parameter[]']").map(function() {return $(this).val();}).get();
+            var metodePengecekan = $("input[name='metode_pengecekan[]']").map(function() {return $(this).val();}).get();
+            // Prepare the data to be sent
+            var formData = {
+                '_token': '{{ csrf_token() }}',
+                name_property : $('input[name="name_property"]').val(),
+                bagian_yang_dicheck : bagianYangDicheck,
+                standart_parameter : standartParameter,
+                metode_pengecekan : metodePengecekan
+            };
+            $.ajax({
+                url: '{{ route("registerproperty") }}',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success
+                    console.log(response);
+                    alert('Data submitted successfully');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error(error);
+                    alert('Failed to submit data');
+                }
             });
         });
-    </script>
+    });
+</script>
 @endpush

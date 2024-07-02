@@ -194,7 +194,7 @@
                     url: '{{ route('fetchedituser', ':id') }}'.replace(':id', id),
                     success: function(data) {
                     var html = `
-                        <form id="editform" method="post">
+                        <form id="editForm" method="post">
                         <div class="row align-items-center">
                             <div class="col-xl-6">
                             <div class="form-group">
@@ -300,7 +300,7 @@
             });
             // kode $ajax untuk mengirim request edit user
             $('#editButton').on('click', function() {
-                var formData = $('#editform').serialize();
+                var formData = $('#editForm').serialize();
                 var userId = $(this).val();
                 formData += '&_token={{ csrf_token() }}'; // Add CSRF token
                 $.ajax({

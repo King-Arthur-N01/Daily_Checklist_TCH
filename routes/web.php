@@ -44,12 +44,12 @@ Route::post('/machinedata/pushfiles','MachineData\ImportdataController@importdat
 Route::get ('/machinedata/fetch/table/{id}','MachineData\ImportdataController@gettableimport')->name('fetchtableproperty');
 Route::get ('/machinedata/fetch/view/{id}','MachineData\ImportdataController@detailproperty')->name('fetchdetailproperty');
 Route::get ('/machinedata/fetch/data/{id}','MachineData\ImportdataController@viewproperty')->name('fetchviewproperty');
-Route::put ('/machinedata/fetch/register/{id}','MachineData\ImportdataController@registerproperty')->name('fetchdataproperty');
+Route::put ('/machinedata/fetch/register/{id}','MachineData\ImportdataController@registeridproperty')->name('fetchdataproperty');
 // machine import route end
 
 // machine property route
-Route::get('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
-// Route::post('/machineproperty','MachineData\MachinepropertyController@registermethod')->name('pushmethod');
+Route::get ('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
+Route::post ('/machineproperty/register','MachineData\MachinepropertyController@addproperty')->name('registerproperty');
 // Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@indexeditmethod')->name('editmethod');
 // Route::put('/machineproperty/{id}','MachineData\MachinepropertyController@editmethod')->name('pusheditmethod');
 // Route::get('/machineproperty','MachineData\MachinepropertyController@indextablemethod')->name('managemethod');

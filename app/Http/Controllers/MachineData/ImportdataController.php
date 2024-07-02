@@ -59,7 +59,7 @@ class ImportdataController extends Controller
         }
     }
     // fungsi untuk mengupload data mesin
-    public function registerproperty(Request $request, $id)
+    public function registeridproperty(Request $request, $id)
     {
         $request->validate([
             'id_property' => 'required'
