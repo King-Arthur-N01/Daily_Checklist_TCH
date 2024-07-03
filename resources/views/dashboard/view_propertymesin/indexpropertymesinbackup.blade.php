@@ -81,41 +81,36 @@
                                     <th>Bagian Yang Dicheck</th>
                                     <th>Standart/Parameter</th>
                                     <th>Metode Pengecekan</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
+                            <tbody>
                                 <tr>
                                     <td>
                                         <div id="inputContainer1">
                                             <div class="dynamic-input-group">
                                                 <input class="col-12" type="text" name="bagian_yang_dicheck[]" placeholder="Example : Push Button">
-                                                <a class="btn btn-success btn-circle btn-sm" id="addColumnBtn1"><i class="fas fa-plus"></i></a>
+                                                <a class="btn btn-success btn-circle btn-sm" id="addInputBtn1"><i class="fas fa-plus"></i></a>
                                                 <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainer1')"><i class="fas fa-trash-alt"></i></a>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div id="inputContainer2">
-                                            <div class="dynamic-input-group" id="inputContainer2">
+                                            <div class="dynamic-input-group">
                                                 <input class="col-12" type="text" name="standart_parameter[]" placeholder="Example : Berfungsi dengan baik">
-                                                <a class="btn btn-success btn-circle btn-sm" id="addColumnBtn2"><i class="fas fa-plus"></i></a>
+                                                <a class="btn btn-success btn-circle btn-sm" id="addInputBtn2"><i class="fas fa-plus"></i></a>
                                                 <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainer2')"><i class="fas fa-trash-alt"></i></a>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div id="inputContainer3">
-                                            <div class="dynamic-input-group" id="inputContainer3">
+                                            <div class="dynamic-input-group">
                                                 <input class="col-12" type="text" name="metode_pengecekan[]" placeholder="Example : Dioperasikan">
-                                                <a class="btn btn-success btn-circle btn-sm" id="addColumnBtn3"><i class="fas fa-plus"></i></a>
+                                                <a class="btn btn-success btn-circle btn-sm" id="addInputBtn3"><i class="fas fa-plus"></i></a>
                                                 <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainer3')"><i class="fas fa-trash-alt"></i></a>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <button type="button" id="addRowBtn">Add Row</button>
-                                        <button type="button" id="removeRowBtn">Delete Row</button>
                                     </td>
                                 </tr>
                             </tbody>
