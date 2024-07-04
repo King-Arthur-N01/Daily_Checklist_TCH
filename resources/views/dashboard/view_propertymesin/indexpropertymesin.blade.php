@@ -59,7 +59,7 @@
         <!-- ============================================================== -->
     </div>
 
-    <!-- Register Modal -->
+        <!-- Register Modal -->
     <div class="modal fade" id="registerModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -87,29 +87,29 @@
                             <tbody id="tableBody">
                                 <tr>
                                     <td>
-                                        <div id="inputContainerA_1">
+                                        <div id="inputContainerA_1_1">
                                             <div class="dynamic-input-group">
                                                 <input class="col-12" type="text" name="bagian_yang_dicheck[]" placeholder="Example : Push Button">
-                                                <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnA"><i class="fas fa-plus"></i></a>
-                                                <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainerA_1')"><i class="fas fa-trash-alt"></i></a>
+                                                <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnA_1_1"><i class="fas fa-plus"></i></button>
+                                                <button type="button" class="btn btn-danger btn-circle btn-sm remove-input"><i class="fas fa-trash-alt"></i></button>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div id="inputContainerB_1">
+                                        <div id="inputContainerB_1_1">
                                             <div class="dynamic-input-group">
                                                 <input class="col-12" type="text" name="standart_parameter[]" placeholder="Example : Berfungsi dengan baik">
-                                                <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnB"><i class="fas fa-plus"></i></a>
-                                                <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainerB_1')"><i class="fas fa-trash-alt"></i></a>
+                                                <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_1_1"><i class="fas fa-plus"></i></button>
+                                                <button type="button" class="btn btn-danger btn-circle btn-sm remove-input"><i class="fas fa-trash-alt"></i></button>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <div id="inputContainerC_1">
+                                        <div id="inputContainerC_1_1">
                                             <div class="dynamic-input-group">
                                                 <input class="col-12" type="text" name="metode_pengecekan[]" placeholder="Example : Dioperasikan">
-                                                <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnC"><i class="fas fa-plus"></i></a>
-                                                <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainerC_1')"><i class="fas fa-trash-alt"></i></a>
+                                                <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_1_1"><i class="fas fa-plus"></i></button>
+                                                <button type="button" class="btn btn-danger btn-circle btn-sm remove-input"><i class="fas fa-trash-alt"></i></button>
                                             </div>
                                         </div>
                                     </td>
