@@ -3943,8 +3943,9 @@ input[type=submit].btn-block {
 .dynamic-input-group {
     display: flex;
     margin-bottom: 5px;
+    justify-content: center;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    align-items: center;
 }
 
 .dynamic-input-group input {
@@ -3953,7 +3954,7 @@ input[type=submit].btn-block {
     flex-grow: 1;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin: 5px 0px 5px 0px;
+    margin: 5px 5px 5px 0px;
 }
 
 .dynamic-button-delete {
@@ -11770,7 +11771,7 @@ a:focus {
 
 .sidebar {
     width: 6.5rem;
-    min-height: 100vh
+    min-height: 100vh;
     toggled: true;
 }
 

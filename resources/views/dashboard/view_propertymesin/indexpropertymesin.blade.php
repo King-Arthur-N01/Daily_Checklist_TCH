@@ -59,7 +59,7 @@
         <!-- ============================================================== -->
     </div>
 
-        <!-- Register Modal -->
+    <!-- Register Modal -->
     <div class="modal fade" id="registerModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -75,7 +75,7 @@
                                 <input class="form-control form-control-user" type="text" name="name_property" placeholder="Nama Standarisasi">
                             </div>
                         </div>
-                        <table class="table table-bordered" id="dataTables" width="100%">
+                        <table class="table table-bordered" id="dynamicTable" width="100%">
                             <thead>
                                 <tr>
                                     <th>Bagian Yang Dicheck</th>
@@ -86,36 +86,30 @@
                             </thead>
                             <tbody id="tableBody">
                                 <tr>
-                                    <td>
-                                        <div id="inputContainerA_1_1">
-                                            <div class="dynamic-input-group">
-                                                <input class="col-12" type="text" name="bagian_yang_dicheck[]" placeholder="Example : Push Button">
-                                                <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnA_1_1"><i class="fas fa-plus"></i></button>
-                                                <button type="button" class="btn btn-danger btn-circle btn-sm remove-input"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
+                                    <td id="columnContainerA_1">
+                                        <div class="dynamic-input-group" id="inputContainerA_1_1">
+                                            <input type="text" name="bagian_yang_dicheck[]" id="componencheck_1_1" placeholder="Example : Push Button">
+                                        </div>
+                                    </td>
+                                    <td id="columnContainerB_1">
+                                        <div class="dynamic-input-group" id="inputContainerB_1_1">
+                                            <input type="text" name="standart_parameter[]" id="parameter_1_1" placeholder="Example : Berfungsi dengan baik">
+                                            <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_1_1"><i class="fas fa-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_1_1"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </td>
+                                    <td id="columnContainerC_1">
+                                        <div class="dynamic-input-group" id="inputContainerC_1_1">
+                                            <input type="text" name="metode_pengecekan[]" id="metodecheck_1_1" placeholder="Example : Dioperasikan">
+                                            <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_1_1"><i class="fas fa-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_1_1"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                     <td>
-                                        <div id="inputContainerB_1_1">
-                                            <div class="dynamic-input-group">
-                                                <input class="col-12" type="text" name="standart_parameter[]" placeholder="Example : Berfungsi dengan baik">
-                                                <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_1_1"><i class="fas fa-plus"></i></button>
-                                                <button type="button" class="btn btn-danger btn-circle btn-sm remove-input"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
+                                        <div class="dynamic-input-group action-buttons">
+                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add rows</i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Remove Rows</i></button>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div id="inputContainerC_1_1">
-                                            <div class="dynamic-input-group">
-                                                <input class="col-12" type="text" name="metode_pengecekan[]" placeholder="Example : Dioperasikan">
-                                                <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_1_1"><i class="fas fa-plus"></i></button>
-                                                <button type="button" class="btn btn-danger btn-circle btn-sm remove-input"><i class="fas fa-trash-alt"></i></button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button type="button" id="addRowBtn">Add Row</button>
-                                        <button type="button" id="removeRowBtn">Delete Row</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -141,37 +135,6 @@
 @push('script')
 <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
 <script>
-    $(document).ready(function() {
-        $('#registerform').on('submit', function(event) {
-            event.preventDefault();
-            // Serialize each group of dynamic inputs separately
-            var bagianYangDicheck = $("input[name='bagian_yang_dicheck[]']").map(function() {return $(this).val();}).get();
-            var standartParameter = $("input[name='standart_parameter[]']").map(function() {return $(this).val();}).get();
-            var metodePengecekan = $("input[name='metode_pengecekan[]']").map(function() {return $(this).val();}).get();
-            // Prepare the data to be sent
-            var formData = {
-                '_token': '{{ csrf_token() }}',
-                name_property : $('input[name="name_property"]').val(),
-                bagian_yang_dicheck : bagianYangDicheck,
-                standart_parameter : standartParameter,
-                metode_pengecekan : metodePengecekan
-            };
-            $.ajax({
-                url: '{{ route("registerproperty") }}',
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    // Handle success
-                    console.log(response);
-                    alert('Data submitted successfully');
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.error(error);
-                    alert('Failed to submit data');
-                }
-            });
-        });
-    });
+
 </script>
 @endpush

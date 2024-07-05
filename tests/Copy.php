@@ -770,7 +770,7 @@ public function importdata(Request $request)
                 var file = fileInput.files[0];
                 var formData = new FormData();
                 formData.append('file', file);
-                
+
                 $.ajax({
                     type: 'POST',
                     url: '{{ route('uploadfile') }}',
@@ -884,3 +884,331 @@ public function importdata(Request $request)
                         </div>
                     </form>
                 </div>
+
+
+
+// Get the table body and the row to clone
+const tableBody = document.getElementById('dynamicTableBody');
+const rowToClone = document.getElementById('tabelRows_1');
+
+// Add row button
+document.getElementById('addRowBtn').addEventListener('click', addRow);
+
+// Remove row button
+document.getElementById('removeRowBtn').addEventListener('click', removeRow);
+
+// Function to add a new row
+function addRow() {
+    const newRow = rowToClone.cloneNode(true);
+    tableBody.appendChild(newRow);
+    updateRowIds(newRow);
+}
+
+// Function to remove a row
+function removeRow() {
+    const rows = tableBody.rows;
+    if (rows.length > 1) {
+        tableBody.removeChild(rows[rows.length - 1]);
+    }
+}
+
+// Function to update the IDs of the inputs and buttons in the new row
+function updateRowIds(row) {
+    const inputs = row.querySelectorAll('input');
+    const buttons = row.querySelectorAll('button');
+    const rowId = row.id.replace('tabelRows_', '');
+    inputs.forEach((input, index) => {
+        input.id = `${input.id}_${rowId}`;
+        input.name = `${input.name}[]`;
+    });
+    buttons.forEach((button, index) => {
+        button.id = `${button.id}_${rowId}`;
+    });
+}
+
+// Add event listeners to the add column buttons
+document.querySelectorAll('[id^="addColumnBtnB_"]').forEach((button) => {
+    button.addEventListener('click', addColumn);
+});
+
+document.querySelectorAll('[id^="addColumnBtnC_"]').forEach((button) => {
+    button.addEventListener('click', addColumn);
+});
+
+// Function to add a new column
+function addColumn(event) {
+    const button = event.target;
+    const inputContainer = button.parentNode;
+    const newInput = inputContainer.querySelector('input').cloneNode(true);
+    inputContainer.appendChild(newInput);
+    updateInputIds(newInput, inputContainer);
+}
+
+// Function to update the IDs of the new input
+function updateInputIds(input, inputContainer) {
+    const inputId = input.id.replace('_1', '');
+    input.id = `${inputId}_${inputContainer.childElementCount}`;
+    input.name = `${input.name}[]`;
+}
+
+
+
+
+// Get the table body element
+const tableBody = document.getElementById('tableBody');
+
+// Add row button event listener
+document.getElementById('addRowBtn').addEventListener('click', addRow);
+
+// Remove row button event listener
+document.getElementById('removeRowBtn').addEventListener('click', removeRow);
+
+// Add column button event listeners
+document.querySelectorAll('.addColumnBtn').forEach((button) => {
+  button.addEventListener('click', addColumn);
+});
+
+// Remove column button event listeners
+document.querySelectorAll('.removeColumnBtn').forEach((button) => {
+  button.addEventListener('click', removeColumn);
+});
+
+// Function to add a new row
+function addRow() {
+  const newRow = document.createElement('tr');
+  newRow.innerHTML = `
+    <td>
+      <div id="inputContainerA_${tableBody.rows.length + 1}">
+        <div class="dynamic-input-group" id="inputContainerA_${tableBody.rows.length + 1}_1">
+          <input type="text" name="bagian_yang_dicheck[]" id="componencheck_${tableBody.rows.length + 1}_1" placeholder="Example : Push Button">
+        </div>
+      </div>
+    </td>
+    <td>
+      <div id="inputContainerB_${tableBody.rows.length + 1}">
+        <div class="dynamic-input-group" id="inputContainerB_${tableBody.rows.length + 1}_1">
+          <input type="text" name="standart_parameter[]" id="parameter_${tableBody.rows.length + 1}_1" placeholder="Example : Berfungsi dengan baik">
+          <button type="button" class="btn btn-success btn-circle btn-sm addColumnBtnB_${tableBody.rows.length + 1}_1"><i class="fas fa-plus"></i></button>
+          <button type="button" class="btn btn-danger btn-circle btn-sm removeColumnBtnB_${tableBody.rows.length + 1}_1"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+    </td>
+    <td>
+      <div id="inputContainerC_${tableBody.rows.length + 1}">
+        <div class="dynamic-input-group" id="inputContainerC_${tableBody.rows.length + 1}_1">
+          <input type="text" name="metode_pengecekan[]" id="metodecheck_${tableBody.rows.length + 1}" placeholder="Example : Dioperasikan">
+          <button type="button" class="btn btn-success btn-circle btn-sm addColumnBtnC_${tableBody.rows.length + 1}_1"><i class="fas fa-plus"></i></button>
+          <button type="button" class="btn btn-danger btn-circle btn-sm removeColumnBtnC_${tableBody.rows.length + 1}_1"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+    </td>
+    <td>
+      <div class="dynamic-input-group action-buttons">
+        <button type="button" class="btn btn-success btn-sm addRowBtn">Add rows</i></button>
+        <button type="button" class="btn btn-danger btn-sm removeRowBtn">Remove Rows</i></button>
+      </div>
+    </td>
+  `;
+  tableBody.appendChild(newRow);
+}
+
+// Function to remove a row
+function removeRow() {
+  const rows = tableBody.rows;
+  if (rows.length > 1) {
+    tableBody.removeChild(rows[rows.length - 1]);
+  }
+}
+
+// Function to add a new column
+function addColumn(event) {
+  const columnId = event.target.id.replace('addColumnBtn', '');
+  const columnContainer = document.getElementById(`inputContainer${columnId}`);
+  const newColumn = document.createElement('div');
+  newColumn.className = 'dynamic-input-group';
+  newColumn.innerHTML = `
+    <input type="text" name="${columnId}[]" id="${columnId}_${columnContainer.children.length + 1}" placeholder="Example : ">
+    <button type="button" class="btn btn-success btn-circle btn-sm addColumnBtn${columnId}_${columnContainer.children.length + 1}"><i class="fas fa-plus"></i></button>
+    <button type="button" class="btn btn-danger btn-circle btn-sm removeColumnBtn${columnId}_${columnContainer.children.length + 1}"><i class="fas fa-trash-alt"></i></button>
+  `;
+  columnContainer.appendChild(newColumn);
+}
+
+// Function to remove a column
+function removeColumn(event) {
+  const columnId = event.target.id.replace('removeColumnBtn', '');
+  const columnContainer = document.getElementById(`inputContainer${columnId}`);
+  const columns = columnContainer.children;
+  if (columns.length >1) {
+    columnContainer.removeChild(columns[columns.length - 1]);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).ready(function() {
+    document.getElementById("addRowBtn").addEventListener("click", function (event) {
+        event.preventDefault();
+        addRow();
+    });
+
+    document.getElementById("removeRowBtn").addEventListener("click", function (event) {
+        event.preventDefault();
+        removeRow();
+    });
+
+    let rowCount = 1;
+
+    function addRow() {
+        const tableBody = document.getElementById("tableBody");
+        const newRow = tableBody.insertRow(-1);
+        rowCount++;
+        const rowIdSuffix = rowCount; // Unique suffix for each row
+        newRow.innerHTML = `
+            <td>
+                <div id="inputContainerA_${rowIdSuffix}">
+                    <div class="dynamic-input-group">
+                        <input class="col-12" type="text" name="bagian_yang_dicheck[]" placeholder="Example : Push Button">
+                        <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnA_${rowIdSuffix}"><i class="fas fa-plus"></i></a>
+                        <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainerA_${rowIdSuffix}')"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div id="inputContainerB_${rowIdSuffix}">
+                    <div class="dynamic-input-group">
+                        <input class="col-12" type="text" name="standart_parameter[]" placeholder="Example : Berfungsi dengan baik">
+                        <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}"><i class="fas fa-plus"></i></a>
+                        <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainerB_${rowIdSuffix}')"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div id="inputContainerC_${rowIdSuffix}">
+                    <div class="dynamic-input-group">
+                        <input class="col-12" type="text" name="metode_pengecekan[]" placeholder="Example : Dioperasikan">
+                        <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}"><i class="fas fa-plus"></i></a>
+                        <a class="btn btn-danger btn-circle btn-sm" onclick="removeInput(this, 'inputContainerC_${rowIdSuffix}')"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <button type="button" id="addRowBtn_${rowIdSuffix}">Add Row</button>
+                <button type="button" id="removeRowBtn_${rowIdSuffix}">Delete Row</button>
+            </td>
+        `;
+
+        attachEventListeners(newRow, rowIdSuffix);
+    }
+
+    function attachEventListeners(row, rowIdSuffix) {
+        row.querySelector(`#addColumnBtnA_${rowIdSuffix}`).addEventListener("click", function (event) {
+            event.preventDefault();
+            addInput(`inputContainerA_${rowIdSuffix}`, "bagian_yang_dicheck[]", "Example: Push Button");
+        });
+
+        row.querySelector(`#addColumnBtnB_${rowIdSuffix}`).addEventListener("click", function (event) {
+            event.preventDefault();
+            addInput(`inputContainerB_${rowIdSuffix}`, "standart_parameter[]", "Example: Berfungsi dengan baik");
+        });
+
+        row.querySelector(`#addColumnBtnC_${rowIdSuffix}`).addEventListener("click", function (event) {
+            event.preventDefault();
+            addInput(`inputContainerC_${rowIdSuffix}`, "metode_pengecekan[]", "Example: Dioperasikan");
+        });
+
+        row.querySelector(`#addRowBtn_${rowIdSuffix}`).addEventListener("click", function (event) {
+            event.preventDefault();
+            addRow();
+        });
+
+        row.querySelector(`#removeRowBtn_${rowIdSuffix}`).addEventListener("click", function (event) {
+            event.preventDefault();
+            removeRow();
+        });
+    }
+
+    function removeRow() {
+        const tableBody = document.getElementById("tableBody");
+        const rows = tableBody.rows;
+        if (rows.length > 1) {
+            tableBody.deleteRow(-1);
+        } else {
+            alert("At least one row must remain.");
+        }
+    }
+
+    document.getElementById("addColumnBtnA").addEventListener("click", function (event) {
+        event.preventDefault();
+        addInput("inputContainerA_1", "bagian_yang_dicheck[]", "Example: Push Button");
+    });
+
+    document.getElementById("addColumnBtnB").addEventListener("click", function (event) {
+        event.preventDefault();
+        addInput("inputContainerB_1", "standart_parameter[]", "Example: Berfungsi dengan baik");
+    });
+
+    document.getElementById("addColumnBtnC").addEventListener("click", function (event) {
+        event.preventDefault();
+        addInput("inputContainerC_1", "metode_pengecekan[]", "Example: Dioperasikan");
+    });
+
+    function addInput(containerId, inputName, placeholder) {
+        const inputContainer = document.getElementById(containerId);
+        const newInputGroup = document.createElement("div");
+        newInputGroup.className = "dynamic-input-group";
+
+        const newInput = document.createElement("input");
+        newInput.className = "col-12";
+        newInput.type = "text";
+        newInput.name = inputName;
+        newInput.placeholder = placeholder;
+
+        const addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.className = "btn btn-success btn-circle btn-sm";
+        addButton.innerHTML = '<i class="fas fa-plus"></i>';
+        addButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            addInput(containerId, inputName, placeholder);
+        });
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "btn btn-danger btn-circle btn-sm";
+        removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        removeButton.onclick = function () {
+            removeInput(this, containerId);
+        };
+
+        newInputGroup.appendChild(newInput);
+        newInputGroup.appendChild(addButton);
+        newInputGroup.appendChild(removeButton);
+        inputContainer.appendChild(newInputGroup);
+    }
+
+    function removeInput(button, containerId) {
+        const inputContainer = document.getElementById(containerId);
+        if (inputContainer) {
+            const inputGroups = inputContainer.querySelectorAll(".dynamic-input-group");
+            if (inputGroups.length > 1) {
+                const inputGroup = button.parentNode;
+                inputGroup.parentNode.removeChild(inputGroup);
+            } else {
+                alert("At least one input must remain.");
+            }
+        } else {
+            console.error(`Element with id "${containerId}" not found`);
+        }
+    }
+});
