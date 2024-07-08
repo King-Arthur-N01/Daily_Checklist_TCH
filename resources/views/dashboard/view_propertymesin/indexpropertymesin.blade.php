@@ -63,12 +63,12 @@
     <div class="modal fade" id="registerModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Standarisasi</h5>
-                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                </div>
-                <div class="modal-body">
-                    <form id="registerform" method="post">
+                <form id="registerform" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah Standarisasi</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    </div>
+                    <div class="modal-body">
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Standarisasi</label>
                             <div>
@@ -107,22 +107,19 @@
                                     </td>
                                     <td>
                                         <div class="dynamic-input-group action-buttons">
-                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add rows</i></button>
-                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Remove Rows</i></button>
+                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add Rows</i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Delete Rows</i></button>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="column-button">
-                            <button type="submit" class="form-buttons">Submit</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="registerButton">Submit</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -135,6 +132,48 @@
 @push('script')
 <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
 <script>
+$(document).ready(function() {
+    $('#registerform').on('submit', function(event) {
+        event.preventDefault();
+        // Serialize each group of dynamic inputs separately
+        var bagianYangDicheck = [];
+        var standartParameter = [];
+        var metodePengecekan = [];
 
+        $('[id^="inputContainerA_"]').each(function() {
+            bagianYangDicheck.push($(this).find('input').val());
+        });
+        $('[id^="inputContainerB_"]').each(function() {
+            standartParameter.push($(this).find('input').val());
+        });
+        $('[id^="inputContainerC_"]').each(function() {
+            metodePengecekan.push($(this).find('input').val());
+        });
+
+        // Prepare the data to be sent
+        var formData = {
+            '_token': '{{ csrf_token() }}',
+            name_property : $('input[name="name_property"]').val(),
+            bagian_yang_dicheck : bagianYangDicheck,
+            standart_parameter : standartParameter,
+            metode_pengecekan : metodePengecekan
+        };
+        $.ajax({
+            url: '{{ route("registerproperty") }}',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                // Handle success
+                console.log(response);
+                alert('Data submitted successfully');
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error(error);
+                alert('Failed to submit data');
+            }
+        });
+    });
+});
 </script>
 @endpush

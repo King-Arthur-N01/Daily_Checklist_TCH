@@ -1,13 +1,20 @@
-$(document).ready(function() {
-    document.getElementById("addRowBtn").addEventListener("click", function (event) {
-        event.preventDefault();
-        addRow();
-    });
+document.addEventListener("DOMContentLoaded", function(){
+    const addRowBtn = document.getElementById("addRowBtn");
+    const removeRowBtn = document.getElementById("removeRowBtn");
 
-    document.getElementById("removeRowBtn").addEventListener("click", function (event) {
-        event.preventDefault();
-        removeRow();
-    });
+    if (addRowBtn) {
+        addRowBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            addRow();
+        });
+    }
+
+    if (removeRowBtn) {
+        removeRowBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            removeRow();
+        });
+    }
 
     let rowCount = 1;
 
@@ -15,7 +22,7 @@ $(document).ready(function() {
         const tableBody = document.getElementById("tableBody");
         const newRow = tableBody.insertRow(-1);
         rowCount++;
-        const rowIdSuffix = rowCount; // Unique suffix for each row
+        const rowIdSuffix = rowCount;
         let inputGroupCount = 1;
         newRow.innerHTML =`
             <td id="columnContainerA_${rowIdSuffix}">
@@ -26,63 +33,47 @@ $(document).ready(function() {
             <td id="columnContainerB_${rowIdSuffix}">
                 <div class="dynamic-input-group" id="inputContainerB_${rowIdSuffix}_${inputGroupCount}">
                     <input type="text" name="standart_parameter[]" id="parameter_${rowIdSuffix}_${inputGroupCount}" placeholder="Example : Berfungsi dengan baik">
-                    <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-plus"></i></a>
-                    <a class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-trash-alt"></i></a>
+                    <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
             <td id="columnContainerC_${rowIdSuffix}">
                 <div class="dynamic-input-group" id="inputContainerC_${rowIdSuffix}_${inputGroupCount}">
                     <input type="text" name="metode_pengecekan[]" id="metodecheck_${rowIdSuffix}_${inputGroupCount}" placeholder="Example : Dioperasikan">
-                    <a class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-plus"></i></a>
-                    <a class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-trash-alt"></i></a>
+                    <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
             <td>
                 <div class="dynamic-input-group action-buttons">
-                    <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add Row</button>
-                    <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Delete Row</button>
+                    <button type="button" class="btn btn-success btn-sm addRowBtn">Add Rows</button>
+                    <button type="button" class="btn btn-danger btn-sm removeRowBtn">Delete Rows</button>
                 </div>
             </td>
         `;
 
-        attachEventListeners(newRow,rowIdSuffix);
+        attachEventListeners(newRow, rowIdSuffix);
     }
 
-    function attachEventListeners(row, rowIdSuffix,) {
-
+    function attachEventListeners(row, rowIdSuffix) {
         let inputGroupCount = 1;
 
-        const addColumnBtnB = row.querySelector(`#addColumnBtnB_${rowIdSuffix}_${inputGroupCount}`);
-        if (addColumnBtnB) {
-            addColumnBtnB.addEventListener("click", function (event) {
-                event.preventDefault();
-                inputGroupCount++;
-                addInput(`inputContainerB_${rowIdSuffix}_${inputGroupCount}`, "bagian_yang_dicheck[]", "Example: Push Button");
-            });
-        }
-
-        const addColumnBtnC = row.querySelector(`#addColumnBtnC_${rowIdSuffix}_${inputGroupCount}`);
-        if (addColumnBtnC) {
-            addColumnBtnC.addEventListener("click", function (event) {
-                event.preventDefault();
-                inputGroupCount++;
-                addInput(`inputContainerC_${rowIdSuffix}_${inputGroupCount}`, "metode_pengecekan[]", "Example: Dioperasikan");
-            });
-        }
         row.querySelector(`#addColumnBtnB_${rowIdSuffix}_${inputGroupCount}`).addEventListener("click", function (event) {
             event.preventDefault();
+            addInput(`columnContainerB_${rowIdSuffix}`, "standart_parameter[]", `parameter_${rowIdSuffix}_${inputGroupCount}`, "Example: Berfungsi dengan baik");
         });
 
         row.querySelector(`#addColumnBtnC_${rowIdSuffix}_${inputGroupCount}`).addEventListener("click", function (event) {
             event.preventDefault();
+            addInput(`columnContainerC_${rowIdSuffix}`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}_${inputGroupCount}`, "Example: Dioperasikan");
         });
 
-        row.querySelector(`#addRowBtn`).addEventListener("click", function (event) {
+        row.querySelector(".addRowBtn").addEventListener("click", function (event) {
             event.preventDefault();
             addRow();
         });
 
-        row.querySelector(`#removeRowBtn`).addEventListener("click", function (event) {
+        row.querySelector(".removeRowBtn").addEventListener("click", function (event) {
             event.preventDefault();
             removeRow();
         });
