@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function() {
     const addRowBtn = document.getElementById("addRowBtn");
     const removeRowBtn = document.getElementById("removeRowBtn");
 
@@ -17,31 +17,33 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     let rowCount = 1;
+    const inputCounts = {1: {A: 1, B: 1, C: 1}};
 
     function addRow() {
         const tableBody = document.getElementById("tableBody");
         const newRow = tableBody.insertRow(-1);
         rowCount++;
         const rowIdSuffix = rowCount;
-        let inputGroupCount = 1;
+        inputCounts[rowIdSuffix] = {A: 1, B: 1, C: 1};
+
         newRow.innerHTML =`
             <td id="columnContainerA_${rowIdSuffix}">
-                <div class="dynamic-input-group" id="inputContainerA_${rowIdSuffix}_${inputGroupCount}">
-                    <input type="text" name="bagian_yang_dicheck[]" id="componencheck_${rowIdSuffix}_${inputGroupCount}" placeholder="Example : Push Button">
+                <div class="dynamic-input-group" id="inputContainerA_${rowIdSuffix}_1">
+                    <input type="text" name="bagian_yang_dicheck[]" id="componencheck_${rowIdSuffix}_1" placeholder="Example : Push Button">
                 </div>
             </td>
             <td id="columnContainerB_${rowIdSuffix}">
-                <div class="dynamic-input-group" id="inputContainerB_${rowIdSuffix}_${inputGroupCount}">
-                    <input type="text" name="standart_parameter[]" id="parameter_${rowIdSuffix}_${inputGroupCount}" placeholder="Example : Berfungsi dengan baik">
-                    <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-plus"></i></button>
-                    <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-trash-alt"></i></button>
+                <div class="dynamic-input-group" id="inputContainerB_${rowIdSuffix}_1">
+                    <input type="text" name="standart_parameter[]" id="parameter_${rowIdSuffix}_1" placeholder="Example : Berfungsi dengan baik">
+                    <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}_1"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_${rowIdSuffix}_1"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
             <td id="columnContainerC_${rowIdSuffix}">
-                <div class="dynamic-input-group" id="inputContainerC_${rowIdSuffix}_${inputGroupCount}">
-                    <input type="text" name="metode_pengecekan[]" id="metodecheck_${rowIdSuffix}_${inputGroupCount}" placeholder="Example : Dioperasikan">
-                    <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-plus"></i></button>
-                    <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_${rowIdSuffix}_${inputGroupCount}"><i class="fas fa-trash-alt"></i></button>
+                <div class="dynamic-input-group" id="inputContainerC_${rowIdSuffix}_1">
+                    <input type="text" name="metode_pengecekan[]" id="metodecheck_${rowIdSuffix}_1" placeholder="Example : Dioperasikan">
+                    <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}_1"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_${rowIdSuffix}_1"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
             <td>
@@ -56,16 +58,14 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     function attachEventListeners(row, rowIdSuffix) {
-        let inputGroupCount = 1;
-
-        row.querySelector(`#addColumnBtnB_${rowIdSuffix}_${inputGroupCount}`).addEventListener("click", function (event) {
+        row.querySelector(`#addColumnBtnB_${rowIdSuffix}_1`).addEventListener("click", function (event) {
             event.preventDefault();
-            addInput(`columnContainerB_${rowIdSuffix}`, "standart_parameter[]", `parameter_${rowIdSuffix}_${inputGroupCount}`, "Example: Berfungsi dengan baik");
+            addInput(`columnContainerB_${rowIdSuffix}`, "standart_parameter[]", `parameter_${rowIdSuffix}`, "Example: Berfungsi dengan baik", rowIdSuffix, 'B');
         });
 
-        row.querySelector(`#addColumnBtnC_${rowIdSuffix}_${inputGroupCount}`).addEventListener("click", function (event) {
+        row.querySelector(`#addColumnBtnC_${rowIdSuffix}_1`).addEventListener("click", function (event) {
             event.preventDefault();
-            addInput(`columnContainerC_${rowIdSuffix}`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}_${inputGroupCount}`, "Example: Dioperasikan");
+            addInput(`columnContainerC_${rowIdSuffix}`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}`, "Example: Dioperasikan", rowIdSuffix, 'C');
         });
 
         row.querySelector(".addRowBtn").addEventListener("click", function (event) {
@@ -91,23 +91,27 @@ document.addEventListener("DOMContentLoaded", function(){
 
     document.getElementById("addColumnBtnB_1_1").addEventListener("click", function (event) {
         event.preventDefault();
-        addInput("columnContainerB_1", "standart_parameter[]", "parameter_1_1", "Example: Berfungsi dengan baik");
+        addInput("columnContainerB_1", "standart_parameter[]", "parameter_1", "Example: Berfungsi dengan baik", 1, 'B');
     });
 
     document.getElementById("addColumnBtnC_1_1").addEventListener("click", function (event) {
         event.preventDefault();
-        addInput("columnContainerC_1", "metode_pengecekan[]", "metodecheck_1_1", "Example: Dioperasikan");
+        addInput("columnContainerC_1", "metode_pengecekan[]", "metodecheck_1", "Example: Dioperasikan", 1, 'C');
     });
 
-    function addInput(containerId, inputName, inputId, placeholder) {
+    function addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId) {
         const inputContainer = document.getElementById(containerId);
+        if (!inputCounts[rowIdSuffix]) {
+            inputCounts[rowIdSuffix] = {A: 1, B: 1, C: 1};
+        }
+        const inputGroupCount = ++inputCounts[rowIdSuffix][columnId];
         const newInputGroup = document.createElement("div");
         newInputGroup.className = "dynamic-input-group";
 
         const newInput = document.createElement("input");
         newInput.type = "text";
         newInput.name = inputName;
-        newInput.id = inputId;
+        newInput.id = `${inputIdPrefix}_${inputGroupCount}`;
         newInput.placeholder = placeholder;
 
         const addButton = document.createElement("button");
@@ -116,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function(){
         addButton.innerHTML = '<i class="fas fa-plus"></i>';
         addButton.addEventListener("click", function (event) {
             event.preventDefault();
-            addInput(containerId, inputName, inputId, placeholder);
+            addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId);
         });
 
         const removeButton = document.createElement("button");

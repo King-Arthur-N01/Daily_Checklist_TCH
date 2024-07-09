@@ -135,29 +135,37 @@
 $(document).ready(function() {
     $('#registerform').on('submit', function(event) {
         event.preventDefault();
-        // Serialize each group of dynamic inputs separately
-        var bagianYangDicheck = [];
-        var standartParameter = [];
-        var metodePengecekan = [];
-
-        $('[id^="inputContainerA_"]').each(function() {
-            bagianYangDicheck.push($(this).find('input').val());
-        });
-        $('[id^="inputContainerB_"]').each(function() {
-            standartParameter.push($(this).find('input').val());
-        });
-        $('[id^="inputContainerC_"]').each(function() {
-            metodePengecekan.push($(this).find('input').val());
-        });
-
-        // Prepare the data to be sent
         var formData = {
             '_token': '{{ csrf_token() }}',
             name_property : $('input[name="name_property"]').val(),
-            bagian_yang_dicheck : bagianYangDicheck,
-            standart_parameter : standartParameter,
-            metode_pengecekan : metodePengecekan
         };
+
+        $('#tableBody tr').each(function(index) {
+            const rowIdSuffix = $(this).find('td:first-child').attr('id').split('_')[1];
+            const dynamicArrayName = `dataRows_${rowIdSuffix}`;
+            if (!formData[dynamicArrayName]) {
+                formData[dynamicArrayName] = {
+                    componencheck: [],
+                    parameter: [],
+                    metodecheck: []
+                };
+            }
+
+            $(this).find('input').each(function() {
+                const inputId = $(this).attr('id');
+                const inputName = $(this).attr('name');
+                const inputValue = $(this).val();
+
+                if (inputId.startsWith(`componencheck_${rowIdSuffix}_`)) {
+                    formData[dynamicArrayName].componencheck.push(inputValue);
+                } else if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
+                    formData[dynamicArrayName].parameter.push(inputValue);
+                } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
+                    formData[dynamicArrayName].metodecheck.push(inputValue);
+                }
+            });
+        });
+
         $.ajax({
             url: '{{ route("registerproperty") }}',
             type: 'POST',
