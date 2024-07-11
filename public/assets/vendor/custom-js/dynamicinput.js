@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <td id="columnContainerA_${rowIdSuffix}">
                 <div class="dynamic-input-group" id="inputContainerA_${rowIdSuffix}_1">
                     <input type="text" name="bagian_yang_dicheck[]" id="componencheck_${rowIdSuffix}_1" placeholder="Example : Push Button">
+                    <input type="hidden" name="total_user_input" id="userInputCount_${rowIdSuffix}" value="1">
                 </div>
             </td>
             <td id="columnContainerB_${rowIdSuffix}">
@@ -135,6 +136,9 @@ document.addEventListener("DOMContentLoaded", function() {
         newInputGroup.appendChild(addButton);
         newInputGroup.appendChild(removeButton);
         inputContainer.appendChild(newInputGroup);
+
+        // Increment the hidden input value
+        document.getElementById(`userInputCount_${rowIdSuffix}`).value = inputGroupCount;
     }
 
     function removeInput(button, containerId) {
@@ -144,6 +148,11 @@ document.addEventListener("DOMContentLoaded", function() {
             if (inputGroups.length > 1) {
                 const inputGroup = button.parentNode;
                 inputGroup.parentNode.removeChild(inputGroup);
+
+                // Decrement the hidden input value
+                const rowIdSuffix = containerId.split('_').pop();
+                const currentCount = parseInt(document.getElementById(`userInputCount_${rowIdSuffix}`).value, 10);
+                document.getElementById(`userInputCount_${rowIdSuffix}`).value = currentCount - 1;
             } else {
                 alert("At least one input must remain.");
             }

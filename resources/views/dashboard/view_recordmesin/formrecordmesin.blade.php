@@ -197,7 +197,7 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
     <script>
-        // Additional code for adding placeholder in search box of select2
+        // Additional code for adding placeholder in search box of select2.js
         (function($) {
             var Defaults = $.fn.select2.amd.require('select2/defaults');
             $.extend(Defaults.defaults, {

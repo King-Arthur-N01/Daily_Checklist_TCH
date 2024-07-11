@@ -89,6 +89,7 @@
                                     <td id="columnContainerA_1">
                                         <div class="dynamic-input-group" id="inputContainerA_1_1">
                                             <input type="text" name="bagian_yang_dicheck[]" id="componencheck_1_1" placeholder="Example : Push Button">
+                                            <input type="hidden" name="total_user_input[]" id="userInputCount_1" value="1">
                                         </div>
                                     </td>
                                     <td id="columnContainerB_1">
@@ -162,6 +163,8 @@ $(document).ready(function() {
                     formData[dynamicArrayName].parameter.push(inputValue);
                 } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
                     formData[dynamicArrayName].metodecheck.push(inputValue);
+                } else if (inputId.startsWith(`userInputCount_${rowIdSuffix}`)) {
+                    formData[dynamicArrayName].user_input_count = inputValue;
                 }
             });
         });

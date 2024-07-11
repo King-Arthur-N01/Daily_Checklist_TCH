@@ -4,10 +4,11 @@ namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
 use App\Machineproperty;
-use app\Componencheck;
+use App\Componencheck;
 use App\Parameter;
 use App\Metodecheck;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class MachinepropertyController extends Controller
@@ -25,7 +26,6 @@ class MachinepropertyController extends Controller
     }
     public function addproperty(Request $request)
     {
-        dd($request);
         try {
             $StoreProperty = new Machineproperty();
             $StoreProperty->name_property = $request->input('name_property');
@@ -33,32 +33,38 @@ class MachinepropertyController extends Controller
 
             $machinepropertyid = Machineproperty::latest('id')->first()->id;
 
-            $bagianYangDicheck = $request->input('bagian_yang_dicheck');
-            $standartParameter = $request->input('standart_parameter');
-            $metodePengecekan = $request->input('metode_pengecekan');
+            foreach ($request->all() as $key => $dataRow) {
+                if (strpos($key, 'dataRows_') === 0) {
+                    $componentChecks = $dataRow['componencheck'];
+                    $parameters = $dataRow['parameter'];
+                    $checkMethods = $dataRow['metodecheck'];
+                    $userInputCount = (int) $dataRow['user_input_count'];
 
-            foreach ($bagianYangDicheck as $key => $value) {
-                $StoreComponent = new Componencheck();
-                $StoreComponent->name_componencheck = $value;
-                $StoreComponent->id_property2 = $machinepropertyid;
-                $StoreComponent->save();
+                    $StoreComponent = new Componencheck();
+                    $StoreComponent->name_componencheck = $componentChecks[0];
+                    $StoreComponent->id_property2 = $machinepropertyid;
+                    $StoreComponent->save();
 
-                $componencheckid = Componencheck::latest('id')->first()->id;
+                    $componencheckid = Componencheck::latest('id')->first()->id;
 
-                $StoreParameter = new Parameter();
-                $StoreParameter->name_parameter = $standartParameter[$key];
-                $StoreParameter->id_componencheck = $componencheckid;
-                $StoreParameter->save();
+                    for ($i = 0; $i < $userInputCount; $i++) {
+                        $StoreParameter = new Parameter();
+                        $StoreParameter->name_parameter = $parameters[$i];
+                        $StoreParameter->id_componencheck = $componencheckid;
+                        $StoreParameter->save();
 
-                $parameterid = Parameter::latest('id')->first()->id;
+                        $parameterid = Parameter::latest('id')->first()->id;
 
-                $StoreMetode = new Metodecheck();
-                $StoreMetode->name_metodecheck = $metodePengecekan[$key];
-                $StoreMetode->id_parameter = $parameterid;
-                $StoreMetode->save();
+                        $StoreMethod = new Metodecheck();
+                        $StoreMethod->name_metodecheck = $checkMethods[$i];
+                        $StoreMethod->id_parameter = $parameterid;
+                        $StoreMethod->save();
+                    }
+                }
             }
         } catch (\Exception $e) {
-            // handle exception
+            Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            return response()->json(['message' => 'Server Error'], 500);
         }
     }
 }
