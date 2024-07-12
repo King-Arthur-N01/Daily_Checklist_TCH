@@ -25,7 +25,7 @@ Route::get ('/manageuser','Auth\RegisterController@readusertable')->name('manage
 Route::post('/manageuser/register','Auth\RegisterController@authenticatecreate')->name('pushregisteruser');
 Route::get ('/manageuser/{id}','Auth\RegisterController@fetchdatauser')->name('fetchedituser');
 Route::put ('/manageuser/{id}','Auth\RegisterController@authenticateedit')->name('pushedituser');
-Route::delete ('/manageuser/userdelete/{id}','Auth\RegisterController@deleteuser')->name('removeuser');
+Route::delete ('/manageuser/remove/{id}','Auth\RegisterController@deleteuser')->name('removeuser');
 Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end
 
@@ -53,7 +53,7 @@ Route::post ('/machineproperty/register','MachineData\MachinepropertyController@
 // Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@indexeditmethod')->name('editmethod');
 // Route::put('/machineproperty/{id}','MachineData\MachinepropertyController@editmethod')->name('pusheditmethod');
 // Route::get('/machineproperty','MachineData\MachinepropertyController@indextablemethod')->name('managemethod');
-// Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@deletemethod')->name('deletemethod');
+Route::delete ('/machineproperty/remove/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end
 
 // componencheck route

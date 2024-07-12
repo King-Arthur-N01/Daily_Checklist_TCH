@@ -29,26 +29,26 @@ document.addEventListener("DOMContentLoaded", function() {
         newRow.innerHTML =`
             <td id="columnContainerA_${rowIdSuffix}">
                 <div class="dynamic-input-group" id="inputContainerA_${rowIdSuffix}_1">
-                    <input type="text" name="bagian_yang_dicheck[]" id="componencheck_${rowIdSuffix}_1" placeholder="Example : Push Button">
+                    <textarea type="text" class="form-control" style="height: 100px;" name="bagian_yang_dicheck[]" id="componencheck_${rowIdSuffix}_1" placeholder="Example : Push Button"></textarea>
                     <input type="hidden" name="total_user_input" id="userInputCount_${rowIdSuffix}" value="1">
                 </div>
             </td>
             <td id="columnContainerB_${rowIdSuffix}">
                 <div class="dynamic-input-group" id="inputContainerB_${rowIdSuffix}_1">
-                    <input type="text" name="standart_parameter[]" id="parameter_${rowIdSuffix}_1" placeholder="Example : Berfungsi dengan baik">
+                    <input type="text" class="form-control form-control-user" name="standart_parameter[]" id="parameter_${rowIdSuffix}_1" placeholder="Example : Berfungsi dengan baik">
                     <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}_1"><i class="fas fa-plus"></i></button>
                     <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_${rowIdSuffix}_1"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
             <td id="columnContainerC_${rowIdSuffix}">
                 <div class="dynamic-input-group" id="inputContainerC_${rowIdSuffix}_1">
-                    <input type="text" name="metode_pengecekan[]" id="metodecheck_${rowIdSuffix}_1" placeholder="Example : Dioperasikan">
+                    <input type="text" class="form-control form-control-user" name="metode_pengecekan[]" id="metodecheck_${rowIdSuffix}_1" placeholder="Example : Dioperasikan">
                     <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}_1"><i class="fas fa-plus"></i></button>
                     <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_${rowIdSuffix}_1"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </td>
             <td>
-                <div class="dynamic-input-group action-buttons">
+                <div class="dynamic-button-group">
                     <button type="button" class="btn btn-success btn-sm addRowBtn">Add Rows</button>
                     <button type="button" class="btn btn-danger btn-sm removeRowBtn">Delete Rows</button>
                 </div>
@@ -67,6 +67,16 @@ document.addEventListener("DOMContentLoaded", function() {
         row.querySelector(`#addColumnBtnC_${rowIdSuffix}_1`).addEventListener("click", function (event) {
             event.preventDefault();
             addInput(`columnContainerC_${rowIdSuffix}`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}`, "Example: Dioperasikan", rowIdSuffix, 'C');
+        });
+
+        row.querySelector(`#removeColumnBtnB_${rowIdSuffix}_1`).addEventListener("click", function (event) {
+            event.preventDefault();
+            removeInput(this, `columnContainerB_${rowIdSuffix}`);
+        });
+
+        row.querySelector(`#removeColumnBtnC_${rowIdSuffix}_1`).addEventListener("click", function (event) {
+            event.preventDefault();
+            removeInput(this, `columnContainerC_${rowIdSuffix}`);
         });
 
         row.querySelector(".addRowBtn").addEventListener("click", function (event) {
@@ -100,6 +110,16 @@ document.addEventListener("DOMContentLoaded", function() {
         addInput("columnContainerC_1", "metode_pengecekan[]", "metodecheck_1", "Example: Dioperasikan", 1, 'C');
     });
 
+    document.getElementById("removeColumnBtnB_1_1").addEventListener("click", function (event) {
+        event.preventDefault();
+        removeInput(this, `inputContainerB_1_1`);
+    });
+
+    document.getElementById("removeColumnBtnC_1_1").addEventListener("click", function (event) {
+        event.preventDefault();
+        removeInput(this, `inputContainerC_1_1`);
+    });
+
     function addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId) {
         const inputContainer = document.getElementById(containerId);
         if (!inputCounts[rowIdSuffix]) {
@@ -111,6 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const newInput = document.createElement("input");
         newInput.type = "text";
+        newInput.className = "form-control form-control-user";
         newInput.name = inputName;
         newInput.id = `${inputIdPrefix}_${inputGroupCount}`;
         newInput.placeholder = placeholder;

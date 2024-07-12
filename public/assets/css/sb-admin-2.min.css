@@ -2201,7 +2201,7 @@ pre code {
 .form-control {
     display: block;
     width: 100%;
-    height: calc(1.5em + .75rem + 2px);
+    /* height: calc(1.5em + .75rem + 2px); */
     padding: .375rem .75rem;
     font-size: 1rem;
     font-weight: 400;
@@ -3943,9 +3943,9 @@ input[type=submit].btn-block {
 .dynamic-input-group {
     display: flex;
     margin-bottom: 5px;
-    justify-content: center;
-    flex-wrap: wrap;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .dynamic-input-group input {
@@ -3980,6 +3980,8 @@ input[type=submit].btn-block {
 .dynamic-button-add:hover, .dynamic-button-delete:hover {
     opacity: 0.8;
 }
+
+.dynamic-button-group{display: inline-grid;}
 
 .input-group>.custom-file,
 .input-group>.custom-select,

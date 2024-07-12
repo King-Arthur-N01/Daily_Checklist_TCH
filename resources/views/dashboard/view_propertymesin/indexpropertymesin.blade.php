@@ -44,7 +44,7 @@
                                         <td>{{ $propertyget->metodecheck_count }}</td>
                                         <td>
                                             <a class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $propertyget->id }}" data-target="#EditModal">Edit</a>
-                                            <a class="btn btn-danger btn-sm" style="color:white" href="#" onclick="return confirm('Yakin Hapus?')">Delete</a>
+                                            <a class="btn btn-danger btn-sm" id="deleteButton" data-id="{{ $propertyget->id }}" style="color:white">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -88,26 +88,26 @@
                                 <tr>
                                     <td id="columnContainerA_1">
                                         <div class="dynamic-input-group" id="inputContainerA_1_1">
-                                            <input type="text" name="bagian_yang_dicheck[]" id="componencheck_1_1" placeholder="Example : Push Button">
+                                            <textarea type="text" class="form-control" style="height: 90px;" name="bagian_yang_dicheck[]" id="componencheck_1_1" placeholder="Example : Push Button"></textarea>
                                             <input type="hidden" name="total_user_input[]" id="userInputCount_1" value="1">
                                         </div>
                                     </td>
                                     <td id="columnContainerB_1">
                                         <div class="dynamic-input-group" id="inputContainerB_1_1">
-                                            <input type="text" name="standart_parameter[]" id="parameter_1_1" placeholder="Example : Berfungsi dengan baik">
+                                            <input type="text" class="form-control form-control-user" name="standart_parameter[]" id="parameter_1_1" placeholder="Example : Berfungsi dengan baik">
                                             <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_1_1"><i class="fas fa-plus"></i></button>
                                             <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_1_1"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                     <td id="columnContainerC_1">
                                         <div class="dynamic-input-group" id="inputContainerC_1_1">
-                                            <input type="text" name="metode_pengecekan[]" id="metodecheck_1_1" placeholder="Example : Dioperasikan">
+                                            <input type="text" class="form-control form-control-user" name="metode_pengecekan[]" id="metodecheck_1_1" placeholder="Example : Dioperasikan">
                                             <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_1_1"><i class="fas fa-plus"></i></button>
                                             <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_1_1"><i class="fas fa-trash-alt"></i></button>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="dynamic-input-group action-buttons">
+                                        <div class="dynamic-button-group">
                                             <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add Rows</i></button>
                                             <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Delete Rows</i></button>
                                         </div>
@@ -152,14 +152,21 @@ $(document).ready(function() {
                 };
             }
 
+            $(this).find('textarea').each(function() {
+                const textareaId = $(this).attr('id');
+                const textareaName = $(this).attr('name');
+                const textareaValue = $(this).val();
+
+                if (textareaId.startsWith(`componencheck_${rowIdSuffix}_`)) {
+                    formData[dynamicArrayName].componencheck.push(textareaValue);
+                }
+            });
             $(this).find('input').each(function() {
                 const inputId = $(this).attr('id');
                 const inputName = $(this).attr('name');
                 const inputValue = $(this).val();
 
-                if (inputId.startsWith(`componencheck_${rowIdSuffix}_`)) {
-                    formData[dynamicArrayName].componencheck.push(inputValue);
-                } else if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
+                if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
                     formData[dynamicArrayName].parameter.push(inputValue);
                 } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
                     formData[dynamicArrayName].metodecheck.push(inputValue);
@@ -168,22 +175,69 @@ $(document).ready(function() {
                 }
             });
         });
+        if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
+            $.ajax({
+                url: '{{ route("registerproperty") }}',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        const successMessage = response.success;
+                        $('#successText').text(successMessage);
+                        $('#successModal').modal('show');
 
-        $.ajax({
-            url: '{{ route("registerproperty") }}',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                // Handle success
-                console.log(response);
-                alert('Data submitted successfully');
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error(error);
-                alert('Failed to submit data');
-            }
-        });
+                    }
+                    $('#registerModal').modal('hide'); // Hide modal on success
+                },
+                error: function(xhr, status, error) {
+                    var warningMessage = xhr.responseText;
+                    try {
+                        warningMessage = JSON.parse(xhr.responseText).error;
+                    } catch (e) {
+                        console.error('Error parsing error message:',e);
+                    }
+                    $('#failedText').text(
+                        warningMessage); // Set the error message in the modal
+                    $('#failedModal').modal('show'); // Show error modal
+                        console.error('Error saving machine record: ' + error);
+                    $('#editModal').modal('hide'); // Hide modal on error
+                }
+            }).always(function() {
+                setTimeout(function() {
+                    location.reload(); // Refresh the page after a 2-second delay
+                }, 2000); // 2000 milliseconds = 2 seconds
+            });
+        } else {
+            // User cancelled the deletion, do nothing
+        }
+    });
+    $(document).on('click', '#deleteButton', function(e) {
+        e.preventDefault();
+        var propertyId = $(this).data("id");
+        if (confirm("Apakah yakin menghapus standarisasi ini?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: "{{ route('removeproperty', ':id') }}".replace(':id', propertyId),
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                }
+            }).done(function(response) {
+                if (response.success) {
+                    alert('Standarisasi berhasil dihapus.'); // Alert success message
+                } else {
+                    alert('Error: Standarisasi gagal dihapus!.'); // Alert failure message
+                }
+                $('#ExtralargeModal').modal('hide');
+            }).fail(function(xhr, status, error) {
+                alert('This PROPERTY has been deleted by someone!'); // Alert error message
+            }).always(function() {
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            });
+        } else {
+            // User cancelled the deletion, do nothing
+        }
     });
 });
 </script>

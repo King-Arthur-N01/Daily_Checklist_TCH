@@ -67,4 +67,12 @@ class MachinepropertyController extends Controller
             return response()->json(['message' => 'Server Error'], 500);
         }
     }
+    public function deleteproperty($id) {
+        $deleteproperty = Machineproperty::where('id', $id)->delete();
+        if ($deleteproperty > 0) {
+            return response()->json(['success' => 'Data user berhasil dihapus.']);
+        } else {
+            return response()->json(['error' => 'Data user gagal dihapus!'], 422);
+        }
+    }
 }

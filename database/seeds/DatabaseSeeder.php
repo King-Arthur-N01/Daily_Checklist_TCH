@@ -14,11 +14,11 @@ class DatabaseSeeder extends Seeder
         // $this->call(UserSeeder::class);
         $this->call([
         PermissionSeeder::class,
-        // MachinesSeeder::class,
-        // MachinepropertySeeder::class,
-        // ComponencheckSeeder::class,
-        // ParameterSeeder::class,
-        // MetodecheckSeeder::class
+        MachinesSeeder::class,
+        MachinepropertySeeder::class,
+        ComponencheckSeeder::class,
+        ParameterSeeder::class,
+        MetodecheckSeeder::class
         ]);
     }
 }
