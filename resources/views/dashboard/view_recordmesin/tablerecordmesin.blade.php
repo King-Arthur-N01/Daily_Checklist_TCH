@@ -78,9 +78,10 @@
                                         @else
                                             <td data-id="{{ $getmachine->id_property }}">{{ $getmachine->id_property }}</td>
                                         @endif
-                                        {{-- <td>{{ $getmachine->invent_number }}</td> --}}
                                         <td>
-                                            <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $getmachine->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                            <div class="dynamic-button-group">
+                                                <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $getmachine->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -122,8 +123,11 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#recordsTable').DataTable({ // Disable sorting for columns
-            columnDefs: [{"orderable": false, "targets": [5]}]
+            $('#recordTables').DataTable({ // Disable sorting for columns
+                columnDefs: [{
+                    "orderable": false,
+                    "targets": [5]
+                }]
             });
             $('.select2').select2({
                 placeholder: 'Select :',
@@ -140,8 +144,8 @@
                         type: 'GET',
                         url: '{{ route('fetchtablerecord', ':id') }}'.replace(':id', id),
                         success: function(data) {
-                            if (data.gettotaltime) {
-                                idCell.text('Terakhir kali preventive ' + data.gettotaltime);
+                            if (data.gettotalhours && data.gettotaldays) {
+                                idCell.text('Terakhir preventive ' + data.gettotaldays + ' hari ' + data.gettotalhours + ' jam yang lalu');
                             } else {
                                 idCell.text('Error fetching data');
                             }

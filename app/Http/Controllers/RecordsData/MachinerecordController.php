@@ -31,16 +31,20 @@ class MachinerecordController extends Controller
             if ($lastrecord) {
                 $lasttime = Carbon::parse($lastrecord->record_time);
                 $totaltime = $currenttime->diff($lasttime);
-                $gettotaltime = $totaltime->format('%h:%I:%S');
-                return response()->json(['gettotaltime' => $gettotaltime]);
+                $gettotalhours = $totaltime->format('%h:%I:%S');
+                $gettotaldays = $totaltime->format('%d');
+                return response()->json([
+                    'gettotalhours' => $gettotalhours,
+                    'gettotaldays' => $gettotaldays
+                ]);
             } else {
-                return response()->json(['error' => 'No records found for the given machine ID'], 404);
+                return response()->json(['error' => 'No records found for the given machine ID'], 422);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
-    
+
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
     {

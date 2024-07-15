@@ -41,6 +41,7 @@ Route::delete('/machine/deletemachine/{id}','MachineData\MachineController@delet
 // machine import route
 Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('managemachinedata');
 Route::post('/machinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
+Route::post ('/machinedata/print/{id}','MachineData\ImportdataController@exportpdf')->name('exportfile');
 Route::get ('/machinedata/fetch/table/{id}','MachineData\ImportdataController@gettableimport')->name('fetchtableproperty');
 Route::get ('/machinedata/fetch/view/{id}','MachineData\ImportdataController@detailproperty')->name('fetchdetailproperty');
 Route::get ('/machinedata/fetch/data/{id}','MachineData\ImportdataController@viewproperty')->name('fetchviewproperty');

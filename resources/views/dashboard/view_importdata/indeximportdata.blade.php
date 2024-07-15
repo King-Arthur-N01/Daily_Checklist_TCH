@@ -82,11 +82,13 @@
                                                 <td data-id="{{ $machineget->id_property }}">{{ $machineget->id_property }}</td>
                                             @endif
                                             <td>
-                                                <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                                <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                                    <a class="dropdown-item-custom-delete" id="deleteButton" data-id="{{ $machineget->id }}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                                <div class="dynamic-button-group">
+                                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                                    <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                                        <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                                        <a class="dropdown-item-custom-delete" id="deleteButton" data-id="{{ $machineget->id }}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -145,15 +147,14 @@
     <!-- End Edit Modal-->
 
     <!-- View Machine Property Modal -->
-    <div class="modal fade" id="ExtralargeModal" tabindex="-1">
+    <div class="modal fade" id="viewModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_view">
                 </div>
                 <div class="modal-body" id="modal_data_view">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <div class="modal-footer" id="modal_button_view">
                 </div>
             </div>
         </div>
@@ -255,7 +256,7 @@
                             $('#failedText').text(warningMessage);
                             $('#failedModal').modal('show');
                         }
-                        $('#ExtralargeModal').modal('hide');
+                        $('#uploadModal').modal('hide');
                     }
                 }).always(function() {
                     setTimeout(function() {
@@ -263,12 +264,14 @@
                     }, 2000); // 2000 milliseconds = 2 seconds
                 });
             });
+
+            // fungsi untuk mengedit atau menambahkan standarisasi ke mesin
             $('#editModal').on('shown.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
                 const machineId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchviewproperty', ':id') }}'.replace(':id', machineId),
+                    url: '{{ route("fetchviewproperty", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
@@ -278,6 +281,7 @@
                         } else {
                             console.error('fetchproperty is not an array:', data.fetchproperty);
                         }
+
                         const header_modal = `
                             <h6 class="modal-title">Standarisasi Mesin</h6>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -324,7 +328,7 @@
                             var idProperty = $('#getproperty').val();
                             $.ajax({
                                 type: 'PUT',
-                                url: '{{ route('fetchdataproperty', ':id') }}'
+                                url: '{{ route("fetchdataproperty", ':id') }}'
                                     .replace(':id', machineId),
                                 data: {
                                     '_token': '{{ csrf_token() }}', // Include the CSRF token
@@ -364,6 +368,7 @@
                     }
                 });
             });
+
             // fungsi delete button untuk hapus mesin
             $('#deleteButton').on('click', function(e) {
                 const button = $(event.relatedTarget);
@@ -371,7 +376,7 @@
                 if (confirm("Apakah yakin menghapus mesin ini?")) {
                     $.ajax({
                         type: 'DELETE',
-                        url: "{{ route('removemachine', ':id') }}".replace(':id', machineId),
+                        url: '{{ route("removemachine", ':id') }}'.replace(':id', machineId),
                         data: {
                             '_token': '{{ csrf_token() }}'
                         }
@@ -396,13 +401,14 @@
                     // User cancelled the deletion, do nothing
                 }
             });
+
             //fungsi button get detail mesin
-            $('#ExtralargeModal').on('shown.bs.modal', function(event) {
+            $('#viewModal').on('shown.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
                 const id = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchdetailproperty', ':id') }}'.replace(':id', id),
+                    url: '{{ route("fetchdetailproperty", ':id') }}'.replace(':id', id),
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
                             $('#modal_data_view').html(
@@ -463,9 +469,53 @@
                                     </tbody>
                                 </table>
                             `;
+                            const button_modal = `
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" data-id="{{ $machineget->id }}" id="printButton">Print Mesin</button>
+                            `;
                             $('#modal_title_view').html(header_modal);
                             $('#modal_data_view').html(data_modal);
+                            $('#modal_button_view').html(button_modal);
                             mergeCells();
+
+                            // Add event listener to print button
+                            $('#printButton').on('click', function() {
+                                var idMachine = data.id;
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '{{ route("exportfile", ':id') }}'
+                                        .replace(':id', idMachine),
+                                    data: {
+                                        '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                        'id_machine': idMachine
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            const successMessage = response.success;
+                                            $('#successText').text(successMessage);
+                                            $('#successModal').modal('show'); // Show success modal
+                                        }
+                                        $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                                    },
+                                    error: function(xhr, status, error) {
+                                        var warningMessage = xhr.responseText;
+                                        try {
+                                            warningMessage = JSON.parse(xhr.responseText).error;
+                                        } catch (e) {
+                                            console.error('Error parsing error message:',e);
+                                        }
+                                        $('#failedText').text(
+                                            warningMessage); // Set the error message in the modal
+                                        $('#failedModal').modal('show'); // Show error modal
+                                            console.error('Error saving machine record: ' + error);
+                                        $('#editModal').modal('hide'); // Hide modal on error
+                                    }
+                                }).always(function() {
+                                    setTimeout(function() {
+                                        location.reload(); // Refresh the page after a 2-second delay
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                });
+                            });
                         }
                     },
                     error: function(xhr, status, error) {

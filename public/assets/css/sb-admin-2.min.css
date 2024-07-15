@@ -3981,7 +3981,7 @@ input[type=submit].btn-block {
     opacity: 0.8;
 }
 
-.dynamic-button-group{display: inline-grid;}
+.dynamic-button-group{display: flex;align-content: center;flex-direction: column;align-items: center;}
 
 .input-group>.custom-file,
 .input-group>.custom-select,

@@ -6,17 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Imports\Importdata;
+use App\Importdata;
 use App\Machine;
 use App\Machineproperty;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+
 class ImportdataController extends Controller
 {
     // fungsi index upload data mesin
     public function indeximport()
     {
         $machines = Machine::get();
-        return view('dashboard.view_importdata.indeximportdata',['machines' => $machines]);
+        return view('dashboard.view_importdata.indeximportdata', ['machines' => $machines]);
     }
     public function gettableimport($id)
     {
@@ -32,13 +34,13 @@ class ImportdataController extends Controller
     {
         try {
             $fetchmachines = DB::table('machines')
-            ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
-            ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-            ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-            ->where('machines.id', '=', $id)
-            ->get();
+                ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+                ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+                ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machines.id', '=', $id)
+                ->get();
             return response()->json(['fetchmachines' => $fetchmachines]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -67,8 +69,7 @@ class ImportdataController extends Controller
         $registerproperty = Machine::find($id);
         if (!$registerproperty) {
             return response()->json(['error' => 'Data mesin tidak berhasil ditemukan !!!!'], 404);
-        }
-        else {
+        } else {
             $registerproperty->update([
                 'id_property' => $request->input('id_property')
             ]);
@@ -86,6 +87,28 @@ class ImportdataController extends Controller
             return response()->json(['success' => 'Data imported successfully!']);
         } catch (\Exception $e) {
             // Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
+        }
+    }
+    public function exportpdf($id)
+    {
+        try {
+            //mendapatkan data work order
+            $joinmachine = DB::table('machines')
+            ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
+            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
+            ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
+            ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
+            ->where('machines.id', '=', $id)
+            ->get();
+            //menyimpan data di array
+            $machinedata = get_object_vars($joinmachine);
+            //merender pdf
+            $pdf = PDF::loadview('view_importdata.viewprintpdf', $machinedata);
+            $pdf->setPaper('A4', 'landscape');
+            return $pdf->download('data.pdf');
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
         }
     }
