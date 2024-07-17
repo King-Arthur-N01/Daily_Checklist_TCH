@@ -43,7 +43,7 @@
 *,
 ::after,
 ::before {
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 html {
@@ -2183,10 +2183,9 @@ pre code {
 }
 
 .table-header{
-    /* display: flex; */
     text-transform: uppercase;
     border: dotted 2px;
-    background-position: center;
+    /* background-position: center; */
 }
 
 .header-input{

@@ -93,23 +93,33 @@ class ImportdataController extends Controller
     public function exportpdf($id)
     {
         try {
-            //mendapatkan data work order
+            // Fetching data from the database
             $joinmachine = DB::table('machines')
-            ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
-            ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
-            ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
-            ->where('machines.id', '=', $id)
-            ->get();
-            //menyimpan data di array
-            $machinedata = get_object_vars($joinmachine);
-            //merender pdf
-            $pdf = PDF::loadview('view_importdata.viewprintpdf', $machinedata);
-            $pdf->setPaper('A4', 'landscape');
-            return $pdf->download('data.pdf');
+                ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
+                ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+                ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
+                ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
+                ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
+                ->where('machines.id', '=', $id)
+                ->get();
+
+            // Convert collection to array
+            // $machinedata = get_object_vars($joinmachine);
+            $machinedata = $joinmachine->toArray();
+
+            // Render PDF
+            $pdf = PDF::loadView('dashboard.view_importdata.viewprintpdf', compact('machinedata'));
+            $pdf->setPaper('A4', 'portrait');
+
+            return $pdf->stream();
+            // return $pdf->download('data.pdf');
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
+            dd($e->getMessage());
+            // Log the error for debugging purposes
+            Log::error('DOM PDF failed: '.$e->getMessage());
+
+            return response()->json(['error' => 'Data Preventive FAILED to be downloaded!']);
         }
     }
+
 }

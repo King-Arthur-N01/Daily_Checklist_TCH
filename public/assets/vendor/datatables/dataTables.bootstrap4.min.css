@@ -206,7 +206,7 @@ table.dataTable.table-sm .sorting_desc:after {
 }
 
 table.table-bordered.dataTable {
-    border-right-width: 0
+    border-right-width: 0;
 }
 
 table.table-bordered.dataTable th,

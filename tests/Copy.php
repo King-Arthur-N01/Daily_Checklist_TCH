@@ -1375,3 +1375,87 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 });
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PDF Preventive Mesin</title>
+</head>
+
+<body>
+    <div>
+        <table>
+            <tbody>
+                <tr>
+                    <th>No. Invent Mesin :</th>
+                    <th>{{ $machinedata[0]->invent_number }}</th>
+                    <th>Spec/Tonage :</th>
+                    <th>{{ $machinedata[0]->machine_spec }}</th>
+                </tr>
+                <tr>
+                    <th>Nama Mesin :</th>
+                    <th>{{ $machinedata[0]->machine_name }}</th>
+                    <th>Buatan :</th>
+                    <th>{{ $machinedata[0]->machine_made }}</th>
+                </tr>
+                <tr>
+                    <th>Brand/Merk :</th>
+                    <th>{{ $machinedata[0]->machine_brand }}</th>
+                    <th>Mfg.NO :</th>
+                    <th>{{ $machinedata[0]->mfg_number }}</th>
+                </tr>
+                <tr>
+                    <th>Model/Type :</th>
+                    <th>{{ $machinedata[0]->machine_type }}</th>
+                    <th>Install Date :</th>
+                    <th>{{ $machinedata[0]->install_date }}</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <div>
+            <a>NO.MESIN :</a>
+            <input>
+        </div>
+        <div>
+            <a>WAKTU PREVENTIVE :</a>
+            <input>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Mesin</th>
+                <th>Bagian Yang Dicheck</th>
+                <th>Standart/Parameter</th>
+                <th>Metode Pengecekan</th>
+                <th>Action</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($machinedata as $key => $recordsget)
+                <tr>
+                    <td>{{ $recordsget->machine_name }}</td>
+                    <td>{{ $recordsget->name_componencheck }}</td>
+                    <td>{{ $recordsget->name_parameter }}</td>
+                    <td>{{ $recordsget->name_metodecheck }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <div>
+        <label>Keterangan</label>
+        <textarea></textarea>
+    </div>
+</body>
+
+</html>
