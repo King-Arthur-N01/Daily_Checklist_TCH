@@ -17,65 +17,6 @@
             /* text-align: center; */
             background-color: #fff;
         }
-        .col-1 {
-            flex: 0 0 8.33333%;
-            max-width: 8.33333%
-        }
-
-        .col-2 {
-            flex: 0 0 16.66667%;
-            max-width: 16.66667%
-        }
-
-        .col-3 {
-            flex: 0 0 25%;
-            max-width: 25%
-        }
-
-        .col-4 {
-            flex: 0 0 33.33333%;
-            max-width: 33.33333%
-        }
-
-        .col-5 {
-            flex: 0 0 41.66667%;
-            max-width: 41.66667%
-        }
-
-        .col-6 {
-            flex: 0 0 50%;
-            max-width: 50%
-        }
-
-        .col-7 {
-            flex: 0 0 58.33333%;
-            max-width: 58.33333%
-        }
-
-        .col-8 {
-            flex: 0 0 66.66667%;
-            max-width: 66.66667%
-        }
-
-        .col-9 {
-            flex: 0 0 75%;
-            max-width: 75%
-        }
-
-        .col-10 {
-            flex: 0 0 83.33333%;
-            max-width: 83.33333%
-        }
-
-        .col-11 {
-            flex: 0 0 91.66667%;
-            max-width: 91.66667%
-        }
-
-        .col-12 {
-            flex: 0 0 100%;
-            max-width: 100%
-        }
 
         .form-header{
             color: #000000;
@@ -87,18 +28,12 @@
             text-align: center;
         }
 
-        .header-input{
-            display: flex;
-            flex-wrap: wrap;
-        }
-
         .table-header {
             width: 100%;
             clear: both;
-            margin-top: 6px !important;
-            margin-bottom: 6px !important;
+            /* margin-top: 5px !important; */
+            /* margin: 4px 0px 4px 0px !important; */
             max-width: none !important;
-            border-collapse: separate !important;
             border-spacing: 0;
             font-size: smaller;
 
@@ -108,49 +43,110 @@
         .table-header tr th {
             text-transform: uppercase;
             border: 0.5px transparent;
-            padding: 5px;
+            /* padding: 5px; */
             vertical-align: top;
             text-align: left;
             /* border: 0.5px solid #000000; */
         }
 
+        .table-input {
+            width: 100%;
+            clear: both;
+            /* margin-top: 5px !important; */
+            margin: 4px 0px 4px 0px !important;
+            max-width: none !important;
+            border-spacing: 0;
+            font-size: smaller;
+            border: 0.3px solid #000000;
+            color: #282828;
+        }
+        .table-input tr th {
+            text-transform: uppercase;
+            padding: 5px;
+            vertical-align: top;
+            text-align: left;
+            border: 0.2px solid #000000;
+        }
+
+        .table-text{
+            padding: 0px 0px 4px 0px;
+            width: 100%;
+            color: #000000;
+            /* border: 0.5px solid #000000; */
+        }
+        .table-text tr td{
+            /* border: 0.5px solid #000000; */
+            text-align: left;
+            /* vertical-align: top; */
+        }
+        .table-text tr th{
+            text-transform: uppercase;
+            text-align: left;
+            /* vertical-align: top; */
+        }
+
+        .table-signature{
+            clear: both;
+            margin: 14px 0px 14px 0px !important;
+            /* padding: 0px 0px 4px 0px; */
+            width: 100%;
+            color: #000000;
+            max-width: none !important;
+            border-spacing: 0;
+            font-size: smaller;
+            align-items: center;
+            /* border: 0.4px solid #000000; */
+        }
+        .table-signature tr td{
+            border: 0.3px solid #000000;
+            border-block: 0.3px, solid #000000;
+            padding: 3px;
+        }
+        .table-signature tr th{
+            text-transform: uppercase;
+            text-align: center;
+            border: 0.3px solid #000000;
+            padding: 3px;
+        }
+
         .table {
             width: 100%;
             clear: both;
-            margin-top: 6px !important;
-            margin-bottom: 6px !important;
+            margin: 14px 0px 14px 0px !important;
+            /* margin-top: 6px !important; */
+            /* margin-bottom: 6px !important; */
             max-width: none !important;
-            border-collapse: separate !important;
             border-spacing: 0;
             font-size: smaller;
-            border: 0.5px solid #000000;
-            color: #282828;
+            align-items: center;
+            border: 0.4px solid #000000;
+            color: #000000;
         }
         .table tr th {
             text-transform: uppercase;
-            border: 0.5px solid #000000;
-            padding: 5px;
-            vertical-align: top;
+            border: 0.3px solid #000000;
+            padding: 3px;
         }
         .table tr td{
-            border: 0.5px solid #000000;
-            padding: 5px;
-            vertical-align: top;
+            border: 0.3px solid #000000;
+            padding: 3px;
         }
+
         .form-control {
             width: 100%;
             /* height: calc(1.5em + .75rem + 2px); */
-            padding: .375rem .75rem;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 1.5;
+            /* padding: 5px 5px 5px 5px; */
+            /* font-weight: 400; */
+            line-height: 20px;
             border: 0.5px solid #000000;
             /* border-radius: .35rem; */
         }
-        .form-custom{
-            width: 100%;
-            line-height: 1.5;
-            padding: .375rem .75rem;
+        .textarea-control{
+            height: 150px;
+        }
+
+        #hidden-column {
+            border: none
         }
     </style>
 </head>
@@ -195,25 +191,23 @@
             </tr>
         </tbody>
     </table>
-    <table class="table-header">
+    <table class="table-input">
         <tbody>
             <tr>
-                <th>NO.MESIN :</th>
-                <th><input class="form-custom"></th>
+                <th>NO. MESIN :</th>
                 <th>TANGGAL :</th>
-                <th><input class="form-custom"></th>
             </tr>
         </tbody>
     </table>
     <table class="table">
         <thead>
             <tr>
-                <th rowspan="2">Nama Mesin</th>
-                <th rowspan="2">Bagian Yang Dicheck</th>
-                <th rowspan="2">Standart/Parameter</th>
-                <th rowspan="2">Metode Pengecekan</th>
-                <th colspan="4">Action</th>
-                <th rowspan="2">Result</th>
+                <th width="5%" rowspan="2">No.</th>
+                <th width="23%" rowspan="2">Bagian Yang Dicheck</th>
+                <th width="23%" rowspan="2">Standart/Parameter</th>
+                <th width="20%" rowspan="2">Metode Pengecekan</th>
+                <th width="15%" colspan="4">Action</th>
+                <th width="12%" rowspan="2">Result</th>
             </tr>
             <tr>
                 <th>ch</th>
@@ -225,7 +219,7 @@
         <tbody>
             @foreach ($machinedata as $key => $recordsget)
                 <tr>
-                    <td>{{ $recordsget->machine_name }}</td>
+                    <td>1</td>
                     <td>{{ $recordsget->name_componencheck }}</td>
                     <td>{{ $recordsget->name_parameter }}</td>
                     <td>{{ $recordsget->name_metodecheck }}</td>
@@ -238,10 +232,65 @@
             @endforeach
         </tbody>
     </table>
-    <div>
-        <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-        <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!"rows="6" cols="50"></textarea>
-    </div>
+    <table class="table-text">
+        <tbody>
+            <tr>
+                <td colspan="5">LD - MTN - 03</td>
+            </tr>
+            <tr>
+                <td width="15%"></td>
+                <th width="25%" colspan="2">Action :</th>
+                <th width="15%"></th>
+                <th width="20%">Result :</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td> ✓ = Check</td>
+                <td> ✓ = Adjust</td>
+                <td></td>
+                <td>O = Oke</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td> ✓ = Cleaning</td>
+                <td> ✓ = Replace/ganti</td>
+                <td></td>
+                <td>X = ng</td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>keterangan :</th>
+            </tr>
+            <tr>
+                <th height="15%"></th>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table-signature">
+        <tbody>
+            <tr>
+                <th width="55%" id="hidden-column"></th>
+                <th>Disetujui</th>
+                <th>Dikoreksi</th>
+                <th>Dibuat</th>
+            </tr>
+            <tr>
+                <td height="5%" id="hidden-column"></td>
+                <td height="5%"></td>
+                <td height="5%"></td>
+                <td height="5%"></td>
+            </tr>
+            <tr>
+                <td width="55%" id="hidden-column"></td>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>
