@@ -24,11 +24,13 @@ class ImportdataController extends Controller
     {
         try {
             $fetchtable = Machineproperty::find($id);
-            return response()->json(['name_property' => $fetchtable->name_property]);
+            return response()->json([
+                'name_property' => $fetchtable->name_property]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
     // fungsi ajax untuk melihat property mesin
     public function detailproperty($id)
     {
@@ -46,6 +48,7 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
     // fungsi fetchdata setiap mesin
     public function viewproperty($id)
     {
@@ -60,6 +63,7 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
     // fungsi untuk mengupload data mesin
     public function registeridproperty(Request $request, $id)
     {
@@ -76,6 +80,7 @@ class ImportdataController extends Controller
         }
         return response()->json(['success' => 'Standarisasi mesin berhasil di UPDATE!']);
     }
+
     // fungsi upload data excel ke database
     public function importdata(Request $request)
     {

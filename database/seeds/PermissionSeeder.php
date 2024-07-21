@@ -61,6 +61,7 @@ class PermissionSeeder extends Seeder
         $supervisorRole->givePermissionTo('viewtable_records');
         $supervisorRole->givePermissionTo('corrected_records');
         $supervisorRole->givePermissionTo('approval_records');
+        $supervisorRole->givePermissionTo('managemachine');
         $supervisorRole->givePermissionTo('manageuser');
 
         $managerRole = Role::create(['name' => 'manager']);
@@ -95,7 +96,7 @@ class PermissionSeeder extends Seeder
         $admin->assignRole('admin');
 
         $manager = User::create([
-            'name' => 'Manager',
+            'name' => 'SENTOT N.B.',
             'nik' => '11111',
             'department' => 'Engginer',
             'password' => bcrypt('manager123'),
@@ -103,7 +104,7 @@ class PermissionSeeder extends Seeder
         $manager->assignRole('manager');
 
         $supervisor = User::create([
-            'name' => 'Supervisor',
+            'name' => 'MARGONO (B)',
             'nik' => '22222',
             'department' => 'Engginer',
             'password' => bcrypt('supervisor123'),
@@ -111,7 +112,7 @@ class PermissionSeeder extends Seeder
         $supervisor->assignRole('supervisor');
 
         $foreman = User::create([
-            'name' => 'Foreman',
+            'name' => 'M. SAMSUL MUHANAN',
             'nik' => '33333',
             'department' => 'Engginer',
             'password' => bcrypt('foreman123'),
@@ -119,7 +120,7 @@ class PermissionSeeder extends Seeder
         $foreman->assignRole('foreman');
 
         $leader = User::create([
-            'name' => 'Leader',
+            'name' => 'ERWANTO',
             'nik' => '44444',
             'department' => 'Engginer',
             'password' => bcrypt('leader123'),
@@ -127,7 +128,7 @@ class PermissionSeeder extends Seeder
         $leader->assignRole('leader');
 
         $operator = User::create([
-            'name' => 'Operator 1',
+            'name' => 'NUR KHAYU L GHANI',
             'nik' => '123456789',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
@@ -135,7 +136,7 @@ class PermissionSeeder extends Seeder
         $operator->assignRole('operator');
 
         $operator = User::create([
-            'name' => 'Operator 2',
+            'name' => 'M. YAKUB ISKANDAR',
             'nik' => '12345',
             'department' => 'Engginer',
             'password' => bcrypt('user123'),
@@ -143,7 +144,7 @@ class PermissionSeeder extends Seeder
         $operator->assignRole('operator');
 
         $operator = User::create([
-            'name' => 'Operator 3',
+            'name' => 'DEDI ARIVIYANTO',
             'nik' => '13579',
             'status' => '0',
             'department' => 'Engginer',
@@ -152,7 +153,7 @@ class PermissionSeeder extends Seeder
         $operator->assignRole('operator');
 
         $operator = User::create([
-            'name' => 'Operator 4',
+            'name' => 'BEKHAN S.',
             'nik' => '24680',
             'status' => '0',
             'department' => 'Engginer',

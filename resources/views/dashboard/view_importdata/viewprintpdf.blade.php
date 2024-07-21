@@ -13,19 +13,18 @@
             font-size: 0.5em;
             font-weight: 400;
             line-height: 1.5;
-            color: #858796;
+            color: #000000;
             /* text-align: center; */
             background-color: #fff;
         }
 
         .form-header{
-            color: #000000;
             font-size: 1.1em;
         }
         .form-title{
-            color: #000000;
             font-size: 1.4em;
             text-align: center;
+            margin: 5px 0px 10px 0px;
         }
 
         .table-header {
@@ -33,12 +32,11 @@
             clear: both;
             /* margin-top: 5px !important; */
             /* margin: 4px 0px 4px 0px !important; */
-            max-width: none !important;
+            margin-bottom: 10px;
             border-spacing: 0;
             font-size: smaller;
 
             border: 0.5px solid #000000;
-            color: #282828;
         }
         .table-header tr th {
             text-transform: uppercase;
@@ -48,30 +46,33 @@
             text-align: left;
             /* border: 0.5px solid #000000; */
         }
+        #header-name-control{
+            width: 15%;
+        }
+        #header-value-control{
+            width: 30%;
+        }
 
         .table-input {
             width: 100%;
             clear: both;
             /* margin-top: 5px !important; */
-            margin: 4px 0px 4px 0px !important;
-            max-width: none !important;
+            margin-bottom: 10px;
             border-spacing: 0;
             font-size: smaller;
-            border: 0.3px solid #000000;
-            color: #282828;
+            border: 0.5px solid #000000;
         }
         .table-input tr th {
             text-transform: uppercase;
             padding: 5px;
             vertical-align: top;
             text-align: left;
-            border: 0.2px solid #000000;
+            /* border: 0.2px solid #000000; */
         }
 
         .table-text{
-            padding: 0px 0px 4px 0px;
+            /* margin-bottom: 5px; */
             width: 100%;
-            color: #000000;
             /* border: 0.5px solid #000000; */
         }
         .table-text tr td{
@@ -90,8 +91,6 @@
             margin: 14px 0px 14px 0px !important;
             /* padding: 0px 0px 4px 0px; */
             width: 100%;
-            color: #000000;
-            max-width: none !important;
             border-spacing: 0;
             font-size: smaller;
             align-items: center;
@@ -112,15 +111,13 @@
         .table {
             width: 100%;
             clear: both;
-            margin: 14px 0px 14px 0px !important;
+            margin-bottom: 5px;
             /* margin-top: 6px !important; */
             /* margin-bottom: 6px !important; */
-            max-width: none !important;
             border-spacing: 0;
             font-size: smaller;
             align-items: center;
             border: 0.4px solid #000000;
-            color: #000000;
         }
         .table tr th {
             text-transform: uppercase;
@@ -149,60 +146,63 @@
             border: none
         }
     </style>
+    <script src="{{asset('assets/vendor/jquery/jquery.min.js')}}"></script>
 </head>
 
 <body>
     <h3 class="form-header">PT. TRIMITRA CHITRAHASTA</h3>
     <h3 class="form-header">MTC DEPARTMENT</h3>
-    <h3 class="form-title">Check Point Mesin</h3>
-    <table class="table-header">
+    <h3 class="form-title">CHECK POINT MESIN</h3>
+    <table class="table-header" id="tablePrint">
         <tbody>
             <tr>
-                <th>No. Invent Mesin</th>
+                <th id="header-name-control">No. Invent Mesin</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->invent_number }}</th>
-                <th>Spec/Tonage</th>
+                <th id="header-value-control">{{ $machinedata[0]->invent_number }}</th>
+                <th id="header-name-control">Spec/Tonage</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->machine_spec }}</th>
+                <th id="header-value-control">{{ $machinedata[0]->machine_spec }}</th>
             </tr>
             <tr>
-                <th>Nama Mesin</th>
+                <th id="header-name-control">Nama Mesin</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->machine_name }}</th>
-                <th>Buatan</th>
+                <th id="header-value-control">{{ $machinedata[0]->machine_name }}</th>
+                <th id="header-name-control">Buatan</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->machine_made }}</th>
+                <th id="header-value-control">{{ $machinedata[0]->machine_made }}</th>
             </tr>
             <tr>
-                <th>Brand/Merk</th>
+                <th id="header-name-control">Brand/Merk</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->machine_brand }}</th>
-                <th>Mfg.NO</th>
+                <th id="header-value-control">{{ $machinedata[0]->machine_brand }}</th>
+                <th id="header-name-control">Mfg.NO</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->mfg_number }}</th>
+                <th id="header-value-control">{{ $machinedata[0]->mfg_number }}</th>
             </tr>
             <tr>
-                <th>Model/Type</th>
+                <th id="header-name-control">Model/Type</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->machine_type }}</th>
-                <th>Install Date</th>
+                <th id="header-value-control">{{ $machinedata[0]->machine_type }}</th>
+                <th id="header-name-control">Install Date</th>
                 <th>:</th>
-                <th>{{ $machinedata[0]->install_date }}</th>
+                <th id="header-value-control">{{ $machinedata[0]->install_date }}</th>
             </tr>
         </tbody>
     </table>
     <table class="table-input">
         <tbody>
             <tr>
-                <th>NO. MESIN :</th>
-                <th>TANGGAL :</th>
+                <th width="10%">NO. MESIN</th>
+                <th width="25%">:</th>
+                <th width="10%" style="border-left: 0.5px solid #000000">TANGGAL</th>
+                <th width="25%">:</th>
             </tr>
         </tbody>
     </table>
     <table class="table">
         <thead>
             <tr>
-                <th width="5%" rowspan="2">No.</th>
+                <th width="4%" rowspan="2">No.</th>
                 <th width="23%" rowspan="2">Bagian Yang Dicheck</th>
                 <th width="23%" rowspan="2">Standart/Parameter</th>
                 <th width="20%" rowspan="2">Metode Pengecekan</th>
@@ -218,8 +218,10 @@
         </thead>
         <tbody>
             @foreach ($machinedata as $key => $recordsget)
+            @for ($number=0; $number<$key; $number ++)
+            @endfor
                 <tr>
-                    <td>1</td>
+                    <td style="text-align: center;">{{ $number }}</td>
                     <td>{{ $recordsget->name_componencheck }}</td>
                     <td>{{ $recordsget->name_parameter }}</td>
                     <td>{{ $recordsget->name_metodecheck }}</td>
@@ -248,14 +250,19 @@
                 <td> ✓ = Check</td>
                 <td> ✓ = Adjust</td>
                 <td></td>
-                <td>O = Oke</td>
+                <td>O = OKE</td>
             </tr>
             <tr>
                 <td></td>
                 <td> ✓ = Cleaning</td>
                 <td> ✓ = Replace/ganti</td>
                 <td></td>
-                <td>X = ng</td>
+                <td>X = NG</td>
+            </tr>
+            <tr>
+                <td colspan="5" rowspan="2" style="font-size:5px">
+                    NOTE : JIKA "NG" URAIAN DIISI DI KOLOM KETERANGAN
+                </td>
             </tr>
         </tbody>
     </table>

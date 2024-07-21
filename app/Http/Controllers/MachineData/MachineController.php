@@ -15,7 +15,7 @@ class MachineController extends Controller
         return view ('dashboard.view_mesin.tablemachine',['machines'=>$machines]);
     }
 
-    public function registermachine()
+    public function notuseregistermachine()
     {
         return view ('dashboard.view_mesin.addmachine');
     }
@@ -36,7 +36,6 @@ class MachineController extends Controller
         // }
         $request->validate([
             'invent_number' => 'required',
-            'machine_number'=> 'required',
             'machine_name' => 'required|max:255',
             'machine_brand',
             'machine_type',
@@ -74,6 +73,31 @@ class MachineController extends Controller
         return redirect()->route("managemachine")->withSuccess('Machine updated successfully.');
     }
 
+    // fungsi tambah mesin secara manual
+    public function registermachine(Request $request)
+    {
+        // dd($request);
+        $request->validate([
+            'invent_number' => 'required',
+            'machine_number'=> 'required',
+            'machine_name' => 'required',
+            'machine_brand',
+            'machine_type',
+            'machine_spec',
+            'machine_made',
+            'mfg_number' => 'required',
+            'install_date',
+            'machine_number'=> 'required',
+        ]);
+        try {
+            Machine::create($request->all());
+            return response()->json(['success' => 'Machine added successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Machine failed to add!!!!']);
+        }
+    }
+
+    // fungsi hapus data mesin
     public function deletemachine($id) {
         $deletemachine = Machine::where('id', $id)->delete();
 
@@ -83,17 +107,4 @@ class MachineController extends Controller
             return response()->json(['error' => 'Data mesin gagal dihapus.'], 422);
         }
     }
-
-    // <<<============================================================================================>>>
-    // <<<==============================batas upload/import machine data==============================>>>
-    // <<<============================================================================================>>>
-    
-    public function addmachineproperty($id)
-    {
-        $machines=Machine::find($id);
-        return view('dashboard.view_mesin.machineproperty',['machines' => $machines]);
-    }
-    // <<<============================================================================================>>>
-    // <<<============================batas upload/import machine data end============================>>>
-    // <<<============================================================================================>>>
 }

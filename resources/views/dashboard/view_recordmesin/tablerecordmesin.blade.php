@@ -21,21 +21,21 @@
                                 <div class="table-filter">
                                     <div class="col-4">
                                         <p class="mg-b-10">Nama Mesin</p>
-                                        <select class="form-control select2" name="" id="category-input-machinename">
+                                        <select class="form-control select2" name="" id="filterByName">
                                             <option selected="selected" value="">Select :</option>
                                             <option></option>
                                         </select>
                                     </div>
                                     <div class="col-4">
                                         <p class="mg-b-10">Input Nomor Mesin </p>
-                                        <select class="form-control select2" name="" id="category-input-machinecode">
+                                        <select class="form-control select2" name="" id="filterByNumber">
                                             <option selected="selected" value="">Select :</option>
                                             <option></option>
                                         </select>
                                     </div>
                                     <div class="col-4">
                                         <p class="mg-b-10">Status Mesin</p>
-                                        <select class="form-control" name="sample" id="statusMachine">
+                                        <select class="form-control" name="sample" id="filterByStatus">
                                             <option selected="selected">Select :</option>
                                             <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
                                             <option>Belum Dipreventive</option>
@@ -98,28 +98,10 @@
 @endsection
 
 @push('style')
-    {{-- <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/jquery.dataTables.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/dataTables.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/buttons.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/select.bootstrap4.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/vendor/datatables/css/fixedHeader.bootstrap4.css')}}"> --}}
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
-    {{-- <script src="{{asset('assets/vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/ajax/jszip.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/ajax/vfs_fonts.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.html5.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.print.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.colVis.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.rowGroup.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.select.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.fixedHeader.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/data-table.js')}}"></script>
-    <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {

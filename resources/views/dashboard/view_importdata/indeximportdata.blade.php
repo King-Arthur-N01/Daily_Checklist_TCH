@@ -7,43 +7,39 @@
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Tambah Data Mesin</h1>
             <div class="card shadow mt-4 mb-4">
-                <div class="collapse" id="filterCard">
-                    <div class="card card-filter">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
-                        </div>
-                        <form action="#" method="post" style="margin-top: 10px">
-                            @csrf
-                            <div class="table-filter">
-                                <div class="dataTables_filter col-4" id="dataTable_filter">
-                                    <p class="mg-b-10">Input Nama Mesin</p>
-                                    <input class="form-control" id="searchInput" type="search" aria-controls="dataTable" placeholder="Search here"></input>
-                                </div>
-                                <div class="col-4">
-                                    <p class="mg-b-10">Input Nomor Mesin </p>
-                                    <select class="form-control select2" name="" id="category-input-machinecode">
-                                        <option selected="selected" value="">Select :</option>
-                                        <option></option>
-                                    </select>
-                                </div>
-                                <div class="col-4">
-                                    <p class="mg-b-10">Input Hari/Bulan/Tahun </p>
-                                    <div class="wd-250 mg-b-20">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                </div>
-                                            </div>
-                                            <input type="text" id="datetimepicker" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                <div class="card card-filter collapse" id="filterCard">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
                     </div>
+                    <form action="#" method="post" style="margin-top: 10px">
+                        @csrf
+                        <div class="table-filter">
+                            <div class="col-4">
+                                <p class="mg-b-10">Nama Mesin</p>
+                                <select class="form-control select2" name="" id="filterByName">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <select class="form-control select2" name="" id="filterByNumber">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Standarisasi Mesin</p>
+                                <select class="form-control select2" name="sample" id="filterByProperty">
+                                    <option selected="selected">Select :</option>
+                                    <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
+                                    <option>Belum Dipreventive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="card-header py-3">
+                <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
@@ -112,6 +108,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Upload File</h5>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addModal" id="addButtton">Tambahkan Secara Manual</button>
                 </div>
                 <div class="modal-body">
                     <form id="formData">
@@ -130,6 +127,21 @@
         </div>
     </div>
     <!-- End Upload Modal-->
+
+    <!-- Add Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_add">
+                </div>
+                <div class="modal-body" id="modal_data_add">
+                </div>
+                <div class="modal-footer" id="modal_button_add">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Modal-->
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1">
@@ -211,9 +223,11 @@
 @endsection
 
 @push('style')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script>
@@ -224,6 +238,10 @@
                     "orderable": false,
                     "targets": [5]
                 }]
+            });
+            $('.select2').select2({
+                placeholder: 'Select :',
+                searchInputPlaceholder: 'Search'
             });
             $.ajaxSetup({
                 headers: {
@@ -265,6 +283,154 @@
                 });
             });
 
+            $('#addModal').on('shown.bs.modal', function(event) {
+                const header_modal = `
+                    <h5 class="modal-title">Standarisasi Mesin</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                `;
+                const data_modal = `
+                    <form id="addForm" method="post">
+                        <div class="row" align-items="center">
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="invent_number" placeholder="Invent Number">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_name" placeholder="Nama Mesin">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_brand" placeholder="Brand/Merk Mesin">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Model/Type Mesin</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_type" placeholder="Model/Type Mesin">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_spec" placeholder="Spec/Tonnage">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_made" placeholder="Buatan">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="mfg_number" placeholder="MFG Number">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="install_date" placeholder="Install Date">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_number" placeholder="Nomor Mesin">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                `;
+                const button_modal = `
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                `;
+                $('#modal_title_add').html(header_modal);
+                $('#modal_data_add').html(data_modal);
+                $('#modal_button_add').html(button_modal);
+
+                // Add event listener to save button
+                $('#saveButton').on('click', function() {
+                    var formData = {
+                        inventNumber: $('input[name="invent_number"]').val(),
+                        machineSpec: $('input[name="machine_spec"]').val(),
+                        machineName: $('input[name="machine_name"]').val(),
+                        machineMade: $('input[name="machine_made"]').val(),
+                        machineBrand: $('input[name="machine_brand"]').val(),
+                        mfgNumber: $('input[name="mfg_number"]').val(),
+                        machineType: $('input[name="machine_type"]').val(),
+                        installDate: $('input[name="install_date"]').val(),
+                        machineNumber: $('input[name="machine_number"]').val()
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route("addmachine") }}',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'invent_number': formData.inventNumber,
+                            'machine_spec': formData.machineSpec,
+                            'machine_name': formData.machineName,
+                            'machine_made': formData.machineMade,
+                            'machine_brand': formData.machineBrand,
+                            'mfg_number': formData.mfgNumber,
+                            'machine_type': formData.machine_type,
+                            'install_date': formData.installDate,
+                            'machine_number': formData.machineNumber,
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                const successMessage = response.success;
+                                $('#successText').text(successMessage);
+                                $('#successModal').modal('show'); // Show success modal
+                            }
+                            $('#addModal').modal('hide'); // Hide modal on success
+                        },
+                        error: function(xhr, status, error) {
+                            var warningMessage = xhr.responseText;
+                            try {
+                                warningMessage = JSON.parse(xhr.responseText).error;
+                            } catch (e) {
+                                console.error('Error parsing error message:',e);
+                            }
+                            $('#addModal').modal('hide'); // Hide modal on error
+                        }
+                    }).always(function() {
+                        setTimeout(function() {
+                            location.reload(); // Refresh the page after a 2-second delay
+                        }, 2000); // 2000 milliseconds = 2 seconds
+                    });
+                });
+            });
+
             // fungsi untuk mengedit atau menambahkan standarisasi ke mesin
             $('#editModal').on('shown.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
@@ -283,7 +449,7 @@
                         }
 
                         const header_modal = `
-                            <h6 class="modal-title">Standarisasi Mesin</h6>
+                            <h5 class="modal-title">Standarisasi Mesin</h5>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
                         const data_modal = `
@@ -356,8 +522,8 @@
                                 }
                             }).always(function() {
                                 setTimeout(function() {
-                                    location.reload(); // Refresh the page after a 2-second delay
-                                }, 2000); // 2000 milliseconds = 2 seconds
+                                    location.reload();
+                                }, 2000);
                             });
                         });
                     },
@@ -366,39 +532,6 @@
                         $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
                     }
                 });
-            });
-
-            // fungsi delete button untuk hapus mesin
-            $('.dropdown-item-custom-delete').on('click', function(e) {
-                const button = $(this);
-                const machineId = button.data('id');
-                if (confirm("Apakah yakin menghapus mesin ini?")) {
-                    $.ajax({
-                        type: 'DELETE',
-                        url: '{{ route("removemachine", ':id') }}'.replace(':id', machineId),
-                        data: {
-                            '_token': '{{ csrf_token() }}'
-                        }
-                    }).done(function(response) {
-                        if (response.success.trim()) {
-                            const successMessage = response.success.trim();
-                            $('#successText').text(successMessage);
-                            $('#successModal').modal('show');
-                        }
-                        $('#successModal').modal('hide');
-                    }).fail(function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        const warningMessage = xhr.statusText;
-                        $('#failedText').text(warningMessage);
-                        $('#failedModal').modal('show');
-                    }).always(function() {
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
-                    });
-                } else {
-                    // User cancelled the deletion, do nothing
-                }
             });
 
             //fungsi button get detail mesin
@@ -417,7 +550,7 @@
                         } else {
                             const machine = data.fetchmachines[0];
                             const header_modal = `
-                                <h6 class="modal-title">Detail Preventive Mesin</h6>
+                                <h5 class="modal-title">Detail Preventive Mesin</h5>
                                 <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                             `;
                             const data_modal = `
@@ -492,6 +625,41 @@
                     }
                 });
             });
+
+            // fungsi delete button untuk hapus mesin
+            $('.dropdown-item-custom-delete').on('click', function(e) {
+                e.preventDefault();
+                const button = $(this);
+                const machineId = button.data('id');
+                if (confirm("Apakah yakin menghapus mesin ini?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{ route("removemachine", ':id') }}'.replace(':id', machineId),
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        }
+                    }).done(function(response) {
+                        if (response.success.trim()) {
+                            const successMessage = response.success.trim();
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
+                        }
+                        $('#successModal').modal('hide');
+                    }).fail(function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        const warningMessage = xhr.statusText;
+                        $('#failedText').text(warningMessage);
+                        $('#failedModal').modal('show');
+                    }).always(function() {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
+                }
+            });
+
             // fungsi get status standarisasi mesin melalui ajax
             var table = $('#importTables').DataTable();
             table.rows().every(function(rowIdx, tableLoop, rowLoop) {
@@ -515,14 +683,11 @@
                     });
                 }
             });
+
             //fungsi filter button
             $('#filterButton').on('click', function() {
                 const filterCard = $('#filterCard');
-                if (filterCard.hasClass('show')) {
-                    filterCard.collapse('hide');
-                } else {
-                    filterCard.collapse('show');
-                }
+                filterCard.collapse('toggle');
             });
         });
     </script>
