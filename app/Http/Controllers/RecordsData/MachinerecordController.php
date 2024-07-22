@@ -77,20 +77,30 @@ class MachinerecordController extends Controller
         $getmachineid = ($request->input('id_machine'));
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine', $getmachineid)->value('record_time');
+        $currenttime = Carbon::now();
+
+        $getshifttime = Carbon::now()->format('H:i');
+        if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
+            $shifttime = 'Shift 1';
+        } elseif ($getshifttime >= '16:00' && $getshifttime < '23:00') {
+            $shifttime = 'Shift 2';
+        } else {
+            $shifttime = 'Diluar Shift';
+        }
 
         if ($lastsubmissiontime){
             $lastsubmit = Carbon::parse($lastsubmissiontime);
-            $currenttime = Carbon::now();
+
             if ($currenttime->diffInHours($lastsubmit) < 24 ){
                 return redirect()->route('indexmachinerecord')->with('error', 'You can submit the form again after 24 hours.');
             }
             else{
                 $StoreRecords = new Machinerecord();
                 $StoreRecords->machine_number2 = $request->input('machine_number2');
-                $StoreRecords->shift = $request->input('shift');
+                $StoreRecords->shift = $shifttime;
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine = $request->input('id_machine');
-                $StoreRecords->record_time = $request->input('record_time');
+                $StoreRecords->record_time = $currenttime;
                 $StoreRecords->create_by = $request->input('combined_create_by');
                 $StoreRecords->save();
 
@@ -110,10 +120,10 @@ class MachinerecordController extends Controller
         }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
             $StoreRecords->machine_number2 = $request->input('machine_number2');
-            $StoreRecords->shift = $request->input('shift');
+            $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine = $request->input('id_machine');
-            $StoreRecords->record_time = $request->input('record_time');
+            $StoreRecords->record_time = $currenttime;
             $StoreRecords->create_by = $request->input('combined_create_by');
             $StoreRecords->save();
 
@@ -132,6 +142,7 @@ class MachinerecordController extends Controller
         }
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
+
     // <<<============================================================================================>>>
     // <<<==============================batas approval machine records 1==============================>>>
     // <<<============================================================================================>>>

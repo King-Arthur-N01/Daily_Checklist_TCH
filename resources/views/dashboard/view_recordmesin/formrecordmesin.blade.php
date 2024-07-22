@@ -63,7 +63,7 @@
                                 </div>
                                 <div class="col-6">
                                     <a>WAKTU PREVENTIVE :</a>
-                                    <input class="form-control" name="record_time" value="{{ $timenow }}" readonly>
+                                    <input class="form-control" value="{{ $timenow->format('Y-m-d') }}" readonly>
                                 </div>
                             </div>
                             <table class="table table-bordered" id="dataTables" width="100%">

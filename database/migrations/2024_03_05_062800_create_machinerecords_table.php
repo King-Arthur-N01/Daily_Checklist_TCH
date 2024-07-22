@@ -15,7 +15,7 @@ class CreateMachinerecordsTable extends Migration
     {
         Schema::create('machinerecords', function (Blueprint $table) {
             $table->id();
-            $table->integer('shift')->nullable();
+            $table->string('shift')->nullable();
             $table->string('note')->nullable();
             $table->string('machine_number2')->index();
             $table->string('create_by')->nullable();

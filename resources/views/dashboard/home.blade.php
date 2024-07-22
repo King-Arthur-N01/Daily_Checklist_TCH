@@ -31,7 +31,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/add_clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('managemachinedata')}}">Tambah Form Preventive &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('managemachinedata')}}">Tambah Form Preventive &nbsp; <i class="fas fa-folder-plus"></i></a>
                     </div>
                 </div>
             </div>
@@ -42,13 +42,13 @@
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Tambah Standart Mesin</h5>
+                        <h5 class="card-title-head">Tambah Standarisasi Mesin</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
                         <img class="image-card-home" src="{{asset('assets/icons/add_task_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('indexproperty')}}">Tambah Standarisasi Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('indexproperty')}}">Tambah Standarisasi Form &nbsp; <i class="fas fa-indent"></i></a>
                     </div>
                 </div>
             </div>
@@ -101,30 +101,30 @@
                         <img class="image-card-home" src="{{asset('assets/icons/history_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Preventive &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="{{route('historymachine')}}">Lihat History Preventive &nbsp; <i class="fas fa-history"></i></a>
                     </div>
                 </div>
             </div>
         </div>
         @endcan
     </div>
-    {{-- <div class="row">
+    <div class="row">
         <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
-                        <h5 class="card-title-head">Tambah Componen Check Mesin</h5>
+                        <h5 class="card-title-head">Lihat Schedule</h5>
                     </div>
                     <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{asset('assets/icons/inspection_home.png')}}">
+                        <img class="image-card-home" src="{{asset('assets/icons/schedule_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('managemachine')}}">Tambah Componen Check &nbsp; <i class="fas fa-indent"></i></a>
+                        <a class="card-title" href="#">Tambah atau Lihat Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-4 mb-4">
+        {{-- <div class="col-xl-4 col-md-4 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body-custom">
                     <div class="col-7">
@@ -153,8 +153,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div> --}}
+        </div> --}}
+    </div>
 @endsection
 
 @push('script')

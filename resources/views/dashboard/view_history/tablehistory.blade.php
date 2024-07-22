@@ -49,7 +49,8 @@
                                 <th>Type Mesin</th>
                                 <th>Nomor Mesin</th>
                                 <th colspan="2">Status</th>
-                                <th>Date</th>
+                                <th>Shift</th>
+                                <th>Waktu</th>
                                 <th>Action</th>
                             </thead>
                             <tbody>
@@ -64,6 +65,7 @@
                                             <td style="display: none;">{{ $recordsget->getapprove }}</td>
                                             <td></td>
                                             <td></td>
+                                            <td>{{ $recordsget->shift }}</td>
                                             <td>{{ $recordsget->getcreatedate }}</td>
                                             <td>
                                                 <a class="btn btn-primary" href="{{ route('detailhistory', $recordsget->records_id) }}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>

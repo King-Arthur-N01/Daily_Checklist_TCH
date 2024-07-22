@@ -76,7 +76,7 @@
                                         @if (empty($getmachine->id_property))
                                             <td>Belum ada standarisasi mesin</td>
                                         @else
-                                            <td data-id="{{ $getmachine->id_property }}">{{ $getmachine->id_property }}</td>
+                                            <td data-id="{{ $getmachine->id }}">{{ $getmachine->id }}</td>
                                         @endif
                                         <td>
                                             <div class="dynamic-button-group">

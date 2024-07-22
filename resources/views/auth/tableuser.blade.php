@@ -157,16 +157,11 @@
     <div class="modal fade" id="EditModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit User</h5>
-                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                <div class="modal-header" id="modal_title_user">
                 </div>
-                <div class="modal-body">
-                    <div id="modaledit-data"></div>
+                <div class="modal-body" id="modal_data_user">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="editButton" onclick="return confirm('Apakah sudah yakin mengisi data dengan benar?')">Submit</button>
+                <div class="modal-footer" id="modal_button_user">
                 </div>
             </div>
         </div>
@@ -180,20 +175,19 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            $(".btn-Id").on('click', function() {
-                var userId = $(this).data("id");
-                $("#editButton").val(userId);
-                $("#deleteButton").data("id", userId); // Updated to use data attribute
-            });
             // kode $ajax untuk menampilkan menu edit
             $('#EditModal').on('shown.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
-                var id = button.data('id');
+                var userId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchedituser', ':id') }}'.replace(':id', id),
+                    url: '{{ route('fetchedituser', ':id') }}'.replace(':id', userId),
                     success: function(data) {
-                    var html = `
+                        const header_modal = `
+                            <h5 class="modal-title">Edit User</h5>
+                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                        `;
+                        const data_modal = `
                         <form id="editForm" method="post">
                         <div class="row align-items-center">
                             <div class="col-xl-6">
@@ -241,120 +235,144 @@
                             </div>
                         </div>
                         </form>
-                    `;
-                        $('#modaledit-data').html(html);
+                        `;
+                        const button_modal = `
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="editButton" onclick="return confirm('Apakah sudah yakin mengisi data dengan benar?')">Submit</button>
+                        `;
+                        $('#modal_title_user').html(header_modal);
+                        $('#modal_data_user').html(data_modal);
+                        $('#modal_button_user').html(button_modal);
+
+                        // kode $ajax untuk mengirim request edit user
+                        $('#editButton').on('click', function() {
+                            var formData = $('#editForm').serialize();
+                            formData +=
+                            '&_token={{ csrf_token() }}'; // Add CSRF token
+                            $.ajax({
+                                type: 'PUT',
+                                url: '{{ route('pushedituser', ':id') }}'
+                                    .replace(':id', userId),
+                                data: formData,
+                                success: function(response) {
+                                    if (response.success) {
+                                        alert(
+                                            'USER was successfully update.'); // Alert success message
+                                    } else {
+                                        alert(
+                                            'Error: USER failed to update.'); // Alert failure message
+                                    }
+                                    $('#EditModal').modal(
+                                    'hide'); // Hide modal on success
+                                },
+                                error: function(xhr, status, error) {
+                                    alert(
+                                    'This USER already exists!'); // Alert error message
+                                    console.error('Error update USER: ' +
+                                        error);
+                                    $('#EditModal').modal(
+                                    'hide'); // Hide modal on error
+                                }
+                            }).always(function() {
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1000);
+                            });
+                        });
+                        // kode $ajax untuk menghapus user
+                        $(document).on('click', '.deleteButton', function(e) {
+                            e.preventDefault();
+                            if (confirm("Apakah yakin menghapus user ini?")) {
+                                $.ajax({
+                                    type: 'DELETE',
+                                    url: "{{ route('removeuser', ':id') }}"
+                                        .replace(':id', userId),
+                                    data: {
+                                        '_token': '{{ csrf_token() }}'
+                                    }
+                                }).done(function(response) {
+                                    if (response.success) {
+                                        alert(
+                                        'USER was successfully delete!.'); // Alert success message
+                                    } else {
+                                        alert(
+                                        'Error: USER failed to delete.'); // Alert failure message
+                                    }
+                                    $('#ExtralargeModal').modal('hide');
+                                }).fail(function(xhr, status, error) {
+                                    alert(
+                                        'This USER has been deleted by someone!'); // Alert error message
+                                    $('#EditModal').modal(
+                                    'hide'); // Hide modal on error
+                                }).always(function() {
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 2000);
+                                });
+                            } else {
+                                // User cancelled the deletion, do nothing
+                            }
+                        });
                     }
                 });
-            });
-            // kode $ajax untuk mengirim request register user baru
-            $('#registerButton').on('click', function(e) {
-                e.preventDefault();
-                var formData = {
-                    'name': $('input[name="name"]').val(),
-                    'nik': $('input[name="nik"]').val(),
-                    'status': $('select[name="status"]').val(),
-                    'department': $('input[name="department"]').val(),
-                    'password': $('input[name="password"]').val(),
-                    'password_confirmation': $('input[name="password_confirmation"]').val()
-                };
-                if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ route('pushregisteruser') }}',
-                        data: {
-                            '_token': '{{ csrf_token() }}',
-                            'name': formData.name,
-                            'nik': formData.nik,
-                            'status': formData.status,
-                            'department': formData.department,
-                            'password': formData.password,
-                            'password_confirmation': formData.password_confirmation
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                alert('USER was successfully added.'); // Alert success message
-                            } else {
-                                alert(
-                                'Error: USER failed to register.'); // Alert failure message
+                // kode $ajax untuk mengirim request register user baru
+                $('#registerButton').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = {
+                        'name': $('input[name="name"]').val(),
+                        'nik': $('input[name="nik"]').val(),
+                        'status': $('select[name="status"]').val(),
+                        'department': $('input[name="department"]').val(),
+                        'password': $('input[name="password"]').val(),
+                        'password_confirmation': $('input[name="password_confirmation"]').val()
+                    };
+                    if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route('pushregisteruser') }}',
+                            data: {
+                                '_token': '{{ csrf_token() }}',
+                                'name': formData.name,
+                                'nik': formData.nik,
+                                'status': formData.status,
+                                'department': formData.department,
+                                'password': formData.password,
+                                'password_confirmation': formData.password_confirmation
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    alert(
+                                    'USER was successfully added.'); // Alert success message
+                                } else {
+                                    alert(
+                                        'Error: USER failed to register.'
+                                        ); // Alert failure message
+                                }
+                                $('#RegisterModal').modal(
+                                'hide'); // Hide modal on success
+                            },
+                            error: function(xhr, status, error) {
+                                if (xhr.status === 422) {
+                                    alert(xhr.responseJSON
+                                    .errors); // Alert error message
+                                } else {
+                                    alert(
+                                        'An error occurred while registering the USER.'
+                                        ); // Alert error message
+                                    console.error('Error register USER: ' + error);
+                                }
+                                $('#RegisterModal').modal(
+                                'hide'); // Hide modal on error
                             }
-                            $('#RegisterModal').modal('hide'); // Hide modal on success
-                        },
-                        error: function(xhr, status, error) {
-                            if (xhr.status === 422) {
-                                alert(xhr.responseJSON.errors); // Alert error message
-                            } else {
-                                alert(
-                                'An error occurred while registering the USER.'); // Alert error message
-                                console.error('Error register USER: ' + error);
-                            }
-                            $('#RegisterModal').modal('hide'); // Hide modal on error
-                        }
-                    }).always(function() {
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    });
-                } else {
-                    // User cancelled the deletion, do nothing
-                }
-            });
-            // kode $ajax untuk mengirim request edit user
-            $('#editButton').on('click', function() {
-                var formData = $('#editForm').serialize();
-                var userId = $(this).val();
-                formData += '&_token={{ csrf_token() }}'; // Add CSRF token
-                $.ajax({
-                    type: 'PUT',
-                    url: '{{ route('pushedituser', ':id') }}'.replace(':id', userId),
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            alert('USER was successfully update.'); // Alert success message
-                        } else {
-                            alert('Error: USER failed to update.'); // Alert failure message
-                        }
-                        $('#EditModal').modal('hide'); // Hide modal on success
-                    },
-                    error: function(xhr, status, error) {
-                        alert('This USER already exists!'); // Alert error message
-                        console.error('Error update USER: ' + error);
-                        $('#EditModal').modal('hide'); // Hide modal on error
+                        }).always(function() {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        });
+                    } else {
+                        // User cancelled the deletion, do nothing
                     }
-                }).always(function() {
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
                 });
-            });
-            // kode $ajax untuk menghapus user
-            $(document).on('click', '.deleteButton', function(e) {
-                e.preventDefault();
-                var userId = $(this).data("id");
-                if (confirm("Apakah yakin menghapus user ini?")) {
-                    $.ajax({
-                        type: 'DELETE',
-                        url: "{{ route('removeuser', ':id') }}".replace(':id', userId),
-                        data: {
-                            '_token': '{{ csrf_token() }}'
-                        }
-                    }).done(function(response) {
-                        if (response.success) {
-                            alert('USER was successfully delete!.'); // Alert success message
-                        } else {
-                            alert('Error: USER failed to delete.'); // Alert failure message
-                        }
-                        $('#ExtralargeModal').modal('hide');
-                    }).fail(function(xhr, status, error) {
-                        alert('This USER has been deleted by someone!'); // Alert error message
-                        $('#EditModal').modal('hide'); // Hide modal on error
-                    }).always(function() {
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
-                    });
-                } else {
-                    // User cancelled the deletion, do nothing
-                }
             });
         });
     </script>

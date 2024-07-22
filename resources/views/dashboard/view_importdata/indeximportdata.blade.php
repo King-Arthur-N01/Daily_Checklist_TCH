@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Input Nomor Mesin </p>
-                                <select class="form-control select2" name="" id="filterByNumber">
+                                <select class="form-control select2" name="" id="filterById">
                                     <option selected="selected" value="">Select :</option>
                                     <option></option>
                                 </select>
@@ -402,7 +402,7 @@
                             'machine_made': formData.machineMade,
                             'machine_brand': formData.machineBrand,
                             'mfg_number': formData.mfgNumber,
-                            'machine_type': formData.machine_type,
+                            'machine_type': formData.machineType,
                             'install_date': formData.installDate,
                             'machine_number': formData.machineNumber,
                         },
@@ -489,7 +489,7 @@
                         $('#modal_data_edit').html(data_modal);
                         $('#modal_button_edit').html(button_modal);
 
-                        // Add event listener to save button
+                        // Save button
                         $('#saveButton').on('click', function() {
                             var idProperty = $('#getproperty').val();
                             $.ajax({

@@ -87,7 +87,6 @@ class MachineController extends Controller
             'machine_made',
             'mfg_number' => 'required',
             'install_date',
-            'machine_number'=> 'required',
         ]);
         try {
             Machine::create($request->all());
