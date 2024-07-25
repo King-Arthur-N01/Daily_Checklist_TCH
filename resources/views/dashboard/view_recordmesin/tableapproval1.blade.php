@@ -88,7 +88,7 @@
 
     <!-- Extra Large Modal -->
     <div class="modal fade" id="ExtralargeModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xxl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_correct">
                 </div>
@@ -186,7 +186,7 @@
                             <table class="table table-bordered" id="dataTables">
                                 <thead>
                                     <tr>
-                                        <th>Nama Mesin</th>
+                                        <th>Nomor</th>
                                         <th>Bagian Yang Dicheck</th>
                                         <th>Standart/Parameter</th>
                                         <th>Metode Pengecekan</th>
@@ -195,18 +195,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                ${data.combinedata.map(function(row) {
-                                    return `
+                                    ${data.combinedata.map((row, index) => `
                                         <tr>
-                                            <td>${row.machine_name}</td>
+                                            <td>${index + 1}</td>
                                             <td>${row.name_componencheck}</td>
                                             <td>${row.name_parameter}</td>
                                             <td>${row.name_metodecheck}</td>
                                             <td>${row.operator_action}</td>
                                             <td>${row.result}</td>
                                         </tr>
-                                    `;
-                                }).join('')}
+                                    `).join('')}
                                 </tbody>
                             </table>
                             <div class="form-custom">
@@ -223,7 +221,7 @@
                                         <tr>
                                             <td>${data.recordsdata[0].approve_by}</td>
                                             <td>${data.recordsdata[0].correct_by}</td>
-                                            <td>${data.recordsdata[0].create_by}</td>
+                                            <td>${data.usernames.join(' & ')}</td>
                                         </tr>
                                     </thead>
                                 </table>
@@ -245,41 +243,45 @@
                         $('#saveButton').on('click', function() {
                             var note = $('#input_note').val();
                             var correctedBy = '{{ Auth::user()->id }}';
-                            $.ajax({
-                                type: 'PUT',
-                                url: '{{ route('pushcorrection', ':id') }}'.replace(':id', correctId),
-                                data: {
-                                    '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                    'correct_by': correctedBy,
-                                    'note': note
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        const successMessage = response.success;
-                                        $('#successText').text(successMessage);
-                                        $('#successModal').modal('show'); // Show success modal
-                                    } else {
-                                        $('#failedModal').modal('show'); // Show failed modal
+                            if (confirm("Apakah yakin mengkoreksi preventive ini?")) {
+                                $.ajax({
+                                    type: 'PUT',
+                                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id', correctId),
+                                    data: {
+                                        '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                        'correct_by': correctedBy,
+                                        'note': note
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            const successMessage = response.success;
+                                            $('#successText').text(successMessage);
+                                            $('#successModal').modal('show'); // Show success modal
+                                        } else {
+                                            $('#failedModal').modal('show'); // Show failed modal
+                                        }
+                                        $('#successModal').modal('hide'); // Hide modal on success
+                                    },
+                                    error: function(xhr, status, error) {
+                                        var warningMessage = xhr.responseText;
+                                        try {
+                                            warningMessage = JSON.parse(xhr.responseText).error;
+                                        } catch (e) {
+                                            console.error('Error parsing error message:', e);
+                                        }
+                                        $('#warningText').text(warningMessage); // Set the error message in the modal
+                                        $('#warningModal').modal('show'); // Show error modal
+                                        console.error('Error saving machine record: ' + error);
+                                        $('#warningModal').modal('hide'); // Hide modal on error
                                     }
-                                    $('#successModal').modal('hide'); // Hide modal on success
-                                },
-                                error: function(xhr, status, error) {
-                                    var warningMessage = xhr.responseText;
-                                    try {
-                                        warningMessage = JSON.parse(xhr.responseText).error;
-                                    } catch (e) {
-                                        console.error('Error parsing error message:', e);
-                                    }
-                                    $('#warningText').text(warningMessage); // Set the error message in the modal
-                                    $('#warningModal').modal('show'); // Show error modal
-                                    console.error('Error saving machine record: ' + error);
-                                    $('#warningModal').modal('hide'); // Hide modal on error
-                                }
-                            }).always(function() {
-                                setTimeout(function() {
-                                    location.reload(); // Refresh the page after a 2-second delay
-                                }, 2000); // 2000 milliseconds = 2 seconds
-                            });
+                                }).always(function() {
+                                    setTimeout(function() {
+                                        location.reload(); // Refresh the page after a 2-second delay
+                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                });
+                            } else {
+                                // User cancelled the deletion, do nothing
+                            }
                         });
 
                         // Delete button

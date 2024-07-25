@@ -65,35 +65,7 @@
                                 <th>Action</th>
                             </thead>
                             <tbody>
-                                @if (isset($machines) && !empty($machines))
-                                    @foreach ($machines as $machineget)
-                                        <tr>
-                                            <td>{{ $machineget->invent_number }}</td>
-                                            <td>{{ $machineget->machine_name }}</td>
-                                            <td>{{ $machineget->machine_brand }}</td>
-                                            <td>{{ $machineget->machine_type }}</td>
-                                            @if (empty($machineget->id_property))
-                                                <td>Belum ada standarisasi</td>
-                                            @else
-                                                <td data-id="{{ $machineget->id_property }}">{{ $machineget->id_property }}</td>
-                                            @endif
-                                            <td>
-                                                <div class="dynamic-button-group">
-                                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                                    <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                        <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                                        <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="{{ $machineget->id }}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                                        <a class="dropdown-item-custom-delete" id="deleteButton" data-id="{{ $machineget->id }}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td>No data found.</td>
-                                    </tr>
-                                @endif
+
                             </tbody>
                         </table>
                     </div>
@@ -227,9 +199,54 @@
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/vendor/jquery-maskedinput/jquery.maskedinput.js') }}"></script>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
+    <script>
+        function refreshtableimport() {
+            $.ajax({
+                url: '{{ route("autorefreshtable") }}',
+                method: 'GET',
+                success: function(data) {
+                    let tbody = $('#importTables tbody');
+                    tbody.empty();
+                    if (data.refreshmachine.length > 0) {
+                        data.refreshmachine.forEach(function(refreshmachine) {
+                            let refreshproperty = data.refreshproperty.find(function(property) {
+                                return property.id === refreshmachine.id_property;
+                            });
+                            let tr = $('<tr></tr>');
+                            tr.append('<td>' + refreshmachine.invent_number + '</td>');
+                            tr.append('<td>' + refreshmachine.machine_name + '</td>');
+                            tr.append('<td>' + refreshmachine.machine_brand + '</td>');
+                            tr.append('<td>' + refreshmachine.machine_type + '</td>');
+                            if (refreshmachine.id_property) {
+                                tr.append('<td>' + (refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi') + '</td>');
+                            } else {
+                                tr.append('<td>Belum ada standarisasi</td>');
+                            }
+                            tr.append(`
+                                <td>
+                                    <div class="dynamic-button-group">
+                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                            <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                            <a class="dropdown-item-custom-delete" id="deleteButton" data-id="${refreshmachine.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            `);
+                            tbody.append(tr);
+                        });
+                    } else {
+                        tbody.append('<tr><td colspan="6">No data found.</td></tr>');
+                    }
+                }
+            });
+        }
+    </script>
     <script>
         $(document).ready(function() {
             //fungsi fillter header table
@@ -248,6 +265,12 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            // sett auto refresh table
+            setInterval(refreshtableimport, 60000);
+            // mengisi table ketika page pertama kali load
+            refreshtableimport();
+
             //fungsi upload button untuk upload mesin
             $('#uploadButton').on('click', function(e) {
                 e.preventDefault();
@@ -266,7 +289,10 @@
                             $('#successText').text(successMessage);
                             $('#successModal').modal('show');
                         }
-                        $('#ExtralargeModal').modal('hide');
+                        setTimeout(function() {
+                                $('#successModal').modal('hide');
+                                $('#uploadModal').modal('hide');
+                        }, 2000);
                     },
                     error: function(status, error, response) {
                         if (response.error) {
@@ -274,12 +300,12 @@
                             $('#failedText').text(warningMessage);
                             $('#failedModal').modal('show');
                         }
-                        $('#uploadModal').modal('hide');
+                        setTimeout(function() {
+                            $('#failedModal').modal('hide');
+                        }, 2000);
                     }
                 }).always(function() {
-                    setTimeout(function() {
-                        location.reload(); // Refresh the page after a 2-second delay
-                    }, 2000); // 2000 milliseconds = 2 seconds
+                    refreshtableimport();
                 });
             });
 
@@ -295,7 +321,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
                                     <div>
-                                        <input class="form-control" type="text" name="invent_number" placeholder="Invent Number">
+                                        <input style="text-transform: uppercase;" class="form-control" id="inventNumber" type="text" name="invent_number" placeholder="_-__-__-____">
                                     </div>
                                 </div>
                             </div>
@@ -377,6 +403,11 @@
                 $('#modal_title_add').html(header_modal);
                 $('#modal_data_add').html(data_modal);
                 $('#modal_button_add').html(button_modal);
+                $('#inventNumber').mask('a-aa-99-9999');
+                // definisi deklarasi mask =
+                //     '9': "[0-9]",
+                //     'a': "[A-Za-z]",
+                //     '*': "[A-Za-z0-9]"
 
                 // Add event listener to save button
                 $('#saveButton').on('click', function() {
@@ -410,9 +441,12 @@
                             if (response.success) {
                                 const successMessage = response.success;
                                 $('#successText').text(successMessage);
-                                $('#successModal').modal('show'); // Show success modal
+                                $('#successModal').modal('show');
                             }
-                            $('#addModal').modal('hide'); // Hide modal on success
+                            setTimeout(function() {
+                                $('#successModal').modal('hide');
+                                $('#addModal').modal('hide');
+                            }, 2000);
                         },
                         error: function(xhr, status, error) {
                             var warningMessage = xhr.responseText;
@@ -424,9 +458,7 @@
                             $('#addModal').modal('hide'); // Hide modal on error
                         }
                     }).always(function() {
-                        setTimeout(function() {
-                            location.reload(); // Refresh the page after a 2-second delay
-                        }, 2000); // 2000 milliseconds = 2 seconds
+                        refreshtableimport();
                     });
                 });
             });
@@ -453,7 +485,7 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
                         const data_modal = `
-                            <table class="table table-bordered" id="importTables" width="100%">
+                            <table class="table table-bordered" id="editTables" width="100%">
                                 <thead>
                                     <th>Nomor Invent</th>
                                     <th>Nama Mesin</th>
@@ -471,12 +503,12 @@
                                         <th colspan="4">Standarisasi</th>
                                     </tr>
                                     <tr>
-                                    <td colspan="4">
-                                        <select class="form-control select2" id="getproperty">
-                                            <option value="">Tidak ada</option>
-                                            ${options}
-                                        </select>
-                                    </td>
+                                        <td colspan="4">
+                                            <select class="form-control select2" id="getproperty">
+                                                <option value="">Tidak ada</option>
+                                                ${options}
+                                            </select>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -505,7 +537,10 @@
                                         $('#successText').text(successMessage);
                                         $('#successModal').modal('show'); // Show success modal
                                     }
-                                    $('#ExtralargeModal').modal('hide'); // Hide modal on success
+                                    setTimeout(function() {
+                                            $('#successModal').modal('hide'); // Hide success modal
+                                            $('#editModal').modal('hide'); // Hide edit modal
+                                    }, 2000);
                                 },
                                 error: function(xhr, status, error) {
                                     var warningMessage = xhr.responseText;
@@ -518,12 +553,12 @@
                                         warningMessage); // Set the error message in the modal
                                     $('#failedModal').modal('show'); // Show error modal
                                         console.error('Error saving machine record: ' + error);
-                                    $('#editModal').modal('hide'); // Hide modal on error
+                                    setTimeout(function() {
+                                        $('#failedModal').modal('hide'); // Hide modal on error
+                                    }, 2000);
                                 }
                             }).always(function() {
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 2000);
+                                refreshtableimport();
                             });
                         });
                     },
@@ -627,7 +662,7 @@
             });
 
             // fungsi delete button untuk hapus mesin
-            $('.dropdown-item-custom-delete').on('click', function(e) {
+            $('#importTables').on('click', '.dropdown-item-custom-delete', function(e) {
                 e.preventDefault();
                 const button = $(this);
                 const machineId = button.data('id');
@@ -644,43 +679,19 @@
                             $('#successText').text(successMessage);
                             $('#successModal').modal('show');
                         }
-                        $('#successModal').modal('hide');
+                        setTimeout(function() {
+                                $('#successModal').modal('hide'); // Hide success modal
+                        }, 2000);
                     }).fail(function(xhr, status, error) {
                         console.error(xhr.responseText);
                         const warningMessage = xhr.statusText;
                         $('#failedText').text(warningMessage);
                         $('#failedModal').modal('show');
                     }).always(function() {
-                        setTimeout(function() {
-                            location.reload();
-                        }, 2000);
+                        refreshtableimport();
                     });
                 } else {
                     // User cancelled the deletion, do nothing
-                }
-            });
-
-            // fungsi get status standarisasi mesin melalui ajax
-            var table = $('#importTables').DataTable();
-            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
-                var row = this.node();
-                var idCell = $(row).find('td').eq(4);
-                var id = idCell.data('id');
-                if (id) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '{{ route('fetchtableproperty', ':id') }}'.replace(':id', id),
-                        success: function(data) {
-                            if (data.name_property) {
-                                idCell.text(data.name_property);
-                            } else {
-                                idCell.text('Belum ada standarisasi');
-                            }
-                        },
-                        error: function() {
-                            idCell.text('Error fetching name');
-                        }
-                    });
                 }
             });
 

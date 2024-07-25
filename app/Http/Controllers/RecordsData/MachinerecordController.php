@@ -196,10 +196,18 @@ class MachinerecordController extends Controller
                 }
             }
         }
+        $usernames = [];
+        $combineuser = $recordsdata->first()->create_by;
+        $splituser = explode(',', $combineuser);
+        foreach ($splituser as $eachuserid){
+            $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+        }
+
         return response()->json([
             'machinedata' => $machinedata,
             'recordsdata' => $recordsdata,
-            'combinedata' => $combinedata
+            'combinedata' => $combinedata,
+            'usernames' => $usernames
         ]);
     }
     // fungsi untuk mensetujui dan meregister hasil preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
@@ -314,10 +322,18 @@ class MachinerecordController extends Controller
                 }
             }
         }
+        $usernames = [];
+        $combineuser = $recordsdata->first()->create_by;
+        $splituser = explode(',', $combineuser);
+        foreach ($splituser as $eachuserid){
+            $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+        }
+
         return response()->json([
             'machinedata' => $machinedata,
             'recordsdata' => $recordsdata,
-            'combinedata' => $combinedata
+            'combinedata' => $combinedata,
+            'usernames' => $usernames
         ]);
     }
     // fungsi untuk mensetujui dan meregister hasil preventive mesin [supervisor + ass.manager + manager only]

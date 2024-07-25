@@ -23,9 +23,24 @@ class ImportdataController extends Controller
     public function gettableimport($id)
     {
         try {
-            $fetchtable = Machineproperty::find($id);
+            $data = Machineproperty::find($id);
             return response()->json([
-                'name_property' => $fetchtable->name_property]);
+                'name_property' => $data->name_property]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    // fungsi untuk merefresh tabel form prefentive
+    public function refreshtable()
+    {
+        try {
+            $refreshmachine = Machine::all();
+            $refreshproperty = Machineproperty::all();
+            return response()->json([
+                'refreshmachine' => $refreshmachine,
+                'refreshproperty' => $refreshproperty
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
@@ -119,7 +134,6 @@ class ImportdataController extends Controller
             return $pdf->stream();
             // return $pdf->download('data.pdf');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             // Log the error for debugging purposes
             Log::error('DOM PDF failed: '.$e->getMessage());
 

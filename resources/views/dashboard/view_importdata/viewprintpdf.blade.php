@@ -20,11 +20,12 @@
 
         .form-header{
             font-size: 1.1em;
+            margin: 0px;
         }
         .form-title{
             font-size: 1.4em;
             text-align: center;
-            margin: 5px 0px 10px 0px;
+            margin: 0px 0px 2px 0px;
         }
 
         .table-header {
@@ -34,7 +35,7 @@
             /* margin: 4px 0px 4px 0px !important; */
             margin-bottom: 10px;
             border-spacing: 0;
-            font-size: smaller;
+            /* font-size: smaller; */
 
             border: 0.5px solid #000000;
         }
@@ -46,12 +47,12 @@
             text-align: left;
             /* border: 0.5px solid #000000; */
         }
-        #header-name-control{
+        /* #header-name-control{
             width: 15%;
         }
         #header-value-control{
             width: 30%;
-        }
+        } */
 
         .table-input {
             width: 100%;
@@ -59,7 +60,7 @@
             /* margin-top: 5px !important; */
             margin-bottom: 10px;
             border-spacing: 0;
-            font-size: smaller;
+            /* font-size: smaller; */
             border: 0.5px solid #000000;
         }
         .table-input tr th {
@@ -92,7 +93,7 @@
             /* padding: 0px 0px 4px 0px; */
             width: 100%;
             border-spacing: 0;
-            font-size: smaller;
+            /* font-size: smaller; */
             align-items: center;
             /* border: 0.4px solid #000000; */
         }
@@ -111,7 +112,7 @@
         .table {
             width: 100%;
             clear: both;
-            margin-bottom: 5px;
+            /* margin-bottom: 5px; */
             /* margin-top: 6px !important; */
             /* margin-bottom: 6px !important; */
             border-spacing: 0;
@@ -218,7 +219,7 @@
         </thead>
         <tbody>
             @foreach ($machinedata as $key => $recordsget)
-            @for ($number=0; $number<$key; $number ++)
+            @for ($number=0; $number<=$key; $number ++)
             @endfor
                 <tr>
                     <td style="text-align: center;">{{ $number }}</td>
@@ -240,10 +241,10 @@
                 <td colspan="5">LD - MTN - 03</td>
             </tr>
             <tr>
-                <td width="15%"></td>
+                <td width="4%"></td>
                 <th width="25%" colspan="2">Action :</th>
-                <th width="15%"></th>
-                <th width="20%">Result :</th>
+                <th width="10%"></th>
+                <th width="28%">Result :</th>
             </tr>
             <tr>
                 <td></td>
@@ -260,7 +261,7 @@
                 <td>X = NG</td>
             </tr>
             <tr>
-                <td colspan="5" rowspan="2" style="font-size:5px">
+                <td colspan="5" rowspan="2" style="font-size:6px">
                     NOTE : JIKA "NG" URAIAN DIISI DI KOLOM KETERANGAN
                 </td>
             </tr>
@@ -272,7 +273,7 @@
                 <th>keterangan :</th>
             </tr>
             <tr>
-                <th height="15%"></th>
+                <th height="14%"></th>
             </tr>
         </tbody>
     </table>
@@ -285,10 +286,10 @@
                 <th>Dibuat</th>
             </tr>
             <tr>
-                <td height="5%" id="hidden-column"></td>
-                <td height="5%"></td>
-                <td height="5%"></td>
-                <td height="5%"></td>
+                <td height="4%" id="hidden-column"></td>
+                <td height="4%"></td>
+                <td height="4%"></td>
+                <td height="4%"></td>
             </tr>
             <tr>
                 <td width="55%" id="hidden-column"></td>
