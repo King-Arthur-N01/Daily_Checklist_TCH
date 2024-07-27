@@ -20,30 +20,74 @@ class MachinerecordController extends Controller
     // fungsi untuk melihat table preventive mesin
     public function indexmachinerecord()
     {
-        $machines = Machine::all();
-        return view('dashboard.view_recordmesin.tablerecordmesin', ['machines' => $machines]);
+        return view('dashboard.view_recordmesin.tablerecordmesin');
     }
-    public function gettablerecord($id) {
+    // fungsi menampilkan tabel dan merefresh tabel
+    public function refreshtablerecord() {
         $currenttime = Carbon::now();
+        $machine = Machine::all();
+        // $machine = DB::table('machines')
+        //     ->select('machines.*', 'machineproperties.*')
+        //     ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+        //     ->get();
+        $responsedata = [];
         try {
-            // Fetch the latest record for the given machine ID
-            $lastrecord = Machinerecord::where('id_machine', $id)->orderBy('record_time', 'desc')->first();
-            if ($lastrecord) {
-                $lasttime = Carbon::parse($lastrecord->record_time);
-                $totaltime = $currenttime->diff($lasttime);
-                $gettotalhours = $totaltime->format('%h:%I:%S');
-                $gettotaldays = $totaltime->format('%d');
-                return response()->json([
-                    'gettotalhours' => $gettotalhours,
-                    'gettotaldays' => $gettotaldays
-                ]);
-            } else {
-                return response()->json(['error' => 'No records found for the given machine ID'], 422);
+            foreach ($machine as $refreshmachine) {
+                $lastrecord = Machinerecord::where('id_machine', $refreshmachine->id)->orderBy('record_time', 'desc')->first();
+                if ($lastrecord) {
+                    $lasttime = Carbon::parse($lastrecord->record_time);
+                    $totaltime = $currenttime->diff($lasttime);
+                    $gettotalhours = $totaltime->format('%h:%I:%S');
+                    $gettotaldays = $totaltime->format('%d');
+
+                    $responsedata[] = [
+                        'id' => $refreshmachine->id,
+                        'machine_number' => $refreshmachine->machine_number,
+                        'machine_name' => $refreshmachine->machine_name,
+                        'machine_type' => $refreshmachine->machine_type,
+                        'machine_brand' => $refreshmachine->machine_brand,
+                        'total_hours' => $gettotalhours,
+                        'total_days' => $gettotaldays
+                    ];
+                } else {
+                    $responsedata[] = [
+                        'id' => $refreshmachine->id,
+                        'machine_number' => $refreshmachine->machine_number,
+                        'machine_name' => $refreshmachine->machine_name,
+                        'machine_type' => $refreshmachine->machine_type,
+                        'machine_brand' => $refreshmachine->machine_brand
+                    ];
+                }
             }
+            return response()->json(
+                $responsedata
+            );
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
+    // public function gettablerecord($id) {
+    //     $currenttime = Carbon::now();
+    //     try {
+    //         // Fetch the latest record for the given machine ID
+    //         $lastrecord = Machinerecord::where('id_machine', $id)->orderBy('record_time', 'desc')->first();
+    //         if ($lastrecord) {
+    //             $lasttime = Carbon::parse($lastrecord->record_time);
+    //             $totaltime = $currenttime->diff($lasttime);
+    //             $gettotalhours = $totaltime->format('%h:%I:%S');
+    //             $gettotaldays = $totaltime->format('%d');
+    //             return response()->json([
+    //                 'gettotalhours' => $gettotalhours,
+    //                 'gettotaldays' => $gettotaldays
+    //             ]);
+    //         } else {
+    //             return response()->json(['error' => 'No records found for the given machine ID'], 422);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
 
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
@@ -150,18 +194,27 @@ class MachinerecordController extends Controller
     // index tampilan untuk koreksi preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
     public function indexcorrection()
     {
-        $getrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
-            ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
-            ->join('users', 'machinerecords.create_by', '=', 'users.id')
-            ->orderBy('machinerecords.id', 'asc')
-            ->get();
-
-        return view('dashboard.view_recordmesin.tableapproval1', [
-            'getrecords' => $getrecords
-        ]);
+        return view('dashboard.view_recordmesin.tableapproval1');
     }
-    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database
+
+    public function refreshtablecorrection()
+    {
+        try {
+            $refreshrecord = DB::table('machinerecords')
+                ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
+                ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
+                ->join('users', 'machinerecords.create_by', '=', 'users.id')
+                ->orderBy('machinerecords.id', 'asc')
+                ->get();
+            return response()->json([
+                'refreshrecord' => $refreshrecord
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk disetujui
     public function fetchdatacorrection($id)
     {
         $machinedata = DB::table('machinerecords')
@@ -175,9 +228,10 @@ class MachinerecordController extends Controller
             ->get('machinerecords.id');
 
         $recordsdata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'machinerecords.id as get_id', 'historyrecords.id_metodecheck as get_checks')
+            ->select('machinerecords.*', 'historyrecords.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
-            ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
+            ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
+            ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
@@ -269,6 +323,11 @@ class MachinerecordController extends Controller
     // <<<============================================================================================>>>
 
 
+
+
+
+
+
     // <<<============================================================================================>>>
     // <<<==============================batas approval machine records 2==============================>>>
     // <<<============================================================================================>>>
@@ -276,18 +335,27 @@ class MachinerecordController extends Controller
     // index tampilan untuk koreksi preventive mesin [supervisor + ass.manager + manager only]
     public function indexapproval()
     {
-        $getrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
-            ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
-            ->join('users', 'machinerecords.create_by', '=', 'users.id')
-            ->orderBy('machinerecords.id', 'asc')
-            ->get();
-
-        return view('dashboard.view_recordmesin.tableapproval2', [
-            'getrecords' => $getrecords
-        ]);
+        return view('dashboard.view_recordmesin.tableapproval2');
     }
-    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database
+
+    public function refreshtableapproval()
+    {
+        try {
+            $refreshrecord = DB::table('machinerecords')
+                ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
+                ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
+                ->join('users', 'machinerecords.create_by', '=', 'users.id')
+                ->orderBy('machinerecords.id', 'asc')
+                ->get();
+            return response()->json([
+                'refreshrecord' => $refreshrecord
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk disetujui
     public function fetchdataapproval($id) // this code for ajax modal html
     {
         $machinedata = DB::table('machinerecords')
@@ -301,9 +369,10 @@ class MachinerecordController extends Controller
             ->get('machinerecords.id');
 
         $recordsdata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'users.*', 'machinerecords.id as get_id', 'historyrecords.id_metodecheck as get_checks')
+            ->select('machinerecords.*', 'historyrecords.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
-            ->leftJoin('users', 'machinerecords.create_by', '=' ,'users.id')
+            ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
+            ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 

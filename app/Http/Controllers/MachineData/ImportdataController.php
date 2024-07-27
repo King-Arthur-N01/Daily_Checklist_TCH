@@ -20,19 +20,9 @@ class ImportdataController extends Controller
         $machines = Machine::get();
         return view('dashboard.view_importdata.indeximportdata', ['machines' => $machines]);
     }
-    public function gettableimport($id)
-    {
-        try {
-            $data = Machineproperty::find($id);
-            return response()->json([
-                'name_property' => $data->name_property]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error fetching data'], 500);
-        }
-    }
 
     // fungsi untuk merefresh tabel form prefentive
-    public function refreshtable()
+    public function refreshtableimport()
     {
         try {
             $refreshmachine = Machine::all();

@@ -1459,3 +1459,115 @@ document.addEventListener("DOMContentLoaded", function() {
 </body>
 
 </html>
+
+
+const table = $('#recordTables').DataTable({
+                ajax: {
+                    url: '{{ route("refreshtablerecord") }}',
+                    dataSrc: function(data) {
+                        console.log(data); // Log the data to inspect the structure
+                        if (data.error) {
+                            alert(data.error);
+                            return []; // Return an empty array if there's an error
+                        }
+                        if (!Array.isArray(data)) {
+                            console.error('Expected an array but got:', data);
+                            return [];
+                        }
+                        return data.map(function(item) {
+                            return {
+                                machine_number: item.machine.machine_number,
+                                machine_name: item.machine.machine_name,
+                                machine_type: item.machine.machine_type,
+                                machine_brand: item.machine.machine_brand,
+                                status: item.total_days && item.total_hours
+                                    ? 'Terakhir preventive ' + item.total_days + ' hari ' + item.total_hours + ' jam yang lalu'
+                                    : 'Error fetching data',
+                                actions: `
+                                    <div class="dynamic-button-group">
+                                        <a class="btn btn-primary btn-sm" style="color:white" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                    </div>
+                                `
+                            };
+                        });
+                    },
+                    error: function(xhr, error, thrown) {
+                        console.error('Error fetching data:', error, thrown);
+                        alert('An error occurred while fetching data.');
+                    }
+                },
+                columns: [
+                    { data: 'machine_number' },
+                    { data: 'machine_name' },
+                    { data: 'machine_type' },
+                    { data: 'machine_brand' },
+                    { data: 'status' },
+                    { data: 'actions', orderable: false, searchable: false }
+                ]
+            });
+
+
+
+
+
+
+            $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'Select :',
+                searchInputPlaceholder: 'Search'
+            });
+
+            const table = $('#recordTables').DataTable({
+                ajax: {
+                    url: '{{ route("refreshtablerecord") }}',
+                    dataSrc: function(data) {
+                        const refreshmachines = data.refreshmachine.id; // store the data in a separate variable
+                        return data.refreshmachine.map(function(refreshmachine) {
+                            return {
+                                machine_number: refreshmachine.machine_number,
+                                machine_name: refreshmachine.machine_name,
+                                machine_type: refreshmachine.machine_type,
+                                machine_brand: refreshmachine.machine_brand,
+                                id_property: refreshmachine.id_property ? refreshmachine.id_property : 'Belum ada standarisasi',
+                                actions: `
+                                    <div class="dynamic-button-group">
+                                        <a class="btn btn-primary btn-sm" style="color:white" href="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                                    </div>
+                                `
+                            };
+                        });
+                    }
+                },
+                columns: [
+                    { data: 'machine_number' },
+                    { data: 'machine_name' },
+                    { data: 'machine_type' },
+                    { data: 'machine_brand' },
+                    { data: 'id_property' },
+                    { data: 'actions', orderable: false, searchable: false }
+                ]
+            });
+
+            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                const row = table.row(rowIdx);
+                const refreshmachine = row.data(); // get the current row data
+                const id = refreshmachine.id;
+                console.log(id);
+                if (id) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{ route('fetchtablerecord', ':id') }}'.replace(':id', id),
+                        success: function(data) {
+                            if (data.gettotalhours && data.gettotaldays) {
+                                idCell.text('Terakhir preventive ' + data.gettotaldays + ' hari ' + data.gettotalhours + ' jam yang lalu');
+                            } else {
+                                idCell.text('Error fetching data');
+                            }
+                        },
+                        error: function() {
+                            idCell.text('Belum pernah dilakukan preventive');
+                        }
+                    });
+                }
+            });
+        });

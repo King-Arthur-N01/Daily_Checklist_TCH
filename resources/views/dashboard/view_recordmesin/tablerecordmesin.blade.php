@@ -66,26 +66,6 @@
                                 <th>STATUS</th>
                                 <th>ACTION</th>
                             </thead>
-                            <tbody>
-                                @foreach ($machines as $getmachine)
-                                    <tr>
-                                        <td>{{ $getmachine->machine_number }}</td>
-                                        <td>{{ $getmachine->machine_name }}</td>
-                                        <td>{{ $getmachine->machine_type }}</td>
-                                        <td>{{ $getmachine->machine_brand }}</td>
-                                        @if (empty($getmachine->id_property))
-                                            <td>Belum ada standarisasi mesin</td>
-                                        @else
-                                            <td data-id="{{ $getmachine->id }}">{{ $getmachine->id }}</td>
-                                        @endif
-                                        <td>
-                                            <div class="dynamic-button-group">
-                                                <a class="btn btn-primary btn-sm" style="color:white" href="{{ route('indexuserinput', $getmachine->id) }}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -105,38 +85,54 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#recordTables').DataTable({ // Disable sorting for columns
-                columnDefs: [{
-                    "orderable": false,
-                    "targets": [5]
-                }]
-            });
             $('.select2').select2({
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
             });
-            // fungsi get status waktu terakhir preventive mesin melalui ajax
-            var table = $('#recordTables').DataTable();
-            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
-                var row = this.node();
-                var idCell = $(row).find('td').eq(4);
-                var id = idCell.data('id');
-                if (id) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '{{ route('fetchtablerecord', ':id') }}'.replace(':id', id),
-                        success: function(data) {
-                            if (data.gettotalhours && data.gettotaldays) {
-                                idCell.text('Terakhir preventive ' + data.gettotaldays + ' hari ' + data.gettotalhours + ' jam yang lalu');
-                            } else {
-                                idCell.text('Error fetching data');
-                            }
-                        },
-                        error: function() {
-                            idCell.text('Belum pernah dilakukan preventive');
-                        }
-                    });
-                }
+
+            // sett automatic soft refresh table
+            setInterval(function() {
+                table.ajax.reload(null, false);
+            }, 30000); // 30000 milidetik = 30 second
+
+            const table = $('#recordTables').DataTable({
+                ajax: {
+                    url: '{{ route("refreshrecord") }}',
+                    dataSrc: function(data) {
+                        return data.map(function(refreshmachine) {
+                            return {
+                                machine_number: refreshmachine.machine_number,
+                                machine_name: refreshmachine.machine_name,
+                                machine_type: refreshmachine.machine_type,
+                                machine_brand: refreshmachine.machine_brand,
+                                status: refreshmachine.total_days && refreshmachine.total_hours
+                                    ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu'
+                                    : 'Belum pernah dilakukan preventive',
+                                actions: refreshmachine.id
+                            };
+                        });
+                    }
+                },
+                columns: [
+                    { data: 'machine_number' },
+                    { data: 'machine_name' },
+                    { data: 'machine_type' },
+                    { data: 'machine_brand' },
+                    { data: 'status' },
+                    {data: 'actions',
+                    render: function(data, type, row) {
+                        var url = '{{ route("indexuserinput", ":id") }}';
+                        url = url.replace(':id', data);
+                        return `
+                        <div class="dynamic-button-group">
+                            <a class="btn btn-primary btn-sm" style="color:white" href="${url}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                        </div>
+                        `;
+                    },
+                    orderable: false,
+                    searchable: false
+                    }
+                ]
             });
         });
     </script>

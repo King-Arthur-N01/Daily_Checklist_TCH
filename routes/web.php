@@ -44,11 +44,10 @@ Route::post('/machinedata/register','MachineData\MachineController@registermachi
 Route::post('/machinedata/pushfiles','MachineData\ImportdataController@importdata')->name('uploadfile');
 Route::get ('/machinedata/print/{machineId}','MachineData\ImportdataController@exportpdf')->name('exportfile');
 
-Route::get ('/machinedata/fetch/table/refresh','MachineData\ImportdataController@refreshtable')->name('autorefreshtable');
-Route::get ('/machinedata/fetch/table/{id}','MachineData\ImportdataController@gettableimport')->name('fetchtableproperty');
-Route::get ('/machinedata/fetch/view/{id}','MachineData\ImportdataController@detailproperty')->name('fetchdetailproperty');
-Route::get ('/machinedata/fetch/data/{id}','MachineData\ImportdataController@viewproperty')->name('fetchviewproperty');
-Route::put ('/machinedata/fetch/register/{id}','MachineData\ImportdataController@registeridproperty')->name('fetchdataproperty');
+Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refreshtableimport')->name('refreshimport');
+Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('fetchdetailproperty');
+Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@viewproperty')->name('fetchviewproperty');
+Route::put ('/machinedata/registerproperty/{id}','MachineData\ImportdataController@registeridproperty')->name('fetchdataproperty');
 // machine import route end
 
 // machine property route
@@ -89,24 +88,31 @@ Route::get ('/methodecheck/delete/{id}','MachineData\MetodecheckController@delet
 
 // input data machine record
 Route::get ('/machinerecord/preventive','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get ('/machinerecord/preventive/fetch/{id}','RecordsData\MachinerecordController@gettablerecord')->name('fetchtablerecord');
 Route::get ('/machinerecord/preventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
 Route::put ('/machinerecord/preventive/machine','RecordsData\MachinerecordController@registermachinerecord')->name('pushuserinput');
+
+Route::get ('/machinerecord/preventive/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
 // input data machine record end
 
-// input data correction 1
+// input data correction
 Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('viewcorrection');
+
+Route::get ('/machinerecord/correction/table/refresh','RecordsData\MachinerecordController@refreshtablecorrection')->name('refreshcorrect');
 Route::get ('/machinerecord/correction/{id}','RecordsData\MachinerecordController@fetchdatacorrection')->name('fetchcorrection');
+
 Route::put ('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('pushcorrection');
 Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrect');
-// input data correction 1 end
+// input data correction end
 
-// input data approval 2
+// input data approval
 Route::get ('/machinerecord/approval','RecordsData\MachinerecordController@indexapproval')->name('viewapproval');
+
+Route::get ('/machinerecord/approval/table/refresh','RecordsData\MachinerecordController@refreshtableapproval')->name('refreshapproval');
 Route::get ('/machinerecord/approval/{id}','RecordsData\MachinerecordController@fetchdataapproval')->name('fetchapproval');
+
 Route::put ('/machinerecord/approval/{id}','RecordsData\MachinerecordController@registerapproval')->name('pushapproval');
 Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordController@deleteapproval')->name('removeapprove');
-// input data approval 2 end
+// input data approval end
 
 // record data machine route
 Route::get ('/historyrecord','RecordsData\HistoryrecordsController@indexhistory')->name('historymachine');

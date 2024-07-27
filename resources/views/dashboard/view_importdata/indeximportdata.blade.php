@@ -64,9 +64,6 @@
                                 <th>Standarisasi</th>
                                 <th>Action</th>
                             </thead>
-                            <tbody>
-
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -204,58 +201,7 @@
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script>
-        function refreshtableimport() {
-            $.ajax({
-                url: '{{ route("autorefreshtable") }}',
-                method: 'GET',
-                success: function(data) {
-                    let tbody = $('#importTables tbody');
-                    tbody.empty();
-                    if (data.refreshmachine.length > 0) {
-                        data.refreshmachine.forEach(function(refreshmachine) {
-                            let refreshproperty = data.refreshproperty.find(function(property) {
-                                return property.id === refreshmachine.id_property;
-                            });
-                            let tr = $('<tr></tr>');
-                            tr.append('<td>' + refreshmachine.invent_number + '</td>');
-                            tr.append('<td>' + refreshmachine.machine_name + '</td>');
-                            tr.append('<td>' + refreshmachine.machine_brand + '</td>');
-                            tr.append('<td>' + refreshmachine.machine_type + '</td>');
-                            if (refreshmachine.id_property) {
-                                tr.append('<td>' + (refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi') + '</td>');
-                            } else {
-                                tr.append('<td>Belum ada standarisasi</td>');
-                            }
-                            tr.append(`
-                                <td>
-                                    <div class="dynamic-button-group">
-                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                            <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                            <a class="dropdown-item-custom-delete" id="deleteButton" data-id="${refreshmachine.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            `);
-                            tbody.append(tr);
-                        });
-                    } else {
-                        tbody.append('<tr><td colspan="6">No data found.</td></tr>');
-                    }
-                }
-            });
-        }
-    </script>
-    <script>
         $(document).ready(function() {
-            //fungsi fillter header table
-            $('#importTables').DataTable({ // Disable sorting for columns
-                columnDefs: [{
-                    "orderable": false,
-                    "targets": [5]
-                }]
-            });
             $('.select2').select2({
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
@@ -266,10 +212,50 @@
                 }
             });
 
-            // sett auto refresh table
-            setInterval(refreshtableimport, 60000);
-            // mengisi table ketika page pertama kali load
-            refreshtableimport();
+            // sett automatic soft refresh table
+            setInterval(function() {
+                table.ajax.reload(null, false);
+            }, 60000); // 60000 milidetik = 60 second/ 1 menit
+
+            // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
+            const table = $('#importTables').DataTable({
+                ajax: {
+                    url: '{{ route("refreshimport") }}',
+                    dataSrc: function(data) {
+                        // Sesuaikan data yang akan digunakan oleh DataTables
+                        return data.refreshmachine.map(function(refreshmachine) {
+                            let refreshproperty = data.refreshproperty.find(function(property) {
+                                return property.id === refreshmachine.id_property;
+                            });
+                            return {
+                                invent_number: refreshmachine.invent_number,
+                                machine_name: refreshmachine.machine_name,
+                                machine_brand: refreshmachine.machine_brand,
+                                machine_type: refreshmachine.machine_type,
+                                name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi',
+                                actions: `
+                                    <div class="dynamic-button-group">
+                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                            <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                            <a class="dropdown-item-custom-delete" id="deleteButton" data-id="${refreshmachine.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                        </div>
+                                    </div>
+                                `
+                            };
+                        });
+                    }
+                },
+                columns: [
+                    { data: 'invent_number' },
+                    { data: 'machine_name' },
+                    { data: 'machine_brand' },
+                    { data: 'machine_type' },
+                    { data: 'name_property' },
+                    { data: 'actions', orderable: false, searchable: false }
+                ]
+            });
 
             //fungsi upload button untuk upload mesin
             $('#uploadButton').on('click', function(e) {
@@ -291,7 +277,7 @@
                         }
                         setTimeout(function() {
                                 $('#successModal').modal('hide');
-                                $('#uploadModal').modal('hide');
+                                $('#addModal').modal('hide');
                         }, 2000);
                     },
                     error: function(status, error, response) {
@@ -305,7 +291,7 @@
                         }, 2000);
                     }
                 }).always(function() {
-                    refreshtableimport();
+                    table.ajax.reload(null, false);
                 });
             });
 
@@ -458,7 +444,7 @@
                             $('#addModal').modal('hide'); // Hide modal on error
                         }
                     }).always(function() {
-                        refreshtableimport();
+                        table.ajax.reload(null, false);
                     });
                 });
             });
@@ -558,7 +544,7 @@
                                     }, 2000);
                                 }
                             }).always(function() {
-                                refreshtableimport();
+                                table.ajax.reload(null, false);
                             });
                         });
                     },
@@ -688,7 +674,7 @@
                         $('#failedText').text(warningMessage);
                         $('#failedModal').modal('show');
                     }).always(function() {
-                        refreshtableimport();
+                        table.ajax.reload(null, false);
                     });
                 } else {
                     // User cancelled the deletion, do nothing

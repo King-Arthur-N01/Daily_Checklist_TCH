@@ -53,29 +53,6 @@
                                 <th>STATUS</th>
                                 <th>ACTION</th>
                             </thead>
-                            <tbody>
-                                @if (isset($getrecords) && !empty($getrecords))
-                                    @foreach ($getrecords as $viewrecords)
-                                        <tr>
-                                            <td>{{ $viewrecords->records_id }}</td>
-                                            <td>{{ $viewrecords->getuser }}</td>
-                                            <td>{{ $viewrecords->shift }} </td>
-                                            <td>{{ $viewrecords->machine_name }}</td>
-                                            <td>{{ $viewrecords->machine_type }}</td>
-                                            <td>{{ $viewrecords->machine_number }}</td>
-                                            <td>{{ $viewrecords->record_time }}</td>
-                                            <td>{{ $viewrecords->approve_by }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $viewrecords->records_id }}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td>No data found.</td>
-                                    </tr>
-                                @endif
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -160,10 +137,52 @@
     <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#preventiveTables2').DataTable({ // Disable sorting for columns
-                columnDefs: [{"orderable": false, "targets": [8]
-                }]
+            // sett automatic soft refresh table
+            setInterval(function() {
+                table.ajax.reload(null, false);
+            }, 60000); // 60000 milidetik = 60 second
+
+            const table = $('#preventiveTables2').DataTable({
+                ajax: {
+                    url: '{{ route("refreshapproval") }}',
+                    dataSrc: function(data) {
+                        if (data && data.refreshrecord) {
+                            // Process the data to match the table columns
+                            return data.refreshrecord.map(function(refreshrecord) {
+                                console.log(refreshrecord);
+                                return {
+                                    no: refreshrecord.records_id,
+                                    pic: refreshrecord.getuser,
+                                    shift: refreshrecord.shift,
+                                    nama_mesin: refreshrecord.machine_name,
+                                    model_type: refreshrecord.machine_type,
+                                    no_mesin: refreshrecord.machine_number2,
+                                    waktu_preventive: refreshrecord.record_time,
+                                    status: refreshrecord.approve_by,
+                                    action: `
+                                        <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                    `
+                                };
+                            });
+                        } else {
+                            console.error('Invalid data received from server:', data);
+                            return [];
+                        }
+                    }
+                },
+                columns: [
+                    { data: 'no' },
+                    { data: 'pic' },
+                    { data: 'shift' },
+                    { data: 'nama_mesin' },
+                    { data: 'model_type' },
+                    { data: 'no_mesin' },
+                    { data: 'waktu_preventive' },
+                    { data: 'status' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
             });
+
             $('#ExtralargeModal').on('shown.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var approveId = button.data('id');
@@ -219,8 +238,8 @@
                                             <th>Dibuat oleh :</th>
                                         </tr>
                                         <tr>
-                                            <td>${data.recordsdata[0].approve_by}</td>
-                                            <td>${data.recordsdata[0].correct_by}</td>
+                                            <td>${data.recordsdata[0].approve_by_name}</td>
+                                            <td>${data.recordsdata[0].correct_by_name}</td>
                                             <td>${data.usernames.join(' & ')}</td>
                                         </tr>
                                     </thead>
@@ -270,9 +289,10 @@
                                             console.error('Error parsing error message:', e);
                                         }
                                         $('#warningText').text(warningMessage); // Set the error message in the modal
-                                        $('#warningModal').modal('show'); // Show error modal
+                                        setTimeout(function() {
+                                            $('#warningModal').modal('hide'); // Hide modal after 2 seconds
+                                        }, 2000);
                                         console.error('Error saving machine record: ' + error);
-                                        $('#warningModal').modal('hide'); // Hide modal on error
                                     }
                                 }).always(function() {
                                     setTimeout(function() {
