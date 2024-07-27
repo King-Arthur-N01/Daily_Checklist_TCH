@@ -31,8 +31,8 @@ Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 
 // machine route
 Route::get ('/machine','MachineData\MachineController@indexmachine')->name('managemachine');
-Route::get ('/machine/addmachine','MachineData\MachineController@registermachine')->name('addmachine');
-Route::post('/machine/addmachine','MachineData\MachineController@pushregistermachine')->name('pushmachine');
+// Route::get ('/machine/addmachine','MachineData\MachineController@registermachine')->name('addmachine');
+// Route::post('/machine/addmachine','MachineData\MachineController@pushregistermachine')->name('pushmachine');
 Route::get ('/machine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::put ('/machine/editmachine/{id}','MachineData\MachineController@pushupdatemachine')->name('pusheditmachine');
 Route::delete('/machine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('removemachine');

@@ -50,6 +50,6 @@ class LoginController extends Controller
     return redirect("login");
     }
     public function blockuser() {
-        return view('dashboard.view_blacklist.internetpositive2');
+        return view('dashboard.view_blockpage.internetpositive2');
     }
 }

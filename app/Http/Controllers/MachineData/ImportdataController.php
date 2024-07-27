@@ -18,7 +18,7 @@ class ImportdataController extends Controller
     public function indeximport()
     {
         $machines = Machine::get();
-        return view('dashboard.view_importdata.indeximportdata', ['machines' => $machines]);
+        return view('dashboard.view_importdata.tableimportdata', ['machines' => $machines]);
     }
 
     // fungsi untuk merefresh tabel form prefentive

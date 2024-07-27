@@ -22,7 +22,7 @@
                                 </select>
                             </div>
                             <div class="col-4">
-                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <p class="mg-b-10">Nomor Mesin </p>
                                 <select class="form-control select2" name="" id="filterById">
                                     <option selected="selected" value="">Select :</option>
                                     <option></option>
