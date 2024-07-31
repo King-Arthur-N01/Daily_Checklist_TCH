@@ -95,6 +95,7 @@
                 table.ajax.reload(null, false);
             }, 30000); // 30000 milidetik = 30 second
 
+            // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#recordTables').DataTable({
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
@@ -121,7 +122,7 @@
                     { data: 'status' },
                     {data: 'actions',
                     render: function(data, type, row) {
-                        var url = '{{ route("indexuserinput", ":id") }}';
+                        let url = '{{ route("indexuserinput", ":id") }}';
                         url = url.replace(':id', data);
                         return `
                         <div class="dynamic-button-group">

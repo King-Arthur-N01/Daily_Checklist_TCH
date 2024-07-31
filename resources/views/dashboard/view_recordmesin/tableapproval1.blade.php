@@ -64,7 +64,7 @@
     </div>
 
     <!-- Extra Large Modal -->
-    <div class="modal fade" id="ExtralargeModal" tabindex="-1">
+    <div class="modal fade" id="correctModal" tabindex="-1">
         <div class="modal-dialog modal-xxl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_correct">
@@ -142,6 +142,7 @@
                 table.ajax.reload(null, false);
             }, 60000); // 60000 milidetik = 60 second
 
+            // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#preventiveTables1').DataTable({
                 ajax: {
                     url: '{{ route("refreshcorrect") }}',
@@ -158,9 +159,9 @@
                                     model_type: refreshrecord.machine_type,
                                     no_mesin: refreshrecord.machine_number2,
                                     waktu_preventive: refreshrecord.record_time,
-                                    status: refreshrecord.correct_by,
+                                    status: refreshrecord.correct_by ? refreshrecord.correct_by : 'Belum Dikoreksi',
                                     action: `
-                                        <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#ExtralargeModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                        <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#correctModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                     `
                                 };
                             });
@@ -183,9 +184,9 @@
                 ]
             });
 
-            $('#ExtralargeModal').on('shown.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var correctId = button.data('id');
+            $('#correctModal').on('shown.bs.modal', function(event) {
+                let button = $(event.relatedTarget);
+                let correctId = button.data('id');
                 $.ajax({
                     type: 'GET',
                     url: '{{ route('fetchcorrection', ':id') }}'.replace(':id', correctId),
@@ -260,8 +261,8 @@
 
                         // Save button
                         $('#saveButton').on('click', function() {
-                            var note = $('#input_note').val();
-                            var correctedBy = '{{ Auth::user()->id }}';
+                            let note = $('#input_note').val();
+                            let correctedBy = '{{ Auth::user()->id }}';
                             if (confirm("Apakah yakin mengkoreksi preventive ini?")) {
                                 $.ajax({
                                     type: 'PUT',
@@ -275,28 +276,26 @@
                                         if (response.success) {
                                             const successMessage = response.success;
                                             $('#successText').text(successMessage);
-                                            $('#successModal').modal('show'); // Show success modal
-                                        } else {
-                                            $('#failedModal').modal('show'); // Show failed modal
+                                            $('#successModal').modal('show');
                                         }
-                                        $('#successModal').modal('hide'); // Hide modal on success
+                                        setTimeout(function() {
+                                            $('#successModal').modal('hide');
+                                            $('#correctModal').modal('hide');
+                                        }, 2000);
                                     },
                                     error: function(xhr, status, error) {
-                                        var warningMessage = xhr.responseText;
-                                        try {
-                                            warningMessage = JSON.parse(xhr.responseText).error;
-                                        } catch (e) {
-                                            console.error('Error parsing error message:', e);
+                                        if (xhr.responseText) {
+                                            const warningMessage = JSON.parse(xhr.responseText).error;
+                                            $('#warningText').text(warningMessage);
+                                            $('#warningModal').modal('show');
                                         }
-                                        $('#warningText').text(warningMessage); // Set the error message in the modal
-                                        $('#warningModal').modal('show'); // Show error modal
-                                        console.error('Error saving machine record: ' + error);
-                                        $('#warningModal').modal('hide'); // Hide modal on error
+                                        setTimeout(function() {
+                                            $('#warningModal').modal('hide');
+                                            $('#correctModal').modal('hide');
+                                        }, 2000);
                                     }
                                 }).always(function() {
-                                    setTimeout(function() {
-                                        location.reload(); // Refresh the page after a 2-second delay
-                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                    table.ajax.reload(null, false);
                                 });
                             } else {
                                 // User cancelled the deletion, do nothing
@@ -316,30 +315,26 @@
                                         if (response.success) {
                                             const successMessage = response.success;
                                             $('#successText').text(successMessage);
-                                            $('#successModal').modal('show'); // Show success modal
-                                        } else {
-                                            $('#failedModal').modal('show'); // Show failed modal
+                                            $('#successModal').modal('show');
                                         }
-                                        $('#successModal').modal('hide'); // Hide modal on success
+                                        setTimeout(function() {
+                                            $('#successModal').modal('hide');
+                                            $('#correctModal').modal('hide');
+                                        }, 2000);
                                     },
                                     error: function(xhr, status, error) {
-                                        var warningMessage = xhr.responseText;
-                                        try {
-                                            warningMessage = JSON.parse(xhr.responseText).error;
-                                        } catch (e) {
-                                            console.error('Error parsing error message:', e);
+                                        if (xhr.responseText) {
+                                            const warningMessage = JSON.parse(xhr.responseText).error;
+                                            $('#warningText').text(warningMessage);
+                                            $('#warningModal').modal('show');
                                         }
-                                        $('#warningText').text(warningMessage); // Set the error message in the modal
-                                        $('#warningModal').modal('show'); // Show error modal
                                         setTimeout(function() {
-                                            $('#warningModal').modal('hide'); // Hide modal after 2 seconds
+                                            $('#warningModal').modal('hide');
+                                            $('#correctModal').modal('hide');
                                         }, 2000);
-                                        console.error('Error saving machine record: ' + error);
                                     }
                                 }).always(function() {
-                                    setTimeout(function() {
-                                        location.reload(); // Refresh the page after a 2-second delay
-                                    }, 2000); // 2000 milliseconds = 2 seconds
+                                    table.ajax.reload(null, false);
                                 });
                             } else {
                                 // User cancelled the deletion, do nothing

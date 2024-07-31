@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MachineData;
 use App\Http\Controllers\Controller;
 use App\Machineproperty;
 use App\Componencheck;
+use App\Machine;
 use App\Parameter;
 use App\Metodecheck;
 use Illuminate\Http\Request;
@@ -15,15 +16,25 @@ class MachinepropertyController extends Controller
 {
     public function indexmachineproperty()
     {
-        $joinproperty = DB::table('machineproperties')
-            ->select('machineproperties.*', DB::raw('COUNT(DISTINCT componenchecks.id) as componencheck_count'), DB::raw('COUNT(DISTINCT parameters.id) as parameter_count'), DB::raw('COUNT(DISTINCT metodechecks.id) as metodecheck_count'))
-            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
-            ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-            ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-            ->groupBy('machineproperties.id')
-            ->get();
-        return view('dashboard.view_propertymesin.indexpropertymesin', ['joinproperty' => $joinproperty]);
+        return view('dashboard.view_propertymesin.indexpropertymesin');
     }
+
+    public function refreshtableproperty()
+    {
+        try {
+            $joinproperty = DB::table('machineproperties')
+                ->select('machineproperties.*', 'machines.*')
+                ->leftJoin('machines', 'machineproperties.id', '=', 'machines.id_property')
+                ->orderBy('machineproperties.id', 'asc')
+                ->get();
+            return response()->json([
+                'joinproperty' => $joinproperty
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     public function addproperty(Request $request)
     {
         try {
@@ -70,9 +81,9 @@ class MachinepropertyController extends Controller
     public function deleteproperty($id) {
         $deleteproperty = Machineproperty::where('id', $id)->delete();
         if ($deleteproperty > 0) {
-            return response()->json(['success' => 'Data user berhasil dihapus.']);
+            return response()->json(['success' => 'Data property berhasil dihapus.']);
         } else {
-            return response()->json(['error' => 'Data user gagal dihapus!'], 422);
+            return response()->json(['error' => 'Data property gagal dihapus!'], 422);
         }
     }
 }

@@ -2176,6 +2176,7 @@ pre code {
     display: flex;
     margin: 0px 0px 15px 0px;
     flex-direction: row;
+    padding: 5px;
 }
 
 .table-responsive>.table-bordered {

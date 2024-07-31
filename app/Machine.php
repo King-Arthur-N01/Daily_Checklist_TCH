@@ -3,9 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Componencheck;
-use App\Parameter;
-use App\Metodecheck;
 
 class Machine extends Model
 {
@@ -28,5 +25,9 @@ class Machine extends Model
     public function getchildernrecord()
     {
         return $this->belongsTo(Machinerecord::class);
+    }
+    public function getchildernschedule()
+    {
+        return $this->belongsTo(Schedule::class);
     }
 }

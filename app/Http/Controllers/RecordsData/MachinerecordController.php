@@ -26,37 +26,35 @@ class MachinerecordController extends Controller
     public function refreshtablerecord() {
         $currenttime = Carbon::now();
         $machine = Machine::all();
-        // $machine = DB::table('machines')
-        //     ->select('machines.*', 'machineproperties.*')
-        //     ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-        //     ->get();
         $responsedata = [];
         try {
             foreach ($machine as $refreshmachine) {
-                $lastrecord = Machinerecord::where('id_machine', $refreshmachine->id)->orderBy('record_time', 'desc')->first();
-                if ($lastrecord) {
-                    $lasttime = Carbon::parse($lastrecord->record_time);
-                    $totaltime = $currenttime->diff($lasttime);
-                    $gettotalhours = $totaltime->format('%h:%I:%S');
-                    $gettotaldays = $totaltime->format('%d');
+                if ($refreshmachine->id_property){
+                    $lastrecord = Machinerecord::where('id_machine', $refreshmachine->id)->orderBy('record_time', 'desc')->first();
+                    if ($lastrecord) {
+                        $lasttime = Carbon::parse($lastrecord->record_time);
+                        $totaltime = $currenttime->diff($lasttime);
+                        $gettotalhours = $totaltime->format('%h:%I:%S');
+                        $gettotaldays = $totaltime->format('%d');
 
-                    $responsedata[] = [
-                        'id' => $refreshmachine->id,
-                        'machine_number' => $refreshmachine->machine_number,
-                        'machine_name' => $refreshmachine->machine_name,
-                        'machine_type' => $refreshmachine->machine_type,
-                        'machine_brand' => $refreshmachine->machine_brand,
-                        'total_hours' => $gettotalhours,
-                        'total_days' => $gettotaldays
-                    ];
-                } else {
-                    $responsedata[] = [
-                        'id' => $refreshmachine->id,
-                        'machine_number' => $refreshmachine->machine_number,
-                        'machine_name' => $refreshmachine->machine_name,
-                        'machine_type' => $refreshmachine->machine_type,
-                        'machine_brand' => $refreshmachine->machine_brand
-                    ];
+                        $responsedata[] = [
+                            'id' => $refreshmachine->id,
+                            'machine_number' => $refreshmachine->machine_number,
+                            'machine_name' => $refreshmachine->machine_name,
+                            'machine_type' => $refreshmachine->machine_type,
+                            'machine_brand' => $refreshmachine->machine_brand,
+                            'total_hours' => $gettotalhours,
+                            'total_days' => $gettotaldays
+                        ];
+                    } else {
+                        $responsedata[] = [
+                            'id' => $refreshmachine->id,
+                            'machine_number' => $refreshmachine->machine_number,
+                            'machine_name' => $refreshmachine->machine_name,
+                            'machine_type' => $refreshmachine->machine_type,
+                            'machine_brand' => $refreshmachine->machine_brand
+                        ];
+                    }
                 }
             }
             return response()->json(
@@ -126,10 +124,10 @@ class MachinerecordController extends Controller
         $getshifttime = Carbon::now()->format('H:i');
         if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
             $shifttime = 'Shift 1';
-        } elseif ($getshifttime >= '16:00' && $getshifttime < '23:00') {
+        } elseif ($getshifttime >= '16:00' && $getshifttime < '00:15') {
             $shifttime = 'Shift 2';
         } else {
-            $shifttime = 'Diluar Shift';
+            $shifttime = 'Diluar Shift Atau Lembur';
         }
 
         if ($lastsubmissiontime){
@@ -187,8 +185,11 @@ class MachinerecordController extends Controller
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
+
+
+
     // <<<============================================================================================>>>
-    // <<<==============================batas approval machine records 1==============================>>>
+    // <<<===============================batas koreksi machine records================================>>>
     // <<<============================================================================================>>>
 
     // index tampilan untuk koreksi preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
@@ -275,7 +276,7 @@ class MachinerecordController extends Controller
             return response()->json(['error' => 'Record not found !!!!'], 404);
         }
         else if ($machinerecord->correct_by) {
-            return response()->json(['error' => 'Data update failed. Record already corrected by someone else.'], 422);
+            return response()->json(['error' => 'Pembaruan data gagal. Data sudah dikoreksi oleh orang lain.'], 422);
         }
         else {
             $machinerecord->update([
@@ -319,7 +320,7 @@ class MachinerecordController extends Controller
         }
     }
     // <<<============================================================================================>>>
-    // <<<============================batas approval machine records 1 end============================>>>
+    // <<<=============================batas koreksi machine records end==============================>>>
     // <<<============================================================================================>>>
 
 
@@ -329,7 +330,7 @@ class MachinerecordController extends Controller
 
 
     // <<<============================================================================================>>>
-    // <<<==============================batas approval machine records 2==============================>>>
+    // <<<===============================batas approval machine records===============================>>>
     // <<<============================================================================================>>>
 
     // index tampilan untuk koreksi preventive mesin [supervisor + ass.manager + manager only]
@@ -416,10 +417,10 @@ class MachinerecordController extends Controller
             return response()->json(['error' => 'Data record not found !!!!'], 404);
         }
         else if (!$machinerecord->correct_by) {
-            return response()->json(['error' => 'Data update failed. Record has not been corrected by someone else.'], 422);
+            return response()->json(['error' => 'Pembaruan data gagal. Data belum dikoreksi oleh orang lain.'], 422);
         }
         else if ($machinerecord->approve_by) {
-            return response()->json(['error' => 'Data update failed. Record already been approved by someone else.'], 422);
+            return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
         }
         else {
             $machinerecord->update([
@@ -465,7 +466,7 @@ class MachinerecordController extends Controller
         }
     }
     // <<<============================================================================================>>>
-    // <<<============================batas approval machine records 2 end============================>>>
+    // <<<===============================batas approval machine records===============================>>>
     // <<<============================================================================================>>>
     public function destroy(Machinerecord $machinerecord)
     {

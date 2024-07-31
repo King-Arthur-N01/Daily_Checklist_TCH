@@ -1571,3 +1571,52 @@ const table = $('#recordTables').DataTable({
                 }
             });
         });
+
+
+        public function viewproperty($id)
+        {
+            $responsedata = [];
+            try {
+                $getproperty = Machine::where('id', $id)->orderBy('id_property', 'asc')->first();
+                if ($getproperty) {
+                    $fetchmachine = DB::table('machines')
+                    ->select('machines.*', 'machineproperties.*')
+                    ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+                    ->where('machines.id', '=', $id)
+                    ->get();
+
+                    $responsedata[] = [
+                        'invent_number' => $fetchmachine->invent_number,
+                        'machine_name' => $fetchmachine->machine_name,
+                        'machine_brand' => $fetchmachine->machine_brand,
+                        'machine_type' => $fetchmachine->machine_type,
+                        'machine_spec' => $fetchmachine->machine_spec,
+                        'machine_made' => $fetchmachine->machine_made,
+                        'mfg_number' => $fetchmachine->mfg_number,
+                        'install_date' => $fetchmachine->install_date,
+                        'machine_number' => $fetchmachine->machine_number,
+                        'name_property'=> $fetchmachine->name_property,
+                    ];
+                } else {
+                    $fetchmachine = Machine::find($id);
+                    $responsedata[] = [
+                        'invent_number' => $fetchmachine->invent_number,
+                        'machine_name' => $fetchmachine->machine_name,
+                        'machine_brand' => $fetchmachine->machine_brand,
+                        'machine_type' => $fetchmachine->machine_type,
+                        'machine_spec' => $fetchmachine->machine_spec,
+                        'machine_made' => $fetchmachine->machine_made,
+                        'mfg_number' => $fetchmachine->mfg_number,
+                        'install_date' => $fetchmachine->install_date,
+                        'machine_number' => $fetchmachine->machine_number,
+                    ];
+                }
+                // $fetchmachine = Machine::find($id);
+                // $fetchproperty = Machineproperty::get();
+                return response()->json([
+                    'responsedata' => $responsedata
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error fetching data'], 500);
+            }
+        }

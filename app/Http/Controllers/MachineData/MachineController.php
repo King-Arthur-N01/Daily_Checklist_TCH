@@ -20,7 +20,7 @@ class MachineController extends Controller
         return view ('dashboard.view_mesin.addmachine');
     }
 
-    public function updatemachine($id)
+    public function notuseupdatemachine($id)
     {
         $machines=Machine::find($id);
         return view ('dashboard.view_mesin.editmachine',['machines'=>$machines]);
@@ -93,6 +93,30 @@ class MachineController extends Controller
             return response()->json(['success' => 'Machine added successfully.']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Machine failed to add!!!!']);
+        }
+    }
+
+    public function updatemachine(Request $request, $id)
+    {
+        $request->validate([
+            'invent_number' => 'required',
+            'machine_number'=> 'required',
+            'machine_name' => 'required',
+            'machine_brand',
+            'machine_type',
+            'machine_spec',
+            'machine_made',
+            'mfg_number' => 'required',
+            'install_date',
+            'id_property'
+
+        ]);
+        try {
+            $machines = Machine::find($id);
+            $machines->update($request->all());
+            return response()->json(['success' => 'Machine updated successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Machine failed to update!!!!']);
         }
     }
 

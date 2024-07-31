@@ -79,9 +79,7 @@ class ImportdataController extends Controller
         if (!$registerproperty) {
             return response()->json(['error' => 'Data mesin tidak berhasil ditemukan !!!!'], 404);
         } else {
-            $registerproperty->update([
-                'id_property' => $request->input('id_property')
-            ]);
+            $registerproperty->update(['id_property' => $request->input('id_property')]);
         }
         return response()->json(['success' => 'Standarisasi mesin berhasil di UPDATE!']);
     }

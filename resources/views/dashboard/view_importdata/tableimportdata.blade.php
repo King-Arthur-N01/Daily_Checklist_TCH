@@ -16,17 +16,11 @@
                         <div class="table-filter">
                             <div class="col-4">
                                 <p class="mg-b-10">Nama Mesin</p>
-                                <select class="form-control select2" name="" id="filterByName">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select>
+                                <input class="form-control" name="" id="filterByName">
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Nomor Mesin </p>
-                                <select class="form-control select2" name="" id="filterById">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select>
+                                <input class="form-control" name="" id="filterById">
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Standarisasi Mesin</p>
@@ -51,9 +45,9 @@
                             <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
                         </div>
                     </div>
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+                    <div class="spinner-border" id="loading_screen" style="display: none;">
+                        <div class="spinner"></div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="importTables" width="100%">
                             <thead>
@@ -114,7 +108,7 @@
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_edit">
                 </div>
@@ -189,6 +183,7 @@
         </div>
     </div>
     <!-- End Alert Warning Modal -->
+
 @endsection
 
 @push('style')
@@ -211,6 +206,15 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            function showLoading() {
+                $('#loading_screen').show();
+            }
+
+            // Hide the loading overlay after the data is loaded
+            function hideLoading() {
+                $('#loading_screen').hide();
+            }
 
             // sett automatic soft refresh table
             setInterval(function() {
@@ -260,8 +264,8 @@
             //fungsi upload button untuk upload mesin
             $('#uploadButton').on('click', function(e) {
                 e.preventDefault();
-                var file = $('#importExcel')[0].files[0];
-                var formData = new FormData();
+                let file = $('#importExcel')[0].files[0];
+                let formData = new FormData();
                 formData.append('file', file);
                 $.ajax({
                     type: "POST",
@@ -280,15 +284,16 @@
                                 $('#addModal').modal('hide');
                         }, 2000);
                     },
-                    error: function(status, error, response) {
-                        if (response.error) {
-                            const warningMessage = response.error;
+                    error: function(xhr, status, error) {
+                        if (xhr.responseText) {
+                            const warningMessage = xhr.responseText;
                             $('#failedText').text(warningMessage);
                             $('#failedModal').modal('show');
                         }
                         setTimeout(function() {
                             $('#failedModal').modal('hide');
-                        }, 2000);
+                            $('#addModal').modal('hide');
+                        }, 20000);
                     }
                 }).always(function() {
                     table.ajax.reload(null, false);
@@ -397,7 +402,7 @@
 
                 // Add event listener to save button
                 $('#saveButton').on('click', function() {
-                    var formData = {
+                    let formData = {
                         inventNumber: $('input[name="invent_number"]').val(),
                         machineSpec: $('input[name="machine_spec"]').val(),
                         machineName: $('input[name="machine_name"]').val(),
@@ -435,13 +440,15 @@
                             }, 2000);
                         },
                         error: function(xhr, status, error) {
-                            var warningMessage = xhr.responseText;
-                            try {
-                                warningMessage = JSON.parse(xhr.responseText).error;
-                            } catch (e) {
-                                console.error('Error parsing error message:',e);
+                            if (xhr.responseText) {
+                                const warningMessage = xhr.responseText;
+                                $('#failedText').text(warningMessage);
+                                $('#failedModal').modal('show');
                             }
-                            $('#addModal').modal('hide'); // Hide modal on error
+                            setTimeout(function() {
+                                $('#failedModal').modal('hide');
+                                $('#addModal').modal('hide');
+                            }, 20000);
                         }
                     }).always(function() {
                         table.ajax.reload(null, false);
@@ -460,34 +467,102 @@
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
                             $.each(data.fetchproperty, function(index, fetchtable) {
-                                options += `<option value="${fetchtable.id}">${fetchtable.name_property}</option>`;
+                                const isSelected = fetchtable.id == data.fetchmachine.id_property ? 'selected' : '';
+                                options += `<option value="${fetchtable.id}" ${isSelected}>${fetchtable.name_property}</option>`;
                             });
                         } else {
                             console.error('fetchproperty is not an array:', data.fetchproperty);
                         }
 
                         const header_modal = `
-                            <h5 class="modal-title">Standarisasi Mesin</h5>
+                            <h5 class="modal-title">Edit Mesin</h5>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
                         const data_modal = `
+                            <div class="row" align-items="center">
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
+                                        <div>
+                                            <input style="text-transform: uppercase;" class="form-control" id="inventNumber" type="text" name="invent_number" value="${data.fetchmachine.invent_number}" placeholder="_-__-__-____">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_name" value="${data.fetchmachine.machine_name}" placeholder="Nama Mesin">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_brand" value="${data.fetchmachine.machine_brand}" placeholder="Brand/Merk Mesin">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" align-items="center">
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Model/Type Mesin</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_type" value="${data.fetchmachine.machine_type}" placeholder="Model/Type Mesin">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_spec" value="${data.fetchmachine.machine_spec}" placeholder="Spec/Tonnage">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_made" value="${data.fetchmachine.machine_made}" placeholder="Buatan">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" align-items="center">
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="mfg_number" value="${data.fetchmachine.mfg_number}" placeholder="MFG Number">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="install_date" value="${data.fetchmachine.install_date}" placeholder="Install Date">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_number" value="${data.fetchmachine.machine_number}" placeholder="Nomor Mesin">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <table class="table table-bordered" id="editTables" width="100%">
                                 <thead>
-                                    <th>Nomor Invent</th>
-                                    <th>Nama Mesin</th>
-                                    <th>Brand/Merk</th>
-                                    <th>Model/Type</th>
-                                </thead>
+                                    <th>Standarisasi Mesin</th>
                                 <tbody>
-                                    <tr>
-                                        <td>${data.fetchmachine.invent_number}</td>
-                                        <td>${data.fetchmachine.machine_name}</td>
-                                        <td>${data.fetchmachine.machine_brand}</td>
-                                        <td>${data.fetchmachine.machine_type}</td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="4">Standarisasi</th>
-                                    </tr>
                                     <tr>
                                         <td colspan="4">
                                             <select class="form-control select2" id="getproperty">
@@ -509,38 +584,55 @@
 
                         // Save button
                         $('#saveButton').on('click', function() {
-                            var idProperty = $('#getproperty').val();
+                            // let idProperty = $('#getproperty').val();
+                            let formData = {
+                                inventNumber: $('input[name="invent_number"]').val(),
+                                machineSpec: $('input[name="machine_spec"]').val(),
+                                machineName: $('input[name="machine_name"]').val(),
+                                machineMade: $('input[name="machine_made"]').val(),
+                                machineBrand: $('input[name="machine_brand"]').val(),
+                                mfgNumber: $('input[name="mfg_number"]').val(),
+                                machineType: $('input[name="machine_type"]').val(),
+                                installDate: $('input[name="install_date"]').val(),
+                                machineNumber: $('input[name="machine_number"]').val(),
+                                idProperty : $('#getproperty').val()
+                            };
                             $.ajax({
                                 type: 'PUT',
-                                url: '{{ route("fetchdataproperty", ':id') }}'.replace(':id', machineId),
+                                url: '{{ route("updatemachine", ':id') }}'.replace(':id', machineId),
                                 data: {
                                     '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                    'id_property': idProperty
+                                    'invent_number': formData.inventNumber,
+                                    'machine_spec': formData.machineSpec,
+                                    'machine_name': formData.machineName,
+                                    'machine_made': formData.machineMade,
+                                    'machine_brand': formData.machineBrand,
+                                    'mfg_number': formData.mfgNumber,
+                                    'machine_type': formData.machineType,
+                                    'install_date': formData.installDate,
+                                    'machine_number': formData.machineNumber,
+                                    'id_property': formData.idProperty
                                 },
                                 success: function(response) {
                                     if (response.success) {
                                         const successMessage = response.success;
                                         $('#successText').text(successMessage);
-                                        $('#successModal').modal('show'); // Show success modal
+                                        $('#successModal').modal('show');
                                     }
                                     setTimeout(function() {
-                                            $('#successModal').modal('hide'); // Hide success modal
-                                            $('#editModal').modal('hide'); // Hide edit modal
+                                        $('#successModal').modal('hide');
+                                        $('#editModal').modal('hide');
                                     }, 2000);
                                 },
                                 error: function(xhr, status, error) {
-                                    var warningMessage = xhr.responseText;
-                                    try {
-                                        warningMessage = JSON.parse(xhr.responseText).error;
-                                    } catch (e) {
-                                        console.error('Error parsing error message:',e);
+                                    if (xhr.responseText) {
+                                        const warningMessage = xhr.responseText;
+                                        $('#failedText').text(warningMessage);
+                                        $('#failedModal').modal('show');
                                     }
-                                    $('#failedText').text(
-                                        warningMessage); // Set the error message in the modal
-                                    $('#failedModal').modal('show'); // Show error modal
-                                        console.error('Error saving machine record: ' + error);
                                     setTimeout(function() {
-                                        $('#failedModal').modal('hide'); // Hide modal on error
+                                        $('#failedModal').modal('hide');
+                                        $('#editModal').modal('hide');
                                     }, 2000);
                                 }
                             }).always(function() {
@@ -557,8 +649,8 @@
 
             //fungsi button get detail mesin
             $('#viewModal').on('shown.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var machineId = button.data('id');
+                let button = $(event.relatedTarget);
+                let machineId = button.data('id');
                 // var no_mesin = $("#viewButton")$(this).attr("data-id");
                 $.ajax({
                     type: 'GET',
@@ -670,7 +762,7 @@
                         }, 2000);
                     }).fail(function(xhr, status, error) {
                         console.error(xhr.responseText);
-                        const warningMessage = xhr.statusText;
+                        const warningMessage = JSON.parse(xhr.responseText).error;
                         $('#failedText').text(warningMessage);
                         $('#failedModal').modal('show');
                     }).always(function() {

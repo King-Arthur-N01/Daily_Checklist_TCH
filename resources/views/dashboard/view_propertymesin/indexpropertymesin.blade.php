@@ -23,32 +23,16 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="propertyTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered" id="propertyTables" width="100%">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Nama Standart Mesin</th>
-                                    <th>Jumlah Componencheck</th>
-                                    <th>Jumlah Standart/Parameter</th>
-                                    <th>Jumlah Metode Pengecekan</th>
+                                    <th>Nama Standarisasi Mesin</th>
+                                    <th>Nama Mesin</th>
+                                    <th>Nomor Mesin</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($joinproperty as $propertyget)
-                                    <tr>
-                                        <td>{{ $propertyget->id }}</td>
-                                        <td>{{ $propertyget->name_property }}</td>
-                                        <td>{{ $propertyget->componencheck_count }}</td>
-                                        <td>{{ $propertyget->parameter_count }}</td>
-                                        <td>{{ $propertyget->metodecheck_count }}</td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="{{ $propertyget->id }}" data-target="#EditModal">Edit</a>
-                                            <a class="btn btn-danger btn-sm" id="deleteButton" data-id="{{ $propertyget->id }}" style="color:white">Delete</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -125,120 +109,204 @@
         </div>
     </div>
     <!-- End Register Modal-->
+
+    <!-- Alert Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <span id="successText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Success Modal -->
+
+    <!-- Alert Danger Modal -->
+    <div class="modal fade" id="failedModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-octagon me-1"></i>
+                        <span id="failedText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Danger Modal -->
+
+    <!-- Alert Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <span id="warningText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Warning Modal -->
 @endsection
 
 @push('style')
 @endpush
 
 @push('script')
-<script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
-<script>
-$(document).ready(function() {
-    $('#registerform').on('submit', function(event) {
-        event.preventDefault();
-        var formData = {
-            '_token': '{{ csrf_token() }}',
-            name_property : $('input[name="name_property"]').val(),
-        };
+    <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
+    <script>
+        $(document).ready(function() {
 
-        $('#tableBody tr').each(function(index) {
-            const rowIdSuffix = $(this).find('td:first-child').attr('id').split('_')[1];
-            const dynamicArrayName = `dataRows_${rowIdSuffix}`;
-            if (!formData[dynamicArrayName]) {
-                formData[dynamicArrayName] = {
-                    componencheck: [],
-                    parameter: [],
-                    metodecheck: []
+            // sett automatic soft refresh table
+            setInterval(function() {
+                table.ajax.reload(null, false);
+            }, 60000); // 60000 milidetik = 60 second
+
+            // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
+            const table = $('#propertyTables').DataTable({
+                ajax: {
+                    url: '{{ route("refreshproperty") }}',
+                    dataSrc: function(data) {
+                        return data.joinproperty.map(function(joinproperty) {
+                            return {
+                                id: joinproperty.id,
+                                standart_name: joinproperty.name_property,
+                                machine_name: joinproperty.machine_name,
+                                machine_number: joinproperty.machine_number,
+                                actions: `
+                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${joinproperty.id}" data-toggle="modal" data-target="#EditModal">Edit</a>
+                                    <a class="btn btn-danger btn-sm btn-delete" data-id="${joinproperty.id}" id="deleteButton" style="color:white">Delete</a>
+                                `
+                            };
+                        });
+                    }
+                },
+                columns: [
+                    { data: 'id' },
+                    { data: 'standart_name' },
+                    { data: 'machine_name' },
+                    { data: 'machine_number' },
+                    { data: 'actions', orderable: false, searchable: false}
+                ]
+            });
+
+            $('#registerform').on('submit', function(event) {
+                event.preventDefault();
+                let formData = {
+                    '_token': '{{ csrf_token() }}',
+                    name_property: $('input[name="name_property"]').val(),
                 };
-            }
 
-            $(this).find('textarea').each(function() {
-                const textareaId = $(this).attr('id');
-                const textareaName = $(this).attr('name');
-                const textareaValue = $(this).val();
+                $('#tableBody tr').each(function(index) {
+                    const rowIdSuffix = $(this).find('td:first-child').attr('id').split('_')[1];
+                    const dynamicArrayName = `dataRows_${rowIdSuffix}`;
+                    if (!formData[dynamicArrayName]) {
+                        formData[dynamicArrayName] = {
+                            componencheck: [],
+                            parameter: [],
+                            metodecheck: []
+                        };
+                    }
 
-                if (textareaId.startsWith(`componencheck_${rowIdSuffix}_`)) {
-                    formData[dynamicArrayName].componencheck.push(textareaValue);
+                    $(this).find('textarea').each(function() {
+                        const textareaId = $(this).attr('id');
+                        const textareaName = $(this).attr('name');
+                        const textareaValue = $(this).val();
+
+                        if (textareaId.startsWith(`componencheck_${rowIdSuffix}_`)) {
+                            formData[dynamicArrayName].componencheck.push(textareaValue);
+                        }
+                    });
+                    $(this).find('input').each(function() {
+                        const inputId = $(this).attr('id');
+                        const inputName = $(this).attr('name');
+                        const inputValue = $(this).val();
+
+                        if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
+                            formData[dynamicArrayName].parameter.push(inputValue);
+                        } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
+                            formData[dynamicArrayName].metodecheck.push(inputValue);
+                        } else if (inputId.startsWith(`userInputCount_${rowIdSuffix}`)) {
+                            formData[dynamicArrayName].user_input_count = inputValue;
+                        }
+                    });
+                });
+                if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
+                    $.ajax({
+                        url: '{{ route('registerproperty') }}',
+                        type: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            if (response.success) {
+                                const successMessage = response.success;
+                                $('#successText').text(successMessage);
+                                $('#successModal').modal('show');
+                            }
+                            setTimeout(function() {
+                                    $('#successModal').modal('hide');
+                                    $('#registerModal').modal('hide');
+                            }, 2000);
+                        },
+                        error: function(xhr, status, error) {
+                            if (xhr.responseText) {
+                                const warningMessage = JSON.parse(xhr.responseText).error;
+                                $('#failedText').text(warningMessage);
+                                $('#failedModal').modal('show');
+                            }
+                            setTimeout(function() {
+                                $('#failedModal').modal('hide');
+                                $('#registerModal').modal('hide');
+                            }, 20000);
+                        }
+                    }).always(function() {
+                        table.ajax.reload(null, false);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
                 }
             });
-            $(this).find('input').each(function() {
-                const inputId = $(this).attr('id');
-                const inputName = $(this).attr('name');
-                const inputValue = $(this).val();
 
-                if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
-                    formData[dynamicArrayName].parameter.push(inputValue);
-                } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
-                    formData[dynamicArrayName].metodecheck.push(inputValue);
-                } else if (inputId.startsWith(`userInputCount_${rowIdSuffix}`)) {
-                    formData[dynamicArrayName].user_input_count = inputValue;
+            $('#propertyTables').on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+                const propertyId = $(this).data("id");
+                if (confirm("Apakah yakin menghapus standarisasi ini?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{ route("removeproperty", ':id') }}'.replace(':id', propertyId),
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        }
+                    }).done(function(response) {
+                        if (response.success.trim()) {
+                            const successMessage = response.success.trim();
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
+                        }
+                        setTimeout(function() {
+                                $('#successModal').modal('hide'); // Hide success modal
+                        }, 2000);
+                    }).fail(function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        const warningMessage = JSON.parse(xhr.responseText).error;
+                        $('#failedText').text(warningMessage);
+                        $('#failedModal').modal('show');
+                    }).always(function() {
+                        table.ajax.reload(null, false);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
                 }
             });
         });
-        if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
-            $.ajax({
-                url: '{{ route("registerproperty") }}',
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        const successMessage = response.success;
-                        $('#successText').text(successMessage);
-                        $('#successModal').modal('show');
-
-                    }
-                    $('#registerModal').modal('hide'); // Hide modal on success
-                },
-                error: function(xhr, status, error) {
-                    var warningMessage = xhr.responseText;
-                    try {
-                        warningMessage = JSON.parse(xhr.responseText).error;
-                    } catch (e) {
-                        console.error('Error parsing error message:',e);
-                    }
-                    $('#failedText').text(
-                        warningMessage); // Set the error message in the modal
-                    $('#failedModal').modal('show'); // Show error modal
-                        console.error('Error saving machine record: ' + error);
-                    $('#editModal').modal('hide'); // Hide modal on error
-                }
-            }).always(function() {
-                setTimeout(function() {
-                    location.reload(); // Refresh the page after a 2-second delay
-                }, 2000); // 2000 milliseconds = 2 seconds
-            });
-        } else {
-            // User cancelled the deletion, do nothing
-        }
-    });
-    $(document).on('click', '#deleteButton', function(e) {
-        e.preventDefault();
-        var propertyId = $(this).data("id");
-        if (confirm("Apakah yakin menghapus standarisasi ini?")) {
-            $.ajax({
-                type: 'DELETE',
-                url: "{{ route('removeproperty', ':id') }}".replace(':id', propertyId),
-                data: {
-                    '_token': '{{ csrf_token() }}'
-                }
-            }).done(function(response) {
-                if (response.success) {
-                    alert('Standarisasi berhasil dihapus.'); // Alert success message
-                } else {
-                    alert('Error: Standarisasi gagal dihapus!.'); // Alert failure message
-                }
-                $('#ExtralargeModal').modal('hide');
-            }).fail(function(xhr, status, error) {
-                alert('This PROPERTY has been deleted by someone!'); // Alert error message
-            }).always(function() {
-                setTimeout(function() {
-                    location.reload();
-                }, 2000);
-            });
-        } else {
-            // User cancelled the deletion, do nothing
-        }
-    });
-});
-</script>
+    </script>
 @endpush

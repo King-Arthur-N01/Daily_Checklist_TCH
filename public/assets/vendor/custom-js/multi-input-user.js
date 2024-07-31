@@ -19,18 +19,17 @@ function disableDoubleSelect() {
     $('select[id^="create_by_"]').each(function () {
         const value = $(this).val();
         if (value !== "0") {
-            // Assuming '0' is the default 'no selection' value
             selectedValues.push(value);
         }
     });
+
     // Iterate over each select element to disable/enable options
     $('select[id^="create_by_"]').each(function () {
         const currentSelect = $(this);
+        const currentVal = currentSelect.val();
         currentSelect.find("option").each(function () {
             const option = $(this);
-            if (
-                selectedValues.includes(option.val()) && option.val() !== currentSelect.val()
-            ) {
+            if (selectedValues.includes(option.val()) && option.val() !== currentVal) {
                 option.prop("disabled", true);
             } else {
                 option.prop("disabled", false);
@@ -38,6 +37,7 @@ function disableDoubleSelect() {
         });
     });
 }
+
 // Attach the change event listener to all select elements
 $('select[id^="create_by_"]').on("change", function () {
     disableDoubleSelect();
