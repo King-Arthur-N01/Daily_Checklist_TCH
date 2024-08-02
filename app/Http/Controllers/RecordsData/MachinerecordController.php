@@ -114,7 +114,7 @@ class MachinerecordController extends Controller
         ]);
     }
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
-    public function registermachinerecord(Request $request)
+    public function createmachinerecord(Request $request)
     {
         $getmachineid = ($request->input('id_machine'));
         // Check the table to see if data has been filled in before
@@ -216,7 +216,7 @@ class MachinerecordController extends Controller
     }
 
     // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk disetujui
-    public function fetchdatacorrection($id)
+    public function readdatacorrection($id)
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
@@ -357,7 +357,7 @@ class MachinerecordController extends Controller
     }
 
     // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk disetujui
-    public function fetchdataapproval($id) // this code for ajax modal html
+    public function readdataapproval($id) // this code for ajax modal html
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')

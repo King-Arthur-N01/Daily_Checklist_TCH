@@ -650,10 +650,19 @@ pre code {
 
 .row {
     display: flex;
-    flex-wrap: wrap;
     margin-right: -.75rem;
-    margin-left: -.75rem
+    margin-left: -.75rem;
+    flex-wrap: wrap;
 }
+
+.custom-row{
+    position: relative;
+    width: 100%;
+    padding-right: .75rem;
+    padding-left: .75rem;
+}
+
+.calendar{display: flex;flex-wrap: wrap;justify-content: center;padding: 10px;}
 
 .no-gutters {
     margin-right: 0;
@@ -841,7 +850,7 @@ pre code {
 
 .col-12 {
     flex: 0 0 100%;
-    max-width: 100%
+    max-width: 100%;
 }
 
 .order-first {
@@ -12350,7 +12359,18 @@ a:focus {
 .chart-area {
     position: relative;
     height: 10rem;
-    width: 100%
+    width: 100%;
+}
+
+.home-chart{
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15) !important;
+    padding: 20px;
+    display: flex;
+    /* margin-right: -.75rem; */
+    /* margin-left: -.75rem; */
+    flex-wrap: wrap;
 }
 
 @media (min-width:768px) {

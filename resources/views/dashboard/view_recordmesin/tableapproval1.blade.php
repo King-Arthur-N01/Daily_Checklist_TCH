@@ -189,7 +189,7 @@
                 let correctId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchcorrection', ':id') }}'.replace(':id', correctId),
+                    url: '{{ route('readcorrection', ':id') }}'.replace(':id', correctId),
                     success: function(data) {
                         const header_modal = `
                             <h5 class="modal-title">Extra Large Modal</h5>
@@ -266,7 +266,7 @@
                             if (confirm("Apakah yakin mengkoreksi preventive ini?")) {
                                 $.ajax({
                                     type: 'PUT',
-                                    url: '{{ route('pushcorrection', ':id') }}'.replace(':id', correctId),
+                                    url: '{{ route("insertcorrection", ':id') }}'.replace(':id', correctId),
                                     data: {
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                                         'correct_by': correctedBy,
@@ -307,7 +307,7 @@
                             if (confirm("Are you sure you want to delete this record?")) {
                                 $.ajax({
                                     type: 'DELETE',
-                                    url: '{{ route('removecorrect', ':id') }}'.replace(':id', correctId),
+                                    url: '{{ route("removecorrection", ':id') }}'.replace(':id', correctId),
                                     data: {
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                                     },

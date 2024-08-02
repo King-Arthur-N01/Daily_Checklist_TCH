@@ -19,9 +19,6 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered" id="propertyTables" width="100%">
                             <thead>
@@ -177,9 +174,9 @@
                 ajax: {
                     url: '{{ route("refreshproperty") }}',
                     dataSrc: function(data) {
-                        return data.joinproperty.map(function(joinproperty) {
+                        return data.joinproperty.map((joinproperty, index) => {
                             return {
-                                id: joinproperty.id,
+                                no: index + 1,
                                 standart_name: joinproperty.name_property,
                                 machine_name: joinproperty.machine_name,
                                 machine_number: joinproperty.machine_number,
@@ -192,7 +189,7 @@
                     }
                 },
                 columns: [
-                    { data: 'id' },
+                    { data: 'no' },
                     { data: 'standart_name' },
                     { data: 'machine_name' },
                     { data: 'machine_number' },
@@ -243,7 +240,7 @@
                 });
                 if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
                     $.ajax({
-                        url: '{{ route('registerproperty') }}',
+                        url: '{{ route("addproperty") }}',
                         type: 'POST',
                         data: formData,
                         success: function(response) {

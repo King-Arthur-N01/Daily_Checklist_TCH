@@ -74,7 +74,7 @@ class MachineController extends Controller
     }
 
     // fungsi tambah mesin secara manual
-    public function registermachine(Request $request)
+    public function createmachine(Request $request)
     {
         // dd($request);
         $request->validate([

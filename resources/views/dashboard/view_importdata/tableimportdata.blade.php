@@ -51,12 +51,12 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="importTables" width="100%">
                             <thead>
-                                <th>Nomor Invent</th>
-                                <th>Nama Mesin</th>
-                                <th>Brand/Merk</th>
-                                <th>Model/Type</th>
-                                <th>Standarisasi</th>
-                                <th>Action</th>
+                                <th>NO. INVENT</th>
+                                <th>NAMA MESIN</th>
+                                <th>MODEL/TYPE</th>
+                                <th>BRAND/MERK</th>
+                                <th>STANDARISASI</th>
+                                <th>ACTION</th>
                             </thead>
                         </table>
                     </div>
@@ -234,8 +234,8 @@
                             return {
                                 invent_number: refreshmachine.invent_number,
                                 machine_name: refreshmachine.machine_name,
-                                machine_brand: refreshmachine.machine_brand,
                                 machine_type: refreshmachine.machine_type,
+                                machine_brand: refreshmachine.machine_brand,
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi',
                                 actions: `
                                     <div class="dynamic-button-group">
@@ -254,8 +254,8 @@
                 columns: [
                     { data: 'invent_number' },
                     { data: 'machine_name' },
-                    { data: 'machine_brand' },
                     { data: 'machine_type' },
+                    { data: 'machine_brand' },
                     { data: 'name_property' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
@@ -462,7 +462,7 @@
                 const machineId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("fetchviewproperty", ':id') }}'.replace(':id', machineId),
+                    url: '{{ route("readmachineproperty", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
@@ -654,7 +654,7 @@
                 // var no_mesin = $("#viewButton")$(this).attr("data-id");
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("fetchdetailproperty", ':id') }}'.replace(':id', machineId),
+                    url: '{{ route("detailproperty", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
                             $('#modal_data_view').html(

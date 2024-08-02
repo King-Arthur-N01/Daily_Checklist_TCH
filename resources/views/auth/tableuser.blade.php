@@ -181,7 +181,7 @@
                 var userId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchedituser', ':id') }}'.replace(':id', userId),
+                    url: '{{ route("readuser", ':id') }}'.replace(':id', userId),
                     success: function(data) {
                         const header_modal = `
                             <h5 class="modal-title">Edit User</h5>
@@ -250,7 +250,7 @@
                             formData +='&_token={{ csrf_token() }}'; // Add CSRF token
                             $.ajax({
                                 type: 'PUT',
-                                url: '{{ route('pushedituser', ':id') }}'.replace(':id', userId),
+                                url: '{{ route("updateuser", ':id') }}'.replace(':id', userId),
                                 data: formData,
                                 success: function(response) {
                                     if (response.success) {
@@ -290,7 +290,7 @@
                 if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{ route('pushregisteruser') }}',
+                        url: '{{ route("registeruser") }}',
                         data: {
                             '_token': '{{ csrf_token() }}',
                             'name': formData.name,

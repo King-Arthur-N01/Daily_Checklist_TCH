@@ -35,7 +35,7 @@ class MachinepropertyController extends Controller
         }
     }
 
-    public function addproperty(Request $request)
+    public function createproperty(Request $request)
     {
         try {
             $StoreProperty = new Machineproperty();

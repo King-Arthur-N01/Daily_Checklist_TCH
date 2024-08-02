@@ -189,7 +189,7 @@
                 let approveId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route('fetchapproval', ':id') }}'.replace(':id', approveId),
+                    url: '{{ route("readapproval", ':id') }}'.replace(':id', approveId),
                     success: function(data) {
                         const header_modal = `
                             <h5 class="modal-title">Extra Large Modal</h5>
@@ -266,7 +266,7 @@
                             if (confirm("Apakah yakin mengapprove preventive ini?")) {
                                 $.ajax({
                                     type: 'PUT',
-                                    url: '{{ route('pushapproval', ':id') }}'.replace(':id', approveId),
+                                    url: '{{ route("insertapproval", ':id') }}'.replace(':id', approveId),
                                     data: {
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                                         'approve_by': approvedBy,
@@ -307,7 +307,7 @@
                             if (confirm("Are you sure you want to delete this record?")) {
                                 $.ajax({
                                     type: 'DELETE',
-                                    url: '{{ route('removeapprove', ':id') }}'.replace(':id', approveId),
+                                    url: '{{ route("removeapproval", ':id') }}'.replace(':id', approveId),
                                     data: {
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                                     },

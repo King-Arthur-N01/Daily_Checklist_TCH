@@ -14,18 +14,8 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
-                    <div id="successMessages">
-                        @if (session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-                    </div>
-                    <div id="errorMessages">
-                        @if (session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
-                        @endif
-                    </div>
                     <div class="table-responsive">
-                        <form action="{{ route('pushuserinput') }}" id="registerform" method="post">
+                        <form action="{{ route('createrecord') }}" id="registerform" method="post">
                             @csrf
                             @method('put')
                             <table class="table table-header">

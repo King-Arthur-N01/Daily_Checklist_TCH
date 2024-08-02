@@ -17,14 +17,14 @@ class RegisterController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
     public function __construct()
     {
-        $this->middleware('permission:manageuser', ['only' => ['readusertable','authenticatecreate','authenticateedit','deleteuser']]);
+        $this->middleware('permission:manageuser', ['only' => ['indexusertable','authenticatecreate','authenticateedit','deleteuser']]);
     }
-    public function readusertable()
+    public function indexusertable()
     {
         $users=User::get();
         return view('auth.tableuser',['users'=>$users]);
     }
-    public function fetchdatauser($id)
+    public function readdatauser($id)
     {
         $getusers=User::find($id);
         return response()->json(['getusers' => $getusers]);
