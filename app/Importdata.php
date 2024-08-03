@@ -15,8 +15,18 @@ class Importdata implements ToModel
             $this->isFirstRow = false;
             return null; // Skip the header row
         }
-        // Log::info('Row headers: ' . implode(', ', array_keys($row)));
+
         try {
+            // Check if invent_number already exists in the database
+            $existingMachine = Machine::where('invent_number', $row[1])->first();
+
+            if ($existingMachine) {
+                $errorMessage = 'Duplicate invent_number: ' . $row[1];
+                Log::error($errorMessage);
+
+                return response()->json(['error' => $errorMessage], 422);
+            }
+
             return new Machine([
                 'invent_number'  => $row[1],
                 'machine_number' => $row[2],

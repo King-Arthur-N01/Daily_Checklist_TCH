@@ -95,7 +95,7 @@ class ImportdataController extends Controller
             return response()->json(['success' => 'Data imported successfully!']);
         } catch (\Exception $e) {
             // Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!']);
+            return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!'], 500);
         }
     }
     public function exportpdf($id)

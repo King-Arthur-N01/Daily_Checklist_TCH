@@ -4,6 +4,7 @@ namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
 use App\Schedule;
+use App\Machine;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
@@ -18,22 +19,30 @@ class ScheduleController extends Controller
         return view ('dashboard.view_schedulemesin.tableschedule');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function refreshtableschedule()
     {
-        //
+        try {
+            $refreshmachine = Machine::all();
+            $refreshschedule= Schedule::all();
+            return response()->json([
+                'refreshmachine' => $refreshmachine,
+                'refreshschedule' => $refreshschedule,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    Public function datacalendar() {
+        // Fetch events from the database or define them statically
+        $events = [
+            ['title' => 'ROBOT PORTABLE SPOT R.41', 'start' => '2024-08-01', 'end' => '2024-08-25'],
+            ['title' => 'WELDING MACHINE R', 'start' => '2024-09-01', 'end' => '2024-09-15']
+        ];
+
+        return response()->json($events);
+    }
+
     public function store(Request $request)
     {
         //
@@ -82,15 +91,5 @@ class ScheduleController extends Controller
     public function destroy(Schedule $schedule)
     {
         //
-    }
-
-    Public function datacalendar () {
-        // Fetch events from the database or define them statically
-        $events = [
-            ['title' => 'ROBOT PORTABLE SPOT R.41', 'start' => '2024-08-01', 'end' => '2024-08-25'],
-            ['title' => 'WELDING MACHINE R', 'start' => '2024-09-01', 'end' => '2024-09-15']
-        ];
-
-        return response()->json($events);
     }
 }

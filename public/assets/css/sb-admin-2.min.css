@@ -662,7 +662,12 @@ pre code {
     padding-left: .75rem;
 }
 
-.calendar{display: flex;flex-wrap: wrap;justify-content: center;padding: 10px;}
+.card-calendar{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1.25rem;
+}
 
 .no-gutters {
     margin-right: 0;
@@ -7192,6 +7197,18 @@ a.close.disabled {
     to {
         transform: rotate(360deg)
     }
+}
+
+.spinner-custom{
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: .25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: .75s linear infinite spinner-border;
+    animation: .75s linear infinite spinner-border
 }
 
 .spinner-border {

@@ -64,6 +64,7 @@ Route::delete ('/machineproperty/delete/{id}','MachineData\MachinepropertyContro
 
 Route::get ('/machineschedule','MachineData\ScheduleController@indexmachineschedule')->name('indexschedule');
 Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@datacalendar')->name('datacalendar');
+Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@refreshtableschedule')->name('refreshcalendar');
 
 // componencheck route
 // Route::get ('/componencheck','MachineData\ComponencheckController@indexcomponencheck')->name('managecomponencheck');

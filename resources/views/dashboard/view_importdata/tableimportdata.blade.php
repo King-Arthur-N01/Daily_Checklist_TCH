@@ -37,6 +37,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
+                    <div id="loading_spinner" class="spinner-custom" style="display: none;"></div>
                     <div class="div-tables">
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-clipboard-check"></i>&nbsp; Tambah Checksheet Mesin</button>
@@ -44,9 +45,6 @@
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
                         </div>
-                    </div>
-                    <div class="spinner-border" id="loading_screen" style="display: none;">
-                        <div class="spinner"></div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="importTables" width="100%">
@@ -208,18 +206,17 @@
             });
 
             function showLoading() {
-                $('#loading_screen').show();
+                document.getElementById('loading_spinner').show();
             }
 
-            // Hide the loading overlay after the data is loaded
             function hideLoading() {
-                $('#loading_screen').hide();
+                document.getElementById('loading_spinner').hide();
             }
 
             // sett automatic soft refresh table
             setInterval(function() {
                 table.ajax.reload(null, false);
-            }, 60000); // 60000 milidetik = 60 second/ 1 menit
+            }, 30000); // 30000 milidetik = 30 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#importTables').DataTable({
@@ -281,7 +278,7 @@
                         }
                         setTimeout(function() {
                                 $('#successModal').modal('hide');
-                                $('#addModal').modal('hide');
+                                $('#uploadModal').modal('hide');
                         }, 2000);
                     },
                     error: function(xhr, status, error) {
@@ -292,8 +289,8 @@
                         }
                         setTimeout(function() {
                             $('#failedModal').modal('hide');
-                            $('#addModal').modal('hide');
-                        }, 20000);
+                            $('#uploadModal').modal('hide');
+                        }, 2000);
                     }
                 }).always(function() {
                     table.ajax.reload(null, false);
@@ -437,6 +434,7 @@
                             setTimeout(function() {
                                 $('#successModal').modal('hide');
                                 $('#addModal').modal('hide');
+                                $('#uploadModal').modal('hide');
                             }, 2000);
                         },
                         error: function(xhr, status, error) {
@@ -448,6 +446,7 @@
                             setTimeout(function() {
                                 $('#failedModal').modal('hide');
                                 $('#addModal').modal('hide');
+                                $('#uploadModal').modal('hide');
                             }, 20000);
                         }
                     }).always(function() {
