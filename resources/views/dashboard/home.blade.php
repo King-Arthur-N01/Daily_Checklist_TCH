@@ -31,7 +31,7 @@
                         <img class="image-card-home" src="{{asset('assets/icons/add_clipboard_home.png')}}">
                     </div>
                     <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{route('machinedata')}}">Tambah Form Preventive &nbsp; <i class="fas fa-folder-plus"></i></a>
+                        <a class="card-title" href="{{route('indexmachinedata')}}">Tambah Form Preventive &nbsp; <i class="fas fa-folder-plus"></i></a>
                     </div>
                 </div>
             </div>

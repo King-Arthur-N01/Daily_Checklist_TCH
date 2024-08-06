@@ -35,17 +35,45 @@ class ScheduleController extends Controller
 
     Public function datacalendar() {
         // Fetch events from the database or define them statically
-        $events = [
-            ['title' => 'ROBOT PORTABLE SPOT R.41', 'start' => '2024-08-01', 'end' => '2024-08-25'],
-            ['title' => 'WELDING MACHINE R', 'start' => '2024-09-01', 'end' => '2024-09-15']
+        $data = [
+            [
+                'id' => '1',
+                'title' => 'WELDING CO2 MANUAL',
+                'start' => '2024-08-01',
+                'end' => '2024-08-07'
+            ],
+            [
+                'id' => '2',
+                'title' => 'WELDING ROBOT',
+                'start' => '2024-07-07',
+                'end' => '2024-08-14'
+            ],
+            [
+                'id' => '3',
+                'title' => 'SCREW COMPRESSORE',
+                'start' => '2024-08-26',
+                'end' => '2024-08-31'
+            ],
+            [
+                'id' => '4',
+                'title' => 'POWER PRESS',
+                'start' => '2024-09-01',
+                'end' => '2024-09-10'
+            ]
         ];
-
-        return response()->json($events);
+        return response()->json($data);
     }
 
-    public function store(Request $request)
+    public function detailmachineschedule($id)
     {
-        //
+        try {
+            $refreshmachine = Machine::find($id);
+            return response()->json([
+                'refreshmachine' => $refreshmachine
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
 
     /**

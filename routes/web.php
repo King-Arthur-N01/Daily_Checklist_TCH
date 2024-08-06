@@ -25,7 +25,7 @@ Route::get ('/manageuser','Auth\RegisterController@indexusertable')->name('manag
 Route::post('/manageuser/register','Auth\RegisterController@authenticatecreate')->name('registeruser');
 Route::get ('/manageuser/read/{id}','Auth\RegisterController@readdatauser')->name('readuser');
 Route::put ('/manageuser/update/{id}','Auth\RegisterController@authenticateedit')->name('updateuser');
-Route::delete ('/manageuser/delete/{id}','Auth\RegisterController@deleteuser')->name('removeuser');
+Route::delete('/manageuser/delete/{id}','Auth\RegisterController@deleteuser')->name('removeuser');
 Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end
 
@@ -39,16 +39,16 @@ Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // machine route end
 
 // machine import route
-Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('machinedata');
+Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('indexmachinedata');
 Route::post('/machinedata/create','MachineData\MachineController@createmachine')->name('addmachine');
 Route::put ('/machinedata/update/{id}','MachineData\MachineController@updatemachine')->name('updatemachine');
 Route::delete('/machinedata/delete/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
-Route::post('/machinedata/import/excel','MachineData\ImportdataController@importdata')->name('uploadfile');
-Route::get ('/machinedata/export/pdf/{machineId}','MachineData\ImportdataController@exportpdf')->name('exportfile');
+Route::post('/machinedata/import','MachineData\ImportdataController@importdata')->name('uploadfile');
+Route::get ('/machinedata/export/{machineId}','MachineData\ImportdataController@exportpdf')->name('exportfile');
 
 Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refreshtableimport')->name('refreshimport');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
-Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@readmachineproperty')->name('readmachineproperty');
+Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@readmachinedata')->name('readmachinedata');
 // Route::put ('/machinedata/registerproperty/{id}','MachineData\ImportdataController@registeridproperty')->name('fetchdataproperty');
 // machine import route end
 
@@ -62,9 +62,14 @@ Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyControl
 Route::delete ('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end
 
+// machine schedule route
 Route::get ('/machineschedule','MachineData\ScheduleController@indexmachineschedule')->name('indexschedule');
+Route::get ('/machineschedule/view/{id}','MachineData\ScheduleController@detailmachineschedule')->name('detailschedule');
+Route::get ('/machineschedule/create','MachineData\ScheduleController@createschedule')->name('addschedule');
+
+Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@refreshtableschedule')->name('refreshschedule');
 Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@datacalendar')->name('datacalendar');
-Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@refreshtableschedule')->name('refreshcalendar');
+// machine schedule route end
 
 // componencheck route
 // Route::get ('/componencheck','MachineData\ComponencheckController@indexcomponencheck')->name('managecomponencheck');
@@ -94,11 +99,11 @@ Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@ref
 // metodecheck route end
 
 // input data machine record
-Route::get ('/machinerecord/preventive','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get ('/machinerecord/preventive/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('indexuserinput');
-Route::put ('/machinerecord/preventive/machine','RecordsData\MachinerecordController@createmachinerecord')->name('createrecord');
+Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
+Route::get ('/machinerecord/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
+Route::put ('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('createrecord');
 
-Route::get ('/machinerecord/preventive/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
+Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
 // input data machine record end
 
 // machine records correction

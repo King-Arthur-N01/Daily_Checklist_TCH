@@ -122,7 +122,7 @@
                     { data: 'status' },
                     {data: 'actions',
                     render: function(data, type, row) {
-                        let url = '{{ route("indexuserinput", ":id") }}';
+                        let url = '{{ route("formpreventive", ":id") }}';
                         url = url.replace(':id', data);
                         return `
                         <div class="dynamic-button-group">

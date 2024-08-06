@@ -28,6 +28,7 @@
         "@fullcalendar/interaction": "^6.1.15",
         "@fullcalendar/list": "^6.1.15",
         "@fullcalendar/multimonth": "^6.1.15",
+        "@fullcalendar/resource-timeline": "^6.1.15",
         "@fullcalendar/timegrid": "^6.1.15",
         "fullcalendar": "^6.1.15"
     }

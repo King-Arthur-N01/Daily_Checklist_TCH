@@ -14,6 +14,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
+                    <div id="errorMessages"></div>
                     <div class="table-responsive">
                         <form action="{{ route('createrecord') }}" id="registerform" method="post">
                             @csrf

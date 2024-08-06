@@ -461,7 +461,7 @@
                 const machineId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("readmachineproperty", ':id') }}'.replace(':id', machineId),
+                    url: '{{ route("readmachinedata", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {

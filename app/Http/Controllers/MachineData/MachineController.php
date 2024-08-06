@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
-    public function indexmachine()
+    public function notuseindexmachine()
     {
         $machines=Machine::get();
         return view ('dashboard.view_mesin.tablemachine',['machines'=>$machines]);
@@ -26,7 +26,7 @@ class MachineController extends Controller
         return view ('dashboard.view_mesin.editmachine',['machines'=>$machines]);
     }
 
-    public function pushregistermachine(Request $request)
+    public function notusepushregistermachine(Request $request)
     {
         // $lastMachineCode = Machine::orderBy('machine_code', 'desc')->first();
         // if (isset($lastMachineCode)) {
@@ -53,7 +53,7 @@ class MachineController extends Controller
         return redirect()->route("managemachine")->withSuccess('Machine added successfully.');
     }
 
-    public function pushupdatemachine(Request $request, $id)
+    public function notusepushupdatemachine(Request $request, $id)
     {
         $request->validate([
             'invent_number' => 'required',
@@ -76,7 +76,6 @@ class MachineController extends Controller
     // fungsi tambah mesin secara manual
     public function createmachine(Request $request)
     {
-        // dd($request);
         $request->validate([
             'invent_number' => 'required',
             'machine_number'=> 'required',
