@@ -62,7 +62,7 @@
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
-                                {{-- <th>INVENT NUMBER</th> --}}
+                                <th>JADWAL PREVENTIVE MESIN</th>
                                 <th>STATUS</th>
                                 <th>ACTION</th>
                             </thead>
@@ -100,15 +100,18 @@
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
+                        console.log(data); // Logging the data to debug
                         return data.map(function(refreshmachine) {
+                            // let refreshschedule = data.refreshschedule.find(function(schedule) {
+                            //     return refreshmachine.id === schedule.id_machine2;
+                            // });
                             return {
                                 machine_number: refreshmachine.machine_number,
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
-                                status: refreshmachine.total_days && refreshmachine.total_hours
-                                    ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu'
-                                    : 'Belum pernah dilakukan preventive',
+                                machine_schedule: refreshmachine.getschedule !== null ? 'Setiap : ' + refreshmachine.getschedule + ' Bulan Sekali' : 'Waktu preventive belum diatur',
+                                status: refreshmachine.total_days && refreshmachine.total_hours ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu' : 'Belum pernah dilakukan preventive',
                                 actions: refreshmachine.id
                             };
                         });
@@ -119,6 +122,7 @@
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
+                    { data: 'machine_schedule' },
                     { data: 'status' },
                     {data: 'actions',
                     render: function(data, type, row) {

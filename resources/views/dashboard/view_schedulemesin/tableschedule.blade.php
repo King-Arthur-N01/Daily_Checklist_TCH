@@ -138,15 +138,14 @@
                     // Sesuaikan data yang akan digunakan oleh DataTables
                     return data.refreshmachine.map(function(refreshmachine) {
                         let refreshschedule = data.refreshschedule.find(function(schedule) {
-                            return schedule.id === refreshmachine.id;
+                            return refreshmachine.id === schedule.id_machine2;
                         });
                         return {
                             invent_number: refreshmachine.invent_number,
                             machine_name: refreshmachine.machine_name,
                             machine_type: refreshmachine.machine_type,
                             machine_brand: refreshmachine.machine_brand,
-                            schedule_time: refreshschedule ? refreshschedule.schedule_time :
-                                'Belum ada jadwal preventive',
+                            schedule_time: refreshschedule ? 'Preventive berikutnya dalam ' + refreshschedule.schedule_time + ' Bulan' : 'Belum ada jadwal preventive',
                             actions: `
                                 <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#addModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                             `
@@ -199,29 +198,33 @@
                     $('#modal_data_add').html(data_modal);
                     $('#modal_button_add').html(button_modal);
 
-                    document.getElementById('schedule_time').addEventListener('input', function(event) {
-                        const inputValue = event.target.value;
-                        if (isNaN(inputValue) || inputValue.includes('e')) {
-                            $('#warningText').text('Please fill with number');
-                            $('#warningModal').modal('show');
-                            setTimeout(function() {
-                                $('#warningModal').modal('hide');
-                            }, 2000);
-                            // alert('Please fill with number');
-                            event.target.value = '';
-                        }
-                    });
+                    let scheduleTimeInput = document.getElementById('schedule_time');
+                    if (scheduleTimeInput) {
+                        scheduleTimeInput.addEventListener('input', function(event) {
+                            const inputValue = event.target.value;
+                            if (isNaN(inputValue) || inputValue.includes('e')) {
+                                $('#warningText').text('Please fill with number');
+                                $('#warningModal').modal('show');
+                                setTimeout(function() {
+                                    $('#warningModal').modal('hide');
+                                    $('#addModal').modal('hide');
+                                }, 2000);
+                                event.target.value = '';
+                            }
+                        });
+                    }
 
                     // Save button
                     $('#saveButton').on('click', function() {
                         let scheduleTime = $('#schedule_time').val();
                         if (confirm("Apakah yakin dengan waktu preventive mesin ini?")) {
                             $.ajax({
-                                type: 'PUT',
-                                url: '{{ route('addschedule', ':id') }}'.replace(':id',machineId),
+                                type: 'POST',
+                                url: '{{ route("addschedule") }}',
                                 data: {
                                     '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                    'schedule_time': scheduleTime
+                                    'schedule_time': scheduleTime,
+                                    'id_machine2' : machineId
                                 },
                                 success: function(response) {
                                     if (response.success) {
@@ -255,45 +258,45 @@
                     });
 
                     // Delete button
-                    $('#deleteButton').on('click', function() {
-                        if (confirm("Are you sure you want to delete this record?")) {
-                            $.ajax({
-                                type: 'DELETE',
-                                url: '{{ route('removecorrection', ':id') }}'.replace(
-                                    ':id', correctId),
-                                data: {
-                                    '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        const successMessage = response.success;
-                                        $('#successText').text(successMessage);
-                                        $('#successModal').modal('show');
-                                    }
-                                    setTimeout(function() {
-                                        $('#successModal').modal('hide');
-                                        $('#correctModal').modal('hide');
-                                    }, 2000);
-                                },
-                                error: function(xhr, status, error) {
-                                    if (xhr.responseText) {
-                                        const warningMessage = JSON.parse(xhr
-                                            .responseText).error;
-                                        $('#warningText').text(warningMessage);
-                                        $('#warningModal').modal('show');
-                                    }
-                                    setTimeout(function() {
-                                        $('#warningModal').modal('hide');
-                                        $('#correctModal').modal('hide');
-                                    }, 2000);
-                                }
-                            }).always(function() {
-                                table.ajax.reload(null, false);
-                            });
-                        } else {
-                            // User cancelled the deletion, do nothing
-                        }
-                    });
+                    // $('#deleteButton').on('click', function() {
+                    //     if (confirm("Are you sure you want to delete this record?")) {
+                    //         $.ajax({
+                    //             type: 'DELETE',
+                    //             url: '{{ route('removecorrection', ':id') }}'.replace(
+                    //                 ':id', correctId),
+                    //             data: {
+                    //                 '_token': '{{ csrf_token() }}', // Include the CSRF token
+                    //             },
+                    //             success: function(response) {
+                    //                 if (response.success) {
+                    //                     const successMessage = response.success;
+                    //                     $('#successText').text(successMessage);
+                    //                     $('#successModal').modal('show');
+                    //                 }
+                    //                 setTimeout(function() {
+                    //                     $('#successModal').modal('hide');
+                    //                     $('#correctModal').modal('hide');
+                    //                 }, 2000);
+                    //             },
+                    //             error: function(xhr, status, error) {
+                    //                 if (xhr.responseText) {
+                    //                     const warningMessage = JSON.parse(xhr
+                    //                         .responseText).error;
+                    //                     $('#warningText').text(warningMessage);
+                    //                     $('#warningModal').modal('show');
+                    //                 }
+                    //                 setTimeout(function() {
+                    //                     $('#warningModal').modal('hide');
+                    //                     $('#correctModal').modal('hide');
+                    //                 }, 2000);
+                    //             }
+                    //         }).always(function() {
+                    //             table.ajax.reload(null, false);
+                    //         });
+                    //     } else {
+                    //         // User cancelled the deletion, do nothing
+                    //     }
+                    // });
                 }
             });
         });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MachineData;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use App\Schedule;
 use App\Machine;
 use Illuminate\Http\Request;
@@ -33,8 +34,8 @@ class ScheduleController extends Controller
         }
     }
 
+    // untuk test fecth data dummy calendar
     Public function datacalendar() {
-        // Fetch events from the database or define them statically
         $data = [
             [
                 'id' => '1',
@@ -76,15 +77,26 @@ class ScheduleController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Schedule  $schedule
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Schedule $schedule)
+    public function createschedule(Request $request)
     {
-        //
+        $currenttime = Carbon::today();
+        $checkmachineid = Schedule::where('id_machine2', $request->id_machine2)->first();
+        try {
+            $preventivetime = $request->input('schedule_time');
+            $nextpreventive = $currenttime->addMonths($preventivetime);
+            if (!$checkmachineid){
+                $StoreSchedule = new Schedule();
+                $StoreSchedule->id_machine2 = $request->input('id_machine2');
+                $StoreSchedule->schedule_time = $request->input('schedule_time');
+                $StoreSchedule->schedule_next = $nextpreventive;
+                $StoreSchedule->save();
+            } else {
+                return response()->json(['error' => 'Mesin Sudah memiliki jadwal preventive !!!!'], 500);
+            }
+            return response()->json(['success' => 'Waktu preventive mesin berhasil di UPDATE!']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
 
     /**

@@ -116,7 +116,7 @@
             /* margin-top: 6px !important; */
             /* margin-bottom: 6px !important; */
             border-spacing: 0;
-            font-size: smaller;
+            font-size: 0.6rem;
             align-items: center;
             border: 0.4px solid #000000;
         }

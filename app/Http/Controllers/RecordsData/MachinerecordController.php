@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\User;
 use App\Machine;
+use App\Schedule;
 use App\Machinerecord;
 use App\Historyrecords;
 use Illuminate\Http\Request;
@@ -26,10 +27,12 @@ class MachinerecordController extends Controller
     public function refreshtablerecord() {
         $currenttime = Carbon::now();
         $machine = Machine::all();
+        // $schedule = Schedule::all();
         $responsedata = [];
         try {
             foreach ($machine as $refreshmachine) {
                 if ($refreshmachine->id_property){
+                    $getschedule = Schedule::where('id_machine2', $refreshmachine->id)->value('schedule_time');
                     $lastrecord = Machinerecord::where('id_machine', $refreshmachine->id)->orderBy('record_time', 'desc')->first();
                     if ($lastrecord) {
                         $lasttime = Carbon::parse($lastrecord->record_time);
@@ -43,8 +46,9 @@ class MachinerecordController extends Controller
                             'machine_name' => $refreshmachine->machine_name,
                             'machine_type' => $refreshmachine->machine_type,
                             'machine_brand' => $refreshmachine->machine_brand,
+                            'getschedule' => $getschedule,
                             'total_hours' => $gettotalhours,
-                            'total_days' => $gettotaldays
+                            'total_days' => $gettotaldays,
                         ];
                     } else {
                         $responsedata[] = [
@@ -52,7 +56,8 @@ class MachinerecordController extends Controller
                             'machine_number' => $refreshmachine->machine_number,
                             'machine_name' => $refreshmachine->machine_name,
                             'machine_type' => $refreshmachine->machine_type,
-                            'machine_brand' => $refreshmachine->machine_brand
+                            'machine_brand' => $refreshmachine->machine_brand,
+                            'getschedule' => $getschedule,
                         ];
                     }
                 }

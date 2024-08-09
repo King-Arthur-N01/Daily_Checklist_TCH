@@ -65,7 +65,7 @@ Route::delete ('/machineproperty/delete/{id}','MachineData\MachinepropertyContro
 // machine schedule route
 Route::get ('/machineschedule','MachineData\ScheduleController@indexmachineschedule')->name('indexschedule');
 Route::get ('/machineschedule/view/{id}','MachineData\ScheduleController@detailmachineschedule')->name('detailschedule');
-Route::get ('/machineschedule/create','MachineData\ScheduleController@createschedule')->name('addschedule');
+Route::post('/machineschedule/create','MachineData\ScheduleController@createschedule')->name('addschedule');
 
 Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@refreshtableschedule')->name('refreshschedule');
 Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@datacalendar')->name('datacalendar');
