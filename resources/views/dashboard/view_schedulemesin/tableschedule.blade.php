@@ -125,9 +125,13 @@
     {{-- <script src="{{ asset('assets/vendor/jquery-maskedinput/jquery.maskedinput.js') }}"></script> --}}
     <script src="{{ mix('js/app.js') }}" defer></script>
 <script>
-        // sett automatic soft refresh table
+        // Set automatic soft refresh table
         setInterval(function() {
+            overlay.addClass('is-active');
             table.ajax.reload(null, false);
+            table.on('draw.dt', function() {
+                overlay.removeClass('is-active');
+            });
         }, 30000); // 30000 milidetik = 30 second
 
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
@@ -145,7 +149,7 @@
                             machine_name: refreshmachine.machine_name,
                             machine_type: refreshmachine.machine_type,
                             machine_brand: refreshmachine.machine_brand,
-                            schedule_time: refreshschedule ? 'Preventive berikutnya dalam ' + refreshschedule.schedule_time + ' Bulan' : 'Belum ada jadwal preventive',
+                            schedule_time: refreshschedule ? 'Setiap ' + refreshschedule.schedule_time + ' Bulan Sekali' : 'Belum ada jadwal preventive',
                             actions: `
                                 <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#addModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                             `

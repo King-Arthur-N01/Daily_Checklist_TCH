@@ -191,47 +191,47 @@
                             <form id="editForm" method="post">
                             <div class="row align-items-center">
                                 <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
-                                    <input class="form-control form-control-user" type="text" name="name" placeholder="Username" value="${data.getusers.name}">
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
+                                        <input class="form-control form-control-user" type="text" name="name" placeholder="Username" value="${data.getusers.name}">
+                                    </div>
                                 </div>
                                 <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
-                                    <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK" value="${data.getusers.nik}">
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
+                                        <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK" value="${data.getusers.nik}">
+                                    </div>
                                 </div>
                             </div>
                             <div class="row align-items-center">
                                 <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
-                                    <select class="form-control" name="status" id="category-input">
-                                        <option value="1" ${data.getusers.status == 1 ? 'selected' : ''}>Aktif</option>
-                                        <option value="0" ${data.getusers.status == 0 ? 'selected' : ''}>Nonaktif</option>
-                                    </select>
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
+                                        <select class="form-control" name="status" id="category-input">
+                                            <option value="1" ${data.getusers.status == 1 ? 'selected' : ''}>Aktif</option>
+                                            <option value="0" ${data.getusers.status == 0 ? 'selected' : ''}>Nonaktif</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
-                                    <input class="form-control form-control-user" type="text" name="department" placeholder="Department" value="${data.getusers.department}">
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
+                                        <input class="form-control form-control-user" type="text" name="department" placeholder="Department" value="${data.getusers.department}">
+                                    </div>
                                 </div>
                             </div>
                             <div class="row align-items-center">
                                 <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
-                                    <input class="form-control" type="password" required placeholder="Password Min:6 digits" id="password" value="${data.getusers.password}" readonly>
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
+                                        <input class="form-control" type="password" required placeholder="Password Min:6 digits" id="password" value="${data.getusers.password}" readonly>
+                                    </div>
                                 </div>
                                 <div class="col-xl-6">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>
-                                    <input class="form-control" type="password" placeholder="Confirm Password" id="confirm_password" value="${data.getusers.password}" readonly>
-                                </div>
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>
+                                        <input class="form-control" type="password" placeholder="Confirm Password" id="confirm_password" value="${data.getusers.password}" readonly>
+                                    </div>
                                 </div>
                             </div>
                             </form>

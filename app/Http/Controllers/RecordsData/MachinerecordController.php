@@ -62,9 +62,7 @@ class MachinerecordController extends Controller
                     }
                 }
             }
-            return response()->json(
-                $responsedata
-            );
+            return response()->json($responsedata);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }

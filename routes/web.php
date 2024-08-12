@@ -47,6 +47,7 @@ Route::post('/machinedata/import','MachineData\ImportdataController@importdata')
 Route::get ('/machinedata/export/{machineId}','MachineData\ImportdataController@exportpdf')->name('exportfile');
 
 Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refreshtableimport')->name('refreshimport');
+Route::get ('/machinedata/table/filter','MachineData\ImportdataController@filltertableimport')->name('fillterimport');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
 Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@readmachinedata')->name('readmachinedata');
 // Route::put ('/machinedata/registerproperty/{id}','MachineData\ImportdataController@registeridproperty')->name('fetchdataproperty');
@@ -56,9 +57,6 @@ Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@readmachi
 Route::get ('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
 Route::post('/machineproperty/create','MachineData\MachinepropertyController@createproperty')->name('addproperty');
 Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyController@refreshtableproperty')->name('refreshproperty');
-// Route::get('/machineproperty/{id}','MachineData\MachinepropertyController@indexeditmethod')->name('editmethod');
-// Route::put('/machineproperty/{id}','MachineData\MachinepropertyController@editmethod')->name('pusheditmethod');
-// Route::get('/machineproperty','MachineData\MachinepropertyController@indextablemethod')->name('managemethod');
 Route::delete ('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end
 
@@ -102,32 +100,28 @@ Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@dat
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
 Route::get ('/machinerecord/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
 Route::put ('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('createrecord');
-
 Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
 // input data machine record end
 
 // machine records correction
 Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('indexcorrection');
-
 Route::get ('/machinerecord/correction/table/refresh','RecordsData\MachinerecordController@refreshtablecorrection')->name('refreshcorrect');
 Route::get ('/machinerecord/correction/{id}','RecordsData\MachinerecordController@readdatacorrection')->name('readcorrection');
-
 Route::put ('/machinerecord/correction/{id}','RecordsData\MachinerecordController@registercorrection')->name('insertcorrection');
 Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrection');
 // machine records correction end
 
 // machine records approval
 Route::get ('/machinerecord/approval','RecordsData\MachinerecordController@indexapproval')->name('indexapproval');
-
 Route::get ('/machinerecord/approval/table/refresh','RecordsData\MachinerecordController@refreshtableapproval')->name('refreshapproval');
 Route::get ('/machinerecord/approval/{id}','RecordsData\MachinerecordController@readdataapproval')->name('readapproval');
-
 Route::put ('/machinerecord/approval/{id}','RecordsData\MachinerecordController@registerapproval')->name('insertapproval');
 Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordController@deleteapproval')->name('removeapproval');
 // machine records approval end
 
 // record data machine route
 Route::get ('/historyrecord','RecordsData\HistoryrecordsController@indexhistory')->name('historymachine');
+Route::get ('/historyrecord/table/refresh','RecordsData\\HistoryrecordsController@refreshtablehistory')->name('refreshistory');
 Route::get ('/historyrecord/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
 // record data machine route end
 

@@ -137,10 +137,14 @@
     <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // sett automatic soft refresh table
+            // Set automatic soft refresh table
             setInterval(function() {
+                overlay.addClass('is-active');
                 table.ajax.reload(null, false);
-            }, 60000); // 60000 milidetik = 60 second
+                table.on('draw.dt', function() {
+                    overlay.removeClass('is-active');
+                });
+            }, 30000); // 30000 milidetik = 30 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#preventiveTables2').DataTable({

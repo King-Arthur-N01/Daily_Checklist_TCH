@@ -13,13 +13,19 @@ class HistoryrecordsController extends Controller
     // fungsi untuk melihat table riwayat dan status preventive mesin
     public function indexhistory()
     {
+        return view('dashboard.view_history.tablehistory');
+    }
+
+    public function refreshtablehistory()
+    {
         $joinrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate', 'machinerecords.create_by as getusercreate', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
             ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
-
-        return view('dashboard.view_history.tablehistory', ['joinrecords' => $joinrecords]);
+        return response()->json([
+            'joinrecords' => $joinrecords
+        ]);
     }
 
     // fungsi tampilan formulir untuk melihat riwayat dan status preventive mesin (record mesin)
@@ -49,7 +55,7 @@ class HistoryrecordsController extends Controller
         foreach ($splituser as $eachuserid){
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
         }
-        $joinuser = implode(',', $usernames);
+        $joinuser = implode(' , ', $usernames);
 
         $combinedata = [];
         foreach ($detailrecords as $detail){
@@ -74,18 +80,6 @@ class HistoryrecordsController extends Controller
             'usernames' => $usernames,
             'joinuser' => $joinuser
         ]);
-    }
-
-    public function insertoperatoraction(Request $request)
-    {
-        // $operatoraction = $request->input('operator_action', []);
-        // $result = $request->input('result', []);
-
-        // $storeData = new Historyrecords();
-        // $storeData->operator_action = implode(',', $operatoraction);
-        // $storeData->result = implode(',', $result);
-        // $storeData->save();
-        // return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
     public function store(Request $request)

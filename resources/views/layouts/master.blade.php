@@ -21,6 +21,9 @@
 </head>
 
 <body id="page-top">
+    <div class="loading-overlay">
+        <img style="height: 60px;" src="{{asset('assets/images/loading_cube.svg')}}" alt="">
+    </div>
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -325,7 +328,10 @@
 
 @stack('script')
 {{-- <=========================BATAS HARDCODED JAVASCRIPT!!!!=========================> --}}
-
+<script>
+    let overlay = $('.loading-overlay');
+    overlay.appendTo('body');
+</script>
 {{-- <=======================BATAS HARDCODED JAVASCRIPT END!!!!=======================> --}}
 </body>
 </html>

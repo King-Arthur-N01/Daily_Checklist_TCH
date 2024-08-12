@@ -48,34 +48,12 @@
                                 <th>Nama Mesin</th>
                                 <th>Type Mesin</th>
                                 <th>Nomor Mesin</th>
-                                <th colspan="2">Status</th>
+                                <th>Status</th>
+                                <th>Status</th>
                                 <th>Shift</th>
                                 <th>Waktu</th>
                                 <th>Action</th>
                             </thead>
-                            <tbody>
-                                @if (isset($joinrecords) &&!empty($joinrecords))
-                                    @foreach ($joinrecords as $recordsget)
-                                        <tr>
-                                            <td>{{ $recordsget->records_id }}</td>
-                                            <td>{{ $recordsget->machine_name }}</td>
-                                            <td>{{ $recordsget->machine_type }}</td>
-                                            <td>{{ $recordsget->machine_number }}</td>
-                                            <td style="display: none;">{{ $recordsget->getcorrect }}</td>
-                                            <td style="display: none;">{{ $recordsget->getapprove }}</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>{{ $recordsget->shift }}</td>
-                                            <td>{{ $recordsget->getcreatedate }}</td>
-                                            <td>
-                                                <a class="btn btn-primary" href="{{ route('detailhistory', $recordsget->records_id) }}"><img style="height: 20px" src="assets/icons/eye_white.png"></a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr><td>No data found.</td></tr>
-                                @endif
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -123,6 +101,53 @@
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'});
             });
+
+            // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
+            const table = $('#historyTables').DataTable({
+                ajax: {
+                    url: '{{ route("refreshistory") }}',
+                    dataSrc: function(data)
+                    {
+                        return data.joinrecords.map((joinrecords, index) => {
+                            return {
+                                number: joinrecords.records_id,
+                                machine_name: joinrecords.machine_name,
+                                machine_type: joinrecords.machine_type,
+                                machine_number: joinrecords.machine_number,
+                                getcorrect: joinrecords.getcorrect ? joinrecords.getcorrect : 'Belum dikoreksi',
+                                getapprove: joinrecords.getapprove ? joinrecords.getapprove : 'Belum disetujui',
+                                shift: joinrecords.shift,
+                                getcreatedate: joinrecords.getcreatedate,
+                                actions: joinrecords.records_id
+                            };
+                        });
+                    }
+                },
+                columns: [
+                    { data: 'number' },
+                    { data: 'machine_name' },
+                    { data: 'machine_type' },
+                    { data: 'machine_number' },
+                    { data: 'getcorrect' },
+                    { data: 'getapprove' },
+                    { data: 'shift' },
+                    { data: 'getcreatedate' },
+                    {data: 'actions',
+                    render: function(data, type, row) {
+                        let url = '{{ route("detailhistory", ":id") }}';
+                        url = url.replace(':id', data);
+                        return `
+                            <div class="dynamic-button-group">
+                                <a class="btn btn-primary btn-sm" style="color:white" href="${url}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                            </div>
+                        `;
+                    },
+                    orderable: false,
+                    searchable: false
+                    }
+                ]
+            });
+
             // fungsi table untuk melihat status dari sebuah preventive
             $('#historyTables tr').each(function() {
                 var correctCell = $(this).find('td:eq(4)');

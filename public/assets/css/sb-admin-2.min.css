@@ -7205,16 +7205,21 @@ a.close.disabled {
     }
 }
 
-.spinner-custom{
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    vertical-align: text-bottom;
-    border: .25em solid currentColor;
-    border-right-color: transparent;
-    border-radius: 50%;
-    -webkit-animation: .75s linear infinite spinner-border;
-    animation: .75s linear infinite spinner-border
+.loading-overlay {
+    display: none;
+    background: transparent;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-overlay.is-active {
+    display: flex;
 }
 
 .spinner-border {

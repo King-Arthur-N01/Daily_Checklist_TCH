@@ -90,9 +90,13 @@
                 searchInputPlaceholder: 'Search'
             });
 
-            // sett automatic soft refresh table
+            // Set automatic soft refresh table
             setInterval(function() {
+                overlay.addClass('is-active');
                 table.ajax.reload(null, false);
+                table.on('draw.dt', function() {
+                    overlay.removeClass('is-active');
+                });
             }, 30000); // 30000 milidetik = 30 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
@@ -100,7 +104,6 @@
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
-                        console.log(data); // Logging the data to debug
                         return data.map(function(refreshmachine) {
                             // let refreshschedule = data.refreshschedule.find(function(schedule) {
                             //     return refreshmachine.id === schedule.id_machine2;
@@ -110,7 +113,7 @@
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
-                                machine_schedule: refreshmachine.getschedule !== null ? 'Setiap : ' + refreshmachine.getschedule + ' Bulan Sekali' : 'Waktu preventive belum diatur',
+                                machine_schedule: refreshmachine.getschedule !== null ? 'Setiap ' + refreshmachine.getschedule + ' Bulan Sekali' : 'Waktu preventive belum diatur',
                                 status: refreshmachine.total_days && refreshmachine.total_hours ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu' : 'Belum pernah dilakukan preventive',
                                 actions: refreshmachine.id
                             };

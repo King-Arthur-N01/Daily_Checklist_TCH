@@ -11,16 +11,18 @@
                     <div class="card-header">
                         <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
                     </div>
-                    <form action="#" method="post" style="margin-top: 10px">
                         @csrf
-                        <div class="table-filter">
+                         <div class="table-filter">
                             <div class="col-4">
                                 <p class="mg-b-10">Nama Mesin</p>
                                 <input class="form-control" name="" id="filterByName">
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Nomor Mesin </p>
-                                <input class="form-control" name="" id="filterById">
+                                <select class="form-control select2" name="" id="filterById">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
                             </div>
                             <div class="col-4">
                                 <p class="mg-b-10">Standarisasi Mesin</p>
@@ -31,13 +33,11 @@
                                 </select>
                             </div>
                         </div>
-                    </form>
                 </div>
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
-                    <div id="loading_spinner" class="spinner-custom" style="display: none;"></div>
                     <div class="div-tables">
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-clipboard-check"></i>&nbsp; Tambah Checksheet Mesin</button>
@@ -199,23 +199,31 @@
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
             });
+            $('#filterByName').on('change', function() {
+                var fillterName = $(this).val();
+
+                $('#importTables tbody tr').each(function() {
+                    var rowName = $(this).find('td:eq(1)').text(); // Adjust index based on your table structure
+                    if (fillterName === "" || rowName === fillterName) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
 
-            function showLoading() {
-                document.getElementById('loading_spinner').show();
-            }
-
-            function hideLoading() {
-                document.getElementById('loading_spinner').hide();
-            }
-
-            // sett automatic soft refresh table
+            // Set automatic soft refresh table
             setInterval(function() {
+                overlay.addClass('is-active');
                 table.ajax.reload(null, false);
+                table.on('draw.dt', function() {
+                    overlay.removeClass('is-active');
+                });
             }, 30000); // 30000 milidetik = 30 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
@@ -275,10 +283,12 @@
                             const successMessage = response.success;
                             $('#successText').text(successMessage);
                             $('#successModal').modal('show');
+                            overlay.toggleClass('is-active');
                         }
                         setTimeout(function() {
                                 $('#successModal').modal('hide');
                                 $('#uploadModal').modal('hide');
+                                overlay.removeClass('is-active');
                         }, 2000);
                     },
                     error: function(xhr, status, error) {
