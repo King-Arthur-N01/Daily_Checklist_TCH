@@ -238,7 +238,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#successModal').modal('hide');
-                                        $('#correctModal').modal('hide');
+                                        $('#addModal').modal('hide');
                                     }, 2000);
                                 },
                                 error: function(xhr, status, error) {
@@ -250,7 +250,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#warningModal').modal('hide');
-                                        $('#correctModal').modal('hide');
+                                        $('#addModal').modal('hide');
                                     }, 2000);
                                 }
                             }).always(function() {

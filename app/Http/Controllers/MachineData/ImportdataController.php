@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Importdata;
 use App\Machine;
 use App\Machineproperty;
+use App\Schedule;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
@@ -27,9 +28,11 @@ class ImportdataController extends Controller
         try {
             $refreshmachine = Machine::all();
             $refreshproperty = Machineproperty::all();
+            $refreshschedule= Schedule::all();
             return response()->json([
                 'refreshmachine' => $refreshmachine,
-                'refreshproperty' => $refreshproperty
+                'refreshproperty' => $refreshproperty,
+                'refreshschedule' => $refreshschedule
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -60,9 +63,11 @@ class ImportdataController extends Controller
         try {
             $fetchmachine = Machine::find($id);
             $fetchproperty = Machineproperty::get();
+            $fetchschedule = Schedule::get();
             return response()->json([
                 'fetchmachine' => $fetchmachine,
-                'fetchproperty' => $fetchproperty
+                'fetchproperty' => $fetchproperty,
+                'fetchschedule' => $fetchschedule
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -70,7 +75,7 @@ class ImportdataController extends Controller
     }
 
     // fungsi untuk mengupload data mesin
-    public function registeridproperty(Request $request, $id)
+    public function notuseregisteridproperty(Request $request, $id)
     {
         $request->validate([
             'id_property' => 'required'

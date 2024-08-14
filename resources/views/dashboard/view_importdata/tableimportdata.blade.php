@@ -53,6 +53,7 @@
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
+                                <th>JADWAL PREVENTIVE</th>
                                 <th>STANDARISASI</th>
                                 <th>ACTION</th>
                             </thead>
@@ -236,11 +237,15 @@
                             let refreshproperty = data.refreshproperty.find(function(property) {
                                 return property.id === refreshmachine.id_property;
                             });
+                            let refreshschedule = data.refreshschedule.find(function(schedule) {
+                                return schedule.id_machine2 === refreshmachine.id;
+                            });
                             return {
                                 invent_number: refreshmachine.invent_number,
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
+                                schedule_time: refreshschedule ? 'Setiap ' + refreshschedule.schedule_time + ' Bulan Sekali' : 'Belum ada jadwal preventive',
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi',
                                 actions: `
                                     <div class="dynamic-button-group">
@@ -261,6 +266,7 @@
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
+                    { data: 'schedule_time' },
                     { data: 'name_property' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
@@ -473,6 +479,10 @@
                     type: 'GET',
                     url: '{{ route("readmachinedata", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
+                        let fetchschedule = data.fetchschedule.find(function(schedule) {
+                            return data.fetchmachine.id === schedule.id_machine2;
+                        });
+
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
                             $.each(data.fetchproperty, function(index, fetchtable) {
@@ -481,6 +491,13 @@
                             });
                         } else {
                             console.error('fetchproperty is not an array:', data.fetchproperty);
+                        }
+
+                        let scheduleTimeInput = '';
+                        if (fetchschedule === undefined || fetchschedule === null) {
+                            scheduleTimeInput = `<input type="text" class="form-control" name="schedule_time" id="schedule_time" aria-describedby="extra-text" placeholder="Waktu Preventive">`;
+                        } else {
+                            scheduleTimeInput = `<input type="text" class="form-control" name="schedule_time" id="schedule_time" aria-describedby="extra-text" placeholder="Waktu Preventive" value="${fetchschedule.schedule_time}">`;
                         }
 
                         const header_modal = `
@@ -567,17 +584,27 @@
                                 </div>
                             </div>
 
-
                             <table class="table table-bordered" id="editTables" width="100%">
                                 <thead>
                                     <th>Standarisasi Mesin</th>
+                                    <th>Waktu Preventive Mesin</th>
                                 <tbody>
                                     <tr>
-                                        <td colspan="4">
-                                            <select class="form-control select2" id="getproperty">
-                                                <option value="">Tidak ada</option>
-                                                ${options}
-                                            </select>
+                                        <td>
+                                            <div class="input-group">
+                                                <select class="form-control select2" id="getproperty">
+                                                    <option value="">Tidak ada</option>
+                                                    ${options}
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                ${scheduleTimeInput}
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="extra-text">/Bulan</span>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -604,8 +631,10 @@
                                 machineType: $('input[name="machine_type"]').val(),
                                 installDate: $('input[name="install_date"]').val(),
                                 machineNumber: $('input[name="machine_number"]').val(),
-                                idProperty : $('#getproperty').val()
+                                idProperty : $('#getproperty').val(),
+                                scheduleTime: $('input[name="schedule_time"]').val(),
                             };
+                            console.log(formData);
                             $.ajax({
                                 type: 'PUT',
                                 url: '{{ route("updatemachine", ':id') }}'.replace(':id', machineId),
@@ -620,7 +649,8 @@
                                     'machine_type': formData.machineType,
                                     'install_date': formData.installDate,
                                     'machine_number': formData.machineNumber,
-                                    'id_property': formData.idProperty
+                                    'id_property': formData.idProperty,
+                                    'schedule_time': formData.scheduleTime
                                 },
                                 success: function(response) {
                                     if (response.success) {
