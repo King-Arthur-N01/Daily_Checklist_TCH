@@ -149,6 +149,10 @@ class MachinerecordController extends Controller
                 $StoreRecords->create_by = $request->input('combined_create_by');
                 $StoreRecords->save();
 
+                $StoreSchedule = Schedule::where('id_machine2',$getmachineid)->first();
+                $StoreSchedule->schedule_record = $currenttime;
+                $StoreSchedule->save();
+
                 // Get the ID of the newly created record
                 $getrecordid = Machinerecord::latest('id')->first()->id;
 
@@ -171,6 +175,10 @@ class MachinerecordController extends Controller
             $StoreRecords->record_time = $currenttime;
             $StoreRecords->create_by = $request->input('combined_create_by');
             $StoreRecords->save();
+
+            $StoreSchedule = Schedule::where('id_machine2',$getmachineid)->first();
+            $StoreSchedule->schedule_record = $currenttime;
+            $StoreSchedule->save();
 
             // Get the ID of the newly created record
             $getrecordid = Machinerecord::latest('id')->first()->id;

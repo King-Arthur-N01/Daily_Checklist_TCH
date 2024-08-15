@@ -167,22 +167,6 @@
     </div>
     <!-- End Alert Danger Modal -->
 
-    <!-- Alert Warning Modal -->
-    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle me-1"></i>
-                        <span id="warningText" class="modal-alert"></span>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Alert Warning Modal -->
-
 @endsection
 
 @push('style')
@@ -232,7 +216,6 @@
                 ajax: {
                     url: '{{ route("refreshimport") }}',
                     dataSrc: function(data) {
-                        // Sesuaikan data yang akan digunakan oleh DataTables
                         return data.refreshmachine.map(function(refreshmachine) {
                             let refreshproperty = data.refreshproperty.find(function(property) {
                                 return property.id === refreshmachine.id_property;

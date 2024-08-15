@@ -136,215 +136,214 @@
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script>
     <script>
-            // Set automatic soft refresh table
-            setInterval(function() {
-                overlay.addClass('is-active');
-                table.ajax.reload(null, false);
-                table.on('draw.dt', function() {
-                    overlay.removeClass('is-active');
-                });
-            }, 30000); // 30000 milidetik = 30 second
-
-            // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
-            const table = $('#preventiveTables1').DataTable({
-                ajax: {
-                    url: '{{ route("refreshcorrect") }}',
-                    dataSrc: function(data) {
-                        if (data && data.refreshrecord) {
-                            // Process the data to match the table columns
-                            return data.refreshrecord.map(function(refreshrecord) {
-                                console.log(refreshrecord);
-                                return {
-                                    no: refreshrecord.records_id,
-                                    pic: refreshrecord.getuser,
-                                    shift: refreshrecord.shift,
-                                    nama_mesin: refreshrecord.machine_name,
-                                    model_type: refreshrecord.machine_type,
-                                    no_mesin: refreshrecord.machine_number2,
-                                    waktu_preventive: refreshrecord.record_time,
-                                    status: refreshrecord.correct_by ? refreshrecord.correct_by : 'Belum Dikoreksi',
-                                    action: `
-                                        <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#correctModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
-                                    `
-                                };
-                            });
-                        } else {
-                            console.error('Invalid data received from server:', data);
-                            return [];
-                        }
-                    }
-                },
-                columns: [
-                    { data: 'no' },
-                    { data: 'pic' },
-                    { data: 'shift' },
-                    { data: 'nama_mesin' },
-                    { data: 'model_type' },
-                    { data: 'no_mesin' },
-                    { data: 'waktu_preventive' },
-                    { data: 'status' },
-                    { data: 'action', orderable: false, searchable: false }
-                ]
+        // Set automatic soft refresh table
+        setInterval(function() {
+            overlay.addClass('is-active');
+            table.ajax.reload(null, false);
+            table.on('draw.dt', function() {
+                overlay.removeClass('is-active');
             });
+        }, 30000); // 30000 milidetik = 30 second
 
-            $('#correctModal').on('shown.bs.modal', function(event) {
-                let button = $(event.relatedTarget);
-                let correctId = button.data('id');
-                $.ajax({
-                    type: 'GET',
-                    url: '{{ route('readcorrection', ':id') }}'.replace(':id', correctId),
-                    success: function(data) {
-                        const header_modal = `
-                            <h5 class="modal-title">Extra Large Modal</h5>
-                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                        `;
-                        const data_modal = `
-                            <table class="table table-bordered">
-                                <tr><th>No. Invent Mesin :</th><td>${data.machinedata[0].invent_number}</td><th>Spec/Tonage :</th><td>${data.machinedata[0].machine_spec}</td></tr>
-                                <tr><th>Nama Mesin :</th><td>${data.machinedata[0].machine_name}</td><th>Buatan :</th><td>${data.machinedata[0].machine_made}</td></tr>
-                                <tr><th>Brand/Merk :</th><td>${data.machinedata[0].machine_brand}</td><th>Mfg.NO :</th><td>${data.machinedata[0].mfg_number}</td></tr>
-                                <tr><th>Model/Type :</th><td>${data.machinedata[0].machine_type}</td><th>Install Date :</th><td>${data.machinedata[0].install_date}</td></tr>
-                            </table>
-                            <h4>History Records</h4>
-                            <table class="table table-bordered" id="dataTables">
+        // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
+        const table = $('#preventiveTables1').DataTable({
+            ajax: {
+                url: '{{ route("refreshcorrect") }}',
+                dataSrc: function(data) {
+                    if (data && data.refreshrecord) {
+                        return data.refreshrecord.map(function(refreshrecord) {
+                            console.log(refreshrecord);
+                            return {
+                                no: refreshrecord.records_id,
+                                pic: refreshrecord.getuser,
+                                shift: refreshrecord.shift,
+                                nama_mesin: refreshrecord.machine_name,
+                                model_type: refreshrecord.machine_type,
+                                no_mesin: refreshrecord.machine_number2,
+                                waktu_preventive: refreshrecord.record_time,
+                                status: refreshrecord.correct_by ? refreshrecord.correct_by : 'Belum Dikoreksi',
+                                action: `
+                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#correctModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                `
+                            };
+                        });
+                    } else {
+                        console.error('Invalid data received from server:', data);
+                        return [];
+                    }
+                }
+            },
+            columns: [
+                { data: 'no' },
+                { data: 'pic' },
+                { data: 'shift' },
+                { data: 'nama_mesin' },
+                { data: 'model_type' },
+                { data: 'no_mesin' },
+                { data: 'waktu_preventive' },
+                { data: 'status' },
+                { data: 'action', orderable: false, searchable: false }
+            ]
+        });
+
+
+        $('#correctModal').on('shown.bs.modal', function(event) {
+            let button = $(event.relatedTarget);
+            let correctId = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('readcorrection', ':id') }}'.replace(':id', correctId),
+                success: function(data) {
+                    const header_modal = `
+                        <h5 class="modal-title">Extra Large Modal</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+                    const data_modal = `
+                        <table class="table table-bordered">
+                            <tr><th>No. Invent Mesin :</th><td>${data.machinedata[0].invent_number}</td><th>Spec/Tonage :</th><td>${data.machinedata[0].machine_spec}</td></tr>
+                            <tr><th>Nama Mesin :</th><td>${data.machinedata[0].machine_name}</td><th>Buatan :</th><td>${data.machinedata[0].machine_made}</td></tr>
+                            <tr><th>Brand/Merk :</th><td>${data.machinedata[0].machine_brand}</td><th>Mfg.NO :</th><td>${data.machinedata[0].mfg_number}</td></tr>
+                            <tr><th>Model/Type :</th><td>${data.machinedata[0].machine_type}</td><th>Install Date :</th><td>${data.machinedata[0].install_date}</td></tr>
+                        </table>
+                        <h4>History Records</h4>
+                        <table class="table table-bordered" id="dataTables">
+                            <thead>
+                                <tr>
+                                    <th>Nomor</th>
+                                    <th>Bagian Yang Dicheck</th>
+                                    <th>Standart/Parameter</th>
+                                    <th>Metode Pengecekan</th>
+                                    <th>Action</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.combinedata.map((row, index) => `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${row.name_componencheck}</td>
+                                        <td>${row.name_parameter}</td>
+                                        <td>${row.name_metodecheck}</td>
+                                        <td>${row.operator_action}</td>
+                                        <td>${row.result}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <div class="form-custom">
+                            <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
+                            <textarea id="input_note" type="text" rows="6" cols="50">${data.machinedata[0].note}</textarea>
+                            </div>
+                            <table class="table table-bordered" id="userTable">
                                 <thead>
                                     <tr>
-                                        <th>Nomor</th>
-                                        <th>Bagian Yang Dicheck</th>
-                                        <th>Standart/Parameter</th>
-                                        <th>Metode Pengecekan</th>
-                                        <th>Action</th>
-                                        <th>Result</th>
+                                        <th>Disetujui oleh :</th>
+                                        <th>Dikoreksi oleh :</th>
+                                        <th>Dibuat oleh :</th>
+                                    </tr>
+                                    <tr>
+                                        <td>${data.recordsdata[0].approve_by_name}</td>
+                                        <td>${data.recordsdata[0].correct_by_name}</td>
+                                        <td>${data.usernames.join(' & ')}</td>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    ${data.combinedata.map((row, index) => `
-                                        <tr>
-                                            <td>${index + 1}</td>
-                                            <td>${row.name_componencheck}</td>
-                                            <td>${row.name_parameter}</td>
-                                            <td>${row.name_metodecheck}</td>
-                                            <td>${row.operator_action}</td>
-                                            <td>${row.result}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
                             </table>
-                            <div class="form-custom">
-                                <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                <textarea id="input_note" type="text" rows="6" cols="50">${data.machinedata[0].note}</textarea>
-                                </div>
-                                <table class="table table-bordered" id="userTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Disetujui oleh :</th>
-                                            <th>Dikoreksi oleh :</th>
-                                            <th>Dibuat oleh :</th>
-                                        </tr>
-                                        <tr>
-                                            <td>${data.recordsdata[0].approve_by_name}</td>
-                                            <td>${data.recordsdata[0].correct_by_name}</td>
-                                            <td>${data.usernames.join(' & ')}</td>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                        `;
-                        const button_modal =`
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            @can('delete_records', Permission::class)
-                            <button type="submit" class="btn btn-danger" id="deleteButton" data-toggle="modal">Delete</button>
-                            @endcan
-                            <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
-                        `;
-                        $('#modal_title_correct').html(header_modal);
-                        $('#modal_data_correct').html(data_modal);
-                        $('#modal_button_correct').html(button_modal);
-                        mergeCells();
+                        </div>
+                    `;
+                    const button_modal =`
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        @can('delete_records', Permission::class)
+                        <button type="submit" class="btn btn-danger" id="deleteButton" data-toggle="modal">Delete</button>
+                        @endcan
+                        <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
+                    `;
+                    $('#modal_title_correct').html(header_modal);
+                    $('#modal_data_correct').html(data_modal);
+                    $('#modal_button_correct').html(button_modal);
+                    mergeCells();
 
-                        // Save button
-                        $('#saveButton').on('click', function() {
-                            let note = $('#input_note').val();
-                            let correctedBy = '{{ Auth::user()->id }}';
-                            if (confirm("Apakah yakin mengkoreksi preventive ini?")) {
-                                $.ajax({
-                                    type: 'PUT',
-                                    url: '{{ route("insertcorrection", ':id') }}'.replace(':id', correctId),
-                                    data: {
-                                        '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                        'correct_by': correctedBy,
-                                        'note': note
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            const successMessage = response.success;
-                                            $('#successText').text(successMessage);
-                                            $('#successModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#successModal').modal('hide');
-                                            $('#correctModal').modal('hide');
-                                        }, 2000);
-                                    },
-                                    error: function(xhr, status, error) {
-                                        if (xhr.responseText) {
-                                            const warningMessage = JSON.parse(xhr.responseText).error;
-                                            $('#warningText').text(warningMessage);
-                                            $('#warningModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#warningModal').modal('hide');
-                                            $('#correctModal').modal('hide');
-                                        }, 2000);
+                    // Save button
+                    $('#saveButton').on('click', function() {
+                        let note = $('#input_note').val();
+                        let correctedBy = '{{ Auth::user()->id }}';
+                        if (confirm("Apakah yakin mengkoreksi preventive ini?")) {
+                            $.ajax({
+                                type: 'PUT',
+                                url: '{{ route("insertcorrection", ':id') }}'.replace(':id', correctId),
+                                data: {
+                                    '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                    'correct_by': correctedBy,
+                                    'note': note
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        const successMessage = response.success;
+                                        $('#successText').text(successMessage);
+                                        $('#successModal').modal('show');
                                     }
-                                }).always(function() {
-                                    table.ajax.reload(null, false);
-                                });
-                            } else {
-                                // User cancelled the deletion, do nothing
-                            }
-                        });
+                                    setTimeout(function() {
+                                        $('#successModal').modal('hide');
+                                        $('#correctModal').modal('hide');
+                                    }, 2000);
+                                },
+                                error: function(xhr, status, error) {
+                                    if (xhr.responseText) {
+                                        const warningMessage = JSON.parse(xhr.responseText).error;
+                                        $('#warningText').text(warningMessage);
+                                        $('#warningModal').modal('show');
+                                    }
+                                    setTimeout(function() {
+                                        $('#warningModal').modal('hide');
+                                        $('#correctModal').modal('hide');
+                                    }, 2000);
+                                }
+                            }).always(function() {
+                                table.ajax.reload(null, false);
+                            });
+                        } else {
+                            // User cancelled the deletion, do nothing
+                        }
+                    });
 
-                        // Delete button
-                        $('#deleteButton').on('click', function() {
-                            if (confirm("Are you sure you want to delete this record?")) {
-                                $.ajax({
-                                    type: 'DELETE',
-                                    url: '{{ route("removecorrection", ':id') }}'.replace(':id', correctId),
-                                    data: {
-                                        '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            const successMessage = response.success;
-                                            $('#successText').text(successMessage);
-                                            $('#successModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#successModal').modal('hide');
-                                            $('#correctModal').modal('hide');
-                                        }, 2000);
-                                    },
-                                    error: function(xhr, status, error) {
-                                        if (xhr.responseText) {
-                                            const warningMessage = JSON.parse(xhr.responseText).error;
-                                            $('#warningText').text(warningMessage);
-                                            $('#warningModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#warningModal').modal('hide');
-                                            $('#correctModal').modal('hide');
-                                        }, 2000);
+                    // Delete button
+                    $('#deleteButton').on('click', function() {
+                        if (confirm("Are you sure you want to delete this record?")) {
+                            $.ajax({
+                                type: 'DELETE',
+                                url: '{{ route("removecorrection", ':id') }}'.replace(':id', correctId),
+                                data: {
+                                    '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        const successMessage = response.success;
+                                        $('#successText').text(successMessage);
+                                        $('#successModal').modal('show');
                                     }
-                                }).always(function() {
-                                    table.ajax.reload(null, false);
-                                });
-                            } else {
-                                // User cancelled the deletion, do nothing
-                            }
-                        });
-                    }
-                });
+                                    setTimeout(function() {
+                                        $('#successModal').modal('hide');
+                                        $('#correctModal').modal('hide');
+                                    }, 2000);
+                                },
+                                error: function(xhr, status, error) {
+                                    if (xhr.responseText) {
+                                        const warningMessage = JSON.parse(xhr.responseText).error;
+                                        $('#warningText').text(warningMessage);
+                                        $('#warningModal').modal('show');
+                                    }
+                                    setTimeout(function() {
+                                        $('#warningModal').modal('hide');
+                                        $('#correctModal').modal('hide');
+                                    }, 2000);
+                                }
+                            }).always(function() {
+                                table.ajax.reload(null, false);
+                            });
+                        } else {
+                            // User cancelled the deletion, do nothing
+                        }
+                    });
+                }
             });
         });
     </script>

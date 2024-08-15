@@ -152,7 +152,6 @@
                     url: '{{ route("refreshapproval") }}',
                     dataSrc: function(data) {
                         if (data && data.refreshrecord) {
-                            // Process the data to match the table columns
                             return data.refreshrecord.map(function(refreshrecord) {
                                 console.log(refreshrecord);
                                 return {

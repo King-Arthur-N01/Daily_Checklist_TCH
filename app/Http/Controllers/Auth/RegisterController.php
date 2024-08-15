@@ -21,8 +21,16 @@ class RegisterController extends Controller
     }
     public function indexusertable()
     {
-        $users=User::get();
-        return view('auth.tableuser',['users'=>$users]);
+        return view('auth.tableuser');
+    }
+    public function refreshtableuser()
+    {
+        try{
+            $refreshusers = User::get();
+            return response()->json(['refreshusers' => $refreshusers]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
     public function readdatauser($id)
     {
@@ -31,23 +39,23 @@ class RegisterController extends Controller
     }
     public function authenticatecreate(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'nik' => ['required', 'string', 'unique:users'],
-            'status' => ['required', 'boolean'],
-            'department' => ['required','string','max:255'],
-            'password' => ['required', 'string', 'confirmed'],
-        ]);
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'nik' => ['required', 'string', 'unique:users'],
+                'status' => ['required', 'boolean'],
+                'department' => ['required','string','max:255'],
+                'password' => ['required', 'string', 'confirmed'],
+            ]);
 
-        // Check if user with same NIK already exists
-        $existinguser = User::where('nik', $request->input('nik'))->first();
-
-        if ($existinguser) {
-            return response()->json(['error' => 'This USER already exists!'], 422);
+            $data = $request->all();
+            $user = $this->createuser($data);
+            return response()->json(['success' => 'USER account created successfully!']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => 'This NIK already exists! or Password confirmation not match'], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error creating user'], 500);
         }
-        $data = $request->all();
-        $user = $this->createuser($data);
-        return response()->json(['success' => 'USER account created successfully!']);
     }
     protected function createuser(array $data)
     {

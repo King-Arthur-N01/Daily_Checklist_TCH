@@ -72,18 +72,25 @@ class MachinepropertyController extends Controller
                         $StoreMethod->save();
                     }
                 }
+                return response()->json(['success' => 'Machine property created successfully.']);
             }
         } catch (\Exception $e) {
-            Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
-            return response()->json(['message' => 'Server Error'], 500);
+            // Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Machine failed to delete!!!!'], 500);
         }
     }
-    public function deleteproperty($id) {
-        $deleteproperty = Machineproperty::where('id', $id)->delete();
-        if ($deleteproperty > 0) {
-            return response()->json(['success' => 'Data property berhasil dihapus.']);
-        } else {
-            return response()->json(['error' => 'Data property gagal dihapus!'], 422);
+    public function deleteproperty($id)
+    {
+        try {
+            $deleteproperty = Machineproperty::where('id', $id)->delete();
+            if ($deleteproperty > 0) {
+                return response()->json(['success' => 'Data property berhasil dihapus.']);
+            } else {
+                return response()->json(['error' => 'Data property gagal dihapus!'], 422);
+            }
+        } catch (\Exception $e) {
+            // Log::error('Error delete property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Property failed to delete!!!!'], 500);
         }
     }
 }

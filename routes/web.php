@@ -22,6 +22,7 @@ Route::get ('/home', 'HomeController@index')->name('home');
 Route::get ('/login','Auth\LoginController@indexlogin')->name('login');
 Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin');
 Route::get ('/manageuser','Auth\RegisterController@indexusertable')->name('manageuser');
+Route::get ('/manageuser/table/refresh','Auth\RegisterController@refreshtableuser')->name('refreshuser');
 Route::post('/manageuser/register','Auth\RegisterController@authenticatecreate')->name('registeruser');
 Route::get ('/manageuser/read/{id}','Auth\RegisterController@readdatauser')->name('readuser');
 Route::put ('/manageuser/update/{id}','Auth\RegisterController@authenticateedit')->name('updateuser');

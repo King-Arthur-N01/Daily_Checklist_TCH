@@ -163,7 +163,6 @@
     <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
     <script>
         $(document).ready(function() {
-
             // Set automatic soft refresh table
             setInterval(function() {
                 overlay.addClass('is-active');
@@ -279,13 +278,14 @@
 
             $('#propertyTables').on('click', '.btn-delete', function(e) {
                 e.preventDefault();
-                const propertyId = $(this).data("id");
+                const button = $(this);
+                const propertyId = button.data('id');
                 if (confirm("Apakah yakin menghapus standarisasi ini?")) {
                     $.ajax({
                         type: 'DELETE',
                         url: '{{ route("removeproperty", ':id') }}'.replace(':id', propertyId),
                         data: {
-                            '_token': '{{ csrf_token() }}'
+                            '_token': '{{ csrf_token() }}',
                         }
                     }).done(function(response) {
                         if (response.success.trim()) {

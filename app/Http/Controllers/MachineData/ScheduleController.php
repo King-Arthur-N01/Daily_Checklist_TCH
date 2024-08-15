@@ -20,7 +20,7 @@ class ScheduleController extends Controller
         return view ('dashboard.view_schedulemesin.tableschedule');
     }
 
-    public function refreshtableschedule()
+    public function notuserefreshtableschedule()
     {
         try {
             $refreshmachine = Machine::all();

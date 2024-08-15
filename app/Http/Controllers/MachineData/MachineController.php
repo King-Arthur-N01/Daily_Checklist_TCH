@@ -100,6 +100,20 @@ class MachineController extends Controller
     public function updatemachine(Request $request, $id)
     {
         try {
+            $request->validate([
+                'invent_number' => 'required',
+                'machine_number'=> 'required',
+                'machine_name' => 'required',
+                'machine_brand',
+                'machine_type',
+                'machine_spec',
+                'machine_made',
+                'mfg_number' => 'required',
+                'install_date',
+                'id_property',
+                'schedule_time',
+            ]);
+
             $currenttime = Carbon::today();
             $preventivetime = $request->input('schedule_time');
             // dd($request->input('schedule_time'));
