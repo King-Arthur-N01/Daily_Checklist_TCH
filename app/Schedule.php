@@ -10,10 +10,6 @@ class Schedule extends Model
         'schedule_time',
         'schedule_record',
         'schedule_next',
-        'id_machine2'
+        'id_machine'
     ];
-    public function getparentcomponen()
-    {
-        return $this->hasMany(Componencheck::class);
-    }
 }

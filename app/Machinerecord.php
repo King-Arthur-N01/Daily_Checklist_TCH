@@ -10,7 +10,7 @@ class Machinerecord extends Model
         'machine_number2',
         'shift',
         'note',
-        'id_machine',
+        'id_machine2',
         'create_by',
         'correct_by',
         'approve_by',

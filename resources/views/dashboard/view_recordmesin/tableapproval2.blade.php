@@ -161,7 +161,7 @@
                                     nama_mesin: refreshrecord.machine_name,
                                     model_type: refreshrecord.machine_type,
                                     no_mesin: refreshrecord.machine_number2,
-                                    waktu_preventive: refreshrecord.record_time,
+                                    waktu_preventive: refreshrecord.created_at,
                                     status: refreshrecord.approve_by ? refreshrecord.approve_by : 'Belum Disetujui',
                                     action: `
                                         <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#approveModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>

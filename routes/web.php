@@ -30,15 +30,6 @@ Route::delete('/manageuser/delete/{id}','Auth\RegisterController@deleteuser')->n
 Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end
 
-// machine route
-// Route::get ('/machine','MachineData\MachineController@indexmachine')->name('managemachine');
-// Route::get ('/machine/addmachine','MachineData\MachineController@registermachine')->name('addmachine');
-// Route::post('/machine/addmachine','MachineData\MachineController@pushregistermachine')->name('pushmachine');
-// Route::get ('/machine/editmachine/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
-// Route::put ('/machine/editmachine/{id}','MachineData\MachineController@pushupdatemachine')->name('pusheditmachine');
-// Route::delete('/machine/deletemachine/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
-// machine route end
-
 // machine import route
 Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('indexmachinedata');
 Route::post('/machinedata/create','MachineData\MachineController@createmachine')->name('addmachine');
@@ -51,14 +42,13 @@ Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refre
 Route::get ('/machinedata/table/filter','MachineData\ImportdataController@filltertableimport')->name('fillterimport');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
 Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@readmachinedata')->name('readmachinedata');
-// Route::put ('/machinedata/registerproperty/{id}','MachineData\ImportdataController@registeridproperty')->name('fetchdataproperty');
 // machine import route end
 
 // machine property route
 Route::get ('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
 Route::post('/machineproperty/create','MachineData\MachinepropertyController@createproperty')->name('addproperty');
 Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyController@refreshtableproperty')->name('refreshproperty');
-Route::delete ('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
+Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end
 
 // machine schedule route
@@ -69,33 +59,6 @@ Route::post('/machineschedule/create','MachineData\ScheduleController@createsche
 Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@refreshtableschedule')->name('refreshschedule');
 Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@datacalendar')->name('datacalendar');
 // machine schedule route end
-
-// componencheck route
-// Route::get ('/componencheck','MachineData\ComponencheckController@indexcomponencheck')->name('managecomponencheck');
-// Route::get ('/componencheck/add','MachineData\ComponencheckController@registercomponencheck')->name('addcomponencheck');
-// Route::post('/componencheck/add','MachineData\ComponencheckController@pushregistercomponencheck')->name('pushcomponencheck');
-// Route::get ('/componencheck/edit/{id}','MachineData\ComponencheckController@editcomponencheck')->name('editcomponencheck');
-// Route::put ('/componencheck/edit/{id}','MachineData\ComponencheckController@pusheditcomponencheck')->name('pusheditcomponencheck');
-// Route::get ('/componencheck/delete/{id}','MachineData\ComponencheckController@deletecomponencheck')->name('deletecomponencheck');
-// componencheck route end
-
-// parameter route
-// Route::get ('/parameter','MachineData\ParameterController@indexparameter')->name('manageparameter');
-// Route::get ('/parameter/add','MachineData\ParameterController@registerparameter')->name('addparameter');
-// Route::post('/parameter/add','MachineData\ParameterController@pushregisterparameter')->name('pushparameter');
-// Route::get ('/parameter/edit/{id}','MachineData\ParameterController@editparameter')->name('editparameter');
-// Route::put ('/parameter/edit/{id}','MachineData\ParameterController@pusheditparameter')->name('pusheditparameter');
-// Route::get ('/parameter/delete/{id}','MachineData\ParameterController@deleteparameter')->name('deleteparameter');
-// parameter route end
-
-// metodecheck route
-// Route::get ('/methodecheck','MachineData\MetodecheckController@indexmethod')->name('managemethod');
-// Route::get ('/methodecheck/add','MachineData\MetodecheckController@registermethod')->name('addmethod');
-// Route::post('/methodecheck/add','MachineData\MetodecheckController@pushregistermethod')->name('pushmethod');
-// Route::get ('/methodecheck/edit/{id}','MachineData\MetodecheckController@editmethod')->name('editmethod');
-// Route::put ('/methodecheck/edit/{id}','MachineData\MetodecheckController@pusheditmethod')->name('pusheditmethod');
-// Route::get ('/methodecheck/delete/{id}','MachineData\MetodecheckController@deletemethod')->name('deletemethod');
-// metodecheck route end
 
 // input data machine record
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');

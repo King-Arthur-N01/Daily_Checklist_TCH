@@ -32,10 +32,10 @@ class MachinerecordController extends Controller
         try {
             foreach ($machine as $refreshmachine) {
                 if ($refreshmachine->id_property){
-                    $getschedule = Schedule::where('id_machine2', $refreshmachine->id)->value('schedule_time');
-                    $lastrecord = Machinerecord::where('id_machine', $refreshmachine->id)->orderBy('record_time', 'desc')->first();
+                    $getschedule = Schedule::where('id_machine', $refreshmachine->id)->value('schedule_time');
+                    $lastrecord = Machinerecord::where('id_machine2', $refreshmachine->id)->orderBy('created_at', 'desc')->first();
                     if ($lastrecord) {
-                        $lasttime = Carbon::parse($lastrecord->record_time);
+                        $lasttime = Carbon::parse($lastrecord->created_at);
                         $totaltime = $currenttime->diff($lasttime);
                         $gettotalhours = $totaltime->format('%h:%I:%S');
                         $gettotaldays = $totaltime->format('%d');
@@ -68,28 +68,6 @@ class MachinerecordController extends Controller
         }
     }
 
-    // public function gettablerecord($id) {
-    //     $currenttime = Carbon::now();
-    //     try {
-    //         // Fetch the latest record for the given machine ID
-    //         $lastrecord = Machinerecord::where('id_machine', $id)->orderBy('record_time', 'desc')->first();
-    //         if ($lastrecord) {
-    //             $lasttime = Carbon::parse($lastrecord->record_time);
-    //             $totaltime = $currenttime->diff($lasttime);
-    //             $gettotalhours = $totaltime->format('%h:%I:%S');
-    //             $gettotaldays = $totaltime->format('%d');
-    //             return response()->json([
-    //                 'gettotalhours' => $gettotalhours,
-    //                 'gettotaldays' => $gettotaldays
-    //             ]);
-    //         } else {
-    //             return response()->json(['error' => 'No records found for the given machine ID'], 422);
-    //         }
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Error fetching data'], 500);
-    //     }
-    // }
-
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
     {
@@ -121,7 +99,7 @@ class MachinerecordController extends Controller
     {
         $getmachineid = ($request->input('id_machine'));
         // Check the table to see if data has been filled in before
-        $lastsubmissiontime = Machinerecord::where('id_machine', $getmachineid)->value('record_time');
+        $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('created_at');
         $currenttime = Carbon::now();
 
         $getshifttime = Carbon::now()->format('H:i');
@@ -144,12 +122,11 @@ class MachinerecordController extends Controller
                 $StoreRecords->machine_number2 = $request->input('machine_number2');
                 $StoreRecords->shift = $shifttime;
                 $StoreRecords->note = $request->input('note');
-                $StoreRecords->id_machine = $request->input('id_machine');
-                $StoreRecords->record_time = $currenttime;
+                $StoreRecords->id_machine2 = $request->input('id_machine');
                 $StoreRecords->create_by = $request->input('combined_create_by');
                 $StoreRecords->save();
 
-                $StoreSchedule = Schedule::where('id_machine2',$getmachineid)->first();
+                $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
                 $StoreSchedule->schedule_record = $currenttime;
                 $StoreSchedule->save();
 
@@ -171,12 +148,11 @@ class MachinerecordController extends Controller
             $StoreRecords->machine_number2 = $request->input('machine_number2');
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
-            $StoreRecords->id_machine = $request->input('id_machine');
-            $StoreRecords->record_time = $currenttime;
+            $StoreRecords->id_machine2 = $request->input('id_machine');
             $StoreRecords->create_by = $request->input('combined_create_by');
             $StoreRecords->save();
 
-            $StoreSchedule = Schedule::where('id_machine2',$getmachineid)->first();
+            $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
             $StoreSchedule->schedule_record = $currenttime;
             $StoreSchedule->save();
 
@@ -214,7 +190,7 @@ class MachinerecordController extends Controller
         try {
             $refreshrecord = DB::table('machinerecords')
                 ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
-                ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
+                ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
                 ->join('users', 'machinerecords.create_by', '=', 'users.id')
                 ->orderBy('machinerecords.id', 'asc')
                 ->get();
@@ -231,7 +207,7 @@ class MachinerecordController extends Controller
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
-            ->leftJoin('machines', 'machinerecords.id_machine', '=', 'machines.id')
+            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
@@ -355,7 +331,7 @@ class MachinerecordController extends Controller
         try {
             $refreshrecord = DB::table('machinerecords')
                 ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
-                ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
+                ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
                 ->join('users', 'machinerecords.create_by', '=', 'users.id')
                 ->orderBy('machinerecords.id', 'asc')
                 ->get();
@@ -372,7 +348,7 @@ class MachinerecordController extends Controller
     {
         $machinedata = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
-            ->leftJoin('machines', 'machinerecords.id_machine', '=', 'machines.id')
+            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')

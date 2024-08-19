@@ -20,7 +20,7 @@ class HistoryrecordsController extends Controller
     {
         $joinrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate', 'machinerecords.create_by as getusercreate', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
-            ->join('machines', 'machinerecords.id_machine', '=', 'machines.id')
+            ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'asc')
             ->get();
         return response()->json([
@@ -33,7 +33,7 @@ class HistoryrecordsController extends Controller
     {
         $detailrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
-            ->leftJoin('machines', 'machinerecords.id_machine', '=', 'machines.id')
+            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
@@ -43,7 +43,7 @@ class HistoryrecordsController extends Controller
 
         $historyrecords = DB::table('machinerecords')
             ->select('machinerecords.*', 'historyrecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
-            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
+            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machine2record')
             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)

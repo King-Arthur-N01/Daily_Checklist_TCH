@@ -106,7 +106,6 @@ class ImportdataController extends Controller
     public function exportpdf($id)
     {
         try {
-            // Fetching data from the database
             $joinmachine = DB::table('machines')
                 ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
                 ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')

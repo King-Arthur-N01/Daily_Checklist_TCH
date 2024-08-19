@@ -462,10 +462,6 @@
                     type: 'GET',
                     url: '{{ route("readmachinedata", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
-                        let fetchschedule = data.fetchschedule.find(function(schedule) {
-                            return data.fetchmachine.id === schedule.id_machine2;
-                        });
-
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
                             $.each(data.fetchproperty, function(index, fetchtable) {
@@ -474,13 +470,6 @@
                             });
                         } else {
                             console.error('fetchproperty is not an array:', data.fetchproperty);
-                        }
-
-                        let scheduleTimeInput = '';
-                        if (fetchschedule === undefined || fetchschedule === null) {
-                            scheduleTimeInput = `<input type="text" class="form-control" name="schedule_time" id="schedule_time" aria-describedby="extra-text" placeholder="Waktu Preventive">`;
-                        } else {
-                            scheduleTimeInput = `<input type="text" class="form-control" name="schedule_time" id="schedule_time" aria-describedby="extra-text" placeholder="Waktu Preventive" value="${fetchschedule.schedule_time}">`;
                         }
 
                         const header_modal = `
@@ -566,28 +555,16 @@
                                     </div>
                                 </div>
                             </div>
-
                             <table class="table table-bordered" id="editTables" width="100%">
                                 <thead>
                                     <th>Standarisasi Mesin</th>
-                                    <th>Waktu Preventive Mesin</th>
                                 <tbody>
                                     <tr>
-                                        <td>
-                                            <div class="input-group">
-                                                <select class="form-control select2" id="getproperty">
-                                                    <option value="">Tidak ada</option>
-                                                    ${options}
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="input-group">
-                                                ${scheduleTimeInput}
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text" id="extra-text">/Bulan</span>
-                                                </div>
-                                            </div>
+                                        <td colspan="4">
+                                            <select class="form-control select2" id="getproperty">
+                                                <option value="">Tidak ada</option>
+                                                ${options}
+                                            </select>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -614,10 +591,8 @@
                                 machineType: $('input[name="machine_type"]').val(),
                                 installDate: $('input[name="install_date"]').val(),
                                 machineNumber: $('input[name="machine_number"]').val(),
-                                idProperty : $('#getproperty').val(),
-                                scheduleTime: $('input[name="schedule_time"]').val(),
+                                idProperty : $('#getproperty').val()
                             };
-                            console.log(formData);
                             $.ajax({
                                 type: 'PUT',
                                 url: '{{ route("updatemachine", ':id') }}'.replace(':id', machineId),
@@ -632,8 +607,7 @@
                                     'machine_type': formData.machineType,
                                     'install_date': formData.installDate,
                                     'machine_number': formData.machineNumber,
-                                    'id_property': formData.idProperty,
-                                    'schedule_time': formData.scheduleTime
+                                    'id_property': formData.idProperty
                                 },
                                 success: function(response) {
                                     if (response.success) {

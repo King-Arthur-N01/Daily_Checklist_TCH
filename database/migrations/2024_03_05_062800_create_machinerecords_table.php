@@ -21,7 +21,7 @@ class CreateMachinerecordsTable extends Migration
             $table->string('create_by')->nullable();
             $table->unsignedBigInteger('correct_by')->nullable();
             $table->unsignedBigInteger('approve_by')->nullable();
-            $table->timestamp('record_time')->nullable();
+            $table->unsignedBigInteger('id_schedule')->nullable();
             $table->timestamps();
         });
     }
