@@ -16,6 +16,7 @@
                 <div class="card-body">
                     <div class="div-tables">
                         <div class="col-sm-12 col-md-12">
+                            {{-- <a type="button" class="btn btn-block btn-primary" href="{{route('formschedule')}}">+ Schedule mesin</a> --}}
                             <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#addModal" tabindex="0">+ Schedule mesin</a>
                         </div>
                     </div>
@@ -25,7 +26,7 @@
                                 <th>NO.</th>
                                 <th>NAMA SCHEDULE</th>
                                 <th>WAKTU SCHEDULE</th>
-                                <th>TERAKHIR PREVENTIVE</th>
+                                <th>TENGGAT WAKTU</th>
                                 <th>JUMLAH MESIN</th>
                                 <th>TANGGAL PEMBUATAN</th>
                                 <th>ACTION</th>
@@ -42,7 +43,7 @@
 
     <!-- Add Modal -->
     <div class="modal fade" id="addModal" tabindex="-1">
-        <div class="modal-dialog modal-xxl">
+        <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_add">
                 </div>
@@ -95,7 +96,7 @@
 @push('script')
     {{-- <script src="{{ asset('assets/vendor/jquery-maskedinput/jquery.maskedinput.js') }}"></script> --}}
     {{-- <script src="{{ mix('js/app.js') }}" defer></script> --}}
-    <script>
+<script>
     $(document).ready(function() {
         // Set automatic soft refresh table
         setInterval(function() {
@@ -115,10 +116,14 @@
                         return {
                             no: index + 1,
                             schedule_name: refreshschedule.schedule_name,
-                            schedule_time: refreshschedule.schedule_time,
+                            schedule_time: refreshschedule.schedule_next,
                             schedule_record: refreshschedule.schedule_record,
                             id_machine: refreshschedule.id_machine,
-                            created_at: refreshschedule.created_at,
+                            created_at: new Date(refreshschedule.created_at).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            }),
                             actions: `
                                 <div class="dynamic-button-group">
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
@@ -145,163 +150,160 @@
         });
 
         $('#addModal').on('shown.bs.modal', function(event) {
-            const header_modal = `
-                <h5 class="modal-title">Standarisasi Mesin</h5>
-                <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-            `;
-            const data_modal = `
-                <form id="addForm" method="post">
-                    <div class="row" align-items="center">
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
-                                <div>
-                                    <input class="form-control" name="schedule_name" type="text" placeholder="Nama Jadwal">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">waktu Schdule</label>
-                                <div>
-                                    <input class="form-control" type="text" name="machine_name" placeholder="Nama Mesin">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
-                                <div>
-                                    <input class="form-control" type="text" name="machine_brand" placeholder="Brand/Merk Mesin">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" align-items="center">
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Model/Type Mesin</label>
-                                <div>
-                                    <input class="form-control" type="text" name="machine_type" placeholder="Model/Type Mesin">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage</label>
-                                <div>
-                                    <input class="form-control" type="text" name="machine_spec" placeholder="Spec/Tonnage">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
-                                <div>
-                                    <input class="form-control" type="text" name="machine_made" placeholder="Buatan">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" align-items="center">
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
-                                <div>
-                                    <input class="form-control" type="text" name="mfg_number" placeholder="MFG Number">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
-                                <div>
-                                    <input class="form-control" type="text" name="install_date" placeholder="Install Date">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
-                                <div>
-                                    <input class="form-control" type="text" name="machine_number" placeholder="Nomor Mesin">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            `;
-            const button_modal = `
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
-            `;
-            $('#modal_title_add').html(header_modal);
-            $('#modal_data_add').html(data_modal);
-            $('#modal_button_add').html(button_modal);
-            $('#inventNumber').mask('a-aa-99-9999');
-            // definisi deklarasi mask =
-            //     '9': "[0-9]",
-            //     'a': "[A-Za-z]",
-            //     '*': "[A-Za-z0-9]"
-
-            // Add event listener to save button
-            $('#saveButton').on('click', function() {
-                let formData = {
-                    inventNumber: $('input[name="invent_number"]').val(),
-                    machineSpec: $('input[name="machine_spec"]').val(),
-                    machineName: $('input[name="machine_name"]').val(),
-                    machineMade: $('input[name="machine_made"]').val(),
-                    machineBrand: $('input[name="machine_brand"]').val(),
-                    mfgNumber: $('input[name="mfg_number"]').val(),
-                    machineType: $('input[name="machine_type"]').val(),
-                    installDate: $('input[name="install_date"]').val(),
-                    machineNumber: $('input[name="machine_number"]').val()
-                };
-                $.ajax({
-                    type: 'POST',
-                    url: '#',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        'invent_number': formData.inventNumber,
-                        'machine_spec': formData.machineSpec,
-                        'machine_name': formData.machineName,
-                        'machine_made': formData.machineMade,
-                        'machine_brand': formData.machineBrand,
-                        'mfg_number': formData.mfgNumber,
-                        'machine_type': formData.machineType,
-                        'install_date': formData.installDate,
-                        'machine_number': formData.machineNumber,
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            const successMessage = response.success;
-                            $('#successText').text(successMessage);
-                            $('#successModal').modal('show');
-                        }
-                        setTimeout(function() {
-                            $('#successModal').modal('hide');
-                            $('#addModal').modal('hide');
-                            $('#uploadModal').modal('hide');
-                        }, 2000);
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.responseText) {
-                            const warningMessage = xhr.responseText;
-                            $('#failedText').text(warningMessage);
-                            $('#failedModal').modal('show');
-                        }
-                        setTimeout(function() {
-                            $('#failedModal').modal('hide');
-                            $('#addModal').modal('hide');
-                            $('#uploadModal').modal('hide');
-                        }, 20000);
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("getmachinedata") }}',
+                success: function(data) {
+                    function combineMachineValues() {
+                        const checkboxes = document.getElementsByName("machineinput");
+                        let values = [];
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                values.push(checkbox.value);
+                            }
+                        });
+                        const combinedValue = values.join(',');
+                        document.getElementById("combine_machine_value").value = combinedValue;
                     }
-                }).always(function() {
-                    table.ajax.reload(null, false);
-                });
+
+                    let tableRows = '';
+                    data.refreshmachine.forEach((value, key) => {
+                        tableRows += `
+                            <tr>
+                                <td>${key + 1}</td>
+                                <td>${value.invent_number}</td>
+                                <td>${value.machine_number}</td>
+                                <td>${value.machine_name}</td>
+                                <td>${value.machine_type}</td>
+                                <td>${value.machine_brand}</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="machineinput" value="${value.id}">
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    const header_modal = `
+                        <h5 class="modal-title">Tambah Jadwal Preventive Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    const data_modal = `
+                        <form id="addForm" method="post">
+                            <div class="row" align-items="center">
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                        <div>
+                                            <input class="form-control" name="schedule_name" type="text" placeholder="Nama Jadwal">
+                                            <input type="hidden" name="machine_input" id="combine_machine_value">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Waktu Schedule</label>
+                                        <select class="form-control" name="schedule_time">
+                                            <option selected="selected">Select :</option>
+                                            <option value="1">1/Bulan</option>
+                                            <option value="3">3/Bulan</option>
+                                            <option value="6">6/Bulan</option>
+                                            <option value="12">12/Bulan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" align-items="center">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="machineTables" width="100%">
+                                        <thead>
+                                            <th>NO.</th>
+                                            <th>NO. INVENT</th>
+                                            <th>NO MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>ADD</th>
+                                        </thead>
+                                        <tbody>
+                                            ${tableRows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    `;
+
+                    const button_modal = `
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                    `;
+
+                    $('#modal_title_add').html(header_modal);
+                    $('#modal_data_add').html(data_modal);
+                    $('#modal_button_add').html(button_modal);
+                    $('#machineTables').DataTable();
+
+                    // Add event listeners for checkboxes
+                    const checkboxes = document.getElementsByName("machineinput");
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', combineMachineValues);
+                    });
+
+                    $('#saveButton').on('click', function(event) {
+                        event.preventDefault();
+                        let formData = {
+                            scheduleName: $('input[name="schedule_name"]').val(),
+                            scheduleTime: $('select[name="schedule_time"]').val(),
+                            machineInput: $('input[name="machine_input"]').val(),
+                        };
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("addschedule") }}',
+                            data: {
+                                '_token': '{{ csrf_token() }}',
+                                'schedule_name': formData.scheduleName,
+                                'schedule_time': formData.scheduleTime,
+                                'id_machine': formData.machineInput,
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    const successMessage = response.success;
+                                    $('#successText').text(successMessage);
+                                    $('#successModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#successModal').modal('hide');
+                                    $('#addModal').modal('hide');
+                                    $('#uploadModal').modal('hide');
+                                }, 2000);
+                            },
+                            error: function(xhr, status, error) {
+                                if (xhr.responseText) {
+                                    const warningMessage = xhr.responseText;
+                                    $('#failedText').text(warningMessage);
+                                    $('#failedModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#failedModal').modal('hide');
+                                    $('#addModal').modal('hide');
+                                    $('#uploadModal').modal('hide');
+                                }, 20000);
+                            }
+                        }).always(function() {
+                            table.ajax.reload(null, false);
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('error:', error);
+                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                }
             });
         });
 
     });
-    </script>
+</script>
 @endpush

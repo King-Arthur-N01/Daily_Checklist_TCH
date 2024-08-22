@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use App\Schedule;
 use App\Machine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleController extends Controller
 {
@@ -17,7 +19,15 @@ class ScheduleController extends Controller
      */
     public function indexmachineschedule()
     {
-        return view ('dashboard.view_schedulemesin.tableschedule');
+        return view('dashboard.view_schedulemesin.tableschedule');
+    }
+
+    public function formcreatechedule()
+    {
+        $machines = Machine::all();
+        return view('dashboard.view_schedulemesin.formschedule', [
+            'machines' => $machines
+        ]);
     }
 
     public function refreshtableschedule()
@@ -64,10 +74,10 @@ class ScheduleController extends Controller
         return response()->json($data);
     }
 
-    public function detailmachineschedule($id)
+    public function fetchmachinedata()
     {
         try {
-            $refreshmachine = Machine::find($id);
+            $refreshmachine = Machine::all();
             return response()->json([
                 'refreshmachine' => $refreshmachine
             ]);
@@ -78,55 +88,50 @@ class ScheduleController extends Controller
 
     public function createschedule(Request $request)
     {
-        $currenttime = Carbon::today();
-        $checkmachineid = Schedule::where('id_machine2', $request->id_machine2)->first();
+        // dd($request);
         try {
-            $preventivetime = $request->input('schedule_time');
-            $nextpreventive = $currenttime->addMonths($preventivetime);
-            if (!$checkmachineid){
-                $StoreSchedule = new Schedule();
-                $StoreSchedule->id_machine2 = $request->input('id_machine2');
-                $StoreSchedule->schedule_time = $request->input('schedule_time');
-                $StoreSchedule->schedule_next = $nextpreventive;
-                $StoreSchedule->save();
-            } else {
-                return response()->json(['error' => 'Mesin Sudah memiliki jadwal preventive !!!!'], 500);
+            $currenttime = Carbon::today();
+            $scheduletime = $request->input('schedule_time');
+            $schedulenext = $currenttime->addMonths($scheduletime);
+            $StoreSchedule = new Schedule();
+            $StoreSchedule->schedule_name = $request->input('schedule_name');
+            $StoreSchedule->schedule_time = $request->input('schedule_time');
+            $StoreSchedule->id_machine = $request->input('id_machine');
+            $StoreSchedule->schedule_next = $schedulenext;
+            $StoreSchedule->save();
+
+            $combinemachine = $request->input('id_machine');
+            $splitmachine = explode(',', $combinemachine);
+            foreach ($splitmachine as $eachmachineid){
+                $UpdateMachine = Machine::where('id', $eachmachineid)->first();
+                if($scheduletime == 1){
+                    $UpdateMachine->schdule_1_month = $schedulenext;
+                }elseif($scheduletime == 3){
+                    $UpdateMachine->schdule_3_month = $schedulenext;
+                }elseif($scheduletime == 6){
+                    $UpdateMachine->schdule_6_month = $schedulenext;
+                }elseif($scheduletime == 12){
+                    $UpdateMachine->schdule_12_month = $schedulenext;
+                }
+                $UpdateMachine->save();
             }
             return response()->json(['success' => 'Waktu preventive mesin berhasil di UPDATE!']);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Schedule  $schedule
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Schedule $schedule)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Schedule  $schedule
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Schedule $schedule)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Schedule  $schedule
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Schedule $schedule)
     {
         //

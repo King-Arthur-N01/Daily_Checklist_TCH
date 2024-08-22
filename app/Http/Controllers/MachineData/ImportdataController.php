@@ -18,8 +18,15 @@ class ImportdataController extends Controller
     // fungsi index upload data mesin
     public function indeximport()
     {
-        $machines = Machine::get();
-        return view('dashboard.view_importdata.tableimportdata', ['machines' => $machines]);
+        $fetchmachines = DB::table('machines')
+            ->select('machines.*', 'machineproperties.*')
+            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->get();
+        // $machines = Machine::get();
+        // $property = Machineproperty::get();
+        return view('dashboard.view_importdata.tableimportdata', [
+            'fetchmachines' => $fetchmachines
+        ]);
     }
 
     // fungsi untuk merefresh tabel form prefentive
@@ -74,21 +81,6 @@ class ImportdataController extends Controller
         }
     }
 
-    // fungsi untuk mengupload data mesin
-    public function notuseregisteridproperty(Request $request, $id)
-    {
-        $request->validate([
-            'id_property' => 'required'
-        ]);
-        $registerproperty = Machine::find($id);
-        if (!$registerproperty) {
-            return response()->json(['error' => 'Data mesin tidak berhasil ditemukan !!!!'], 404);
-        } else {
-            $registerproperty->update(['id_property' => $request->input('id_property')]);
-        }
-        return response()->json(['success' => 'Standarisasi mesin berhasil di UPDATE!']);
-    }
-
     // fungsi upload data excel ke database
     public function importdata(Request $request)
     {
@@ -128,7 +120,6 @@ class ImportdataController extends Controller
         } catch (\Exception $e) {
             // Log the error for debugging purposes
             Log::error('DOM PDF failed: '.$e->getMessage());
-
             return response()->json(['error' => 'Data Preventive FAILED to be downloaded!']);
         }
     }

@@ -2196,7 +2196,7 @@ pre code {
     display: flex;
     margin: 0px 0px 15px 0px;
     flex-direction: row;
-    padding: 5px;
+    padding: 1rem;
 }
 
 .table-responsive>.table-bordered {
@@ -2409,7 +2409,7 @@ textarea.form-control {
 .form-check {
     position: relative;
     display: block;
-    padding-left: 1.25rem
+    padding-left: 1.25rem;
 }
 
 .form-check-input {
@@ -6696,6 +6696,13 @@ a.close.disabled {
 @media (min-width:1500px) {
     .modal-xxl {
         max-width: 1440px
+    }
+}
+
+@media (min-width:1500px) {
+    .modal-fullscreen {
+        max-width: none;
+        height: 100%;
     }
 }
 

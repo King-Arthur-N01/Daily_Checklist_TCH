@@ -39,7 +39,6 @@ Route::post('/machinedata/import','MachineData\ImportdataController@importdata')
 Route::get ('/machinedata/export/{machineId}','MachineData\ImportdataController@exportpdf')->name('exportfile');
 
 Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refreshtableimport')->name('refreshimport');
-Route::get ('/machinedata/table/filter','MachineData\ImportdataController@filltertableimport')->name('fillterimport');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
 Route::get ('/machinedata/data/{id}','MachineData\ImportdataController@readmachinedata')->name('readmachinedata');
 // machine import route end
@@ -53,8 +52,9 @@ Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyControl
 
 // machine schedule route
 Route::get ('/machineschedule','MachineData\ScheduleController@indexmachineschedule')->name('indexschedule');
-Route::get ('/machineschedule/view/{id}','MachineData\ScheduleController@detailmachineschedule')->name('detailschedule');
+Route::get ('/machineschedule/formschedule','MachineData\ScheduleController@formcreatechedule')->name('formschedule');
 Route::post('/machineschedule/create','MachineData\ScheduleController@createschedule')->name('addschedule');
+Route::get ('/machineschedule/view','MachineData\ScheduleController@fetchmachinedata')->name('getmachinedata');
 
 Route::get ('/machineschedule/table/refresh','MachineData\ScheduleController@refreshtableschedule')->name('refreshschedule');
 Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@datacalendar')->name('datacalendar');

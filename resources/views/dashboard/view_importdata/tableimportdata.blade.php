@@ -11,28 +11,25 @@
                     <div class="card-header">
                         <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
                     </div>
-                        @csrf
-                         <div class="table-filter">
-                            <div class="col-4">
-                                <p class="mg-b-10">Nama Mesin</p>
-                                <input class="form-control" name="" id="filterByName">
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Nomor Mesin </p>
-                                <select class="form-control select2" name="" id="filterById">
-                                    <option selected="selected" value="">Select :</option>
-                                    <option></option>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Standarisasi Mesin</p>
-                                <select class="form-control select2" name="sample" id="filterByProperty">
-                                    <option selected="selected">Select :</option>
-                                    <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
-                                    <option>Belum Dipreventive</option>
-                                </select>
-                            </div>
+                    <div class="table-filter">
+                        <div class="col-4">
+                            <p class="mg-b-10">Nama Mesin</p>
+                            <input class="form-control" id="filterByName">
                         </div>
+                        <div class="col-4">
+                            <p class="mg-b-10">Nomor Mesin </p>
+                            <input class="form-control" id="filterByNumber">
+                        </div>
+                        <div class="col-4">
+                            <p class="mg-b-10">Standarisasi Mesin</p>
+                            <select class="form-control" id="filterByProperty">
+                                <option selected="selected">Select :</option>
+                                @foreach ($fetchmachines as $getmachine)
+                                    <option value="{{$getmachine->name_property}}">{{$getmachine->name_property}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
@@ -49,7 +46,7 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="importTables" width="100%">
                             <thead>
-                                <th>NO. INVENT</th>
+                                <th>NO MESIN</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
@@ -122,7 +119,7 @@
 
     <!-- View Machine Property Modal -->
     <div class="modal fade" id="viewModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xxl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_view">
                 </div>
@@ -181,21 +178,13 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2({
-                placeholder: 'Select :',
-                searchInputPlaceholder: 'Search'
+                placeholder: {
+                    id: '-1', // the value of the option
+                    text: 'Not selected :' // the text of the option
+                },
+                searchInputPlaceholder: 'Search',
             });
-            $('#filterByName').on('change', function() {
-                var fillterName = $(this).val();
 
-                $('#importTables tbody tr').each(function() {
-                    var rowName = $(this).find('td:eq(1)').text(); // Adjust index based on your table structure
-                    if (fillterName === "" || rowName === fillterName) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            });
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -224,7 +213,7 @@
                                 return schedule.id_machine2 === refreshmachine.id;
                             });
                             return {
-                                invent_number: refreshmachine.invent_number,
+                                machine_number: refreshmachine.machine_number,
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
@@ -245,7 +234,7 @@
                     }
                 },
                 columns: [
-                    { data: 'invent_number' },
+                    { data: 'machine_number' },
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
@@ -693,7 +682,6 @@
                                 <table class="table table-bordered" id="dataTables">
                                     <thead>
                                         <tr>
-                                            <th>Nama Mesin</th>
                                             <th>Bagian Yang Dicheck</th>
                                             <th>Standart/Parameter</th>
                                             <th>Metode Pengecekan</th>
@@ -702,7 +690,6 @@
                                     <tbody>
                                     ${data.fetchmachines.map(machine => `
                                             <tr>
-                                                <td>${machine.machine_name}</td>
                                                 <td>${machine.name_componencheck}</td>
                                                 <td>${machine.name_parameter}</td>
                                                 <td>${machine.name_metodecheck}</td>
@@ -774,6 +761,46 @@
                 const filterCard = $('#filterCard');
                 filterCard.collapse('toggle');
             });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const filterByName = document.getElementById('filterByName');
+            const filterByNumber = document.getElementById('filterByNumber');
+            const filterByProperty = document.getElementById('filterByProperty');
+            const table = document.getElementById('importTables');
+            const rows = table.getElementsByTagName('tr');
+
+            // Function to filter table
+            function filterTable() {
+                const nameValue = filterByName.value.toLowerCase();
+                const numberValue = filterByNumber.value.toLowerCase();
+                const propertyValue = filterByProperty.value.toLowerCase();
+
+                for (let i = 1; i < rows.length; i++) {
+                    const nameCell = rows[i].getElementsByTagName('td')[1];
+                    const numberCell = rows[i].getElementsByTagName('td')[0];
+                    const propertyCell = rows[i].getElementsByTagName('td')[5];
+
+                    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                    const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
+                    const propertyText = propertyCell ? propertyCell.textContent.toLowerCase() : '';
+
+                    // Check if row matches the filter criteria
+                    if (nameText.includes(nameValue) &&
+                        numberText.includes(numberValue) &&
+                        (propertyValue === "select :" || propertyText.includes(propertyValue))) {
+                        rows[i].style.display = '';  // Show the row
+                    } else {
+                        rows[i].style.display = 'none';  // Hide the row
+                    }
+                }
+            }
+
+            // Attach event listeners
+            filterByName.addEventListener('input', filterTable);
+            filterByNumber.addEventListener('input', filterTable);
+            filterByProperty.addEventListener('change', filterTable);
         });
     </script>
 @endpush
