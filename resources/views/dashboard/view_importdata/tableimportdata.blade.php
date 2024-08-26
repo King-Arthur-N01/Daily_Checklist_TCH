@@ -117,7 +117,7 @@
     </div>
     <!-- End Edit Modal-->
 
-    <!-- View Machine Property Modal -->
+    <!-- View Modal -->
     <div class="modal fade" id="viewModal" tabindex="-1">
         <div class="modal-dialog modal-xxl">
             <div class="modal-content">
@@ -130,7 +130,7 @@
             </div>
         </div>
     </div>
-    <!-- End View Machine Property Modal-->
+    <!-- End View Modal-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">

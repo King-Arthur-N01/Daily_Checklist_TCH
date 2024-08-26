@@ -56,6 +56,36 @@
     </div>
     <!-- End Add Modal-->
 
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_edit">
+                </div>
+                <div class="modal-body" id="modal_data_edit">
+                </div>
+                <div class="modal-footer" id="modal_button_edit">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Modal-->
+
+    <!-- View Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog modal-xxl">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_view">
+                </div>
+                <div class="modal-body" id="modal_data_view">
+                </div>
+                <div class="modal-footer" id="modal_button_view">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End View Modal-->
+
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -116,9 +146,9 @@
                         return {
                             no: index + 1,
                             schedule_name: refreshschedule.schedule_name,
-                            schedule_time: refreshschedule.schedule_next,
+                            schedule_time: 'Setiap ' + refreshschedule.schedule_time + ' Bulan Sekali',
                             schedule_record: refreshschedule.schedule_record,
-                            id_machine: refreshschedule.id_machine,
+                            id_machine: refreshschedule.id_machine.split(',').length,
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-US', {
                                 year: 'numeric',
                                 month: '2-digit',

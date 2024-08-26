@@ -1620,3 +1620,47 @@ const table = $('#recordTables').DataTable({
                 return response()->json(['error' => 'Error fetching data'], 500);
             }
         }
+
+
+        function fetchtableimport() {
+            $.ajax({
+                url: '{{ route("autorefreshtable") }}',
+                method: 'GET',
+                success: function(data) {
+                    let tbody = $('#importTables tbody');
+                    tbody.empty();
+                    if (data.refreshmachine.length > 0) {
+                        data.refreshmachine.forEach(function(refreshmachine) {
+                            let refreshproperty = data.refreshproperty.find(function(property) {
+                                return property.id === refreshmachine.id_property;
+                            });
+                            let tr = $('<tr></tr>');
+                            tr.append('<td>' + refreshmachine.invent_number + '</td>');
+                            tr.append('<td>' + refreshmachine.machine_name + '</td>');
+                            tr.append('<td>' + refreshmachine.machine_brand + '</td>');
+                            tr.append('<td>' + refreshmachine.machine_type + '</td>');
+                            if (refreshmachine.id_property) {
+                                tr.append('<td>' + (refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi') + '</td>');
+                            } else {
+                                tr.append('<td>Belum ada standarisasi</td>');
+                            }
+                            tr.append(`
+                                <td>
+                                    <div class="dynamic-button-group">
+                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                            <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                            <a class="dropdown-item-custom-delete" id="deleteButton" data-id="${refreshmachine.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            `);
+                            tbody.append(tr);
+                        });
+                    } else {
+                        tbody.append('<tr><td colspan="6">No data found.</td></tr>');
+                    }
+                }
+            });
+        }

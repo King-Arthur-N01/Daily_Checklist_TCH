@@ -65,6 +65,7 @@ Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinere
 Route::get ('/machinerecord/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
 Route::put ('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('createrecord');
 Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
+Route::get ('/machinerecord/table/refresh/{id}','RecordsData\MachinerecordController@refreshtabledetail')->name('refreshdetailrecord');
 // input data machine record end
 
 // machine records correction

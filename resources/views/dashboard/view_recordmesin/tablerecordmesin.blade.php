@@ -56,15 +56,14 @@
                         @endif
                     </div>
                     <div class="table-responsive">
-                        <table class="table" id="recordTables" width="100%">
+                        <table class="table table-bordered" id="recordTables" width="100%">
                             <thead>
+                                <th></th>
                                 <th>NO MESIN</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
-                                <th>JADWAL PREVENTIVE MESIN</th>
                                 <th>STATUS</th>
-                                <th>ACTION</th>
                             </thead>
                         </table>
                     </div>
@@ -100,47 +99,74 @@
             }, 30000); // 30000 milidetik = 30 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
-            const table = $('#recordTables').DataTable({
+            let table = $('#recordTables').DataTable({
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
                         return data.map(function(refreshmachine) {
-                            // let refreshschedule = data.refreshschedule.find(function(schedule) {
-                            //     return refreshmachine.id === schedule.id_machine2;
-                            // });
                             return {
+                                id: refreshmachine.id,
                                 machine_number: refreshmachine.machine_number,
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
-                                machine_schedule: refreshmachine.getschedule !== null ? 'Setiap ' + refreshmachine.getschedule + ' Bulan Sekali' : 'Waktu preventive belum diatur',
                                 status: refreshmachine.total_days && refreshmachine.total_hours ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu' : 'Belum pernah dilakukan preventive',
-                                actions: refreshmachine.id
                             };
                         });
                     }
                 },
                 columns: [
+                    {
+                        "value": 'id',
+                        "defaultContent": `<i class="fas fa-angle-right toggle-icon"></i>`,
+                        "orderable": false,
+                        "className": 'table-accordion',
+                    },
                     { data: 'machine_number' },
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
-                    { data: 'machine_schedule' },
                     { data: 'status' },
-                    {data: 'actions',
-                    render: function(data, type, row) {
-                        let url = '{{ route("formpreventive", ":id") }}';
-                        url = url.replace(':id', data);
-                        return `
-                        <div class="dynamic-button-group">
-                            <a class="btn btn-primary btn-sm" style="color:white" href="${url}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                        </div>
-                        `;
-                    },
-                    orderable: false,
-                    searchable: false
-                    }
                 ]
+            });
+
+            $('#recordTables tbody').on('click', 'td.table-accordion', function () {
+                let tr = $(this).closest('tr');
+                let row = table.row(tr);
+                let rowId = row.data().id;
+                const contentRow = this.nextElementSibling;
+                const toggleIcon = this.querySelector('.toggle-icon');
+
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    tr.removeClass('shown');
+                    toggleIcon.classList.remove('active');
+                } else {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{route("refreshdetailrecord", ':id')}}'.replace(':id', rowId),
+                        success: function(data) {
+                            let detailTable = '<table class="table">' +
+                                                '<tbody>';
+                            $.each(data.machine, function(index, machine) {
+                                detailTable += '<tr>' +
+                                            '<td>' + data.machine.machine_name + '</td>' +
+                                            '<td>' + data.machine.schdule_1_month + '</td>' +
+                                            '<td>' + data.machine.schdule_3_month + '</td>' +
+                                            '<td>' + data.machine.schdule_6_month + '</td>' +
+                                            '<td>' + data.machine.schdule_12_month + '</td>' +
+                                            '<td><button class="btn btn-primary">View</button></td>' +
+                                            '</tr>';
+                            });
+
+                            detailTable += '</tbody></table>';
+
+                            row.child(detailTable).show();
+                            tr.addClass('shown');
+                            toggleIcon.classList.add('active');
+                        }
+                    });
+                }
             });
         });
     </script>

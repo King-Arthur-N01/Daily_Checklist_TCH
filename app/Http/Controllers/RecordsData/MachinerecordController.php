@@ -11,6 +11,7 @@ use App\Machinerecord;
 use App\Historyrecords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MachinerecordController extends Controller
 {
@@ -32,7 +33,6 @@ class MachinerecordController extends Controller
         try {
             foreach ($machine as $refreshmachine) {
                 if ($refreshmachine->id_property){
-                    $getschedule = Schedule::where('id_machine', $refreshmachine->id)->value('schedule_time');
                     $lastrecord = Machinerecord::where('id_machine2', $refreshmachine->id)->orderBy('created_at', 'desc')->first();
                     if ($lastrecord) {
                         $lasttime = Carbon::parse($lastrecord->created_at);
@@ -46,7 +46,6 @@ class MachinerecordController extends Controller
                             'machine_name' => $refreshmachine->machine_name,
                             'machine_type' => $refreshmachine->machine_type,
                             'machine_brand' => $refreshmachine->machine_brand,
-                            'getschedule' => $getschedule,
                             'total_hours' => $gettotalhours,
                             'total_days' => $gettotaldays,
                         ];
@@ -57,13 +56,23 @@ class MachinerecordController extends Controller
                             'machine_name' => $refreshmachine->machine_name,
                             'machine_type' => $refreshmachine->machine_type,
                             'machine_brand' => $refreshmachine->machine_brand,
-                            'getschedule' => $getschedule,
                         ];
                     }
                 }
             }
             return response()->json($responsedata);
         } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    public function refreshtabledetail($id)
+    {
+        try{
+            $machine = Machine::find($id);
+            return response()->json(['machine' => $machine]);
+        } catch (\Exception $e) {
+            Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
