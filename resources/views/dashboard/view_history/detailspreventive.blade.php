@@ -19,44 +19,45 @@
                             <tbody>
                                 <tr>
                                     <th>No. Invent Mesin :</th>
-                                    <th>{{ $detailrecords[0]->invent_number }}</th>
+                                    <th>{{ $machinedata[0]->invent_number }}</th>
                                     <th>Spec/Tonage :</th>
-                                    <th>{{ $detailrecords[0]->machine_spec }}</th>
+                                    <th>{{ $machinedata[0]->machine_spec }}</th>
                                 </tr>
                                 <tr>
                                     <th>Nama Mesin :</th>
-                                    <th>{{ $detailrecords[0]->machine_name }}</th>
+                                    <th>{{ $machinedata[0]->machine_name }}</th>
                                     <th>Buatan :</th>
-                                    <th>{{ $detailrecords[0]->machine_made }}</th>
+                                    <th>{{ $machinedata[0]->machine_made }}</th>
                                 </tr>
                                 <tr>
                                     <th>Brand/Merk :</th>
-                                    <th>{{ $detailrecords[0]->machine_brand }}</th>
+                                    <th>{{ $machinedata[0]->machine_brand }}</th>
                                     <th>Mfg.NO :</th>
-                                    <th>{{ $detailrecords[0]->mfg_number }}</th>
+                                    <th>{{ $machinedata[0]->mfg_number }}</th>
                                 </tr>
                                 <tr>
                                     <th>Model/Type :</th>
-                                    <th>{{ $detailrecords[0]->machine_type }}</th>
+                                    <th>{{ $machinedata[0]->machine_type }}</th>
                                     <th>Install Date :</th>
-                                    <th>{{ $detailrecords[0]->install_date }}</th>
+                                    <th>{{ $machinedata[0]->install_date }}</th>
                                 </tr>
                                 <tr>
                                     <th>PIC :</th>
-                                    <th>{{ $joinuser }}</th>
+                                    <th>
+                                        {{implode(' , ', $usernames)}}
+                                    </th>
                                     <th>Waktu Preventive :</th>
-                                    <th>{{ $detailrecords[0]->created_at }}</th>
+                                    <th>{{ $machinedata[0]->created_at }}</th>
                                 </tr>
                             </tbody>
                         </table>
                         <div class="header-input">
                             <a>Machine Number :</a>
-                            <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $detailrecords[0]->machine_number2 }}" placeholder="Nomor Mesin" readonly>
+                            <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $machinedata[0]->machine_number2 }}" placeholder="Nomor Mesin" readonly>
                         </div>
                         <table class="table table-bordered" id="dataTables" width="100%">
                             <thead>
                                 <tr>
-                                    <th>Nama Mesin</th>
                                     <th>Bagian Yang Dicheck</th>
                                     <th>Standart/Parameter</th>
                                     <th>Metode Pengecekan</th>
@@ -65,21 +66,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($combinedata as $row)
+                                @foreach ($combinedata as $index => $rowdata)
                                     <tr>
-                                        <td>{{ $row['machine_name'] }}</td>
-                                        <td>{{ $row['name_componencheck'] }}</td>
-                                        <td>{{ $row['name_parameter'] }}</td>
-                                        <td>{{ $row['name_metodecheck'] }}</td>
-                                        <td>{{ $row['operator_action'] }}</td>
-                                        <td>{{ $row['result'] }}</td>
+                                        <td>{{ $rowdata['name_componencheck'] }}</td>
+                                        <td>{{ $rowdata['name_parameter'] }}</td>
+                                        <td>{{ $rowdata['name_metodecheck'] }}</td>
+                                        <td>{{ implode(' & ', json_decode($combineresult[0]['operator_action'])[$index]) }}</td>
+                                        <td>{{ json_decode($combineresult[0]['result'])[$index] }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                         <div class="form-custom">
                             <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                            <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>{{ $detailrecords[0]->note }}</textarea>
+                            <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>{{ $machinedata[0]->note }}</textarea>
                         </div>
                         <div class="form-custom">
                             <table class="table table-bordered table-custom" id="userTable">
@@ -90,8 +90,8 @@
                                         <th colspan="4">Dibuat oleh :</th>
                                     </tr>
                                     <tr>
-                                        <td>{{ $historyrecords[0]->approve_by_name }}</td>
-                                        <td>{{ $historyrecords[0]->correct_by_name }}</td>
+                                        <td>{{ $recordsdata[0]->approve_by_name }}</td>
+                                        <td>{{ $recordsdata[0]->correct_by_name }}</td>
                                         @foreach ($usernames as $get_user_id)
                                             <td>{{ $get_user_id }}</td>
                                         @endforeach

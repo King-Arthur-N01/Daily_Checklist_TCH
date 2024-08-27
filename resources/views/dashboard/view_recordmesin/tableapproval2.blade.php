@@ -194,6 +194,22 @@
                     type: 'GET',
                     url: '{{ route("readapproval", ':id') }}'.replace(':id', approveId),
                     success: function(data) {
+                        let table_modal = '';
+                        data.combinedata.forEach((rowdata, index) => {
+                            const actions = JSON.parse(data.combineresult[0].operator_action)[index].join(' & ');
+                            const result = JSON.parse(data.combineresult[0].result)[index];
+
+                            table_modal += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${rowdata.name_componencheck}</td>
+                                    <td>${rowdata.name_parameter}</td>
+                                    <td>${rowdata.name_metodecheck}</td>
+                                    <td>${actions}</td>
+                                    <td>${result}</td>
+                                </tr>
+                            `;
+                        });
                         const header_modal = `
                             <h5 class="modal-title">Extra Large Modal</h5>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -209,7 +225,7 @@
                             <table class="table table-bordered" id="dataTables">
                                 <thead>
                                     <tr>
-                                        <th>Nomor</th>
+                                        <th>No.</th>
                                         <th>Bagian Yang Dicheck</th>
                                         <th>Standart/Parameter</th>
                                         <th>Metode Pengecekan</th>
@@ -218,37 +234,27 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${data.combinedata.map((row, index) => `
-                                        <tr>
-                                            <td>${index + 1}</td>
-                                            <td>${row.name_componencheck}</td>
-                                            <td>${row.name_parameter}</td>
-                                            <td>${row.name_metodecheck}</td>
-                                            <td>${row.operator_action}</td>
-                                            <td>${row.result}</td>
-                                        </tr>
-                                    `).join('')}
+                                    ${table_modal}
                                 </tbody>
                             </table>
                             <div class="form-custom">
                                 <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                 <textarea id="input_note" type="text" rows="6" cols="50">${data.machinedata[0].note}</textarea>
-                                </div>
-                                <table class="table table-bordered" id="userTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Disetujui oleh :</th>
-                                            <th>Dikoreksi oleh :</th>
-                                            <th>Dibuat oleh :</th>
-                                        </tr>
-                                        <tr>
-                                            <td>${data.recordsdata[0].approve_by_name}</td>
-                                            <td>${data.recordsdata[0].correct_by_name}</td>
-                                            <td>${data.usernames.join(' & ')}</td>
-                                        </tr>
-                                    </thead>
-                                </table>
                             </div>
+                            <table class="table table-bordered" id="userTable">
+                                <thead>
+                                    <tr>
+                                        <th>Disetujui oleh :</th>
+                                        <th>Dikoreksi oleh :</th>
+                                        <th>Dibuat oleh :</th>
+                                    </tr>
+                                    <tr>
+                                        <td>${data.recordsdata[0].approve_by_name}</td>
+                                        <td>${data.recordsdata[0].correct_by_name}</td>
+                                        <td>${data.usernames.join(' & ')}</td>
+                                    </tr>
+                                </thead>
+                            </table>
                         `;
                         const button_modal =`
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

@@ -31,8 +31,8 @@ class HistoryrecordsController extends Controller
     // fungsi tampilan formulir untuk melihat riwayat dan status preventive mesin (record mesin)
     public function viewdetails($id)
     {
-        $detailrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
+        $machinedata = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
             ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
             ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
@@ -41,44 +41,41 @@ class HistoryrecordsController extends Controller
             ->where('machinerecords.id', '=', $id)
             ->get();
 
-        $historyrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
-            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machine2record')
+        $recordsdata = DB::table('machinerecords')
+            ->select('machinerecords.*', 'historyrecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)
             ->get();
 
         $usernames = [];
-        $combineuser = $detailrecords->first()->create_by;
+        $combineuser = $recordsdata->first()->create_by;
         $splituser = explode(',', $combineuser);
         foreach ($splituser as $eachuserid){
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
         }
-        $joinuser = implode(' , ', $usernames);
 
         $combinedata = [];
-        foreach ($detailrecords as $detail){
-            foreach ($historyrecords as $history){
-                if ($detail->checks_id == $history->get_checks){
-                    $combinedata[] = [
-                        'machine_name' => $detail->machine_name,
-                        'name_componencheck' => $detail->name_componencheck,
-                        'name_parameter' => $detail->name_parameter,
-                        'name_metodecheck' => $detail->name_metodecheck,
-                        'operator_action' => $history->operator_action,
-                        'result' => $history->result,
-                    ];
-                }
-            }
+        foreach ($machinedata as $detail){
+            $combinedata[] = [
+                'machine_name' => $detail->machine_name,
+                'name_componencheck' => $detail->name_componencheck,
+                'name_parameter' => $detail->name_parameter,
+                'name_metodecheck' => $detail->name_metodecheck,
+            ];
         }
+        $combineresult[] = [
+            'operator_action' => $recordsdata->first()->operator_action,
+            'result' => $recordsdata->first()->result
+        ];
 
         return view('dashboard.view_history.detailspreventive', [
-            'detailrecords' => $detailrecords,
-            'historyrecords' => $historyrecords,
+            'machinedata' => $machinedata,
+            'recordsdata' => $recordsdata,
             'combinedata' => $combinedata,
-            'usernames' => $usernames,
-            'joinuser' => $joinuser
+            'combineresult' => $combineresult,
+            'usernames' => $usernames
         ]);
     }
 

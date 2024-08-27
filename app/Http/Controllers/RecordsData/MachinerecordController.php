@@ -135,22 +135,20 @@ class MachinerecordController extends Controller
                 $StoreRecords->create_by = $request->input('combined_create_by');
                 $StoreRecords->save();
 
-                $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
-                $StoreSchedule->schedule_record = $currenttime;
-                $StoreSchedule->save();
+                // $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
+                // $StoreSchedule->save();
 
                 // Get the ID of the newly created record
                 $getrecordid = Machinerecord::latest('id')->first()->id;
 
-                $metodecheck_id = $request->input('metodecheck_id', []);
-                foreach ($metodecheck_id as $key => $test) {
-                    $StoreHistory = new Historyrecords();
-                    $StoreHistory->id_metodecheck = $test;
-                    $StoreHistory->operator_action = implode(',', $request->input('operator_action')[$key]);
-                    $StoreHistory->result = $request->input('result')[$key];
-                    $StoreHistory->id_machinerecord = $getrecordid;
-                    $StoreHistory->save();
-                }
+                $operator_action_json = json_encode(array_values($request->input('operator_action')));
+                $result_json = json_encode(array_values($request->input('result')));
+
+                $StoreHistory = new Historyrecords();
+                $StoreHistory->operator_action = $operator_action_json;
+                $StoreHistory->result = $result_json;
+                $StoreHistory->id_machinerecord = $getrecordid;
+                $StoreHistory->save();
             }
         }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
@@ -161,22 +159,20 @@ class MachinerecordController extends Controller
             $StoreRecords->create_by = $request->input('combined_create_by');
             $StoreRecords->save();
 
-            $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
-            $StoreSchedule->schedule_record = $currenttime;
-            $StoreSchedule->save();
+            // $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
+            // $StoreSchedule->save();
 
             // Get the ID of the newly created record
             $getrecordid = Machinerecord::latest('id')->first()->id;
 
-            $metodecheck_id = $request->input('metodecheck_id', []);
-            foreach ($metodecheck_id as $key => $test) {
+                $operator_action_json = json_encode(array_values($request->input('operator_action')));
+                $result_json = json_encode(array_values($request->input('result')));
+
                 $StoreHistory = new Historyrecords();
-                $StoreHistory->id_metodecheck = $test;
-                $StoreHistory->operator_action = implode(',', $request->input('operator_action')[$key]);
-                $StoreHistory->result = $request->input('result')[$key];
+                $StoreHistory->operator_action = $operator_action_json;
+                $StoreHistory->result = $result_json;
                 $StoreHistory->id_machinerecord = $getrecordid;
                 $StoreHistory->save();
-            }
         }
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
@@ -225,28 +221,13 @@ class MachinerecordController extends Controller
             ->get('machinerecords.id');
 
         $recordsdata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'historyrecords.id_metodecheck as get_checks')
+            ->select('machinerecords.*', 'historyrecords.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
             ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
-        $combinedata = [];
-        foreach ($machinedata as $getmachine){
-            foreach ($recordsdata as $getrecords){
-                if ($getmachine->checks_id == $getrecords->get_checks){
-                    $combinedata[] = [
-                        'machine_name' => $getmachine->machine_name,
-                        'name_componencheck' => $getmachine->name_componencheck,
-                        'name_parameter' => $getmachine->name_parameter,
-                        'name_metodecheck' => $getmachine->name_metodecheck,
-                        'operator_action' => $getrecords->operator_action,
-                        'result' => $getrecords->result,
-                    ];
-                }
-            }
-        }
         $usernames = [];
         $combineuser = $recordsdata->first()->create_by;
         $splituser = explode(',', $combineuser);
@@ -254,10 +235,25 @@ class MachinerecordController extends Controller
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
         }
 
+        $combinedata = [];
+        foreach ($machinedata as $detail){
+            $combinedata[] = [
+                'machine_name' => $detail->machine_name,
+                'name_componencheck' => $detail->name_componencheck,
+                'name_parameter' => $detail->name_parameter,
+                'name_metodecheck' => $detail->name_metodecheck,
+            ];
+        }
+        $combineresult[] = [
+            'operator_action' => $recordsdata->first()->operator_action,
+            'result' => $recordsdata->first()->result
+        ];
+
         return response()->json([
             'machinedata' => $machinedata,
             'recordsdata' => $recordsdata,
             'combinedata' => $combinedata,
+            'combineresult' => $combineresult,
             'usernames' => $usernames
         ]);
     }
@@ -282,28 +278,6 @@ class MachinerecordController extends Controller
         }
         return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
     }
-    // public function rejectcorrection(Request $request, $id) // this code for ajax send request
-    // {
-    //     $request->validate([
-    //         'reject_by' => 'required'
-    //     ]);
-    //     $machinerecord = Machinerecord::find($id);
-
-    //     if (!$machinerecord->correct_by) {
-    //         if (!$machinerecord) {
-    //             return response()->json(['error' => 'Machine record not found'], 404);
-    //         }
-    //         else if ($machinerecord->reject_by) {
-    //             return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
-    //         }
-    //         else {
-    //             $machinerecord->update(['reject_by' => $request->input('reject_by')]);
-    //         }
-    //     } else if ($machinerecord->correct_by) {
-    //         return response()->json(['error' => 'Data update failed. Record has been corrected by someone else.'], 422);
-    //     }
-    //     return response()->json(['success' => 'Data Preventive was successfully REJECT!']);
-    // }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
     public function deletecorrection($id) {
@@ -373,21 +347,6 @@ class MachinerecordController extends Controller
             ->where('machinerecords.id', '=', $id)
             ->get('machinerecords.id');
 
-        $combinedata = [];
-        foreach ($machinedata as $getmachine){
-            foreach ($recordsdata as $getrecords){
-                if ($getmachine->checks_id == $getrecords->get_checks){
-                    $combinedata[] = [
-                        'machine_name' => $getmachine->machine_name,
-                        'name_componencheck' => $getmachine->name_componencheck,
-                        'name_parameter' => $getmachine->name_parameter,
-                        'name_metodecheck' => $getmachine->name_metodecheck,
-                        'operator_action' => $getrecords->operator_action,
-                        'result' => $getrecords->result,
-                    ];
-                }
-            }
-        }
         $usernames = [];
         $combineuser = $recordsdata->first()->create_by;
         $splituser = explode(',', $combineuser);
@@ -395,10 +354,25 @@ class MachinerecordController extends Controller
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
         }
 
+        $combinedata = [];
+        foreach ($machinedata as $detail){
+            $combinedata[] = [
+                'machine_name' => $detail->machine_name,
+                'name_componencheck' => $detail->name_componencheck,
+                'name_parameter' => $detail->name_parameter,
+                'name_metodecheck' => $detail->name_metodecheck,
+            ];
+        }
+        $combineresult[] = [
+            'operator_action' => $recordsdata->first()->operator_action,
+            'result' => $recordsdata->first()->result
+        ];
+
         return response()->json([
             'machinedata' => $machinedata,
             'recordsdata' => $recordsdata,
             'combinedata' => $combinedata,
+            'combineresult' => $combineresult,
             'usernames' => $usernames
         ]);
     }
@@ -426,30 +400,6 @@ class MachinerecordController extends Controller
         }
         return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
     }
-    // public function rejectapproval(Request $request, $id) // this code for ajax send request
-    // {
-    //     $request->validate([
-    //         'reject_by' => 'required'
-    //     ]);
-    //     $machinerecord = Machinerecord::find($id);
-    //     if (!$machinerecord->approve_by) {
-    //         if (!$machinerecord) {
-    //             return response()->json(['error' => 'Data record not found !!!!'], 404);
-    //         }
-    //         else if (!$machinerecord->correct_by) {
-    //             return response()->json(['error' => 'Data update failed. Record has not been corrected previously by someone else.'], 422);
-    //         }
-    //         else if ($machinerecord->reject_by) {
-    //             return response()->json(['error' => 'Data update failed. Record already rejected by someone else.'], 422);
-    //         }
-    //         else {
-    //             $machinerecord->update(['reject_by' => $request->input('reject_by')]);
-    //         }
-    //     } else if ($machinerecord->approve_by) {
-    //         return response()->json(['error' => 'Data update failed. Record already been approved previously.'], 422);
-    //     }
-    //     return response()->json(['success' => 'Data Preventive was successfully REJECT!']);
-    // }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
     public function deleteapproval($id) {

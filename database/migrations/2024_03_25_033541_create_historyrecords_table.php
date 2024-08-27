@@ -15,9 +15,8 @@ class CreateHistoryrecordsTable extends Migration
     {
         Schema::create('historyrecords', function (Blueprint $table) {
             $table->id();
-            $table->text('operator_action');
-            $table->string('result');
-            $table->integer('id_metodecheck');
+            $table->json('operator_action');
+            $table->json('result');
             $table->timestamps();
         });
     }
