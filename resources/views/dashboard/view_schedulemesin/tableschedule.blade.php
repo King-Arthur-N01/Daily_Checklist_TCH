@@ -184,16 +184,16 @@
                 type: 'GET',
                 url: '{{ route("getmachinedata") }}',
                 success: function(data) {
+                    let combinedValue = [];
                     function combineMachineValues() {
                         const checkboxes = document.getElementsByName("machineinput");
-                        let values = [];
+                        combinedValue = [];
                         checkboxes.forEach(checkbox => {
                             if (checkbox.checked) {
-                                values.push(checkbox.value);
+                                combinedValue.push(checkbox.value);
                             }
                         });
-                        const combinedValue = values.join(',');
-                        document.getElementById("combine_machine_value").value = combinedValue;
+                        combinedValue = combinedValue.join(',');
                     }
 
                     let tableRows = '';
@@ -228,7 +228,6 @@
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
                                             <input class="form-control" name="schedule_name" type="text" placeholder="Nama Jadwal">
-                                            <input type="hidden" name="machine_input" id="combine_machine_value">
                                         </div>
                                     </div>
                                 </div>
@@ -287,7 +286,7 @@
                         let formData = {
                             scheduleName: $('input[name="schedule_name"]').val(),
                             scheduleTime: $('select[name="schedule_time"]').val(),
-                            machineInput: $('input[name="machine_input"]').val(),
+                            machineInput: combinedValue,
                         };
                         $.ajax({
                             type: 'POST',

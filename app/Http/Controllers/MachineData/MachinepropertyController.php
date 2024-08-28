@@ -76,7 +76,7 @@ class MachinepropertyController extends Controller
             }
         } catch (\Exception $e) {
             // Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
-            return response()->json(['error' => 'Machine failed to delete!!!!'], 500);
+            return response()->json(['error' => 'Error machine property failed to add!!!!'], 500);
         }
     }
     public function deleteproperty($id)

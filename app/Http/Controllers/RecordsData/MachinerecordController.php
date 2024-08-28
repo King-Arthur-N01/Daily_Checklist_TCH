@@ -69,6 +69,7 @@ class MachinerecordController extends Controller
     public function refreshtabledetail($id)
     {
         try{
+            $schedule= Schedule::all();
             $machine = Machine::find($id);
             return response()->json(['machine' => $machine]);
         } catch (\Exception $e) {

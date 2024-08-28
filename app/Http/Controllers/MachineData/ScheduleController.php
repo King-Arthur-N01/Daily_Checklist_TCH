@@ -92,10 +92,11 @@ class ScheduleController extends Controller
             $currenttime = Carbon::today();
             $scheduletime = $request->input('schedule_time');
             $schedulenext = $currenttime->addMonths($scheduletime);
+            $id_machine_array = explode(',', $request->input('id_machine'));
             $StoreSchedule = new Schedule();
             $StoreSchedule->schedule_name = $request->input('schedule_name');
             $StoreSchedule->schedule_time = $request->input('schedule_time');
-            $StoreSchedule->id_machine = $request->input('id_machine');
+            $StoreSchedule->id_machine = json_encode($id_machine_array);
             $StoreSchedule->schedule_next = $schedulenext;
             $StoreSchedule->save();
 

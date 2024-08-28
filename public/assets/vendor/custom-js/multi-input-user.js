@@ -1,4 +1,4 @@
-function combineCreateByValues() {
+function combineCreateByUsers() {
     const createBy1 = document.getElementById("create_by_1").value;
     const createBy2 = document.getElementById("create_by_2").value;
     const createBy3 = document.getElementById("create_by_3").value;
@@ -10,10 +10,10 @@ function combineCreateByValues() {
 }
 // Ensure the combined value is set before form submission
 document.getElementById("registerform").addEventListener("submit", function () {
-    combineCreateByValues();
+    combineCreateByUsers();
 });
 
-function disableDoubleSelect() {
+function disableDoubleSelectUsers() {
     // Get all selected values
     const selectedValues = [];
     $('select[id^="create_by_"]').each(function () {
@@ -40,5 +40,5 @@ function disableDoubleSelect() {
 
 // Attach the change event listener to all select elements
 $('select[id^="create_by_"]').on("change", function () {
-    disableDoubleSelect();
+    disableDoubleSelectUsers();
 });

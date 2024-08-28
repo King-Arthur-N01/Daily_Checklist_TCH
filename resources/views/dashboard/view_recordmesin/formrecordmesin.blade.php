@@ -70,8 +70,8 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($joinmachine as $key => $recordsget)
-                                    @for ($number=0; $number<=$key; $number ++)
-                                    @endfor
+                                        @for ($number=0; $number<=$key; $number ++)
+                                        @endfor
                                         <tr>
                                             <td>{{ $number }}</td>
                                             <td>{{ $recordsget->name_componencheck }}</td>
@@ -206,8 +206,8 @@
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
             });
-            combineCreateByValues();
-            disableDoubleSelect()
+            combineCreateByUsers();
+            disableDoubleSelectUsers()
             mergeCells();
         });
     </script>
