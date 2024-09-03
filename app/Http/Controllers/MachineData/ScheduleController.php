@@ -88,6 +88,7 @@ class ScheduleController extends Controller
 
     public function createschedule(Request $request)
     {
+        // dd($request->input('id_machine'));
         try {
             $currenttime = Carbon::today();
             $scheduletime = $request->input('schedule_time');

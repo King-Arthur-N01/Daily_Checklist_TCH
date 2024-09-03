@@ -74,6 +74,38 @@
         <!-- end data table  -->
         <!-- ============================================================== -->
     </div>
+
+    <!-- Alert Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <span id="successText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Success Modal -->
+
+    <!-- Alert Warning Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <span id="warningText" class="modal-alert"></span>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Alert Warning Modal -->
 @endsection
 
 @push('style')
@@ -117,10 +149,12 @@
                 },
                 columns: [
                     {
-                        "value": 'id',
-                        "defaultContent": `<i class="fas fa-angle-right toggle-icon"></i>`,
-                        "orderable": false,
+                        "data": 'id',
+                        "render": function(data, type, row) {
+                            return `<button value="${data}"><i class="fas fa-angle-right toggle-icon"></i></button>`;
+                        },
                         "className": 'table-accordion',
+                        "orderable": false,
                     },
                     { data: 'machine_number' },
                     { data: 'machine_name' },
@@ -134,7 +168,7 @@
                 let tr = $(this).closest('tr');
                 let row = table.row(tr);
                 let rowId = row.data().id;
-                const contentRow = this.nextElementSibling;
+
                 const toggleIcon = this.querySelector('.toggle-icon');
 
                 if (row.child.isShown()) {
@@ -148,22 +182,34 @@
                         success: function(data) {
                             let detailTable = '<table class="table">' +
                                                 '<tbody>';
-                            $.each(data.machine, function(index, machine) {
                                 detailTable += '<tr>' +
-                                            '<td>' + data.machine.machine_name + '</td>' +
-                                            '<td>' + data.machine.schdule_1_month + '</td>' +
-                                            '<td>' + data.machine.schdule_3_month + '</td>' +
-                                            '<td>' + data.machine.schdule_6_month + '</td>' +
-                                            '<td>' + data.machine.schdule_12_month + '</td>' +
+                                            '<td>' + data.getschedule.schedule_name + '</td>' +
+                                            '<td>' + data.getschedule.schedule_time + '</td>' +
+                                            '<td>' + new Date(data.getschedule.schedule_next).toLocaleString('en-ID', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: '2-digit'
+                                                })
+                                            + '</td>' +
                                             '<td><button class="btn btn-primary">View</button></td>' +
                                             '</tr>';
-                            });
 
                             detailTable += '</tbody></table>';
 
                             row.child(detailTable).show();
                             tr.addClass('shown');
                             toggleIcon.classList.add('active');
+                        },
+                        error: function(xhr, error) {
+                            if (xhr.responseText) {
+                                const warningMessage = JSON.parse(xhr.responseText).error;
+                                $('#warningText').text(warningMessage);
+                                $('#warningModal').modal('show');
+                            }
+                            setTimeout(function() {
+                                $('#warningModal').modal('hide');
+                                $('#correctModal').modal('hide');
+                            }, 2000);
                         }
                     });
                 }

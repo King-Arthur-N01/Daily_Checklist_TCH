@@ -68,13 +68,30 @@ class MachinerecordController extends Controller
 
     public function refreshtabledetail($id)
     {
-        try{
-            $schedule= Schedule::all();
-            $machine = Machine::find($id);
-            return response()->json(['machine' => $machine]);
+        try {
+            $schedules = Schedule::latest()->get();
+            $matchingSchedules = [];
+
+            foreach ($schedules as $schedule) {
+                $idSchedule = $schedule->id;
+                $idMachineArray = json_decode($schedule->id_machine, true);
+
+                // Check if $idMachineArray is valid and contains the $id
+                if (is_array($idMachineArray) && in_array($id, $idMachineArray)) {
+                    $matchingSchedules[] = $idSchedule;
+
+                }
+            }
+            // dd($matchingSchedules)->all();
+            foreach ($matchingSchedules as $findSchedule) {
+                $getschedule = Schedule::find($findSchedule);
+                
+            }
+            return response()->json(['getschedule' => $getschedule]);
+
         } catch (\Exception $e) {
             Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'Error fetching data'], 500);
+            return response()->json(['error' => 'An unexpected error occurred'], 500);
         }
     }
 

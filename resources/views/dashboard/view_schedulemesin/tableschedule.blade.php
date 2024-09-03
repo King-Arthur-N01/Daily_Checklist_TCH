@@ -149,9 +149,9 @@
                             schedule_time: 'Setiap ' + refreshschedule.schedule_time + ' Bulan Sekali',
                             schedule_record: refreshschedule.schedule_record,
                             id_machine: refreshschedule.id_machine.split(',').length,
-                            created_at: new Date(refreshschedule.created_at).toLocaleString('en-US', {
+                            created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
-                                month: '2-digit',
+                                month: 'long',
                                 day: '2-digit'
                             }),
                             actions: `
@@ -194,6 +194,7 @@
                             }
                         });
                         combinedValue = combinedValue.join(',');
+                        console.log(combinedValue);
                     }
 
                     let tableRows = '';
