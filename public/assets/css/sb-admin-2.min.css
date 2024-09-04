@@ -1822,6 +1822,32 @@ pre code {
     color: #282828;
 }
 
+.table-child {
+    width: 100%;
+    /* font-size: 15px; */
+    margin: 0px 0px 10px 0px;
+    color: #282828;
+    flex-direction: column;
+}
+
+.table-child td,
+.table-child th {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #e3e6f0;
+    justify-items: center;
+    align-content: center;
+}
+
+.table-child thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #e3e6f0
+}
+
+.table-child tbody+tbody {
+    border-top: 2px solid #e3e6f0
+}
+
 .div-tables{
     width: 100%;
     display: flex;

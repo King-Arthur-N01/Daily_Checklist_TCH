@@ -64,6 +64,7 @@
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND</th>
                                 <th>STATUS</th>
+                                <th>ACTION</th>
                             </thead>
                         </table>
                     </div>
@@ -128,7 +129,7 @@
                 table.on('draw.dt', function() {
                     overlay.removeClass('is-active');
                 });
-            }, 30000); // 30000 milidetik = 30 second
+            }, 60000); // 60000 milidetik = 60 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             let table = $('#recordTables').DataTable({
@@ -143,6 +144,7 @@
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
                                 status: refreshmachine.total_days && refreshmachine.total_hours ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu' : 'Belum pernah dilakukan preventive',
+                                actions: refreshmachine.id
                             };
                         });
                     }
@@ -161,6 +163,19 @@
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
                     { data: 'status' },
+                    {data: 'actions',
+                    render: function(data, type, row) {
+                        let url = '{{ route("formpreventive", ":id") }}';
+                        url = url.replace(':id', data);
+                        return `
+                        <div class="dynamic-button-group">
+                            <a class="btn btn-primary btn-sm" style="color:white" href="${url}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
+                        </div>
+                        `;
+                    },
+                    orderable: false,
+                    searchable: false
+                    }
                 ]
             });
 
@@ -180,20 +195,21 @@
                         type: 'GET',
                         url: '{{route("refreshdetailrecord", ':id')}}'.replace(':id', rowId),
                         success: function(data) {
-                            let detailTable = '<table class="table">' +
-                                                '<tbody>';
+                            let detailTable = '<table class="table-child"><thead>' +
+                                                '<tr><th>NAMA SCHEDULE</th><th>WAKTU PREVENTIVE</th><th>WAKTU JATUH TEMPO</th></tr>' +
+                                                '</thead><tbody>';
+                            data.getschedules.forEach(schedule => {
                                 detailTable += '<tr>' +
-                                            '<td>' + data.getschedule.schedule_name + '</td>' +
-                                            '<td>' + data.getschedule.schedule_time + '</td>' +
-                                            '<td>' + new Date(data.getschedule.schedule_next).toLocaleString('en-ID', {
+                                            '<td>' + schedule.schedule_name + '</td>' +
+                                            '<td>' + schedule.schedule_time + ' Bulan ' + '</td>' +
+                                            '<td>' + new Date(schedule.schedule_next).toLocaleString('en-ID', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: '2-digit'
                                                 })
                                             + '</td>' +
-                                            '<td><button class="btn btn-primary">View</button></td>' +
                                             '</tr>';
-
+                            });
                             detailTable += '</tbody></table>';
 
                             row.child(detailTable).show();

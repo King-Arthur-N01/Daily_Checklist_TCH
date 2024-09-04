@@ -194,7 +194,6 @@
                             }
                         });
                         combinedValue = combinedValue.join(',');
-                        console.log(combinedValue);
                     }
 
                     let tableRows = '';
@@ -307,7 +306,6 @@
                                 setTimeout(function() {
                                     $('#successModal').modal('hide');
                                     $('#addModal').modal('hide');
-                                    $('#uploadModal').modal('hide');
                                 }, 2000);
                             },
                             error: function(xhr, status, error) {
@@ -319,7 +317,6 @@
                                 setTimeout(function() {
                                     $('#failedModal').modal('hide');
                                     $('#addModal').modal('hide');
-                                    $('#uploadModal').modal('hide');
                                 }, 20000);
                             }
                         }).always(function() {
@@ -334,6 +331,176 @@
             });
         });
 
+        $('#editModal').on('shown.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const machineId = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("getmachinedataid", ':id') }}'.replace(':id', machineId),
+                success: function(data) {
+                    let options = '';
+                    if (typeof data.getschedule === 'object') {
+                        const scheduleTime = data.getschedule.schedule_time;
+                        const isSelected1 = scheduleTime === 1 ? 'selected' : '';
+                        const isSelected3 = scheduleTime === 3 ? 'selected' : '';
+                        const isSelected6 = scheduleTime === 6 ? 'selected' : '';
+                        const isSelected12 = scheduleTime === 12 ? 'selected' : '';
+
+                        options += `<option value="1" ${isSelected1}>1/Bulan</option>`;
+                        options += `<option value="3" ${isSelected3}>3/Bulan</option>`;
+                        options += `<option value="6" ${isSelected6}>6/Bulan</option>`;
+                        options += `<option value="12" ${isSelected12}>12/Bulan</option>`;
+                    } else {
+                        console.error('fetchschedule is not an array:', data.getschedule);
+                    }
+
+                    let combinedValue = [];
+                    function combineMachineValues() {
+                        const checkboxes = document.getElementsByName("machineinput");
+                        combinedValue = [];
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                combinedValue.push(checkbox.value);
+                            }
+                        });
+                        combinedValue = combinedValue.join(',');
+                    }
+
+                    let tableRows = '';
+                    if (Array.isArray(data.machinearray)) {
+                        data.refreshmachine.forEach((value, key) => {
+                            const machineArray = data.machinearray.map(id => parseInt(id)); // convert json string array into legular integer array
+                            const isChecked = machineArray.includes(value.id) ? 'checked' : ''; // compare each legular integer array value into id each machine and check it if have same value
+                            tableRows += `
+                                <tr>
+                                    <td>${key + 1}</td>
+                                    <td>${value.invent_number}</td>
+                                    <td>${value.machine_number}</td>
+                                    <td>${value.machine_name}</td>
+                                    <td>${value.machine_type}</td>
+                                    <td>${value.machine_brand}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="machineinput" value="${value.id}" ${isChecked}>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    const header_modal = `
+                        <h5 class="modal-title">Tambah Jadwal Preventive Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    const data_modal = `
+                        <form id="addForm" method="post">
+                            <div class="row" align-items="center">
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                        <div>
+                                            <input class="form-control" name="schedule_name" value="${data.getschedule.schedule_name}" type="text" placeholder="Nama Jadwal">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Waktu Schedule</label>
+                                        <select class="form-control" name="schedule_time">
+                                            <option selected="selected">Select :</option>
+                                            ${options}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" align-items="center">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="machineTables" width="100%">
+                                        <thead>
+                                            <th>NO.</th>
+                                            <th>NO. INVENT</th>
+                                            <th>NO MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>ADD</th>
+                                        </thead>
+                                        <tbody>
+                                            ${tableRows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    `;
+
+                    const button_modal = `
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                    `;
+
+                    $('#modal_title_edit').html(header_modal);
+                    $('#modal_data_edit').html(data_modal);
+                    $('#modal_button_edit').html(button_modal);
+                    $('#machineTables').DataTable();
+
+                    // Add event listeners for checkboxes
+                    const checkboxes = document.getElementsByName("machineinput");
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', combineMachineValues);
+                    });
+
+                    $('#saveButton').on('click', function(event) {
+                        event.preventDefault();
+                        let formData = {
+                            scheduleName: $('input[name="schedule_name"]').val(),
+                            scheduleTime: $('select[name="schedule_time"]').val(),
+                            machineInput: combinedValue,
+                        };
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("updateschedule", ':id') }}'.replace(':id', machineId),
+                            data: {
+                                '_token': '{{ csrf_token() }}',
+                                'schedule_name': formData.scheduleName,
+                                'schedule_time': formData.scheduleTime,
+                                'id_machine': formData.machineInput,
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    const successMessage = response.success;
+                                    $('#successText').text(successMessage);
+                                    $('#successModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#successModal').modal('hide');
+                                    $('#editModal').modal('hide');
+                                }, 2000);
+                            },
+                            error: function(xhr, status, error) {
+                                if (xhr.responseText) {
+                                    const warningMessage = xhr.responseText;
+                                    $('#failedText').text(warningMessage);
+                                    $('#failedModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#failedModal').modal('hide');
+                                    $('#editModal').modal('hide');
+                                }, 20000);
+                            }
+                        }).always(function() {
+                            table.ajax.reload(null, false);
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('error:', error);
+                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                }
+            });
+        });
     });
 </script>
 @endpush

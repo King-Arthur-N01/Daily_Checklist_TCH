@@ -82,12 +82,11 @@ class MachinerecordController extends Controller
 
                 }
             }
-            // dd($matchingSchedules)->all();
+            $getschedules = [];
             foreach ($matchingSchedules as $findSchedule) {
-                $getschedule = Schedule::find($findSchedule);
-                
+                $getschedules[] = Schedule::find($findSchedule);
             }
-            return response()->json(['getschedule' => $getschedule]);
+            return response()->json(['getschedules' => $getschedules]);
 
         } catch (\Exception $e) {
             Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);

@@ -266,7 +266,7 @@
                             setTimeout(function() {
                                 $('#failedModal').modal('hide');
                                 $('#registerModal').modal('hide');
-                            }, 20000);
+                            }, 2000);
                         }
                     }).always(function() {
                         table.ajax.reload(null, false);
