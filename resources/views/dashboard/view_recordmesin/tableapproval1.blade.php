@@ -134,7 +134,7 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
-    <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script> --}}
     <script>
         $(document).ready(function() {
             // Set automatic soft refresh table
@@ -162,7 +162,7 @@
                                     model_type: refreshrecord.machine_type,
                                     no_mesin: refreshrecord.machine_number2,
                                     waktu_preventive: refreshrecord.created_at,
-                                    status: refreshrecord.correct_by ? refreshrecord.correct_by : 'Belum Dikoreksi',
+                                    status: refreshrecord.correct_by ? (refreshrecord.correct_by > 0 ? 'Sudah Dikoreksi' : 'Belum Dikoreksi') : 'Belum Dikoreksi',
                                     action: `
                                         <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#correctModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
                                     `
