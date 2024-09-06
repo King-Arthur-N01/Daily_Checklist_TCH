@@ -13,12 +13,12 @@
                     </div>
                     <div class="table-filter">
                         <div class="col-4">
-                            <p class="mg-b-10">Nama Mesin</p>
-                            <input class="form-control" id="filterByName">
-                        </div>
-                        <div class="col-4">
                             <p class="mg-b-10">Nomor Mesin </p>
                             <input class="form-control" id="filterByNumber">
+                        </div>
+                        <div class="col-4">
+                            <p class="mg-b-10">Nama Mesin</p>
+                            <input class="form-control" id="filterByName">
                         </div>
                         <div class="col-4">
                             <p class="mg-b-10">Standarisasi Mesin</p>
@@ -50,7 +50,6 @@
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
-                                <th>JADWAL PREVENTIVE</th>
                                 <th>STANDARISASI</th>
                                 <th>ACTION</th>
                             </thead>
@@ -198,7 +197,7 @@
                 table.on('draw.dt', function() {
                     overlay.removeClass('is-active');
                 });
-            }, 30000); // 30000 milidetik = 30 second
+            }, 60000); // 60000 milidetik = 60 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#importTables').DataTable({
@@ -209,15 +208,11 @@
                             let refreshproperty = data.refreshproperty.find(function(property) {
                                 return property.id === refreshmachine.id_property;
                             });
-                            let refreshschedule = data.refreshschedule.find(function(schedule) {
-                                return schedule.id_machine2 === refreshmachine.id;
-                            });
                             return {
                                 machine_number: refreshmachine.machine_number,
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
-                                schedule_time: refreshschedule ? 'Setiap ' + refreshschedule.schedule_time + ' Bulan Sekali' : 'Belum ada jadwal preventive',
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi',
                                 actions: `
                                     <div class="dynamic-button-group">
@@ -238,7 +233,6 @@
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
-                    { data: 'schedule_time' },
                     { data: 'name_property' },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
@@ -297,7 +291,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
                                     <div>
-                                        <input style="text-transform: uppercase;" class="form-control" id="inventNumber" type="text" name="invent_number" placeholder="_-__-__-____">
+                                        <input style="text-transform: uppercase;" class="form-control" type="text" name="invent_number" placeholder="_-__-__-____">
                                     </div>
                                 </div>
                             </div>
@@ -379,11 +373,6 @@
                 $('#modal_title_add').html(header_modal);
                 $('#modal_data_add').html(data_modal);
                 $('#modal_button_add').html(button_modal);
-                $('#inventNumber').mask('a-aa-99-9999');
-                // definisi deklarasi mask =
-                //     '9': "[0-9]",
-                //     'a': "[A-Za-z]",
-                //     '*': "[A-Za-z0-9]"
 
                 // Add event listener to save button
                 $('#saveButton').on('click', function() {
@@ -427,7 +416,7 @@
                         },
                         error: function(xhr, status, error) {
                             if (xhr.responseText) {
-                                const warningMessage = xhr.responseText;
+                                const warningMessage = JSON.parse(xhr.responseText).error;
                                 $('#failedText').text(warningMessage);
                                 $('#failedModal').modal('show');
                             }
@@ -435,7 +424,7 @@
                                 $('#failedModal').modal('hide');
                                 $('#addModal').modal('hide');
                                 $('#uploadModal').modal('hide');
-                            }, 20000);
+                            }, 2000);
                         }
                     }).always(function() {
                         table.ajax.reload(null, false);
@@ -611,7 +600,7 @@
                                 },
                                 error: function(xhr, status, error) {
                                     if (xhr.responseText) {
-                                        const warningMessage = xhr.responseText;
+                                        const warningMessage = JSON.parse(xhr.responseText).error;
                                         $('#failedText').text(warningMessage);
                                         $('#failedModal').modal('show');
                                     }
@@ -765,25 +754,25 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const filterByName = document.getElementById('filterByName');
             const filterByNumber = document.getElementById('filterByNumber');
+            const filterByName = document.getElementById('filterByName');
             const filterByProperty = document.getElementById('filterByProperty');
             const table = document.getElementById('importTables');
             const rows = table.getElementsByTagName('tr');
 
             // Function to filter table
             function filterTable() {
-                const nameValue = filterByName.value.toLowerCase();
                 const numberValue = filterByNumber.value.toLowerCase();
+                const nameValue = filterByName.value.toLowerCase();
                 const propertyValue = filterByProperty.value.toLowerCase();
 
                 for (let i = 1; i < rows.length; i++) {
-                    const nameCell = rows[i].getElementsByTagName('td')[1];
                     const numberCell = rows[i].getElementsByTagName('td')[0];
+                    const nameCell = rows[i].getElementsByTagName('td')[1];
                     const propertyCell = rows[i].getElementsByTagName('td')[5];
 
-                    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
+                    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
                     const propertyText = propertyCell ? propertyCell.textContent.toLowerCase() : '';
 
                     // Check if row matches the filter criteria

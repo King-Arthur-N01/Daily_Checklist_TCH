@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class RegisterController extends Controller
 {
@@ -84,12 +85,13 @@ class RegisterController extends Controller
     //     return back()->with('success','User berhasil dihapus');
     // }
     public function deleteuser($id) {
-        $deleteuser = User::where('id', $id)->delete();
-
-        if ($deleteuser > 0) {
-            return response()->json(['success' => 'Data user berhasil dihapus.']);
-        } else {
-            return response()->json(['error' => 'Data user gagal dihapus!'], 422);
+        try{
+            $DeleteUser = User::where('id', $id);
+            $DeleteUser->delete();
+            return response()->json(['success' => 'User account berhasil di HAPUS!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error delete data'], 500);
         }
     }
 }

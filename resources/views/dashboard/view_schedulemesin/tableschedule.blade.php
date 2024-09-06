@@ -135,7 +135,7 @@
             table.on('draw.dt', function() {
                 overlay.removeClass('is-active');
             });
-        }, 30000); // 30000 milidetik = 30 second
+        }, 60000); // 60000 milidetik = 60 second
 
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
@@ -146,8 +146,12 @@
                         return {
                             no: index + 1,
                             schedule_name: refreshschedule.schedule_name,
-                            schedule_time: 'Setiap ' + refreshschedule.schedule_time + ' Bulan Sekali',
-                            schedule_record: refreshschedule.schedule_record,
+                            schedule_time: refreshschedule.schedule_time + ' Bulan Kedepan',
+                            schedule_record: new Date(refreshschedule.schedule_next).toLocaleString('en-ID', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: '2-digit'
+                            }),
                             id_machine: refreshschedule.id_machine.split(',').length,
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
@@ -390,12 +394,12 @@
                     }
 
                     const header_modal = `
-                        <h5 class="modal-title">Tambah Jadwal Preventive Mesin</h5>
+                        <h5 class="modal-title">Edit Jadwal Preventive Mesin</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
                     const data_modal = `
-                        <form id="addForm" method="post">
+                        <form id="editForm" method="put">
                             <div class="row" align-items="center">
                                 <div class="col-xl-6">
                                     <div class="form-group">
@@ -417,7 +421,7 @@
                             </div>
                             <div class="row" align-items="center">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="machineTables" width="100%">
+                                    <table class="table table-bordered" id="machineTablesEdit" width="100%">
                                         <thead>
                                             <th>NO.</th>
                                             <th>NO. INVENT</th>
@@ -444,7 +448,7 @@
                     $('#modal_title_edit').html(header_modal);
                     $('#modal_data_edit').html(data_modal);
                     $('#modal_button_edit').html(button_modal);
-                    $('#machineTables').DataTable();
+                    $('#machineTablesEdit').DataTable();
 
                     // Add event listeners for checkboxes
                     const checkboxes = document.getElementsByName("machineinput");
@@ -460,7 +464,7 @@
                             machineInput: combinedValue,
                         };
                         $.ajax({
-                            type: 'POST',
+                            type: 'PUT',
                             url: '{{ route("updateschedule", ':id') }}'.replace(':id', machineId),
                             data: {
                                 '_token': '{{ csrf_token() }}',
@@ -481,14 +485,14 @@
                             },
                             error: function(xhr, status, error) {
                                 if (xhr.responseText) {
-                                    const warningMessage = xhr.responseText;
+                                    const warningMessage = JSON.parse(xhr.responseText).error;
                                     $('#failedText').text(warningMessage);
                                     $('#failedModal').modal('show');
                                 }
                                 setTimeout(function() {
                                     $('#failedModal').modal('hide');
                                     $('#editModal').modal('hide');
-                                }, 20000);
+                                }, 2000);
                             }
                         }).always(function() {
                             table.ajax.reload(null, false);
@@ -500,6 +504,40 @@
                     $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
                 }
             });
+        });
+
+        // fungsi delete button untuk hapus mesin
+        $('#scheduleTables').on('click', '.dropdown-item-custom-delete', function(e) {
+            e.preventDefault();
+            const button = $(this);
+            const machineId = button.data('id');
+            if (confirm("Apakah yakin menghapus mesin ini?")) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '{{ route("removeschedule", ':id') }}'.replace(':id', machineId),
+                    data: {
+                        '_token': '{{ csrf_token() }}'
+                    }
+                }).done(function(response) {
+                    if (response.success.trim()) {
+                        const successMessage = response.success.trim();
+                        $('#successText').text(successMessage);
+                        $('#successModal').modal('show');
+                    }
+                    setTimeout(function() {
+                            $('#successModal').modal('hide'); // Hide success modal
+                    }, 2000);
+                }).fail(function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    const warningMessage = JSON.parse(xhr.responseText).error;
+                    $('#failedText').text(warningMessage);
+                    $('#failedModal').modal('show');
+                }).always(function() {
+                    table.ajax.reload(null, false);
+                });
+            } else {
+                // User cancelled the deletion, do nothing
+            }
         });
     });
 </script>

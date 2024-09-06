@@ -58,18 +58,20 @@ class MachineController extends Controller
             $machines->update($request->all());
             return response()->json(['success' => 'Machine updated successfully.']);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Machine failed to update!!!!']);
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Machine failed to update!!!!'], 500);
         }
     }
 
     // fungsi hapus data mesin
     public function deletemachine($id) {
-        $deletemachine = Machine::where('id', $id)->delete();
-
-        if ($deletemachine > 0) {
-            return response()->json(['success' => 'Data mesin berhasil dihapus!']);
-        } else {
-            return response()->json(['error' => 'Data mesin gagal dihapus.'], 422);
+        try{
+            $DeleteMachine = Machine::where('id', $id);
+            $DeleteMachine->delete();
+            return response()->json(['success' => 'Data mesin berhasil di HAPUS!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error delete data'], 500);
         }
     }
 }

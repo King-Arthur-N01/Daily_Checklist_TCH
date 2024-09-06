@@ -52,9 +52,10 @@ Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyControl
 
 // machine schedule route
 Route::get ('/machineschedule','MachineData\ScheduleController@indexmachineschedule')->name('indexschedule');
-Route::get ('/machineschedule/formschedule','MachineData\ScheduleController@formcreatechedule')->name('formschedule');
+// Route::get ('/machineschedule/formschedule','MachineData\ScheduleController@formcreatechedule')->name('formschedule');
 Route::post('/machineschedule/create','MachineData\ScheduleController@createschedule')->name('addschedule');
-Route::post('/machineschedule/upadate/{id}','MachineData\ScheduleController@updateschedule')->name('updateschedule');
+Route::put ('/machineschedule/update/{id}','MachineData\ScheduleController@updateschedule')->name('updateschedule');
+Route::delete('/machineschedule/delete/{id}','MachineData\ScheduleController@deleteschedule')->name('removeschedule');
 Route::get ('/machineschedule/view','MachineData\ScheduleController@fetchmachinedata')->name('getmachinedata');
 Route::get ('/machineschedule/view/{id}','MachineData\ScheduleController@fetchmachinedataid')->name('getmachinedataid');
 

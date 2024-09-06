@@ -170,7 +170,7 @@
                 table.on('draw.dt', function() {
                     overlay.removeClass('is-active');
                 });
-            }, 30000); // 30000 milidetik = 30 second
+            }, 60000); // 60000 milidetik = 60 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#propertyTables').DataTable({

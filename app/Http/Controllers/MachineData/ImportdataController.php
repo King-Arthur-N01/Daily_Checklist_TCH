@@ -35,11 +35,9 @@ class ImportdataController extends Controller
         try {
             $refreshmachine = Machine::all();
             $refreshproperty = Machineproperty::all();
-            $refreshschedule= Schedule::all();
             return response()->json([
                 'refreshmachine' => $refreshmachine,
                 'refreshproperty' => $refreshproperty,
-                'refreshschedule' => $refreshschedule
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);

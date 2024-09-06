@@ -22,14 +22,6 @@ class ScheduleController extends Controller
         return view('dashboard.view_schedulemesin.tableschedule');
     }
 
-    public function formcreatechedule()
-    {
-        $machines = Machine::all();
-        return view('dashboard.view_schedulemesin.formschedule', [
-            'machines' => $machines
-        ]);
-    }
-
     public function refreshtableschedule()
     {
         try {
@@ -116,25 +108,25 @@ class ScheduleController extends Controller
             $StoreSchedule->schedule_next = $schedulenext;
             $StoreSchedule->save();
 
-            $combinemachine = $request->input('id_machine');
-            $splitmachine = explode(',', $combinemachine);
-            foreach ($splitmachine as $eachmachineid){
-                $UpdateMachine = Machine::where('id', $eachmachineid)->first();
-                if($scheduletime == 1){
-                    $UpdateMachine->schdule_1_month = $schedulenext;
-                }elseif($scheduletime == 3){
-                    $UpdateMachine->schdule_3_month = $schedulenext;
-                }elseif($scheduletime == 6){
-                    $UpdateMachine->schdule_6_month = $schedulenext;
-                }elseif($scheduletime == 12){
-                    $UpdateMachine->schdule_12_month = $schedulenext;
-                }
-                $UpdateMachine->save();
-            }
-            return response()->json(['success' => 'Waktu preventive mesin berhasil di UPDATE!']);
+            // $combinemachine = $request->input('id_machine');
+            // $splitmachine = explode(',', $combinemachine);
+            // foreach ($splitmachine as $eachmachineid){
+            //     $UpdateMachine = Machine::where('id', $eachmachineid)->first();
+            //     if($scheduletime == 1){
+            //         $UpdateMachine->schdule_1_month = $schedulenext;
+            //     }elseif($scheduletime == 3){
+            //         $UpdateMachine->schdule_3_month = $schedulenext;
+            //     }elseif($scheduletime == 6){
+            //         $UpdateMachine->schdule_6_month = $schedulenext;
+            //     }elseif($scheduletime == 12){
+            //         $UpdateMachine->schdule_12_month = $schedulenext;
+            //     }
+            //     $UpdateMachine->save();
+            // }
+            return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return response()->json(['error' => 'Error fetching data'], 500);
+            return response()->json(['error' => 'Error adding data'], 500);
         }
     }
 
@@ -147,21 +139,21 @@ class ScheduleController extends Controller
             $id_machine_array = explode(',', $request->input('id_machine'));
             $UpdateSchedule = Schedule::find($id);
 
-            $machinejson = $UpdateSchedule->id_machine;
-            $machinearray = json_decode($machinejson, true);
-            foreach ($machinearray as $eachmachineid){
-                $UpdateMachine = Machine::where('id', $eachmachineid)->first();
-                if($scheduletime == 1){
-                    $UpdateMachine->schdule_1_month = null;
-                }elseif($scheduletime == 3){
-                    $UpdateMachine->schdule_3_month = null;
-                }elseif($scheduletime == 6){
-                    $UpdateMachine->schdule_6_month = null;
-                }elseif($scheduletime == 12){
-                    $UpdateMachine->schdule_12_month = null;
-                }
-                $UpdateMachine->save();
-            }
+            // $machinejson = $UpdateSchedule->id_machine;
+            // $machinearray = json_decode($machinejson, true);
+            // foreach ($machinearray as $eachmachineid){
+            //     $UpdateMachine = Machine::where('id', $eachmachineid)->first();
+            //     if($scheduletime == 1){
+            //         $UpdateMachine->schdule_1_month = null;
+            //     }elseif($scheduletime == 3){
+            //         $UpdateMachine->schdule_3_month = null;
+            //     }elseif($scheduletime == 6){
+            //         $UpdateMachine->schdule_6_month = null;
+            //     }elseif($scheduletime == 12){
+            //         $UpdateMachine->schdule_12_month = null;
+            //     }
+            //     $UpdateMachine->save();
+            // }
 
             $UpdateSchedule->schedule_name = $request->input('schedule_name');
             $UpdateSchedule->schedule_time = $request->input('schedule_time');
@@ -169,25 +161,25 @@ class ScheduleController extends Controller
             $UpdateSchedule->schedule_next = $schedulenext;
             $UpdateSchedule->save();
 
-            $combinemachine = $request->input('id_machine');
-            $splitmachine = explode(',', $combinemachine);
-            foreach ($splitmachine as $eachmachineid){
-                $UpdateMachine = Machine::where('id', $eachmachineid)->first();
-                if($scheduletime == 1){
-                    $UpdateMachine->schdule_1_month = $schedulenext;
-                }elseif($scheduletime == 3){
-                    $UpdateMachine->schdule_3_month = $schedulenext;
-                }elseif($scheduletime == 6){
-                    $UpdateMachine->schdule_6_month = $schedulenext;
-                }elseif($scheduletime == 12){
-                    $UpdateMachine->schdule_12_month = $schedulenext;
-                }
-                $UpdateMachine->save();
-            }
-            return response()->json(['success' => 'Waktu preventive mesin berhasil di UPDATE!']);
+            // $combinemachine = $request->input('id_machine');
+            // $splitmachine = explode(',', $combinemachine);
+            // foreach ($splitmachine as $eachmachineid){
+            //     $UpdateMachine = Machine::where('id', $eachmachineid)->first();
+            //     if($scheduletime == 1){
+            //         $UpdateMachine->schdule_1_month = $schedulenext;
+            //     }elseif($scheduletime == 3){
+            //         $UpdateMachine->schdule_3_month = $schedulenext;
+            //     }elseif($scheduletime == 6){
+            //         $UpdateMachine->schdule_6_month = $schedulenext;
+            //     }elseif($scheduletime == 12){
+            //         $UpdateMachine->schdule_12_month = $schedulenext;
+            //     }
+            //     $UpdateMachine->save();
+            // }
+            return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return response()->json(['error' => 'Error fetching data'], 500);
+            return response()->json(['error' => 'Error updating data'], 500);
         }
     }
 
@@ -196,8 +188,15 @@ class ScheduleController extends Controller
         //
     }
 
-    public function destroy(Schedule $schedule)
+    public function deleteschedule($id)
     {
-        //
+        try{
+            $DeleteSchedule = Schedule::where('id', $id);
+            $DeleteSchedule->delete();
+            return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error delete data'], 500);
+        }
     }
 }

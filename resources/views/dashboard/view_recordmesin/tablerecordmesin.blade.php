@@ -16,33 +16,24 @@
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div>
-                            <form  method="post">
-                                @csrf
-                                <div class="table-filter">
-                                    <div class="col-4">
-                                        <p class="mg-b-10">Nama Mesin</p>
-                                        <select class="form-control select2" name="" id="filterByName">
-                                            <option selected="selected" value="">Select :</option>
-                                            <option></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-4">
-                                        <p class="mg-b-10">Input Nomor Mesin </p>
-                                        <select class="form-control select2" name="" id="filterByNumber">
-                                            <option selected="selected" value="">Select :</option>
-                                            <option></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-4">
-                                        <p class="mg-b-10">Status Mesin</p>
-                                        <select class="form-control" name="sample" id="filterByStatus">
-                                            <option selected="selected">Select :</option>
-                                            <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
-                                            <option>Belum Dipreventive</option>
-                                        </select>
-                                    </div>
+                            <div class="table-filter">
+                                <div class="col-4">
+                                    <p class="mg-b-10">Input Nomor Mesin </p>
+                                    <input class="form-control" id="filterByNumber">
                                 </div>
-                            </form>
+                                <div class="col-4">
+                                    <p class="mg-b-10">Nama Mesin</p>
+                                    <input class="form-control" id="filterByName">
+                                </div>
+                                <div class="col-4">
+                                    <p class="mg-b-10">Status Mesin</p>
+                                    <select class="form-control" name="sample" id="filterByStatus">
+                                        <option selected="selected">Select :</option>
+                                        <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
+                                        <option>Belum Dipreventive</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="successMessages">
@@ -230,6 +221,46 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const filterByNumber = document.getElementById('filterByNumber');
+            const filterByName = document.getElementById('filterByName');
+            const filterByStatus = document.getElementById('filterByStatus');
+            const table = document.getElementById('recordTables');
+            const rows = table.getElementsByTagName('tr');
+
+            // Function to filter table
+            function filterTable() {
+                const nameValue = filterByName.value.toLowerCase();
+                const numberValue = filterByNumber.value.toLowerCase();
+                const statusValue = filterByStatus.value.toLowerCase();
+
+                for (let i = 1; i < rows.length; i++) {
+                    const numberCell = rows[i].getElementsByTagName('td')[1];
+                    const nameCell = rows[i].getElementsByTagName('td')[2];
+                    const statusCell = rows[i].getElementsByTagName('td')[5];
+
+                    const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
+                    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                    const propertyText = statusCell ? statusCell.textContent.toLowerCase() : '';
+
+                    // Check if row matches the filter criteria
+                    if (nameText.includes(nameValue) &&
+                        numberText.includes(numberValue) &&
+                        (statusValue === "select :" || propertyText.includes(statusValue))) {
+                        rows[i].style.display = '';  // Show the row
+                    } else {
+                        rows[i].style.display = 'none';  // Hide the row
+                    }
+                }
+            }
+
+            // Attach event listeners
+            filterByNumber.addEventListener('input', filterTable);
+            filterByName.addEventListener('input', filterTable);
+            filterByStatus.addEventListener('change', filterTable);
         });
     </script>
 @endpush

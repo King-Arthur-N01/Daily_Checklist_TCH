@@ -22,10 +22,6 @@ class CreateMachinesTable extends Migration
             $table->string('mfg_number');
             $table->string('install_date');
             $table->unsignedBigInteger('id_property')->nullable();
-            $table->timestamp('schdule_1_month')->nullable();
-            $table->timestamp('schdule_3_month')->nullable();
-            $table->timestamp('schdule_6_month')->nullable();
-            $table->timestamp('schdule_12_month')->nullable();
             $table->timestamps();
         });
     }
