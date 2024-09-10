@@ -11,6 +11,12 @@ class Schedule extends Model
         'schedule_time',
         'schedule_record',
         'schedule_next',
-        'id_machine'
+        'id_machine',
+        'schedule_status'
     ];
+
+    public function getchildernrecord()
+    {
+        return $this->belongsTo(Machinerecord::class);
+    }
 }

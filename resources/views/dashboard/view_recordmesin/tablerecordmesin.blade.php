@@ -50,12 +50,11 @@
                         <table class="table table-bordered" id="recordTables" width="100%">
                             <thead>
                                 <th></th>
-                                <th>NO MESIN</th>
-                                <th>NAMA MESIN</th>
-                                <th>MODEL/TYPE</th>
-                                <th>BRAND</th>
+                                <th>NAMA SCHEDULE</th>
+                                <th>WAKTU SCHEDULE</th>
+                                <th>TENGGAT WAKTU</th>
+                                <th>JUMLAH MESIN</th>
                                 <th>STATUS</th>
-                                <th>ACTION</th>
                             </thead>
                         </table>
                     </div>
@@ -67,6 +66,7 @@
         <!-- ============================================================== -->
     </div>
 
+    @if (session('success'))
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -74,7 +74,7 @@
                 <div class="modal-body">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle me-1"></i>
-                        <span id="successText" class="modal-alert"></span>
+                        <span id="successText" class="modal-alert">Checklist added successfully.</span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -83,6 +83,8 @@
     </div>
     <!-- End Alert Success Modal -->
 
+    @elseif(session('failed'))
+
     <!-- Alert Warning Modal -->
     <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -90,7 +92,7 @@
                 <div class="modal-body">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle me-1"></i>
-                        <span id="warningText" class="modal-alert"></span>
+                        <span id="warningText" class="modal-alert">You can submit the form again after 24 hours.</span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -98,6 +100,7 @@
         </div>
     </div>
     <!-- End Alert Warning Modal -->
+    @endif
 @endsection
 
 @push('style')
@@ -127,15 +130,18 @@
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
-                        return data.map(function(refreshmachine) {
+                        return data.refreshschedule.map(function(refreshschedule) {
                             return {
-                                id: refreshmachine.id,
-                                machine_number: refreshmachine.machine_number,
-                                machine_name: refreshmachine.machine_name,
-                                machine_type: refreshmachine.machine_type,
-                                machine_brand: refreshmachine.machine_brand,
-                                status: refreshmachine.total_days && refreshmachine.total_hours ? 'Terakhir preventive ' + refreshmachine.total_days + ' hari ' + refreshmachine.total_hours + ' jam yang lalu' : 'Belum pernah dilakukan preventive',
-                                actions: refreshmachine.id
+                                id: refreshschedule.id,
+                                schedule_name: refreshschedule.schedule_name,
+                                schedule_time: refreshschedule.schedule_time + ' Bulan Kedepan',
+                                schedule_record: new Date(refreshschedule.schedule_next).toLocaleString('en-ID', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: '2-digit'
+                                }),
+                                id_machine: refreshschedule.id_machine.split(',').length,
+                                schedule_status: refreshschedule.schedule_status,
                             };
                         });
                     }
@@ -149,24 +155,17 @@
                         "className": 'table-accordion',
                         "orderable": false,
                     },
-                    { data: 'machine_number' },
-                    { data: 'machine_name' },
-                    { data: 'machine_type' },
-                    { data: 'machine_brand' },
-                    { data: 'status' },
-                    {data: 'actions',
-                    render: function(data, type, row) {
-                        let url = '{{ route("formpreventive", ":id") }}';
-                        url = url.replace(':id', data);
-                        return `
-                        <div class="dynamic-button-group">
-                            <a class="btn btn-primary btn-sm" style="color:white" href="${url}"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></a>
-                        </div>
-                        `;
-                    },
-                    orderable: false,
-                    searchable: false
-                    }
+                    { data: 'schedule_name' },
+                    { data: 'schedule_time' },
+                    { data: 'schedule_record' },
+                    { data: 'id_machine' },
+                    { data: 'schedule_status', render: function(data, type, row) {
+                        if (data === 0) {
+                            return '<span class="badge badge-danger">UNFINISHED</span>';
+                        } else if (data === 1) {
+                            return '<span class="badge badge-success">COMPLETED</span>';
+                        }
+                    }}
                 ]
             });
 
@@ -187,18 +186,22 @@
                         url: '{{route("refreshdetailrecord", ':id')}}'.replace(':id', rowId),
                         success: function(data) {
                             let detailTable = '<table class="table-child"><thead>' +
-                                                '<tr><th>NAMA SCHEDULE</th><th>WAKTU PREVENTIVE</th><th>WAKTU JATUH TEMPO</th></tr>' +
+                                                '<tr><th>INVENT NUMBER</th><th>MACHINE NUMBER</th><th>MACHINE NAME</th><th>MACHINE BRAND</th><th>MACHINE TYPE</th><th>ACTION</th></tr>' +
                                                 '</thead><tbody>';
-                            data.getschedules.forEach(schedule => {
+                            data.getmachineid.forEach(machineArray => {
+                                let machine = machineArray[0];
                                 detailTable += '<tr>' +
-                                            '<td>' + schedule.schedule_name + '</td>' +
-                                            '<td>' + schedule.schedule_time + ' Bulan ' + '</td>' +
-                                            '<td>' + new Date(schedule.schedule_next).toLocaleString('en-ID', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: '2-digit'
-                                                })
-                                            + '</td>' +
+                                            '<td>' + machine.invent_number + '</td>' +
+                                            '<td>' + machine.machine_number + '</td>' +
+                                            '<td>' + machine.machine_name + '</td>' +
+                                            '<td>' + machine.machine_brand + '</td>' +
+                                            '<td>' + machine.machine_type + '</td>' +
+                                            '<td><a class="btn btn-primary btn-sm btn-Id" style="color:white" href="' +
+                                            '{{ route("formpreventive", [":id1", ":id2"]) }}'
+                                            .replace(':id1', rowId)
+                                            .replace(':id2', machine.id) + '">' +
+                                            '<img style="height: 20px" src="{{ asset("assets/icons/edit_white_table.png") }}">' +
+                                            '</a></td>' +
                                             '</tr>';
                             });
                             detailTable += '</tbody></table>';

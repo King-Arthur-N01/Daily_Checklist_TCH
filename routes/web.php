@@ -65,7 +65,7 @@ Route::get ('/machineschedule/calendar/read','MachineData\ScheduleController@dat
 
 // input data machine record
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get ('/machinerecord/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
+Route::get ('/machinerecord/schedule/{id1}/machine/{id2}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
 Route::put ('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('createrecord');
 Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
 Route::get ('/machinerecord/table/refresh/{id}','RecordsData\MachinerecordController@refreshtabledetail')->name('refreshdetailrecord');

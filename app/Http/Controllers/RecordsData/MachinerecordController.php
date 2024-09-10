@@ -26,41 +26,11 @@ class MachinerecordController extends Controller
     }
     // fungsi menampilkan tabel dan merefresh tabel
     public function refreshtablerecord() {
-        $currenttime = Carbon::now();
-        $machine = Machine::all();
-        // $schedule = Schedule::all();
-        $responsedata = [];
         try {
-            foreach ($machine as $refreshmachine) {
-                if ($refreshmachine->id_property){
-                    $lastrecord = Machinerecord::where('id_machine2', $refreshmachine->id)->orderBy('created_at', 'desc')->first();
-                    if ($lastrecord) {
-                        $lasttime = Carbon::parse($lastrecord->created_at);
-                        $totaltime = $currenttime->diff($lasttime);
-                        $gettotalhours = $totaltime->format('%h:%I:%S');
-                        $gettotaldays = $totaltime->format('%d');
-
-                        $responsedata[] = [
-                            'id' => $refreshmachine->id,
-                            'machine_number' => $refreshmachine->machine_number,
-                            'machine_name' => $refreshmachine->machine_name,
-                            'machine_type' => $refreshmachine->machine_type,
-                            'machine_brand' => $refreshmachine->machine_brand,
-                            'total_hours' => $gettotalhours,
-                            'total_days' => $gettotaldays,
-                        ];
-                    } else {
-                        $responsedata[] = [
-                            'id' => $refreshmachine->id,
-                            'machine_number' => $refreshmachine->machine_number,
-                            'machine_name' => $refreshmachine->machine_name,
-                            'machine_type' => $refreshmachine->machine_type,
-                            'machine_brand' => $refreshmachine->machine_brand,
-                        ];
-                    }
-                }
-            }
-            return response()->json($responsedata);
+            $refreshschedule = Schedule::latest()->get();
+            return response()->json([
+                'refreshschedule' => $refreshschedule
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
@@ -69,25 +39,15 @@ class MachinerecordController extends Controller
     public function refreshtabledetail($id)
     {
         try {
-            $schedules = Schedule::latest()->get();
-            $matchingSchedules = [];
+            $schedule = Schedule::find($id);
+            $machinearray = json_decode($schedule->id_machine, true);
+            $getmachineid = [];
 
-            foreach ($schedules as $schedule) {
-                $idSchedule = $schedule->id;
-                $idMachineArray = json_decode($schedule->id_machine, true);
-
-                // Check if $idMachineArray is valid and contains the $id
-                if (is_array($idMachineArray) && in_array($id, $idMachineArray)) {
-                    $matchingSchedules[] = $idSchedule;
-
-                }
+            foreach ($machinearray as $eachmachineid) {
+                $machineid = Machine::where('id', $eachmachineid)->get();
+                $getmachineid[] = $machineid;
             }
-            $getschedules = [];
-            foreach ($matchingSchedules as $findSchedule) {
-                $getschedules[] = Schedule::find($findSchedule);
-            }
-            return response()->json(['getschedules' => $getschedules]);
-
+            return response()->json(['getmachineid' => $getmachineid]);
         } catch (\Exception $e) {
             Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'An unexpected error occurred'], 500);
@@ -95,18 +55,18 @@ class MachinerecordController extends Controller
     }
 
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
-    public function formmachinerecord($id)
+    public function formmachinerecord($id1,$id2)
     {
         $users = User::get();
         $timenow = Carbon::now();
 
         $joinmachine = DB::table('machines')
-        ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
+        ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
         ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
         ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
         ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
         ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
-        ->where('machines.id', '=', $id)
+        ->where('machines.id', '=', $id2)
         ->get();
         if ($joinmachine->isEmpty()) {
             // Return an error message or a default view
@@ -114,19 +74,24 @@ class MachinerecordController extends Controller
         }
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'joinmachine' => $joinmachine,
-            'machine_id' => $id,
+            'schedule' => $id1,
+            'machine_id' => $id2,
             'timenow' => $timenow,
             'users' => $users,
-            'get_number'
         ]);
     }
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function createmachinerecord(Request $request)
     {
-        $getmachineid = ($request->input('id_machine'));
+        $machineid = ($request->input('id_machine'));
+        $scheduleid = ($request->input('id_schedule'));
         // Check the table to see if data has been filled in before
-        $lastsubmissiontime = Machinerecord::where('id_machine2', $getmachineid)->value('created_at');
+        $lastsubmissiontime = Machinerecord::where('id_machine2', $machineid)->value('created_at');
         $currenttime = Carbon::now();
+
+        $StoreSchedule = Schedule::where('id',$scheduleid)->first();
+        $machinearray =  json_decode($StoreSchedule->id_machine);
+        $machinecount = count($machinearray);
 
         $getshifttime = Carbon::now()->format('H:i');
         if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
@@ -145,10 +110,11 @@ class MachinerecordController extends Controller
             }
             else{
                 $StoreRecords = new Machinerecord();
-                $StoreRecords->machine_number2 = $request->input('machine_number2');
+                $StoreRecords->machine_number2 = $request->input('machine_number');
                 $StoreRecords->shift = $shifttime;
                 $StoreRecords->note = $request->input('note');
-                $StoreRecords->id_machine2 = $request->input('id_machine');
+                $StoreRecords->id_machine2 = $machineid;
+                $StoreRecords->id_schedule= $scheduleid;
                 $StoreRecords->create_by = $request->input('combined_create_by');
                 $StoreRecords->save();
 
@@ -166,30 +132,52 @@ class MachinerecordController extends Controller
                 $StoreHistory->result = $result_json;
                 $StoreHistory->id_machinerecord = $getrecordid;
                 $StoreHistory->save();
+
+                $recordscount = DB::table('schedules')
+                    ->select('schedules.*', 'machinerecords.*')
+                    ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
+                    ->where('schedules.id', '=', $scheduleid)
+                    ->groupBy('machinerecords.id_schedule')
+                    ->count();
+
+                if ($machinecount == $recordscount) {
+                    $StoreSchedule->schedule_status = true;
+                    $StoreSchedule->save();
+                }
             }
         }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
-            $StoreRecords->machine_number2 = $request->input('machine_number2');
+            $StoreRecords->machine_number2 = $request->input('machine_number');
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
-            $StoreRecords->id_machine2 = $request->input('id_machine');
+            $StoreRecords->id_machine2 = $machineid;
+            $StoreRecords->id_schedule= $scheduleid;
             $StoreRecords->create_by = $request->input('combined_create_by');
             $StoreRecords->save();
-
-            // $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
-            // $StoreSchedule->save();
 
             // Get the ID of the newly created record
             $getrecordid = Machinerecord::latest('id')->first()->id;
 
-                $operator_action_json = json_encode(array_values($request->input('operator_action')));
-                $result_json = json_encode(array_values($request->input('result')));
+            $operator_action_json = json_encode(array_values($request->input('operator_action')));
+            $result_json = json_encode(array_values($request->input('result')));
 
-                $StoreHistory = new Historyrecords();
-                $StoreHistory->operator_action = $operator_action_json;
-                $StoreHistory->result = $result_json;
-                $StoreHistory->id_machinerecord = $getrecordid;
-                $StoreHistory->save();
+            $StoreHistory = new Historyrecords();
+            $StoreHistory->operator_action = $operator_action_json;
+            $StoreHistory->result = $result_json;
+            $StoreHistory->id_machinerecord = $getrecordid;
+            $StoreHistory->save();
+
+            $recordscount = DB::table('schedules')
+                ->select('schedules.*', 'machinerecords.*')
+                ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
+                ->where('schedules.id', '=', $scheduleid)
+                ->groupBy('machinerecords.id_schedule')
+                ->count();
+
+            if ($machinecount == $recordscount) {
+                $StoreSchedule->schedule_status = true;
+                $StoreSchedule->save();
+            }
         }
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }

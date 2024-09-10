@@ -50,7 +50,7 @@
                             <div class="header-input">
                                 <div class="col-6">
                                     <a>NO.MESIN :</a>
-                                    <input class="form-control" type="int" name="machine_number2" id="machine_number2" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
+                                    <input class="form-control" type="int" name="machine_number" id="machine_number" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
                                 </div>
                                 <div class="col-6">
                                     <a>WAKTU PREVENTIVE :</a>
@@ -114,6 +114,7 @@
                                 <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                 <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
                                 <input type="hidden" name="id_machine" value="{{ $machine_id }}">
+                                <input type="hidden" name="id_schedule" value="{{ $schedule }}">
                                 <input type="hidden" name="combined_create_by" id="combined_create_by">
                             </div>
                                 <div class="form-custom">

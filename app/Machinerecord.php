@@ -15,6 +15,7 @@ class Machinerecord extends Model
         'correct_by',
         'approve_by',
         'record_time',
+        'status_record'
     ];
     // public static function boot()
     // {

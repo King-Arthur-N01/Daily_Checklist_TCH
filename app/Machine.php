@@ -16,7 +16,11 @@ class Machine extends Model
         'machine_made',
         'mfg_number',
         'install_date',
-        'id_property'
+        'id_property',
+        'schdule_1_month',
+        'schdule_3_month',
+        'schdule_6_month',
+        'schdule_12_month',
     ];
     public function getchildernproperty()
     {

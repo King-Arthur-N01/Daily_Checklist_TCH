@@ -5681,8 +5681,8 @@ input[type=submit].btn-block {
 }
 
 .badge {
-    display: inline-block;
-    padding: .25em .4em;
+    /* display: inline-block; */
+    padding: .35em .10em;
     font-size: 75%;
     font-weight: 700;
     line-height: 1;

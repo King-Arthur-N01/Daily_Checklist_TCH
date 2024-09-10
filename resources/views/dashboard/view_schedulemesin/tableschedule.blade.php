@@ -147,7 +147,7 @@
                             no: index + 1,
                             schedule_name: refreshschedule.schedule_name,
                             schedule_time: refreshschedule.schedule_time + ' Bulan Kedepan',
-                            schedule_record: new Date(refreshschedule.schedule_next).toLocaleString('en-ID', {
+                            schedule_next: new Date(refreshschedule.schedule_next).toLocaleString('en-ID', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: '2-digit'
@@ -176,7 +176,7 @@
                 { data: 'no', orderable: false, searchable: false},
                 { data: 'schedule_name' },
                 { data: 'schedule_time' },
-                { data: 'schedule_record' },
+                { data: 'schedule_next' },
                 { data: 'id_machine' },
                 { data: 'created_at' },
                 { data: 'actions', orderable: false, searchable: false }

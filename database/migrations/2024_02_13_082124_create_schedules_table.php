@@ -20,7 +20,7 @@ class CreateSchedulesTable extends Migration
             $table->timestamp('schedule_record')->nullable();
             $table->timestamp('schedule_next');
             $table->json('id_machine');
-            $table->boolean('schedule_status')->default(true);
+            $table->boolean('schedule_status')->default(false);
             $table->timestamps();
         });
     }
