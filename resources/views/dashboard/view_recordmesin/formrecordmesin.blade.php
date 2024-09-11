@@ -114,52 +114,68 @@
                                 <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                 <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
                                 <input type="hidden" name="id_machine" value="{{ $machine_id }}">
-                                <input type="hidden" name="id_schedule" value="{{ $schedule }}">
-                                <input type="hidden" name="combined_create_by" id="combined_create_by">
+                                <input type="hidden" name="id_schedule" value="{{ $schedule_id }}">
+                                <input type="hidden" name="combined_create_by[]" id="combined_create_by">
+                                <input type="hidden" name="combined_abnormal[]" id="combined_abnormal_value">
                             </div>
-                                <div class="form-custom">
-                                    <table class="table table-bordered" id="userTables">
-                                        <thead>
-                                            <tr>
-                                                <th>PIC 1 :</th>
-                                                <th>PIC 2 :</th>
-                                                <th>PIC 3 :</th>
-                                                <th>PIC 4 :</th>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <select class="form-control select2-no-search" id="create_by_1" readonly>
-                                                        <option value="{{ Auth::user()->id }}">{{ Auth::user()->name }}</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control select2" id="create_by_2">
-                                                        <option value="0" selected="selected">Tidak ada</option>
-                                                        @foreach ($users as $getuser)
-                                                            <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control select2" id="create_by_3">
-                                                        <option value="0" selected="selected">Tidak ada</option>
-                                                        @foreach ($users as $getuser)
-                                                            <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control select2" id="create_by_4">
-                                                        <option value="0" selected="selected">Tidak ada</option>
-                                                        @foreach ($users as $getuser)
-                                                            <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        </thead>
-                                    </table>
+                            <div class="abnormal-option">
+                                <label>Opsi jika terdapat abnormal terhadap preventive</label>
+                                <div class="switch-container">
+                                    <label>Abnormal</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="abnormal_switch">
+                                        <span class="slider round"></span>
+                                    </label>
                                 </div>
+                                <select class="form-control select2" id="abnormality" multiple="multiple" disabled>
+                                    @foreach ($getcomponen as $listcomponen)
+                                        <option value="{{ $listcomponen->id }}">{{ $listcomponen->name_componencheck }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-custom">
+                                <table class="table table-bordered" id="userTables">
+                                    <thead>
+                                        <tr>
+                                            <th>PIC 1 :</th>
+                                            <th>PIC 2 :</th>
+                                            <th>PIC 3 :</th>
+                                            <th>PIC 4 :</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <select class="form-control select2-no-search" id="create_by_1" readonly>
+                                                    <option value="{{ Auth::user()->id }}">{{ Auth::user()->name }}</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control select2" id="create_by_2">
+                                                    <option value="0" selected="selected">Tidak ada</option>
+                                                    @foreach ($users as $getuser)
+                                                        <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control select2" id="create_by_3">
+                                                    <option value="0" selected="selected">Tidak ada</option>
+                                                    @foreach ($users as $getuser)
+                                                        <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-control select2" id="create_by_4">
+                                                    <option value="0" selected="selected">Tidak ada</option>
+                                                    @foreach ($users as $getuser)
+                                                        <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                             <div class="column-button">
                                 <button type="submit" class="form-buttons">Submit</button>
                             </div>
@@ -185,27 +201,45 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
     <script>
-        // Additional code for adding placeholder in search box of select2.js
-        (function($) {
-            var Defaults = $.fn.select2.amd.require('select2/defaults');
-            $.extend(Defaults.defaults, {
-                searchInputPlaceholder: ''
-            });
-            var SearchDropdown = $.fn.select2.amd.require('select2/dropdown/search');
-            var _renderSearchDropdown = SearchDropdown.prototype.render;
-            SearchDropdown.prototype.render = function(decorated) {
-                // invoke parent method
-                var $rendered = _renderSearchDropdown.apply(this, Array.prototype.slice.apply(arguments));
-                this.$search.attr('placeholder', this.options.get('searchInputPlaceholder'));
-                return $rendered;
-            };
-        })(window.jQuery);
+        const checkbox = document.getElementById('abnormal_switch');
+        const selectElement = document.getElementById('abnormality');
+
+        checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            selectElement.disabled = false;
+        } else {
+            selectElement.disabled = true;
+        }
+        });
     </script>
     <script>
         $(document).ready(function() {
             $('.select2').select2({
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
+            });
+
+            // Initialize Select2 for abnormality selection
+                $('#abnormality').select2();
+
+            // Event listener for abnormality select changes
+            $('#abnormality').on('change', function() {
+                // Get all selected values
+                var selectedValues = $(this).val();
+
+                // Set the selected values into the hidden input as an array
+                $('#combined_abnormal_value').val(selectedValues);
+            });
+
+            // Enable/Disable abnormality select based on the switch
+            $('#abnormal_switch').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#abnormality').prop('disabled', false);
+                } else {
+                    $('#abnormality').prop('disabled', true).val(null).trigger('change');
+                    // Clear hidden input when select is disabled
+                    $('#combined_abnormal_value').val('');
+                }
             });
             combineCreateByUsers();
             disableDoubleSelectUsers()

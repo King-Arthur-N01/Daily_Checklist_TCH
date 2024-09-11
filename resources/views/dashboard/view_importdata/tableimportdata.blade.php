@@ -88,7 +88,7 @@
 
     <!-- Add Modal -->
     <div class="modal fade" id="addModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xxl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_add">
                 </div>

@@ -51,6 +51,7 @@ class HistoryrecordsController extends Controller
 
         $usernames = [];
         $combineuser = $recordsdata->first()->create_by;
+        
         $splituser = explode(',', $combineuser);
         foreach ($splituser as $eachuserid){
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;

@@ -60,6 +60,13 @@ class MachinerecordController extends Controller
         $users = User::get();
         $timenow = Carbon::now();
 
+        $getcomponen = DB::table('machines')
+        ->select('machines.*', 'machineproperties.*', 'componenchecks.*')
+        ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+        ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
+        ->where('machines.id', '=', $id2)
+        ->get();
+
         $joinmachine = DB::table('machines')
         ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
         ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
@@ -68,13 +75,15 @@ class MachinerecordController extends Controller
         ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
         ->where('machines.id', '=', $id2)
         ->get();
+
         if ($joinmachine->isEmpty()) {
             // Return an error message or a default view
             return view('dashboard.view_blockpage.404', ['message' => 'No machine record found.']);
         }
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'joinmachine' => $joinmachine,
-            'schedule' => $id1,
+            'getcomponen' => $getcomponen,
+            'schedule_id' => $id1,
             'machine_id' => $id2,
             'timenow' => $timenow,
             'users' => $users,
@@ -85,6 +94,14 @@ class MachinerecordController extends Controller
     {
         $machineid = ($request->input('id_machine'));
         $scheduleid = ($request->input('id_schedule'));
+        $abnormal = ($request->input('combined_abnormal'));
+
+        $create_by_json = json_encode($request->input('combined_create_by'));
+        $abnormal_json = json_encode($request->input('combined_abnormal'));
+
+        $operator_action_json = json_encode(array_values($request->input('operator_action')));
+        $result_json = json_encode(array_values($request->input('result')));
+
         // Check the table to see if data has been filled in before
         $lastsubmissiontime = Machinerecord::where('id_machine2', $machineid)->value('created_at');
         $currenttime = Carbon::now();
@@ -115,17 +132,15 @@ class MachinerecordController extends Controller
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine2 = $machineid;
                 $StoreRecords->id_schedule= $scheduleid;
-                $StoreRecords->create_by = $request->input('combined_create_by');
+                $StoreRecords->create_by = $create_by_json;
+                if ($abnormal){
+                    $StoreRecords->status_record= false;
+                    $StoreRecords->abnormal_record = $abnormal_json;
+                }
                 $StoreRecords->save();
-
-                // $StoreSchedule = Schedule::where('id_machine',$getmachineid)->first();
-                // $StoreSchedule->save();
 
                 // Get the ID of the newly created record
                 $getrecordid = Machinerecord::latest('id')->first()->id;
-
-                $operator_action_json = json_encode(array_values($request->input('operator_action')));
-                $result_json = json_encode(array_values($request->input('result')));
 
                 $StoreHistory = new Historyrecords();
                 $StoreHistory->operator_action = $operator_action_json;
@@ -133,17 +148,6 @@ class MachinerecordController extends Controller
                 $StoreHistory->id_machinerecord = $getrecordid;
                 $StoreHistory->save();
 
-                $recordscount = DB::table('schedules')
-                    ->select('schedules.*', 'machinerecords.*')
-                    ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
-                    ->where('schedules.id', '=', $scheduleid)
-                    ->groupBy('machinerecords.id_schedule')
-                    ->count();
-
-                if ($machinecount == $recordscount) {
-                    $StoreSchedule->schedule_status = true;
-                    $StoreSchedule->save();
-                }
             }
         }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
@@ -152,14 +156,15 @@ class MachinerecordController extends Controller
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine2 = $machineid;
             $StoreRecords->id_schedule= $scheduleid;
-            $StoreRecords->create_by = $request->input('combined_create_by');
+            $StoreRecords->create_by = $create_by_json;
+            if ($abnormal){
+                $StoreRecords->status_record= false;
+                $StoreRecords->abnormal_record = $abnormal_json;
+            }
             $StoreRecords->save();
 
             // Get the ID of the newly created record
             $getrecordid = Machinerecord::latest('id')->first()->id;
-
-            $operator_action_json = json_encode(array_values($request->input('operator_action')));
-            $result_json = json_encode(array_values($request->input('result')));
 
             $StoreHistory = new Historyrecords();
             $StoreHistory->operator_action = $operator_action_json;
@@ -167,18 +172,20 @@ class MachinerecordController extends Controller
             $StoreHistory->id_machinerecord = $getrecordid;
             $StoreHistory->save();
 
-            $recordscount = DB::table('schedules')
-                ->select('schedules.*', 'machinerecords.*')
-                ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
-                ->where('schedules.id', '=', $scheduleid)
-                ->groupBy('machinerecords.id_schedule')
-                ->count();
-
-            if ($machinecount == $recordscount) {
-                $StoreSchedule->schedule_status = true;
-                $StoreSchedule->save();
-            }
         }
+
+        $recordscount = DB::table('schedules')
+            ->select('schedules.*', 'machinerecords.*')
+            ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
+            ->where('schedules.id', '=', $scheduleid)
+            ->groupBy('machinerecords.id_schedule')
+            ->count();
+
+        if ($machinecount == $recordscount) {
+            $StoreSchedule->schedule_status = true;
+            $StoreSchedule->save();
+        }
+
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
@@ -234,7 +241,8 @@ class MachinerecordController extends Controller
             ->get('machinerecords.id');
 
         $usernames = [];
-        $combineuser = $recordsdata->first()->create_by;
+        $user_json = $recordsdata->first()->create_by;
+        $combineuser = json_decode($user_json);
         $splituser = explode(',', $combineuser);
         foreach ($splituser as $eachuserid){
             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;

@@ -152,10 +152,9 @@
                     url: '{{ route("refreshapproval") }}',
                     dataSrc: function(data) {
                         if (data && data.refreshrecord) {
-                            return data.refreshrecord.map(function(refreshrecord) {
-                                console.log(refreshrecord);
+                            return data.refreshrecord.map((refreshrecord, index) => {
                                 return {
-                                    no: refreshrecord.records_id,
+                                    no: index + 1,
                                     pic: refreshrecord.getuser,
                                     shift: refreshrecord.shift,
                                     nama_mesin: refreshrecord.machine_name,
