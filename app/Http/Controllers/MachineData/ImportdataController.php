@@ -63,7 +63,7 @@ class ImportdataController extends Controller
     }
 
     // fungsi fetchdata setiap mesin
-    public function readmachinedata($id)
+    public function readdatamachine($id)
     {
         try {
             $fetchmachine = Machine::find($id);

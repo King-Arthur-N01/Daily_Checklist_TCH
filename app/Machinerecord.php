@@ -7,15 +7,17 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 class Machinerecord extends Model
 {
     protected $fillable = [
-        'machine_number2',
         'shift',
         'note',
-        'id_machine2',
+        'machine_number2',
         'create_by',
         'correct_by',
         'approve_by',
-        'record_time',
-        'status_record'
+        'id_machine2',
+        'operator_action',
+        'result',
+        'machinerecord_status',
+        'abnormal_record',
     ];
     // public static function boot()
     // {
@@ -32,8 +34,8 @@ class Machinerecord extends Model
     {
         return $this->hasMany(User::class);
     }
-    public function getchildernhistoryrecord()
-    {
-        return $this->belongsTo(Historyrecords::class);
-    }
+    // public function getchildernhistoryrecord()
+    // {
+    //     return $this->belongsTo(Historyrecords::class);
+    // }
 }

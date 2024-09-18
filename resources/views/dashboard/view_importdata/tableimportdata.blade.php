@@ -66,7 +66,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Upload File</h5>
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addModal" id="addButtton">Tambahkan Secara Manual</button>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addModal">Tambahkan Secara Manual</button>
                 </div>
                 <div class="modal-body">
                     <form id="formData">
@@ -202,7 +202,7 @@
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#importTables').DataTable({
                 ajax: {
-                    url: '{{ route("refreshimport") }}',
+                    url: '{{ route("refreshmachinedata") }}',
                     dataSrc: function(data) {
                         return data.refreshmachine.map(function(refreshmachine) {
                             let refreshproperty = data.refreshproperty.find(function(property) {
@@ -218,9 +218,9 @@
                                     <div class="dynamic-button-group">
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                            <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                            <a class="dropdown-item-custom-delete" id="deleteButton" data-id="${refreshmachine.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                            <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
+                                            <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                            <a class="dropdown-item-custom-delete" data-id="${refreshmachine.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                         </div>
                                     </div>
                                 `
@@ -368,14 +368,14 @@
                 `;
                 const button_modal = `
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                    <button type="submit" class="btn btn-primary" id="addButtton">Save changes</button>
                 `;
                 $('#modal_title_add').html(header_modal);
                 $('#modal_data_add').html(data_modal);
                 $('#modal_button_add').html(button_modal);
 
                 // Add event listener to save button
-                $('#saveButton').on('click', function() {
+                $('#addButtton').on('click', function() {
                     let formData = {
                         inventNumber: $('input[name="invent_number"]').val(),
                         machineSpec: $('input[name="machine_spec"]').val(),
@@ -550,14 +550,14 @@
                         `;
                         const button_modal = `
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                            <button type="submit" class="btn btn-primary" id="editButton">Save changes</button>
                         `;
                         $('#modal_title_edit').html(header_modal);
                         $('#modal_data_edit').html(data_modal);
                         $('#modal_button_edit').html(button_modal);
 
                         // Save button
-                        $('#saveButton').on('click', function() {
+                        $('#editButton').on('click', function() {
                             // let idProperty = $('#getproperty').val();
                             let formData = {
                                 inventNumber: $('input[name="invent_number"]').val(),

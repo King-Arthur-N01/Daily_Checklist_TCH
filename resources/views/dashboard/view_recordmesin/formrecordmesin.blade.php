@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div id="errorMessages"></div>
                     <div class="table-responsive">
-                        <form action="{{ route('createrecord') }}" id="registerform" method="post">
+                        <form action="{{ route('addrecord') }}" id="registerform" method="post">
                             @csrf
                             @method('put')
                             <table class="table table-header">

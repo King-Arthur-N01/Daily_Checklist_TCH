@@ -16,7 +16,6 @@
                 <div class="card-body">
                     <div class="div-tables">
                         <div class="col-sm-12 col-md-12">
-                            {{-- <a type="button" class="btn btn-block btn-primary" href="{{route('formschedule')}}">+ Schedule mesin</a> --}}
                             <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#addModal" tabindex="0">+ Schedule mesin</a>
                         </div>
                     </div>
@@ -25,8 +24,6 @@
                             <thead>
                                 <th>NO.</th>
                                 <th>NAMA SCHEDULE</th>
-                                <th>WAKTU SCHEDULE</th>
-                                <th>TENGGAT WAKTU</th>
                                 <th>JUMLAH MESIN</th>
                                 <th>TANGGAL PEMBUATAN</th>
                                 <th>ACTION</th>
@@ -72,14 +69,14 @@
     <!-- End Edit Modal-->
 
     <!-- View Modal -->
-    <div class="modal fade" id="viewModal" tabindex="-1">
-        <div class="modal-dialog modal-xxl">
+    <div class="modal fade" id="scheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                <div class="modal-header" id="modal_title_view">
+                <div class="modal-header" id="modal_title_schedule">
                 </div>
-                <div class="modal-body" id="modal_data_view">
+                <div class="modal-body" id="modal_data_schedule">
                 </div>
-                <div class="modal-footer" id="modal_button_view">
+                <div class="modal-footer" id="modal_button_schedule">
                 </div>
             </div>
         </div>
@@ -145,14 +142,8 @@
                     return data.refreshschedule.map((refreshschedule, index) => {
                         return {
                             no: index + 1,
-                            schedule_name: refreshschedule.schedule_name,
-                            schedule_time: refreshschedule.schedule_time + ' Bulan Kedepan',
-                            schedule_next: new Date(refreshschedule.schedule_next).toLocaleString('en-ID', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: '2-digit'
-                            }),
-                            id_machine: refreshschedule.id_machine.split(',').length,
+                            name_schedule: refreshschedule.name_schedule,
+                            id_machine: JSON.parse(refreshschedule.id_machine.split(',').length),
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
                                 month: 'long',
@@ -162,9 +153,9 @@
                                 <div class="dynamic-button-group">
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                     <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item-custom-detail" id="viewButton" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                        <a class="dropdown-item-custom-edit" id="editButton" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                        <a class="dropdown-item-custom-delete" id="deleteButton" data-id="${refreshschedule.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                        <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#scheduleModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Edit Machine Schedule</a>
+                                        <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                        <a class="dropdown-item-custom-delete" data-id="${refreshschedule.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                     </div>
                                 </div>
                             `
@@ -174,19 +165,129 @@
             },
             columns: [
                 { data: 'no', orderable: false, searchable: false},
-                { data: 'schedule_name' },
-                { data: 'schedule_time' },
-                { data: 'schedule_next' },
+                { data: 'name_schedule' },
                 { data: 'id_machine' },
                 { data: 'created_at' },
                 { data: 'actions', orderable: false, searchable: false }
             ]
         });
 
+        $('#scheduleModal').on('shown.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const machineId = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("readmachineschedule", ':id') }}'.replace(':id', machineId),
+                success: function(data) {
+
+                    const header_modal = `
+                        <h5 class="modal-title">Edit Jadwal Preventive Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    const data_modal = `
+                        <form id="editform" method="post">
+                            <table class="table table-bordered" id="machineTablesSchedule" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NO. INVENT</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>BRAND/MERK</th>
+                                        <th>SPEC/TYPE</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.getmachineid.map((machine, index) => `
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td>${machine.invent_number}</td>
+                                            <td>${machine.machine_name}</td>
+                                            <td>${machine.machine_brand}</td>
+                                            <td>${machine.machine_spec}</td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                            <i class="bi bi-calendar3"></i>
+                                                        </div>
+                                                    </div>
+                                                    <input name="schedule_time[${index}]" type="date" class="form-control ui-datepicker" placeholder="DD/MM/YYYY">
+                                                    <input type="hidden" name="id_machine[${index}]" value="${machine.id}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </form>
+                    `;
+
+                    const button_modal = `
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="scheduleButton">Save changes</button>
+                    `;
+
+                    $('#modal_title_schedule').html(header_modal);
+                    $('#modal_data_schedule').html(data_modal);
+                    $('#modal_button_schedule').html(button_modal);
+                    $('#machineTablesSchedule').DataTable();
+
+                    $('#scheduleButton').on('click', function(event) {
+                        event.preventDefault(); // Prevent default form submission
+                        let scheduleTimes = $('input[name^="schedule_time"]').map(function() {
+                            return $(this).val();
+                        }).get(); // Collect all values in an array
+                        let idMachines = $('input[name^="id_machine"]').map(function() {
+                            return $(this).val();
+                        }).get(); // Collect all values in an array
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("addmachineschedule") }}',
+                            data: {
+                                '_token': '{{ csrf_token() }}',
+                                'schedule_time': scheduleTimes,
+                                'id_machine': idMachines,
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    const successMessage = response.success;
+                                    $('#successText').text(successMessage);
+                                    $('#successModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#successModal').modal('hide');
+                                    $('#scheduleModal').modal('hide');
+                                }, 2000);
+                            },
+                            error: function(xhr, status, error) {
+                                if (xhr.responseText) {
+                                    const warningMessage = xhr.responseText;
+                                    $('#failedText').text(warningMessage);
+                                    $('#failedModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#failedModal').modal('hide');
+                                    $('#scheduleModal').modal('hide');
+                                }, 2000);
+                            }
+                        }).always(function() {
+                            table.ajax.reload(null, false);
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('error:', error);
+                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                }
+            });
+        });
+
         $('#addModal').on('shown.bs.modal', function(event) {
             $.ajax({
                 type: 'GET',
-                url: '{{ route("getmachinedata") }}',
+                url: '{{ route("fetchmachine") }}',
                 success: function(data) {
                     let combinedValue = [];
                     function combineMachineValues() {
@@ -197,7 +298,6 @@
                                 combinedValue.push(checkbox.value);
                             }
                         });
-                        combinedValue = combinedValue.join(',');
                     }
 
                     let tableRows = '';
@@ -227,24 +327,12 @@
                     const data_modal = `
                         <form id="addForm" method="post">
                             <div class="row" align-items="center">
-                                <div class="col-xl-6">
+                                <div class="col-xl-12">
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
-                                            <input class="form-control" name="schedule_name" type="text" placeholder="Nama Jadwal">
+                                            <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Waktu Schedule</label>
-                                        <select class="form-control" name="schedule_time">
-                                            <option selected="selected">Select :</option>
-                                            <option value="1">1/Bulan</option>
-                                            <option value="3">3/Bulan</option>
-                                            <option value="6">6/Bulan</option>
-                                            <option value="12">12/Bulan</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -271,7 +359,7 @@
 
                     const button_modal = `
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                        <button type="submit" class="btn btn-primary" id="addButton">Save changes</button>
                     `;
 
                     $('#modal_title_add').html(header_modal);
@@ -285,11 +373,10 @@
                         checkbox.addEventListener('change', combineMachineValues);
                     });
 
-                    $('#saveButton').on('click', function(event) {
+                    $('#addButton').on('click', function(event) {
                         event.preventDefault();
                         let formData = {
-                            scheduleName: $('input[name="schedule_name"]').val(),
-                            scheduleTime: $('select[name="schedule_time"]').val(),
+                            nameSchedule: $('input[name="name_schedule"]').val(),
                             machineInput: combinedValue,
                         };
                         $.ajax({
@@ -297,8 +384,7 @@
                             url: '{{ route("addschedule") }}',
                             data: {
                                 '_token': '{{ csrf_token() }}',
-                                'schedule_name': formData.scheduleName,
-                                'schedule_time': formData.scheduleTime,
+                                'name_schedule': formData.nameSchedule,
                                 'id_machine': formData.machineInput,
                             },
                             success: function(response) {
@@ -340,24 +426,8 @@
             const machineId = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route("getmachinedataid", ':id') }}'.replace(':id', machineId),
+                url: '{{ route("readschedule", ':id') }}'.replace(':id', machineId),
                 success: function(data) {
-                    let options = '';
-                    if (typeof data.getschedule === 'object') {
-                        const scheduleTime = data.getschedule.schedule_time;
-                        const isSelected1 = scheduleTime === 1 ? 'selected' : '';
-                        const isSelected3 = scheduleTime === 3 ? 'selected' : '';
-                        const isSelected6 = scheduleTime === 6 ? 'selected' : '';
-                        const isSelected12 = scheduleTime === 12 ? 'selected' : '';
-
-                        options += `<option value="1" ${isSelected1}>1/Bulan</option>`;
-                        options += `<option value="3" ${isSelected3}>3/Bulan</option>`;
-                        options += `<option value="6" ${isSelected6}>6/Bulan</option>`;
-                        options += `<option value="12" ${isSelected12}>12/Bulan</option>`;
-                    } else {
-                        console.error('fetchschedule is not an array:', data.getschedule);
-                    }
-
                     let combinedValue = [];
                     function combineMachineValues() {
                         const checkboxes = document.getElementsByName("machineinput");
@@ -401,21 +471,12 @@
                     const data_modal = `
                         <form id="editForm" method="put">
                             <div class="row" align-items="center">
-                                <div class="col-xl-6">
+                                <div class="col-xl-12">
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
-                                            <input class="form-control" name="schedule_name" value="${data.getschedule.schedule_name}" type="text" placeholder="Nama Jadwal">
+                                            <input class="form-control" name="schedule_name" value="${data.getschedule.name_schedule}" type="text" placeholder="Nama Jadwal">
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <div class="form-group">
-                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Waktu Schedule</label>
-                                        <select class="form-control" name="schedule_time">
-                                            <option selected="selected">Select :</option>
-                                            ${options}
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -442,7 +503,7 @@
 
                     const button_modal = `
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                        <button type="submit" class="btn btn-primary" id="editButton">Save changes</button>
                     `;
 
                     $('#modal_title_edit').html(header_modal);
@@ -456,11 +517,10 @@
                         checkbox.addEventListener('change', combineMachineValues);
                     });
 
-                    $('#saveButton').on('click', function(event) {
+                    $('#editButton').on('click', function(event) {
                         event.preventDefault();
                         let formData = {
                             scheduleName: $('input[name="schedule_name"]').val(),
-                            scheduleTime: $('select[name="schedule_time"]').val(),
                             machineInput: combinedValue,
                         };
                         $.ajax({
@@ -469,7 +529,6 @@
                             data: {
                                 '_token': '{{ csrf_token() }}',
                                 'schedule_name': formData.scheduleName,
-                                'schedule_time': formData.scheduleTime,
                                 'id_machine': formData.machineInput,
                             },
                             success: function(response) {

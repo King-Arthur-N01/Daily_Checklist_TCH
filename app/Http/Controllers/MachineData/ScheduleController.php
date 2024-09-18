@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Schedule;
 use App\Machine;
+use App\MachineSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,11 +18,27 @@ class ScheduleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexmachineschedule()
+    public function indexschedule()
     {
         return view('dashboard.view_schedulemesin.tableschedule');
     }
 
+    public function formmachineschedule($id)
+    {
+        $getschedule = Schedule::find($id);
+        $machinearray = json_decode($getschedule->id_machine, true);
+        $getmachineid = [];
+
+        foreach ($machinearray as $eachmachineid){
+            $machine = Machine::find($eachmachineid);
+            $getmachineid[] = $machine;
+        }
+
+        return view('dashboard.view_schedulemesin.formschedulemesin', [
+            'getschedule' => $getschedule,
+            'getmachineid' => $getmachineid,
+        ]);
+    }
     public function refreshtableschedule()
     {
         try {
@@ -66,7 +83,7 @@ class ScheduleController extends Controller
         return response()->json($data);
     }
 
-    public function fetchmachinedata()
+    public function readdatamachine()
     {
         try {
             $refreshmachine = Machine::all();
@@ -78,7 +95,7 @@ class ScheduleController extends Controller
         }
     }
 
-    public function fetchmachinedataid($id)
+    public function readdataschedule($id)
     {
         try {
             $getschedule = Schedule::find($id);
@@ -97,89 +114,16 @@ class ScheduleController extends Controller
     public function createschedule(Request $request)
     {
         try {
-            $currenttime = Carbon::today();
-            $scheduletime = $request->input('schedule_time');
-            $schedulenext = $currenttime->addMonths($scheduletime);
-            $id_machine_array = explode(',', $request->input('id_machine'));
+            $id_machine_array = json_encode($request->input('id_machine'));
             $StoreSchedule = new Schedule();
-            $StoreSchedule->schedule_name = $request->input('schedule_name');
-            $StoreSchedule->schedule_time = $request->input('schedule_time');
-            $StoreSchedule->id_machine = json_encode($id_machine_array);
-            $StoreSchedule->schedule_next = $schedulenext;
+            $StoreSchedule->name_schedule = $request->input('name_schedule');
+            $StoreSchedule->id_machine = $id_machine_array;
             $StoreSchedule->save();
 
-            // $combinemachine = $request->input('id_machine');
-            // $splitmachine = explode(',', $combinemachine);
-            // foreach ($splitmachine as $eachmachineid){
-            //     $UpdateMachine = Machine::where('id', $eachmachineid)->first();
-            //     if($scheduletime == 1){
-            //         $UpdateMachine->schdule_1_month = $schedulenext;
-            //     }elseif($scheduletime == 3){
-            //         $UpdateMachine->schdule_3_month = $schedulenext;
-            //     }elseif($scheduletime == 6){
-            //         $UpdateMachine->schdule_6_month = $schedulenext;
-            //     }elseif($scheduletime == 12){
-            //         $UpdateMachine->schdule_12_month = $schedulenext;
-            //     }
-            //     $UpdateMachine->save();
-            // }
             return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Error adding data'], 500);
-        }
-    }
-
-    public function updateschedule(Request $request, $id)
-    {
-        try {
-            $currenttime = Carbon::today();
-            $scheduletime = $request->input('schedule_time');
-            $schedulenext = $currenttime->addMonths($scheduletime);
-            $id_machine_array = explode(',', $request->input('id_machine'));
-            $UpdateSchedule = Schedule::find($id);
-
-            // $machinejson = $UpdateSchedule->id_machine;
-            // $machinearray = json_decode($machinejson, true);
-            // foreach ($machinearray as $eachmachineid){
-            //     $UpdateMachine = Machine::where('id', $eachmachineid)->first();
-            //     if($scheduletime == 1){
-            //         $UpdateMachine->schdule_1_month = null;
-            //     }elseif($scheduletime == 3){
-            //         $UpdateMachine->schdule_3_month = null;
-            //     }elseif($scheduletime == 6){
-            //         $UpdateMachine->schdule_6_month = null;
-            //     }elseif($scheduletime == 12){
-            //         $UpdateMachine->schdule_12_month = null;
-            //     }
-            //     $UpdateMachine->save();
-            // }
-
-            $UpdateSchedule->schedule_name = $request->input('schedule_name');
-            $UpdateSchedule->schedule_time = $request->input('schedule_time');
-            $UpdateSchedule->id_machine = json_encode($id_machine_array); // change into json string array to save in one column
-            $UpdateSchedule->schedule_next = $schedulenext;
-            $UpdateSchedule->save();
-
-            // $combinemachine = $request->input('id_machine');
-            // $splitmachine = explode(',', $combinemachine);
-            // foreach ($splitmachine as $eachmachineid){
-            //     $UpdateMachine = Machine::where('id', $eachmachineid)->first();
-            //     if($scheduletime == 1){
-            //         $UpdateMachine->schdule_1_month = $schedulenext;
-            //     }elseif($scheduletime == 3){
-            //         $UpdateMachine->schdule_3_month = $schedulenext;
-            //     }elseif($scheduletime == 6){
-            //         $UpdateMachine->schdule_6_month = $schedulenext;
-            //     }elseif($scheduletime == 12){
-            //         $UpdateMachine->schdule_12_month = $schedulenext;
-            //     }
-            //     $UpdateMachine->save();
-            // }
-            return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json(['error' => 'Error updating data'], 500);
         }
     }
 

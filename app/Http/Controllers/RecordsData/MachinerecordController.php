@@ -8,7 +8,6 @@ use App\User;
 use App\Machine;
 use App\Schedule;
 use App\Machinerecord;
-use App\Historyrecords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -131,23 +130,14 @@ class MachinerecordController extends Controller
                 $StoreRecords->shift = $shifttime;
                 $StoreRecords->note = $request->input('note');
                 $StoreRecords->id_machine2 = $machineid;
-                $StoreRecords->id_schedule= $scheduleid;
+                $StoreRecords->operator_action = $operator_action_json;
+                $StoreRecords->result = $result_json;
                 $StoreRecords->create_by = $create_by_json;
                 if ($abnormal){
-                    $StoreRecords->status_record= false;
+                    $StoreRecords->machinerecord_status	= false;
                     $StoreRecords->abnormal_record = $abnormal_json;
                 }
                 $StoreRecords->save();
-
-                // Get the ID of the newly created record
-                $getrecordid = Machinerecord::latest('id')->first()->id;
-
-                $StoreHistory = new Historyrecords();
-                $StoreHistory->operator_action = $operator_action_json;
-                $StoreHistory->result = $result_json;
-                $StoreHistory->id_machinerecord = $getrecordid;
-                $StoreHistory->save();
-
             }
         }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
@@ -155,36 +145,27 @@ class MachinerecordController extends Controller
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine2 = $machineid;
-            $StoreRecords->id_schedule= $scheduleid;
+            $StoreRecords->operator_action = $operator_action_json;
+            $StoreRecords->result = $result_json;
             $StoreRecords->create_by = $create_by_json;
             if ($abnormal){
-                $StoreRecords->status_record= false;
+                $StoreRecords->machinerecord_status	= false;
                 $StoreRecords->abnormal_record = $abnormal_json;
             }
             $StoreRecords->save();
-
-            // Get the ID of the newly created record
-            $getrecordid = Machinerecord::latest('id')->first()->id;
-
-            $StoreHistory = new Historyrecords();
-            $StoreHistory->operator_action = $operator_action_json;
-            $StoreHistory->result = $result_json;
-            $StoreHistory->id_machinerecord = $getrecordid;
-            $StoreHistory->save();
-
         }
 
-        $recordscount = DB::table('schedules')
-            ->select('schedules.*', 'machinerecords.*')
-            ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
-            ->where('schedules.id', '=', $scheduleid)
-            ->groupBy('machinerecords.id_schedule')
-            ->count();
+        // $recordscount = DB::table('schedules')
+        //     ->select('schedules.*', 'machinerecords.*')
+        //     ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
+        //     ->where('schedules.id', '=', $scheduleid)
+        //     ->groupBy('machinerecords.id_schedule')
+        //     ->count();
 
-        if ($machinecount == $recordscount) {
-            $StoreSchedule->schedule_status = true;
-            $StoreSchedule->save();
-        }
+        // if ($machinecount == $recordscount) {
+        //     $StoreSchedule->schedule_status = true;
+        //     $StoreSchedule->save();
+        // }
 
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
@@ -233,8 +214,8 @@ class MachinerecordController extends Controller
             ->get('machinerecords.id');
 
         $recordsdata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'historyrecords.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
-            ->leftJoin('historyrecords', 'machinerecords.id', '=', 'historyrecords.id_machinerecord')
+            ->select('machinerecords.*', 'machineschedules.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+            ->leftJoin('machineschedules', 'machinerecords.id', '=', 'machineschedules.id_machinerecord')
             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
             ->where('machinerecords.id', '=', $id)

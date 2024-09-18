@@ -7,16 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Schedule extends Model
 {
     protected $fillable = [
-        'schedule_name',
-        'schedule_time',
-        'schedule_record',
-        'schedule_next',
+        'name_schedule',
         'id_machine',
         'schedule_status'
     ];
 
-    public function getchildernrecord()
+    public function getchildernmachineschedule()
     {
-        return $this->belongsTo(Machinerecord::class);
+        return $this->belongsTo(MachineSchedule::class);
     }
 }

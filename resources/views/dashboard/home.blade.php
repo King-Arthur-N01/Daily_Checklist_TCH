@@ -101,7 +101,7 @@
                             <img class="image-card-home" src="{{ asset('assets/icons/history_home.png') }}">
                         </div>
                         <div class="card-footer-item-custom col-12">
-                            <a class="card-title" href="{{ route('historymachine') }}">Lihat History Preventive &nbsp; <i class="fas fa-history"></i></a>
+                            <a class="card-title" href="#">Lihat History Preventive &nbsp; <i class="fas fa-history"></i></a>
                         </div>
                     </div>
                 </div>

@@ -51,8 +51,6 @@
                             <thead>
                                 <th></th>
                                 <th>NAMA SCHEDULE</th>
-                                <th>WAKTU SCHEDULE</th>
-                                <th>TENGGAT WAKTU</th>
                                 <th>JUMLAH MESIN</th>
                                 <th>STATUS</th>
                             </thead>
@@ -133,13 +131,7 @@
                         return data.refreshschedule.map(function(refreshschedule) {
                             return {
                                 id: refreshschedule.id,
-                                schedule_name: refreshschedule.schedule_name,
-                                schedule_time: refreshschedule.schedule_time + ' Bulan Kedepan',
-                                schedule_record: new Date(refreshschedule.schedule_next).toLocaleString('en-ID', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: '2-digit'
-                                }),
+                                name_schedule: refreshschedule.name_schedule,
                                 id_machine: refreshschedule.id_machine.split(',').length,
                                 schedule_status: refreshschedule.schedule_status,
                             };
@@ -155,9 +147,7 @@
                         "className": 'table-accordion',
                         "orderable": false,
                     },
-                    { data: 'schedule_name' },
-                    { data: 'schedule_time' },
-                    { data: 'schedule_record' },
+                    { data: 'name_schedule' },
                     { data: 'id_machine' },
                     { data: 'schedule_status', render: function(data, type, row) {
                         if (data === 0) {
