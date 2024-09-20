@@ -8,6 +8,7 @@ use App\User;
 use App\Machine;
 use App\Schedule;
 use App\Machinerecord;
+use App\Machineschedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,12 +19,20 @@ class MachinerecordController extends Controller
     public function __construct(){
         $this->middleware('permission:#namapermission#', ['only' => ['#namafunction#']]);
     }
+
     // fungsi untuk melihat table preventive mesin
     public function indexmachinerecord()
     {
         return view('dashboard.view_recordmesin.tablerecordmesin');
     }
-    // fungsi menampilkan tabel dan merefresh tabel
+
+    // fungsi untuk melihat history preventive mesin
+    public function indexhistoryrecord()
+    {
+        return view('dashboard.view_history.tablehistory');
+    }
+
+    // fungsi menampilkan tabel dan merefresh tabel preventice
     public function refreshtablerecord() {
         try {
             $refreshschedule = Schedule::latest()->get();
@@ -35,7 +44,20 @@ class MachinerecordController extends Controller
         }
     }
 
-    public function refreshtabledetail($id)
+    // fungsi menampilkan tabel dan merefresh tabel history preventice
+    public function refreshtablehistory()
+    {
+        $joinrecords = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as getcreatedate', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
+            ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+            ->orderBy('machinerecords.id', 'asc')
+            ->get();
+        return response()->json([
+            'joinrecords' => $joinrecords
+        ]);
+    }
+
+    public function refreshdetailtablerecord($id)
     {
         try {
             $schedule = Schedule::find($id);
@@ -53,8 +75,69 @@ class MachinerecordController extends Controller
         }
     }
 
+    // fungsi tampilan formulir untuk melihat riwayat dan status preventive mesin (record mesin)
+    public function detailpreventive($id)
+    {
+        try{
+            $machinedata = DB::table('machines')
+                ->select('machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machines.id', '=', $id)
+                ->get();
+
+            $recordsdata = DB::table('machines')
+                ->select('machinerecords.*', 'machineschedules.*', 'machines.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+                ->leftJoin('machineschedules', 'machines.id', '=' ,'machineschedules.id_machine3')
+                ->leftJoin('machinerecords', 'machines.id', '=' ,'machinerecords.id_machine2')
+                ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
+                ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
+                ->where('machines.id', '=', $id)
+                ->get();
+
+            // $operator_action_json = json_decode($recordsdata->first()->operator_action);
+            // $result_json = json_decode($recordsdata->first()->result);
+
+            $usernames = [];
+            $userarray = json_decode($recordsdata->first()->create_by);
+            $userids = explode(',', $userarray[0]);
+
+            foreach ($userids as $eachuserid){
+                $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+            }
+
+            // $combinedata = [];
+            // foreach ($machinedata as $detail){
+            //     $combinedata[] = [
+            //         'machine_name' => $detail->machine_name,
+            //         'name_componencheck' => $detail->name_componencheck,
+            //         'name_parameter' => $detail->name_parameter,
+            //         'name_metodecheck' => $detail->name_metodecheck,
+            //     ];
+            // }
+            $combineresult[] = [
+                'operator_action' => $recordsdata->first()->operator_action,
+                'result' => $recordsdata->first()->result
+            ];
+
+            return response()->json([
+                'machinedata' => $machinedata,
+                'recordsdata' => $recordsdata,
+                'combineresult' => $combineresult,
+                // 'operator_action_json' => $operator_action_json,
+                // 'result_json' => $result_json,
+                'usernames' => $usernames
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error get machine data: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
-    public function formmachinerecord($id1,$id2)
+    public function formmachinerecord($id)
     {
         $users = User::get();
         $timenow = Carbon::now();
@@ -63,7 +146,7 @@ class MachinerecordController extends Controller
         ->select('machines.*', 'machineproperties.*', 'componenchecks.*')
         ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
         ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
-        ->where('machines.id', '=', $id2)
+        ->where('machines.id', '=', $id)
         ->get();
 
         $joinmachine = DB::table('machines')
@@ -72,7 +155,7 @@ class MachinerecordController extends Controller
         ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
         ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
         ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
-        ->where('machines.id', '=', $id2)
+        ->where('machines.id', '=', $id)
         ->get();
 
         if ($joinmachine->isEmpty()) {
@@ -82,8 +165,7 @@ class MachinerecordController extends Controller
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'joinmachine' => $joinmachine,
             'getcomponen' => $getcomponen,
-            'schedule_id' => $id1,
-            'machine_id' => $id2,
+            'machine_id' => $id,
             'timenow' => $timenow,
             'users' => $users,
         ]);
@@ -91,13 +173,12 @@ class MachinerecordController extends Controller
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function createmachinerecord(Request $request)
     {
+        dd($request)->all();
         $machineid = ($request->input('id_machine'));
-        $scheduleid = ($request->input('id_schedule'));
         $abnormal = ($request->input('combined_abnormal'));
 
+        $abnormal_json = json_encode($abnormal);
         $create_by_json = json_encode($request->input('combined_create_by'));
-        $abnormal_json = json_encode($request->input('combined_abnormal'));
-
         $operator_action_json = json_encode(array_values($request->input('operator_action')));
         $result_json = json_encode(array_values($request->input('result')));
 
@@ -105,9 +186,15 @@ class MachinerecordController extends Controller
         $lastsubmissiontime = Machinerecord::where('id_machine2', $machineid)->value('created_at');
         $currenttime = Carbon::now();
 
-        $StoreSchedule = Schedule::where('id',$scheduleid)->first();
-        $machinearray =  json_decode($StoreSchedule->id_machine);
-        $machinecount = count($machinearray);
+        // $machineschedule = DB::table('machines')
+        // ->select('machines.id', 'machineschedules.*')
+        // ->join('machineschedules', 'machines.id', '=', 'machineschedules.id_machine3')
+        // ->where('machines.id', '=', $machineid)
+        // ->get();
+
+        // $StoreSchedule = Schedule::where('id',$scheduleid)->first();
+        // $machinearray =  json_decode($StoreSchedule->id_machine);
+        // $machinecount = count($machinearray);
 
         $getshifttime = Carbon::now()->format('H:i');
         if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
@@ -118,13 +205,25 @@ class MachinerecordController extends Controller
             $shifttime = 'Diluar Shift Atau Lembur';
         }
 
+        // Function to check if array has non-null, non-empty values
+        function hasValidAbnormalData($abnormal)
+        {
+            if (is_array($abnormal)) {
+                foreach ($abnormal as $value) {
+                    if (!is_null($value) && $value !== '') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         if ($lastsubmissiontime){
             $lastsubmit = Carbon::parse($lastsubmissiontime);
 
             if ($currenttime->diffInHours($lastsubmit) < 24 ){
                 return redirect()->route('indexmachinerecord')->with('error', 'You can submit the form again after 24 hours.');
-            }
-            else{
+            }else{
                 $StoreRecords = new Machinerecord();
                 $StoreRecords->machine_number2 = $request->input('machine_number');
                 $StoreRecords->shift = $shifttime;
@@ -133,11 +232,21 @@ class MachinerecordController extends Controller
                 $StoreRecords->operator_action = $operator_action_json;
                 $StoreRecords->result = $result_json;
                 $StoreRecords->create_by = $create_by_json;
-                if ($abnormal){
-                    $StoreRecords->machinerecord_status	= false;
+                $StoreRecords->start_preventive = $currenttime;
+                if (hasValidAbnormalData($abnormal)) {
                     $StoreRecords->abnormal_record = $abnormal_json;
+                    $StoreRecords->machinerecord_status = false;
+                    $StoreRecords->finish_preventive = null;
+                } else {
+                    $StoreRecords->abnormal_record = null;
+                    $StoreRecords->machinerecord_status = true;
+                    $StoreRecords->finish_preventive = $currenttime;
                 }
                 $StoreRecords->save();
+
+                $StoreSchedule = Machineschedule::where('id_machine3',$machineid);
+                $StoreSchedule->schedule_record = $currenttime;
+                $StoreSchedule->save();
             }
         }else if(!$lastsubmissiontime){
             $StoreRecords = new Machinerecord();
@@ -148,9 +257,15 @@ class MachinerecordController extends Controller
             $StoreRecords->operator_action = $operator_action_json;
             $StoreRecords->result = $result_json;
             $StoreRecords->create_by = $create_by_json;
-            if ($abnormal){
-                $StoreRecords->machinerecord_status	= false;
+            $StoreRecords->start_preventive = $currenttime;
+            if (hasValidAbnormalData($abnormal)) {
                 $StoreRecords->abnormal_record = $abnormal_json;
+                $StoreRecords->machinerecord_status = false;
+                $StoreRecords->finish_preventive = null;
+            } else {
+                $StoreRecords->abnormal_record = null;
+                $StoreRecords->machinerecord_status = true;
+                $StoreRecords->finish_preventive = $currenttime;
             }
             $StoreRecords->save();
         }

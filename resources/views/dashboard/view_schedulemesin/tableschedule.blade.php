@@ -186,7 +186,8 @@
                     `;
 
                     const data_modal = `
-                        <form id="editform" method="post">
+                        <form id="scheduleform" method="post">
+                            <input type="hidden" name="id_schedule" value="${data.schedule_id}">
                             <table class="table table-bordered" id="machineTablesSchedule" width="100%">
                                 <thead>
                                     <tr>
@@ -235,13 +236,14 @@
                     $('#machineTablesSchedule').DataTable();
 
                     $('#scheduleButton').on('click', function(event) {
-                        event.preventDefault(); // Prevent default form submission
+                        event.preventDefault();
                         let scheduleTimes = $('input[name^="schedule_time"]').map(function() {
                             return $(this).val();
-                        }).get(); // Collect all values in an array
+                        }).get();
                         let idMachines = $('input[name^="id_machine"]').map(function() {
                             return $(this).val();
-                        }).get(); // Collect all values in an array
+                        }).get();
+                        let idSchedule = $('input[name="id_schedule"]').val();
                         $.ajax({
                             type: 'POST',
                             url: '{{ route("addmachineschedule") }}',
@@ -249,6 +251,7 @@
                                 '_token': '{{ csrf_token() }}',
                                 'schedule_time': scheduleTimes,
                                 'id_machine': idMachines,
+                                'id_schedule': idSchedule,
                             },
                             success: function(response) {
                                 if (response.success) {

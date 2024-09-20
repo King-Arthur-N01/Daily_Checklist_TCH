@@ -24,9 +24,10 @@ class CreateMachinerecordsTable extends Migration
             $table->unsignedBigInteger('id_machine2')->nullable();
             $table->json('operator_action');
             $table->json('result');
-            $table->boolean('machinerecord_status')->default(true);
+            $table->boolean('machinerecord_status');
             $table->json('abnormal_record')->nullable();
-
+            $table->timestamp('start_preventive')->nullable();
+            $table->timestamp('finish_preventive')->nullable();
             $table->timestamps();
         });
     }

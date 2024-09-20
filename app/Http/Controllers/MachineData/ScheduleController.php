@@ -136,7 +136,14 @@ class ScheduleController extends Controller
     {
         try{
             $DeleteSchedule = Schedule::where('id', $id);
+            $machineschedule = DB::table('machineschedules')
+            ->select('schedules.*', 'machineschedules.*')
+            ->join('machineschedules', 'schedules.id', '=', 'machineschedules.id_schedule')
+            ->where('schedules.id', '=', $id)
+            ->get();
+
             $DeleteSchedule->delete();
+            $machineschedule->delete();
             return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

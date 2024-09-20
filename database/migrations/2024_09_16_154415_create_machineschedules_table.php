@@ -19,8 +19,6 @@ class CreateMachineschedulesTable extends Migration
             $table->timestamp('schedule_end');
             $table->timestamp('schedule_record')->nullable();
             $table->timestamp('schedule_next')->nullable();
-            $table->timestamp('start_date')->nullable();
-            $table->timestamp('finish_date')->nullable();
             $table->unsignedBigInteger('id_machine3')->nullable();
             $table->unsignedBigInteger('id_schedule')->nullable();
             $table->boolean('machineschedule_status')->default(false);

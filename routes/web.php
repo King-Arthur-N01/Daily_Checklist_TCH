@@ -65,10 +65,10 @@ Route::get ('/schedule/machineschedule/read/{id}','RecordsData\MachinescheduleCo
 
 // machine record
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get ('/machinerecord/schedule/{id1}/machine/{id2}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
-Route::put ('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('addrecord');
+Route::get ('/machinerecord/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
+Route::post('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('addrecord');
 Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
-Route::get ('/machinerecord/table/refresh/{id}','RecordsData\MachinerecordController@refreshtabledetail')->name('refreshdetailrecord');
+Route::get ('/machinerecord/table/refresh/{id}','RecordsData\MachinerecordController@refreshdetailtablerecord')->name('refreshdetailrecord');
 // machine record end
 
 // machine records correction
@@ -88,9 +88,9 @@ Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordCo
 // machine records approval end
 
 // record data machine route
-// Route::get ('/historyrecord','RecordsData\HistoryrecordsController@indexhistory')->name('historymachine');
-// Route::get ('/historyrecord/table/refresh','RecordsData\\HistoryrecordsController@refreshtablehistory')->name('refreshistory');
-// Route::get ('/historyrecord/viewdetails/{id}','RecordsData\HistoryrecordsController@viewdetails')->name('detailhistory');
+Route::get ('/historyrecord','RecordsData\MachinerecordController@indexhistoryrecord')->name('indexhistoryrecord');
+Route::get ('/historyrecord/table/refresh','RecordsData\MachinerecordController@refreshtablehistory')->name('refreshistory');
+Route::get ('/historyrecord/view/{id}','RecordsData\MachinerecordController@detailpreventive')->name('detailhistory');
 // record data machine route end
 
 

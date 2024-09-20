@@ -15,24 +15,22 @@
                 </div>
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
-                        <div>
-                            <div class="table-filter">
-                                <div class="col-4">
-                                    <p class="mg-b-10">Input Nomor Mesin </p>
-                                    <input class="form-control" id="filterByNumber">
-                                </div>
-                                <div class="col-4">
-                                    <p class="mg-b-10">Nama Mesin</p>
-                                    <input class="form-control" id="filterByName">
-                                </div>
-                                <div class="col-4">
-                                    <p class="mg-b-10">Status Mesin</p>
-                                    <select class="form-control" name="sample" id="filterByStatus">
-                                        <option selected="selected">Select :</option>
-                                        <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
-                                        <option>Belum Dipreventive</option>
-                                    </select>
-                                </div>
+                        <div class="table-filter">
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <input class="form-control" id="filterByNumber">
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Nama Mesin</p>
+                                <input class="form-control" id="filterByName">
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Status Mesin</p>
+                                <select class="form-control" name="sample" id="filterByStatus">
+                                    <option selected="selected">Select :</option>
+                                    <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
+                                    <option>Belum Dipreventive</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -187,9 +185,8 @@
                                             '<td>' + machine.machine_brand + '</td>' +
                                             '<td>' + machine.machine_type + '</td>' +
                                             '<td><a class="btn btn-primary btn-sm btn-Id" style="color:white" href="' +
-                                            '{{ route("formpreventive", [":id1", ":id2"]) }}'
-                                            .replace(':id1', rowId)
-                                            .replace(':id2', machine.id) + '">' +
+                                            '{{ route("formpreventive",":id") }}'
+                                            .replace(':id', machine.id) + '">' +
                                             '<img style="height: 20px" src="{{ asset("assets/icons/edit_white_table.png") }}">' +
                                             '</a></td>' +
                                             '</tr>';

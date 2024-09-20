@@ -35,7 +35,8 @@ class MachinescheduleController extends Controller
             }
             return response()->json([
                 'getschedule' => $getschedule,
-                'getmachineid' => $getmachineid
+                'getmachineid' => $getmachineid,
+                'schedule_id' => $id
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -45,6 +46,7 @@ class MachinescheduleController extends Controller
     public function createmachineschedule(Request $request)
     {
         try {
+            $id_schedule = $request->input('id_schedule');
             $machinekey = $request->input('id_machine',[]);
             foreach ($machinekey as $key => $index) {
                 $scheduleStart = $request->input('schedule_time')[$key];
@@ -54,6 +56,7 @@ class MachinescheduleController extends Controller
                 $StoreSchedule->schedule_start = $scheduleStart;
                 $StoreSchedule->schedule_end = $scheduleEnd;
                 $StoreSchedule->id_machine3 = $index;
+                $StoreSchedule->id_schedule = $id_schedule;
                 $StoreSchedule->save();
             }
             return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
