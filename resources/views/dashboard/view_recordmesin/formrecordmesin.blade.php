@@ -117,7 +117,7 @@
                                 <input type="hidden" name="combined_create_by[]" id="combined_create_by">
                                 <input type="hidden" name="combined_abnormal[]" id="combined_abnormal_value">
                             </div>
-                            <div class="abnormal-option">
+                            <div class="form-custom">
                                 <label>Opsi jika terdapat abnormal terhadap preventive</label>
                                 <div class="switch-container">
                                     <label>Abnormal</label>

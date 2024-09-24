@@ -153,7 +153,7 @@
                                 <div class="dynamic-button-group">
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                     <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#scheduleModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Edit Machine Schedule</a>
+                                        <a class="dropdown-item-custom-more-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#scheduleModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;More Edit</a>
                                         <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
                                         <a class="dropdown-item-custom-delete" data-id="${refreshschedule.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                     </div>
@@ -186,6 +186,7 @@
                     `;
 
                     const data_modal = `
+                        <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
                         <form id="scheduleform" method="post">
                             <input type="hidden" name="id_schedule" value="${data.schedule_id}">
                             <table class="table table-bordered" id="machineTablesSchedule" width="100%">
@@ -478,7 +479,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
-                                            <input class="form-control" name="schedule_name" value="${data.getschedule.name_schedule}" type="text" placeholder="Nama Jadwal">
+                                            <input class="form-control" name="name_schedule" value="${data.getschedule.name_schedule}" type="text" placeholder="Nama Jadwal">
                                         </div>
                                     </div>
                                 </div>
@@ -523,7 +524,7 @@
                     $('#editButton').on('click', function(event) {
                         event.preventDefault();
                         let formData = {
-                            scheduleName: $('input[name="schedule_name"]').val(),
+                            scheduleName: $('input[name="name_schedule"]').val(),
                             machineInput: combinedValue,
                         };
                         $.ajax({
@@ -531,7 +532,7 @@
                             url: '{{ route("updateschedule", ':id') }}'.replace(':id', machineId),
                             data: {
                                 '_token': '{{ csrf_token() }}',
-                                'schedule_name': formData.scheduleName,
+                                'name_schedule': formData.scheduleName,
                                 'id_machine': formData.machineInput,
                             },
                             success: function(response) {

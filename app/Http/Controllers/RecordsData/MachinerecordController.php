@@ -44,6 +44,30 @@ class MachinerecordController extends Controller
         }
     }
 
+    public function refreshdetailtablerecord($id)
+    {
+        try {
+            $schedule = Schedule::find($id);
+            $machinearray = json_decode($schedule->id_machine, true);
+            $getmachineid = [];
+            $getmachinescheduleid = [];
+
+            foreach ($machinearray as $eachmachineid) {
+                $machine = Machine::where('id', $eachmachineid)->first();
+                $getmachineid[] = $machine;
+                $machineschedule = Machineschedule::where('id_machine3', $machine->id)->get();
+                $getmachinescheduleid[] = $machineschedule;
+            }
+            return response()->json([
+                'getmachineid' => $getmachineid,
+                'getmachinescheduleid' => $getmachinescheduleid
+            ]);
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'An unexpected error occurred'], 500);
+        }
+    }
+
     // fungsi menampilkan tabel dan merefresh tabel history preventice
     public function refreshtablehistory()
     {
@@ -55,24 +79,6 @@ class MachinerecordController extends Controller
         return response()->json([
             'joinrecords' => $joinrecords
         ]);
-    }
-
-    public function refreshdetailtablerecord($id)
-    {
-        try {
-            $schedule = Schedule::find($id);
-            $machinearray = json_decode($schedule->id_machine, true);
-            $getmachineid = [];
-
-            foreach ($machinearray as $eachmachineid) {
-                $machineid = Machine::where('id', $eachmachineid)->get();
-                $getmachineid[] = $machineid;
-            }
-            return response()->json(['getmachineid' => $getmachineid]);
-        } catch (\Exception $e) {
-            Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'An unexpected error occurred'], 500);
-        }
     }
 
     // fungsi tampilan formulir untuk melihat riwayat dan status preventive mesin (record mesin)
@@ -89,16 +95,13 @@ class MachinerecordController extends Controller
                 ->get();
 
             $recordsdata = DB::table('machines')
-                ->select('machinerecords.*', 'machineschedules.*', 'machines.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+                ->select('machinerecords.*', 'machineschedules.*', 'machines.id_property', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
                 ->leftJoin('machineschedules', 'machines.id', '=' ,'machineschedules.id_machine3')
                 ->leftJoin('machinerecords', 'machines.id', '=' ,'machinerecords.id_machine2')
                 ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
                 ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
                 ->where('machines.id', '=', $id)
                 ->get();
-
-            // $operator_action_json = json_decode($recordsdata->first()->operator_action);
-            // $result_json = json_decode($recordsdata->first()->result);
 
             $usernames = [];
             $userarray = json_decode($recordsdata->first()->create_by);
@@ -108,15 +111,18 @@ class MachinerecordController extends Controller
                 $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
             }
 
-            // $combinedata = [];
-            // foreach ($machinedata as $detail){
-            //     $combinedata[] = [
-            //         'machine_name' => $detail->machine_name,
-            //         'name_componencheck' => $detail->name_componencheck,
-            //         'name_parameter' => $detail->name_parameter,
-            //         'name_metodecheck' => $detail->name_metodecheck,
-            //     ];
-            // }
+            $IsAbnormalExist = $recordsdata->first()->abnormal_record;
+            $abnormals = [];
+            if ($IsAbnormalExist != null) {
+                $abnormalarray = json_decode($recordsdata->first()->abnormal_record);
+                $abnormalid = explode(',', $abnormalarray[0]);
+
+                foreach ($abnormalid as $eachabnormal) {
+                    $abnormals[] = DB::table('componenchecks')->select('name_componencheck')->where('id', $eachabnormal)->first()->name_componencheck;
+                }
+            }
+
+            $combineresult = [];
             $combineresult[] = [
                 'operator_action' => $recordsdata->first()->operator_action,
                 'result' => $recordsdata->first()->result
@@ -126,9 +132,8 @@ class MachinerecordController extends Controller
                 'machinedata' => $machinedata,
                 'recordsdata' => $recordsdata,
                 'combineresult' => $combineresult,
-                // 'operator_action_json' => $operator_action_json,
-                // 'result_json' => $result_json,
-                'usernames' => $usernames
+                'usernames' => $usernames,
+                'abnormals' => $abnormals,
             ]);
         } catch (\Exception $e) {
             Log::error('Error get machine data: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
@@ -136,7 +141,7 @@ class MachinerecordController extends Controller
         }
     }
 
-    // fungsi tampilan formulir $ajax untuk mengisi preventive mesin (record mesin)
+    // fungsi tampilan formulir untuk mengisi preventive mesin (record mesin)
     public function formmachinerecord($id)
     {
         $users = User::get();
@@ -173,7 +178,6 @@ class MachinerecordController extends Controller
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function createmachinerecord(Request $request)
     {
-        dd($request)->all();
         $machineid = ($request->input('id_machine'));
         $abnormal = ($request->input('combined_abnormal'));
 
@@ -191,10 +195,6 @@ class MachinerecordController extends Controller
         // ->join('machineschedules', 'machines.id', '=', 'machineschedules.id_machine3')
         // ->where('machines.id', '=', $machineid)
         // ->get();
-
-        // $StoreSchedule = Schedule::where('id',$scheduleid)->first();
-        // $machinearray =  json_decode($StoreSchedule->id_machine);
-        // $machinecount = count($machinearray);
 
         $getshifttime = Carbon::now()->format('H:i');
         if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
@@ -270,6 +270,10 @@ class MachinerecordController extends Controller
             $StoreRecords->save();
         }
 
+        // $StoreSchedule = Schedule::where('id',$scheduleid)->first();
+        // $machinearray =  json_decode($StoreSchedule->id_machine);
+        // $machinecount = count($machinearray);
+
         // $recordscount = DB::table('schedules')
         //     ->select('schedules.*', 'machinerecords.*')
         //     ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
@@ -302,12 +306,12 @@ class MachinerecordController extends Controller
     {
         try {
             $refreshrecord = DB::table('machinerecords')
-                ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'users.name as getuser')
+                ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
                 ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
-                ->join('users', 'machinerecords.create_by', '=', 'users.id')
                 ->orderBy('machinerecords.id', 'asc')
                 ->get();
-            return response()->json([
+
+        return response()->json([
                 'refreshrecord' => $refreshrecord
             ]);
         } catch (\Exception $e) {
@@ -315,58 +319,64 @@ class MachinerecordController extends Controller
         }
     }
 
-    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk disetujui
+    // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk dikoreksi
     public function readdatacorrection($id)
     {
-        $machinedata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'metodechecks.id as checks_id')
-            ->leftJoin('machines', 'machinerecords.id_machine2', '=', 'machines.id')
-            ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
-            ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-            ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-            ->where('machinerecords.id', '=', $id)
-            ->get('machinerecords.id');
+        try{
+            $machinedata = DB::table('machines')
+                ->select('machinerecords.id_machine2', 'machines.*', 'machineproperties.*', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+                ->leftJoin('machinerecords', 'machines.id', '=', 'machinerecords.id_machine2')
+                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machinerecords.id', '=', $id)
+                ->get();
 
-        $recordsdata = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machineschedules.*', 'machinerecords.id as get_id', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
-            ->leftJoin('machineschedules', 'machinerecords.id', '=', 'machineschedules.id_machinerecord')
-            ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
-            ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
-            ->where('machinerecords.id', '=', $id)
-            ->get('machinerecords.id');
+            $recordsdata = DB::table('machinerecords')
+                ->select('machinerecords.*', 'machines.id_property', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+                ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
+                ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
+                ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
+                ->where('machinerecords.id', '=', $id)
+                ->get();
 
-        $usernames = [];
-        $user_json = $recordsdata->first()->create_by;
-        $combineuser = json_decode($user_json);
-        $splituser = explode(',', $combineuser);
-        foreach ($splituser as $eachuserid){
-            $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
-        }
+            $usernames = [];
+            $userarray = json_decode($recordsdata->first()->create_by);
+            $userids = explode(',', $userarray[0]);
 
-        $combinedata = [];
-        foreach ($machinedata as $detail){
-            $combinedata[] = [
-                'machine_name' => $detail->machine_name,
-                'name_componencheck' => $detail->name_componencheck,
-                'name_parameter' => $detail->name_parameter,
-                'name_metodecheck' => $detail->name_metodecheck,
+            foreach ($userids as $eachuserid){
+                $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+            }
+
+            $IsAbnormalExist = $recordsdata->first()->abnormal_record;
+            $abnormals = [];
+            if ($IsAbnormalExist != null) {
+                $abnormalarray = json_decode($recordsdata->first()->abnormal_record);
+                $abnormalid = explode(',', $abnormalarray[0]);
+
+                foreach ($abnormalid as $eachabnormal) {
+                    $abnormals[] = DB::table('componenchecks')->select('name_componencheck')->where('id', $eachabnormal)->first()->name_componencheck;
+                }
+            }
+
+            $combineresult[] = [
+                'operator_action' => $recordsdata->first()->operator_action,
+                'result' => $recordsdata->first()->result
             ];
-        }
-        $combineresult[] = [
-            'operator_action' => $recordsdata->first()->operator_action,
-            'result' => $recordsdata->first()->result
-        ];
 
-        return response()->json([
-            'machinedata' => $machinedata,
-            'recordsdata' => $recordsdata,
-            'combinedata' => $combinedata,
-            'combineresult' => $combineresult,
-            'usernames' => $usernames
-        ]);
+            return response()->json([
+                'machinedata' => $machinedata,
+                'recordsdata' => $recordsdata,
+                'combineresult' => $combineresult,
+                'usernames' => $usernames,
+                'abnormals' => $abnormals,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
-    // fungsi untuk mensetujui dan meregister hasil preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
+    // fungsi untuk mengkoreksi dan meregister hasil preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
     public function registercorrection(Request $request, $id)
     {
         $request->validate([

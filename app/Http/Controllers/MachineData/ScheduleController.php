@@ -127,9 +127,19 @@ class ScheduleController extends Controller
         }
     }
 
-    public function update(Request $request, Schedule $schedule)
+    public function updateschedule(Request $request, $id)
     {
-        //
+        try {
+            $id_machine_array = json_encode($request->input('id_machine'));
+            $UpdateSchedule = Schedule::find($id);
+            $UpdateSchedule->name_schedule = $request->input('name_schedule');
+            $UpdateSchedule->id_machine = $id_machine_array;
+            $UpdateSchedule->save();
+            return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error updating data'], 500);
+        }
     }
 
     public function deleteschedule($id)

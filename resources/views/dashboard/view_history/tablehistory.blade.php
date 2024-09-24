@@ -37,15 +37,18 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="historyTables" width="100%">
                             <thead>
-                                <th>Checkpoint NO.</th>
-                                <th>Nama Mesin</th>
-                                <th>Type Mesin</th>
-                                <th>Nomor Mesin</th>
-                                <th>Status</th>
-                                <th>Status</th>
-                                <th>Shift</th>
-                                <th>Waktu</th>
-                                <th>Action</th>
+                                <tr>
+                                    <th>NO.</th>
+                                    <th>Nama Mesin</th>
+                                    <th>Type Mesin</th>
+                                    <th>Nomor Mesin</th>
+                                    <th>Status</th>
+                                    <th>Status</th>
+                                    <th>Status Preventive</th>
+                                    <th>Shift</th>
+                                    <th>Waktu</th>
+                                    <th>Action</th>
+                                </tr>
                             </thead>
                         </table>
                     </div>
@@ -56,7 +59,7 @@
 
     <!-- view Modal -->
     <div class="modal fade" id="viewModal" tabindex="-1">
-        <div class="modal-dialog modal-xxl">
+        <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_view">
                 </div>
@@ -104,8 +107,9 @@
                                 machine_name: joinrecords.machine_name,
                                 machine_type: joinrecords.machine_type,
                                 machine_number: joinrecords.machine_number,
-                                getcorrect: joinrecords.getcorrect ? joinrecords.getcorrect : 'Belum dikoreksi',
-                                getapprove: joinrecords.getapprove ? joinrecords.getapprove : 'Belum disetujui',
+                                correct_status: joinrecords.getcorrect ? joinrecords.getcorrect : 'Belum dikoreksi',
+                                approve_status: joinrecords.getapprove ? joinrecords.getapprove : 'Belum disetujui',
+                                record_status: joinrecords.machinerecord_status,
                                 shift: joinrecords.shift,
                                 getcreatedate: joinrecords.getcreatedate,
                                 actions: `
@@ -120,8 +124,15 @@
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_number' },
-                    { data: 'getcorrect' },
-                    { data: 'getapprove' },
+                    { data: 'correct_status' },
+                    { data: 'approve_status' },
+                    { data: 'record_status', render: function(data, type, row) {
+                        if (data === 0) {
+                            return '<span class="badge badge-danger">ABNORMAL</span>';
+                        } else if (data === 1) {
+                            return '<span class="badge badge-success">NORMAL</span>';
+                        }
+                    }},
                     { data: 'shift' },
                     { data: 'getcreatedate' },
                     { data: 'actions', orderable: false, searchable: false }
@@ -135,7 +146,6 @@
                     type: 'GET',
                     url: '{{ route("detailhistory", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
-
                         let table_modal = '';
                         data.machinedata.forEach((rowdata, index) => {
                             const actions = JSON.parse(data.combineresult[0].operator_action)[index].join(' & ');
@@ -186,12 +196,6 @@
                                             <th>Install Date :</th>
                                             <th>${data.machinedata[0].install_date}</th>
                                         </tr>
-                                        <tr>
-                                            <th>PIC :</th>
-                                            <th>${data.usernames.join(', ')}</th>
-                                            <th>Waktu Preventive :</th>
-                                            <th>${data.machinedata[0].install_date}</th>
-                                        </tr>
                                     </tbody>
                                 </table>
                                 <div class="header-input">
@@ -223,20 +227,25 @@
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                     <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>${data.recordsdata[0].note}</textarea>
                                 </div>
+                                    <a>Abnormality terhadap preventive</a>
+                                    <input class="form-control" value="${data.abnormals}" readonly>
+                                </div>
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
                                         <thead>
                                             <tr>
+                                                <th>Shift :</th>
                                                 <th>Disetujui oleh :</th>
                                                 <th>Dikoreksi oleh :</th>
                                                 <th colspan="4">Dibuat oleh :</th>
                                             </tr>
                                             <tr>
-                                            <td>${data.recordsdata.approve_by_name}</td>
-                                            <td>${data.recordsdata.correct_by_name}</td>
-                                            ${data.usernames.map((get_user_id) => `
-                                                <td>${get_user_id}</td>
-                                            `).join('')}
+                                                <td>${data.recordsdata[0].shift}</td>
+                                                <td>${data.recordsdata.approve_by_name ? data.recordsdata.approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.recordsdata.correct_by_name ? data.recordsdata.correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${data.usernames.map((get_user_id) => `
+                                                    <td>${get_user_id}</td>
+                                                `).join('')}
                                             </tr>
                                         </thead>
                                     </table>
@@ -262,26 +271,26 @@
             });
 
             // fungsi table untuk melihat status dari sebuah preventive
-            $('#historyTables tr').each(function() {
-                var correctCell = $(this).find('td:eq(4)');
-                var approveCell = $(this).find('td:eq(5)');
-                var statusCell1 = $(this).find('td:eq(6)');
-                var statusCell2 = $(this).find('td:eq(7)');
-                var correct = correctCell.text().trim();
-                var approve = approveCell.text().trim();
-                if (correct !== '' && approve !== '') {
-                    statusCell1.text('SUDAH DI KOREKSI');
-                    statusCell2.text('SUDAH DI SETUJUI');
-                    $(this).css("background-color", "rgba( 0, 0, 255, 0.2)");
-                } else if (correct !== '' && approve === '') {
-                    statusCell1.text('SUDAH DI KOREKSI');
-                    statusCell2.text('BELUM DI SETUJUI');
-                    $(this).css("background-color", "rgba( 0, 255, 0, 0.2)");
-                } else if (correct === '' && approve === '') {
-                    statusCell1.text('BELUM DI KOREKSI');
-                    statusCell2.text('BELUM DI SETUJUI');
-                }
-            });
+            // $('#historyTables tr').each(function() {
+            //     var correctCell = $(this).find('td:eq(4)');
+            //     var approveCell = $(this).find('td:eq(5)');
+            //     var statusCell1 = $(this).find('td:eq(6)');
+            //     var statusCell2 = $(this).find('td:eq(7)');
+            //     var correct = correctCell.text().trim();
+            //     var approve = approveCell.text().trim();
+            //     if (correct !== '' && approve !== '') {
+            //         statusCell1.text('SUDAH DI KOREKSI');
+            //         statusCell2.text('SUDAH DI SETUJUI');
+            //         $(this).css("background-color", "rgba( 0, 0, 255, 0.2)");
+            //     } else if (correct !== '' && approve === '') {
+            //         statusCell1.text('SUDAH DI KOREKSI');
+            //         statusCell2.text('BELUM DI SETUJUI');
+            //         $(this).css("background-color", "rgba( 0, 255, 0, 0.2)");
+            //     } else if (correct === '' && approve === '') {
+            //         statusCell1.text('BELUM DI KOREKSI');
+            //         statusCell2.text('BELUM DI SETUJUI');
+            //     }
+            // });
         });
     </script>
 @endpush

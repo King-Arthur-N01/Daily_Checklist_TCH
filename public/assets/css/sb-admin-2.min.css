@@ -3802,6 +3802,19 @@ input[type=submit].btn-block {
     border: 0
 }
 
+.dropdown-item-custom-more-edit {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #3a3b45;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #f1ea08;
+    border: 0
+}
+
 .dropdown-item-custom-delete {
     display: block;
     width: 100%;
@@ -3813,6 +3826,10 @@ input[type=submit].btn-block {
     white-space: nowrap;
     background-color: #ef172c;
     border: 0
+}
+
+.elapsed-time {
+    background-color: #ff0000ad;
 }
 
 .dropdown-item:focus,
@@ -4334,9 +4351,6 @@ input[type=submit].btn-block {
     background-color: rgba(78, 115, 223, .5)
 }
 
-.abnormal-option{
-
-}
 
 .switch-container{
     margin-bottom: 5px;
