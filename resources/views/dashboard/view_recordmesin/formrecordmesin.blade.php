@@ -121,10 +121,12 @@
                                 <label>Opsi jika terdapat abnormal terhadap preventive</label>
                                 <div class="switch-container">
                                     <label>Abnormal</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="abnormal_switch">
-                                        <span class="slider round"></span>
-                                    </label>
+                                    <div class="custom-radio">
+                                        <input type="radio" id="yes" name="option">
+                                        <label for="yes" class="yes-label">Iya</label>
+                                        <input type="radio" id="no" name="option" checked>
+                                        <label for="no" class="no-label">Tidak</label>
+                                    </div>
                                 </div>
                                 <select class="form-control select2" id="abnormality" multiple="multiple" disabled>
                                     @foreach ($getcomponen as $listcomponen)
@@ -200,18 +202,6 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
     <script>
-        const checkbox = document.getElementById('abnormal_switch');
-        const selectElement = document.getElementById('abnormality');
-
-        checkbox.addEventListener('change', function() {
-        if (this.checked) {
-            selectElement.disabled = false;
-        } else {
-            selectElement.disabled = true;
-        }
-        });
-    </script>
-    <script>
         $(document).ready(function() {
             $('.select2').select2({
                 placeholder: 'Select :',
@@ -223,20 +213,16 @@
 
             // Event listener for abnormality select changes
             $('#abnormality').on('change', function() {
-                // Get all selected values
                 var selectedValues = $(this).val();
-
-                // Set the selected values into the hidden input as an array
                 $('#combined_abnormal_value').val(selectedValues);
             });
 
             // Enable/Disable abnormality select based on the switch
-            $('#abnormal_switch').on('change', function() {
-                if ($(this).is(':checked')) {
+            $('input[name="option"]').on('change', function() {
+                if ($(this).attr('id') === 'yes') {
                     $('#abnormality').prop('disabled', false);
                 } else {
                     $('#abnormality').prop('disabled', true).val(null).trigger('change');
-                    // Clear hidden input when select is disabled
                     $('#combined_abnormal_value').val('');
                 }
             });

@@ -189,7 +189,6 @@
                                 '</thead>' +
                                 '<tbody>';
 
-
                             let currentTime = new Date();
                             data.getmachineid.forEach(machine => {
                                 let schedule = data.getmachinescheduleid.find(schedules => schedules[0].id_machine3 === machine.id);

@@ -3811,7 +3811,7 @@ input[type=submit].btn-block {
     color: #3a3b45;
     text-align: center;
     white-space: nowrap;
-    background-color: #f1ea08;
+    background-color: #29a6ff;
     border: 0
 }
 
@@ -4339,18 +4339,59 @@ input[type=submit].btn-block {
     background-color: rgba(78, 115, 223, .5)
 }
 
-.custom-radio .custom-control-label::before {
-    border-radius: 50%
-}
+.custom-radio {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* position: relative; */
+    /* width: 1150px; */
+    height: 30px;
+    margin: 5px 10px;
+  }
 
-.custom-radio .custom-control-input:checked~.custom-control-label::after {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e")
-}
+  .custom-radio input[type="radio"] {
+    display: none; /* Hide the default radio button */
+  }
 
-.custom-radio .custom-control-input:disabled:checked~.custom-control-label::before {
-    background-color: rgba(78, 115, 223, .5)
-}
+  .custom-radio label {
+    padding: 5px 15px;
+    margin: 0px 5px;
+    cursor: pointer;
+    /* font-size: 18px; */
+    color: #000;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    border: 2px solid #333;
+    transition: background-color 0.3s, color 0.3s;
+  }
 
+  .yes-label {
+    color: #fff;
+    border-right: none;
+  }
+
+  .no-label {
+    color: #fff;
+  }
+
+  input[type="radio"]:checked + label {
+    background-color: #333;
+    color: white;
+  }
+
+  input[type="radio"]#yes:checked + label.yes-label {
+    background-color: #ff0000;
+    color: #fff;
+  }
+
+  input[type="radio"]#no:checked + label.no-label {
+    background-color: #00ff00;
+    color: #fff;
+  }
+
+  .yes-label:hover, .no-label:hover {
+    opacity: 0.8;
+  }
 
 .switch-container{
     margin-bottom: 5px;

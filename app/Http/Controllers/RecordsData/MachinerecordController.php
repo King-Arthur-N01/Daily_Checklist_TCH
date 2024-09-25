@@ -268,6 +268,10 @@ class MachinerecordController extends Controller
                 $StoreRecords->finish_preventive = $currenttime;
             }
             $StoreRecords->save();
+
+            $StoreSchedule = Machineschedule::where('id_machine3',$machineid);
+            $StoreSchedule->schedule_record = $currenttime;
+            $StoreSchedule->save();
         }
 
         // $StoreSchedule = Schedule::where('id',$scheduleid)->first();
