@@ -47,24 +47,55 @@ class MachinescheduleController extends Controller
     {
         try {
             $id_schedule = $request->input('id_schedule');
-            $machinekey = $request->input('id_machine',[]);
-            foreach ($machinekey as $key => $index) {
-                $scheduleStart = $request->input('schedule_time')[$key];
-                $scheduleEnd = Carbon::parse($scheduleStart)->addDays(7);
+            $machinekey = $request->input('id_machine', []);
+            $schedule_duration = $request->input('schedule_duration', []);
+            $schedule_time = $request->input('schedule_time', []);
 
+            // Ensure the number of machine keys matches the schedule durations and times
+            if (count($machinekey) !== count($schedule_duration) || count($machinekey) !== count($schedule_time)) {
+                return response()->json(['error' => 'Input array lengths do not match'], 400);
+            }
+
+            // Loop through each machine key and create a Machineschedule record
+            foreach ($machinekey as $index => $key) {
                 $StoreSchedule = new Machineschedule;
-                $StoreSchedule->schedule_start = $scheduleStart;
-                $StoreSchedule->schedule_end = $scheduleEnd;
-                $StoreSchedule->id_machine3 = $index;
+                $StoreSchedule->schedule_duration = $schedule_duration[$index];  // Assign individual duration
+                $StoreSchedule->schedule_time = $schedule_time[$index];          // Assign individual time
                 $StoreSchedule->id_schedule = $id_schedule;
+                $StoreSchedule->id_machine2 = $key;  // Assuming 'id_machine2' refers to the machine's key
                 $StoreSchedule->save();
             }
-            return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
+
+            return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return response()->json(['error' => 'Error updating data'], 500);
+            return response()->json(['error' => 'Error creating data'], 500);
         }
     }
+
+
+    // public function createmachineschedule(Request $request)
+    // {
+    //     try {
+    //         $id_schedule = $request->input('id_schedule');
+    //         $machinekey = $request->input('id_machine',[]);
+    //         foreach ($machinekey as $key => $index) {
+    //             $scheduleStart = $request->input('schedule_time')[$key];
+    //             $scheduleEnd = Carbon::parse($scheduleStart)->addDays(7);
+
+    //             $StoreSchedule = new Machineschedule;
+    //             $StoreSchedule->schedule_start = $scheduleStart;
+    //             $StoreSchedule->schedule_end = $scheduleEnd;
+    //             $StoreSchedule->id_machine3 = $index;
+    //             $StoreSchedule->id_schedule = $id_schedule;
+    //             $StoreSchedule->save();
+    //         }
+    //         return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
+    //     } catch (\Exception $e) {
+    //         Log::error($e->getMessage());
+    //         return response()->json(['error' => 'Error updating data'], 500);
+    //     }
+    // }
 
     /**
      * Store a newly created resource in storage.

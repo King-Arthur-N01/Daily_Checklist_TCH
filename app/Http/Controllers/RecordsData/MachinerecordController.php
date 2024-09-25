@@ -55,7 +55,7 @@ class MachinerecordController extends Controller
             foreach ($machinearray as $eachmachineid) {
                 $machine = Machine::where('id', $eachmachineid)->first();
                 $getmachineid[] = $machine;
-                $machineschedule = Machineschedule::where('id_machine3', $machine->id)->get();
+                $machineschedule = Machineschedule::where('id_machine2', $machine->id)->get();
                 $getmachinescheduleid[] = $machineschedule;
             }
             return response()->json([
@@ -309,10 +309,11 @@ class MachinerecordController extends Controller
     public function refreshtablecorrection()
     {
         try {
-            $refreshrecord = DB::table('machinerecords')
-                ->select('machinerecords.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
-                ->join('machines', 'machinerecords.id_machine2', '=', 'machines.id')
-                ->orderBy('machinerecords.id', 'asc')
+            $refreshrecord = DB::table('machineschedules')
+                ->select('machinerecords.*', 'machineschedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
+                ->join('machines', 'machineschedules.id_machine2', '=', 'machines.id')
+                ->join('machineschedules', 'machinerecords.id_machineschedule', '=', 'machineschedules.id')
+                ->orderBy('machineschedules.id', 'asc')
                 ->get();
 
         return response()->json([

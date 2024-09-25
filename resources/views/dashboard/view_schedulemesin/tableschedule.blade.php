@@ -197,7 +197,8 @@
                                         <th>NAMA MESIN</th>
                                         <th>BRAND/MERK</th>
                                         <th>SPEC/TYPE</th>
-                                        <th>ACTION</th>
+                                        <th>DURASI</th>
+                                        <th>RENCANA TGL</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -208,6 +209,16 @@
                                             <td>${machine.machine_name}</td>
                                             <td>${machine.machine_brand}</td>
                                             <td>${machine.machine_spec}</td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                            <i class="bi bi-hourglass-split"></i>
+                                                        </div>
+                                                    </div>
+                                                    <input name="schedule_duration[${index}]" type="number" class="form-control" placeholder="Dihitung Perjam">
+                                                </div>
+                                            </td>
                                             <td>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
@@ -238,6 +249,9 @@
 
                     $('#scheduleButton').on('click', function(event) {
                         event.preventDefault();
+                        let scheduleDuration = $('input[name^="schedule_duration"]').map(function() {
+                            return $(this).val();
+                        }).get();
                         let scheduleTimes = $('input[name^="schedule_time"]').map(function() {
                             return $(this).val();
                         }).get();
@@ -250,6 +264,7 @@
                             url: '{{ route("addmachineschedule") }}',
                             data: {
                                 '_token': '{{ csrf_token() }}',
+                                'schedule_duration': scheduleDuration,
                                 'schedule_time': scheduleTimes,
                                 'id_machine': idMachines,
                                 'id_schedule': idSchedule,

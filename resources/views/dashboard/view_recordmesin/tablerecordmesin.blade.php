@@ -191,7 +191,7 @@
 
                             let currentTime = new Date();
                             data.getmachineid.forEach(machine => {
-                                let schedule = data.getmachinescheduleid.find(schedules => schedules[0].id_machine3 === machine.id);
+                                let schedule = data.getmachinescheduleid.find(schedules => schedules[0].id_machine2 === machine.id);
                                 let scheduleEnd = new Date(schedule[0].schedule_end);
                                 let isPast = scheduleEnd && scheduleEnd < currentTime;
 
@@ -207,7 +207,7 @@
                                         day: '2-digit',
                                     }) : 'N/A') + '</td>' +
                                     '<td><a class="btn btn-primary btn-sm btn-Id" style="color:white" href="' +
-                                    '{{ route("formpreventive", ":id") }}'.replace(':id', machine.id) + '">' +
+                                    '{{ route("formpreventive", ":id") }}'.replace(':id', schedule.id) + '">' +
                                     '<img style="height: 20px" src="{{ asset("assets/icons/edit_white_table.png") }}">' +
                                     '</a></td>' +
                                     '</tr>';
