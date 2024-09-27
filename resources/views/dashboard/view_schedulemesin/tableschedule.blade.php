@@ -172,24 +172,52 @@
             ]
         });
 
-        $('#scheduleModal').on('shown.bs.modal', function(event) {
-            const button = $(event.relatedTarget);
-            const machineId = button.data('id');
+        $('#addModal').on('shown.bs.modal', function(event) {
             $.ajax({
                 type: 'GET',
-                url: '{{ route("readmachineschedule", ':id') }}'.replace(':id', machineId),
+                url: '{{ route("fetchmachine") }}',
                 success: function(data) {
 
                     const header_modal = `
-                        <h5 class="modal-title">Edit Jadwal Preventive Mesin</h5>
+                        <h5 class="modal-title">Tambah Jadwal Preventive Mesin</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
-                    const data_modal = `
+                    const data_modal_1 = `
+                        <div class="row" align-items="center">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                    <div>
+                                        <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="machineTables" width="100%">
+                                    <thead>
+                                        <th>NO.</th>
+                                        <th>NO. INVENT</th>
+                                        <th>NO MESIN</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>MODEL/TYPE</th>
+                                        <th>BRAND/MERK</th>
+                                        <th>ADD</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+
+                    const data_modal_2 = `
                         <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
-                        <form id="scheduleform" method="post">
-                            <input type="hidden" name="id_schedule" value="${data.schedule_id}">
-                            <table class="table table-bordered" id="machineTablesSchedule" width="100%">
+                        <form id=" addForm" method="post">
+                            <table class="table table-bordered" id="machineTables" width="100%">
                                 <thead>
                                     <tr>
                                         <th>NO</th>
@@ -202,380 +230,52 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${data.getmachineid.map((machine, index) => `
-                                        <tr>
-                                            <td>${index + 1}</td>
-                                            <td>${machine.invent_number}</td>
-                                            <td>${machine.machine_name}</td>
-                                            <td>${machine.machine_brand}</td>
-                                            <td>${machine.machine_spec}</td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="bi bi-hourglass-split"></i>
-                                                        </div>
-                                                    </div>
-                                                    <input name="schedule_duration[${index}]" type="number" class="form-control" placeholder="Dihitung Perjam">
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="bi bi-calendar3"></i>
-                                                        </div>
-                                                    </div>
-                                                    <input name="schedule_time[${index}]" type="date" class="form-control ui-datepicker" placeholder="DD/MM/YYYY">
-                                                    <input type="hidden" name="id_machine[${index}]" value="${machine.id}">
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
+
                                 </tbody>
                             </table>
                         </form>
                     `;
 
                     const button_modal = `
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="scheduleButton">Save changes</button>
+                        <button class="prev-btn" id="previousButton">Previous</button>
+                        <button class="next-btn" id="nextButton">Next</button>
                     `;
 
-                    $('#modal_title_schedule').html(header_modal);
-                    $('#modal_data_schedule').html(data_modal);
-                    $('#modal_button_schedule').html(button_modal);
-                    $('#machineTablesSchedule').DataTable();
+                    let currentMenu = 1;
 
-                    $('#scheduleButton').on('click', function(event) {
-                        event.preventDefault();
-                        let scheduleDuration = $('input[name^="schedule_duration"]').map(function() {
-                            return $(this).val();
-                        }).get();
-                        let scheduleTimes = $('input[name^="schedule_time"]').map(function() {
-                            return $(this).val();
-                        }).get();
-                        let idMachines = $('input[name^="id_machine"]').map(function() {
-                            return $(this).val();
-                        }).get();
-                        let idSchedule = $('input[name="id_schedule"]').val();
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ route("addmachineschedule") }}',
-                            data: {
-                                '_token': '{{ csrf_token() }}',
-                                'schedule_duration': scheduleDuration,
-                                'schedule_time': scheduleTimes,
-                                'id_machine': idMachines,
-                                'id_schedule': idSchedule,
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    const successMessage = response.success;
-                                    $('#successText').text(successMessage);
-                                    $('#successModal').modal('show');
-                                }
-                                setTimeout(function() {
-                                    $('#successModal').modal('hide');
-                                    $('#scheduleModal').modal('hide');
-                                }, 2000);
-                            },
-                            error: function(xhr, status, error) {
-                                if (xhr.responseText) {
-                                    const warningMessage = xhr.responseText;
-                                    $('#failedText').text(warningMessage);
-                                    $('#failedModal').modal('show');
-                                }
-                                setTimeout(function() {
-                                    $('#failedModal').modal('hide');
-                                    $('#scheduleModal').modal('hide');
-                                }, 2000);
-                            }
-                        }).always(function() {
-                            table.ajax.reload(null, false);
-                        });
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('error:', error);
-                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
-                }
-            });
-        });
-
-        $('#addModal').on('shown.bs.modal', function(event) {
-            $.ajax({
-                type: 'GET',
-                url: '{{ route("fetchmachine") }}',
-                success: function(data) {
-                    let combinedValue = [];
-                    function combineMachineValues() {
-                        const checkboxes = document.getElementsByName("machineinput");
-                        combinedValue = [];
-                        checkboxes.forEach(checkbox => {
-                            if (checkbox.checked) {
-                                combinedValue.push(checkbox.value);
-                            }
-                        });
+                    function changeMenu(step) {
+                        const totalMenus = 2;
+                        if (step === 1) {
+                            document.getElementById("modal_data_add").innerHTML = data_modal_1;
+                            document.getElementById("previousButton").style.display = "none";
+                            document.getElementById("nextButton").style.display = "block";
+                        } else if (step === 2) {
+                            document.getElementById("modal_data_add").innerHTML = data_modal_2;
+                            document.getElementById("previousButton").style.display = "block";
+                            document.getElementById("nextButton").style.display = "none";
+                            combineMachineValues();
+                        }
                     }
 
-                    let tableRows = '';
-                    data.refreshmachine.forEach((value, key) => {
-                        tableRows += `
-                            <tr>
-                                <td>${key + 1}</td>
-                                <td>${value.invent_number}</td>
-                                <td>${value.machine_number}</td>
-                                <td>${value.machine_name}</td>
-                                <td>${value.machine_type}</td>
-                                <td>${value.machine_brand}</td>
-                                <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="machineinput" value="${value.id}">
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
+                    // Define initial menu content
+                    const data_modal = data_modal_1;
 
-                    const header_modal = `
-                        <h5 class="modal-title">Tambah Jadwal Preventive Mesin</h5>
-                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                    `;
-
-                    const data_modal = `
-                        <form id="addForm" method="post">
-                            <div class="row" align-items="center">
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
-                                        <div>
-                                            <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" align-items="center">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="machineTables" width="100%">
-                                        <thead>
-                                            <th>NO.</th>
-                                            <th>NO. INVENT</th>
-                                            <th>NO MESIN</th>
-                                            <th>NAMA MESIN</th>
-                                            <th>MODEL/TYPE</th>
-                                            <th>BRAND/MERK</th>
-                                            <th>ADD</th>
-                                        </thead>
-                                        <tbody>
-                                            ${tableRows}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </form>
-                    `;
-
-                    const button_modal = `
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="addButton">Save changes</button>
-                    `;
-
+                    // Insert modal content only after it's ready
                     $('#modal_title_add').html(header_modal);
-                    $('#modal_data_add').html(data_modal);
-                    $('#modal_button_add').html(button_modal);
+                    $('#modal_data_add').html(data_modal_1); // Initial content
+                    $('#modal_button_add').html(button_modal); // Buttons
+
+                    // Add event listeners for dynamically added buttons
+                    $(document).on('click', '#nextButton', function() {
+                        changeMenu(2);
+                    });
+
+                    $(document).on('click', '#previousButton', function() {
+                        changeMenu(1);
+                    });
+
+                    // Ensure DataTables initialization
                     $('#machineTables').DataTable();
-
-                    // Add event listeners for checkboxes
-                    const checkboxes = document.getElementsByName("machineinput");
-                    checkboxes.forEach(checkbox => {
-                        checkbox.addEventListener('change', combineMachineValues);
-                    });
-
-                    $('#addButton').on('click', function(event) {
-                        event.preventDefault();
-                        let formData = {
-                            nameSchedule: $('input[name="name_schedule"]').val(),
-                            machineInput: combinedValue,
-                        };
-                        $.ajax({
-                            type: 'POST',
-                            url: '{{ route("addschedule") }}',
-                            data: {
-                                '_token': '{{ csrf_token() }}',
-                                'name_schedule': formData.nameSchedule,
-                                'id_machine': formData.machineInput,
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    const successMessage = response.success;
-                                    $('#successText').text(successMessage);
-                                    $('#successModal').modal('show');
-                                }
-                                setTimeout(function() {
-                                    $('#successModal').modal('hide');
-                                    $('#addModal').modal('hide');
-                                }, 2000);
-                            },
-                            error: function(xhr, status, error) {
-                                if (xhr.responseText) {
-                                    const warningMessage = xhr.responseText;
-                                    $('#failedText').text(warningMessage);
-                                    $('#failedModal').modal('show');
-                                }
-                                setTimeout(function() {
-                                    $('#failedModal').modal('hide');
-                                    $('#addModal').modal('hide');
-                                }, 20000);
-                            }
-                        }).always(function() {
-                            table.ajax.reload(null, false);
-                        });
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('error:', error);
-                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
-                }
-            });
-        });
-
-        $('#editModal').on('shown.bs.modal', function(event) {
-            const button = $(event.relatedTarget);
-            const machineId = button.data('id');
-            $.ajax({
-                type: 'GET',
-                url: '{{ route("readschedule", ':id') }}'.replace(':id', machineId),
-                success: function(data) {
-                    let combinedValue = [];
-                    function combineMachineValues() {
-                        const checkboxes = document.getElementsByName("machineinput");
-                        combinedValue = [];
-                        checkboxes.forEach(checkbox => {
-                            if (checkbox.checked) {
-                                combinedValue.push(checkbox.value);
-                            }
-                        });
-                        combinedValue = combinedValue.join(',');
-                    }
-
-                    let tableRows = '';
-                    if (Array.isArray(data.machinearray)) {
-                        data.refreshmachine.forEach((value, key) => {
-                            const machineArray = data.machinearray.map(id => parseInt(id)); // convert json string array into legular integer array
-                            const isChecked = machineArray.includes(value.id) ? 'checked' : ''; // compare each legular integer array value into id each machine and check it if have same value
-                            tableRows += `
-                                <tr>
-                                    <td>${key + 1}</td>
-                                    <td>${value.invent_number}</td>
-                                    <td>${value.machine_number}</td>
-                                    <td>${value.machine_name}</td>
-                                    <td>${value.machine_type}</td>
-                                    <td>${value.machine_brand}</td>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="machineinput" value="${value.id}" ${isChecked}>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-
-                    const header_modal = `
-                        <h5 class="modal-title">Edit Jadwal Preventive Mesin</h5>
-                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                    `;
-
-                    const data_modal = `
-                        <form id="editForm" method="put">
-                            <div class="row" align-items="center">
-                                <div class="col-xl-12">
-                                    <div class="form-group">
-                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
-                                        <div>
-                                            <input class="form-control" name="name_schedule" value="${data.getschedule.name_schedule}" type="text" placeholder="Nama Jadwal">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" align-items="center">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="machineTablesEdit" width="100%">
-                                        <thead>
-                                            <th>NO.</th>
-                                            <th>NO. INVENT</th>
-                                            <th>NO MESIN</th>
-                                            <th>NAMA MESIN</th>
-                                            <th>MODEL/TYPE</th>
-                                            <th>BRAND/MERK</th>
-                                            <th>ADD</th>
-                                        </thead>
-                                        <tbody>
-                                            ${tableRows}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </form>
-                    `;
-
-                    const button_modal = `
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="editButton">Save changes</button>
-                    `;
-
-                    $('#modal_title_edit').html(header_modal);
-                    $('#modal_data_edit').html(data_modal);
-                    $('#modal_button_edit').html(button_modal);
-                    $('#machineTablesEdit').DataTable();
-
-                    // Add event listeners for checkboxes
-                    const checkboxes = document.getElementsByName("machineinput");
-                    checkboxes.forEach(checkbox => {
-                        checkbox.addEventListener('change', combineMachineValues);
-                    });
-
-                    $('#editButton').on('click', function(event) {
-                        event.preventDefault();
-                        let formData = {
-                            scheduleName: $('input[name="name_schedule"]').val(),
-                            machineInput: combinedValue,
-                        };
-                        $.ajax({
-                            type: 'PUT',
-                            url: '{{ route("updateschedule", ':id') }}'.replace(':id', machineId),
-                            data: {
-                                '_token': '{{ csrf_token() }}',
-                                'name_schedule': formData.scheduleName,
-                                'id_machine': formData.machineInput,
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    const successMessage = response.success;
-                                    $('#successText').text(successMessage);
-                                    $('#successModal').modal('show');
-                                }
-                                setTimeout(function() {
-                                    $('#successModal').modal('hide');
-                                    $('#editModal').modal('hide');
-                                }, 2000);
-                            },
-                            error: function(xhr, status, error) {
-                                if (xhr.responseText) {
-                                    const warningMessage = JSON.parse(xhr.responseText).error;
-                                    $('#failedText').text(warningMessage);
-                                    $('#failedModal').modal('show');
-                                }
-                                setTimeout(function() {
-                                    $('#failedModal').modal('hide');
-                                    $('#editModal').modal('hide');
-                                }, 2000);
-                            }
-                        }).always(function() {
-                            table.ajax.reload(null, false);
-                        });
-                    });
                 },
                 error: function(xhr, status, error) {
                     console.error('error:', error);

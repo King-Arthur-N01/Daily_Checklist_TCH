@@ -117,6 +117,7 @@ class ScheduleController extends Controller
             $id_machine_array = json_encode($request->input('id_machine'));
             $StoreSchedule = new Schedule();
             $StoreSchedule->name_schedule = $request->input('name_schedule');
+            
             $StoreSchedule->id_machine = $id_machine_array;
             $StoreSchedule->save();
 

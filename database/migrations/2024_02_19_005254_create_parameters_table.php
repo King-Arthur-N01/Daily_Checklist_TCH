@@ -15,8 +15,6 @@ class CreateParametersTable extends Migration
     {
         Schema::create('parameters', function (Blueprint $table) {
             $table->id();
-            // $table->integer('componencheck_parameter')->index();
-            // $table->bigInteger('id_componencheck')->unique()->default('0');
             $table->string('name_parameter');
             $table->timestamps();
         });

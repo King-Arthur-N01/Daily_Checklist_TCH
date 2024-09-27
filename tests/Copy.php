@@ -1664,3 +1664,240 @@ const table = $('#recordTables').DataTable({
                 }
             });
         }
+
+
+        <ul class="nav nav-tabs">
+            <li class="nav-custom">
+                <a class="nav-link active" data-toggle="tab" href="#annual_schedule">Schedule Tahunan</a>
+            </li>
+            <li class="nav-custom">
+                <a class="nav-link" data-toggle="tab" href="#monthly_schedule">Schedule Bulanan</a>
+            </li>
+        </ul>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#annual_schedule">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#monthly_schedule">Menu 1</a>
+            </li>
+        </ul>
+        <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap5.bundle.min.js') }}"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Menu 1</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Menu 2</button>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <p>Content for Menu 1.</p>
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <p>Content for Menu 2.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                $('#addModal').on('shown.bs.modal', function(event) {
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("fetchmachine") }}',
+                success: function(data) {
+                    // Add event listeners for checkboxes
+                    const checkboxes = document.getElementsByName("machineinput");
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', combineMachineValues);
+                    });
+
+                    let combinedValue = [];
+                    function combineMachineValues() {
+                        const checkboxes = document.getElementsByName("machineinput");
+                        combinedValue = [];
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                combinedValue.push(checkbox.value);
+                            }
+                        });
+                    }
+
+                    let tableRows1 = '';
+                    data.refreshmachine.forEach((value, key) => {
+                        tableRows1 += `
+                            <tr>
+                                <td>${key + 1}</td>
+                                <td>${value.invent_number}</td>
+                                <td>${value.machine_number}</td>
+                                <td>${value.machine_name}</td>
+                                <td>${value.machine_type}</td>
+                                <td>${value.machine_brand}</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="machineinput" value="${value.id}">
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    let tableRows2 = '';
+                    let index = 0; // define index variable
+                    let selectedMachine = data.refreshmachine.filter(machine => combinedValue.includes(machine.id.toString()));
+                    selectedMachine.forEach((value, key) => {
+                        tableRows2 += `
+                            <tr>
+                                <td>${key + 1}</td>
+                                <td>${value.invent_number}</td>
+                                <td>${value.machine_name}</td>
+                                <td>${value.machine_brand}</td>
+                                <td>${value.machine_spec}</td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="bi bi-hourglass-split"></i>
+                                            </div>
+                                        </div>
+                                        <input name="schedule_duration[${index}]" type="number" class="form-control" placeholder="Dihitung Perjam">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="bi bi-calendar3"></i>
+                                            </div>
+                                        </div>
+                                        <input name="schedule_time[${index}]" type="date" class="form-control ui-datepicker" placeholder="DD/MM/YYYY">
+                                        <input type="hidden" name="id_machine[${index}]" value="${value.id}">
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        index++; // increment index variable
+                    });
+
+                    const header_modal = `
+                        <h5 class="modal-title">Tambah Jadwal Preventive Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    const data_modal_1 = `
+                        <div class="row" align-items="center">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                    <div>
+                                        <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="machineTables" width="100%">
+                                    <thead>
+                                        <th>NO.</th>
+                                        <th>NO. INVENT</th>
+                                        <th>NO MESIN</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>MODEL/TYPE</th>
+                                        <th>BRAND/MERK</th>
+                                        <th>ADD</th>
+                                    </thead>
+                                    <tbody>
+                                        ${tableRows1}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+
+                    const data_modal_2 = `
+                        <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
+                        <form id=" addForm" method="post">
+                            <table class="table table-bordered" id="machineTables" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NO. INVENT</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>BRAND/MERK</th>
+                                        <th>SPEC/TYPE</th>
+                                        <th>DURASI</th>
+                                        <th>RENCANA TGL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows2}
+                                </tbody>
+                            </table>
+                        </form>
+                    `;
+
+                    const button_modal = `
+                        <button class="prev-btn" id="previousButton">Previous</button>
+                        <button class="next-btn" id="nextButton">Next</button>
+                    `;
+
+                    let currentMenu = 1;
+
+                    function changeMenu(step) {
+                        const totalMenus = 2;
+                        const modalBody = document.getElementById("modal-body");
+
+                        // Ensure the modal body exists before trying to modify it
+                        if (!modalBody) {
+                            console.error("Modal body element not found.");
+                            return;
+                        }
+
+                        if (step === 1) {
+                            modalBody.innerHTML = data_modal_1;
+                            document.getElementById("previousButton").style.display = "none";
+                            document.getElementById("nextButton").style.display = "block";
+                        } else if (step === 2) {
+                            modalBody.innerHTML = data_modal_2;
+                            document.getElementById("previousButton").style.display = "block";
+                            document.getElementById("nextButton").style.display = "none";
+                            combineMachineValues();
+                        }
+                    }
+
+
+                    // Define initial menu content
+                    const data_modal = data_modal_1;
+
+                    // Insert modal content only after it's ready
+                    $('#modal_title_add').html(header_modal);
+                    $('#modal_data_add').html(data_modal_1); // Initial content
+                    $('#modal_button_add').html(button_modal); // Buttons
+
+                    // Add event listeners for dynamically added buttons
+                    $(document).on('click', '#nextButton', function() {
+                        changeMenu(2);
+                    });
+
+                    $(document).on('click', '#previousButton', function() {
+                        changeMenu(1);
+                    });
+
+                    // Ensure DataTables initialization
+                    $('#machineTables').DataTable();
+                },
+                error: function(xhr, status, error) {
+                    console.error('error:', error);
+                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                }
+            });
+        });

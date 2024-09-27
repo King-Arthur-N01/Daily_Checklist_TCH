@@ -13,11 +13,13 @@ class Machinerecord extends Model
         'create_by',
         'correct_by',
         'approve_by',
-        'id_machine2',
+        'id_machineschedule',
         'operator_action',
         'result',
         'machinerecord_status',
         'abnormal_record',
+        'start_preventive',
+        'finish_preventive',
     ];
     // public static function boot()
     // {

@@ -4804,6 +4804,25 @@ input:checked + .slider:before {
     }
 }
 
+.tab-content {
+    display: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.nav-custom {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none
+}
+
 .nav {
     display: flex;
     flex-wrap: wrap;
@@ -4814,7 +4833,8 @@ input:checked + .slider:before {
 
 .nav-link {
     display: block;
-    padding: .5rem 1rem
+    padding: .5rem 1rem;
+    text-align: center;
 }
 
 .nav-link:focus,

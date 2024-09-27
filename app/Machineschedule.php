@@ -7,15 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Machineschedule extends Model
 {
     protected $fillable = [
-        'schedule_start',
-        'schedule_end',
+        'schedule_duration',
+        'schedule_time',
         'schedule_record',
-        'schedule_next',
-        'start_date',
-        'finish_date',
-        'id_machine3',
-        'machineschedule_status',
-        'id_machinerecord',
+        'id_machine2',
+        'id_schedule2',
     ];
 
     public function getparentmachine()
