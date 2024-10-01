@@ -183,106 +183,161 @@
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
-                    const data_modal_1 = `
-                        <div class="row" align-items="center">
-                            <div class="col-xl-12">
-                                <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
-                                    <div>
-                                        <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
+                    const button_modal = `
+                        <button class="btn btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
+                        <button class="btn btn-primary" id="nextButton">Next<i class="bi bi-arrow-right"></i></button>
+                    `;
+
+                    let combinedMachineId = [];
+
+                    // Check if previous selections exist in sessionStorage
+                    let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
+
+                    function updateSelectedMachines() {
+                        combinedMachineId = [];
+                        const checkboxes = document.getElementsByName("machineinput");
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                combinedMachineId.push(checkbox.value);
+                            }
+                        });
+                        sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                    }
+
+                    // Display machines in the first modal (selection menu)
+                    function renderFirstMenu() {
+                        let tableRows1 = `
+                            <div class="row" align-items="center">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                        <div>
+                                            <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" align-items="center">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="machineTables" width="100%">
+                            <div class="row" align-items="center">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="machineTables1" width="100%">
+                                        <thead>
+                                            <th>NO.</th>
+                                            <th>NO. INVENT</th>
+                                            <th>NO MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>ADD</th>
+                                        </thead>
+                                        <tbody>
+                                    `;
+                                        data.refreshmachine.forEach((machine, index) => {
+                                            tableRows1 += `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${machine.invent_number}</td>
+                                                    <td>${machine.machine_number}</td>
+                                                    <td>${machine.machine_name}</td>
+                                                    <td>${machine.machine_type}</td>
+                                                    <td>${machine.machine_brand}</td>
+                                                    <td><input type="checkbox" name="machineinput" value="${machine.id}"></td>
+                                                </tr>
+                                            `;
+                                        });
+                        tableRows1 += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+
+                        document.getElementById("modal_data_add").innerHTML = tableRows1;
+
+                        // Re-add event listeners for new checkboxes
+                        const checkboxes = document.getElementsByName("machineinput");
+                        checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateSelectedMachines));
+                    }
+
+                    // Display the selected machines in the second modal (confirmation menu)
+                    function renderSecondMenu() {
+                        const selectedMachines = data.refreshmachine.filter(machine =>
+                            combinedMachineId.includes(machine.id.toString())
+                        );
+
+                        let tableRows2 = `
+                            <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
+                            <form id="addForm" method="post">
+                                <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
-                                        <th>NO.</th>
-                                        <th>NO. INVENT</th>
-                                        <th>NO MESIN</th>
-                                        <th>NAMA MESIN</th>
-                                        <th>MODEL/TYPE</th>
-                                        <th>BRAND/MERK</th>
-                                        <th>ADD</th>
+                                        <tr>
+                                            <th>NO</th>
+                                            <th>NO. INVENT</th>
+                                            <th>NO MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>DURASI</th>
+                                            <th>RENCANA TGL</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-
+                                `;
+                                    selectedMachines.forEach((machine, index) => {
+                                        tableRows2 += `
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>${machine.invent_number}</td>
+                                                <td>${machine.machine_number}</td>
+                                                <td>${machine.machine_name}</td>
+                                                <td>${machine.machine_type}</td>
+                                                <td>${machine.machine_brand}</td>
+                                                <td><input class="form-control ui-datepicker" type="number" name="duration_${machine.id}" placeholder="DD/MM/YYYY"></td>
+                                                <td><input class="form-control" type="date" name="date_${machine.id}"></td>
+                                            </tr>
+                                        `;
+                                    });
+                        tableRows2 += `
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                    `;
+                            </form>
+                        `;
+                        document.getElementById("modal_data_add").innerHTML = tableRows2;
+                    }
 
-                    const data_modal_2 = `
-                        <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
-                        <form id=" addForm" method="post">
-                            <table class="table table-bordered" id="machineTables" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>NO</th>
-                                        <th>NO. INVENT</th>
-                                        <th>NAMA MESIN</th>
-                                        <th>BRAND/MERK</th>
-                                        <th>SPEC/TYPE</th>
-                                        <th>DURASI</th>
-                                        <th>RENCANA TGL</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </form>
-                    `;
-
-                    const button_modal = `
-                        <button class="prev-btn" id="previousButton">Previous</button>
-                        <button class="next-btn" id="nextButton">Next</button>
-                    `;
-
-                    let currentMenu = 1;
-
+                    // Modal button functionality to switch between menus
                     function changeMenu(step) {
-                        const totalMenus = 2;
                         if (step === 1) {
-                            document.getElementById("modal_data_add").innerHTML = data_modal_1;
-                            document.getElementById("previousButton").style.display = "none";
-                            document.getElementById("nextButton").style.display = "block";
+                            renderFirstMenu();
+                            document.getElementById("previousButton").disabled = true;
+                            document.getElementById("nextButton").disabled = false;
                         } else if (step === 2) {
-                            document.getElementById("modal_data_add").innerHTML = data_modal_2;
-                            document.getElementById("previousButton").style.display = "block";
-                            document.getElementById("nextButton").style.display = "none";
-                            combineMachineValues();
+                            renderSecondMenu();
+                            document.getElementById("previousButton").disabled = false;
+                            document.getElementById("nextButton").disabled = true;
                         }
                     }
 
-                    // Define initial menu content
-                    const data_modal = data_modal_1;
-
-                    // Insert modal content only after it's ready
                     $('#modal_title_add').html(header_modal);
-                    $('#modal_data_add').html(data_modal_1); // Initial content
-                    $('#modal_button_add').html(button_modal); // Buttons
+                    $('#modal_button_add').html(button_modal);
 
-                    // Add event listeners for dynamically added buttons
-                    $(document).on('click', '#nextButton', function() {
+                    // Initialize modal with first menu content
+                    changeMenu(1);
+
+                    // Event listeners for navigation buttons
+                    document.getElementById("nextButton").addEventListener('click', function() {
                         changeMenu(2);
                     });
 
-                    $(document).on('click', '#previousButton', function() {
+                    document.getElementById("previousButton").addEventListener('click', function() {
                         changeMenu(1);
                     });
-
-                    // Ensure DataTables initialization
-                    $('#machineTables').DataTable();
                 },
                 error: function(xhr, status, error) {
-                    console.error('error:', error);
-                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                    console.error('Error fetching data:', error);
                 }
             });
         });
+
 
         // fungsi delete button untuk hapus mesin
         $('#scheduleTables').on('click', '.dropdown-item-custom-delete', function(e) {
