@@ -46,6 +46,7 @@ class MachinescheduleController extends Controller
     public function createmachineschedule(Request $request)
     {
         try {
+            dd($request);
             $id_schedule = $request->input('id_schedule');
             $machinekey = $request->input('id_machine', []);
             $schedule_duration = $request->input('schedule_duration', []);

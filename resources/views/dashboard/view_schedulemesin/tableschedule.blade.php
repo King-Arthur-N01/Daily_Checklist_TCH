@@ -183,19 +183,15 @@
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
-                    const button_modal = `
-                        <button class="btn btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
-                        <button class="btn btn-primary" id="nextButton">Next<i class="bi bi-arrow-right"></i></button>
-                    `;
-
                     let combinedMachineId = [];
+                    let nameSchedule = '';
 
                     // Check if previous selections exist in sessionStorage
                     let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
 
                     function updateSelectedMachines() {
                         combinedMachineId = [];
-                        const checkboxes = document.getElementsByName("machineinput");
+                        let checkboxes = document.getElementsByName("machineinput");
                         checkboxes.forEach(checkbox => {
                             if (checkbox.checked) {
                                 combinedMachineId.push(checkbox.value);
@@ -212,7 +208,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
-                                            <input class="form-control" name="name_schedule" type="text" placeholder="Nama Jadwal">
+                                            <input class="form-control" id="name_schedule" type="text" placeholder="Nama Jadwal">
                                         </div>
                                     </div>
                                 </div>
@@ -254,7 +250,7 @@
                         document.getElementById("modal_data_add").innerHTML = tableRows1;
 
                         // Re-add event listeners for new checkboxes
-                        const checkboxes = document.getElementsByName("machineinput");
+                        let checkboxes = document.getElementsByName("machineinput");
                         checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateSelectedMachines));
                     }
 
@@ -266,7 +262,8 @@
 
                         let tableRows2 = `
                             <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
-                            <form id="addForm" method="post">
+                            <form id="addSchedule" method="post">
+                                <input type="hidden" name="name_schedule" value="${nameSchedule}">
                                 <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
                                         <tr>
@@ -276,8 +273,7 @@
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
-                                            <th>DURASI</th>
-                                            <th>RENCANA TGL</th>
+                                            <th>RENCANA PREVENTIVE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -291,8 +287,8 @@
                                                 <td>${machine.machine_name}</td>
                                                 <td>${machine.machine_type}</td>
                                                 <td>${machine.machine_brand}</td>
-                                                <td><input class="form-control ui-datepicker" type="number" name="duration_${machine.id}" placeholder="DD/MM/YYYY"></td>
-                                                <td><input class="form-control" type="date" name="date_${machine.id}"></td>
+                                                <td><input class="form-control" type="date" name="schedule_time"></td>
+                                                <input type="hidden" name="id_machine" value="${machine.id}">
                                             </tr>
                                         `;
                                     });
@@ -306,30 +302,41 @@
 
                     // Modal button functionality to switch between menus
                     function changeMenu(step) {
+                        const button_modal1 = `
+                            <button class="btn dynamic-button btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
+                            <button class="btn dynamic-button btn-primary" id="nextButton">Next<i class="bi bi-arrow-right"></i></button>
+                        `;
+                        const button_modal2 = `
+                            <button class="btn dynamic-button btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
+                            <button class="btn dynamic-button btn-primary" id="confirmButton">Confirm<i class="bi bi-check2-circle"></i></button>
+                        `;
                         if (step === 1) {
                             renderFirstMenu();
+                            document.getElementById("modal_button_add").innerHTML = button_modal1;
                             document.getElementById("previousButton").disabled = true;
-                            document.getElementById("nextButton").disabled = false;
                         } else if (step === 2) {
                             renderSecondMenu();
-                            document.getElementById("previousButton").disabled = false;
-                            document.getElementById("nextButton").disabled = true;
+                            document.getElementById("modal_button_add").innerHTML = button_modal2;
+                            document.getElementById("confirmButton").addEventListener('click', function() {
+                                confirmButton();
+                            });
                         }
                     }
 
                     $('#modal_title_add').html(header_modal);
-                    $('#modal_button_add').html(button_modal);
-
-                    // Initialize modal with first menu content
                     changeMenu(1);
 
-                    // Event listeners for navigation buttons
-                    document.getElementById("nextButton").addEventListener('click', function() {
-                        changeMenu(2);
+                    document.getElementById("modal_button_add").addEventListener('click', function(event) {
+                        if (event.target.id === "previousButton") {
+                            changeMenu(1);
+                        }
                     });
 
-                    document.getElementById("previousButton").addEventListener('click', function() {
-                        changeMenu(1);
+                    document.getElementById("modal_button_add").addEventListener('click', function(event) {
+                        if (event.target.id === "nextButton") {
+                            nameSchedule = $('#name_schedule').val();
+                            changeMenu(2);
+                        }
                     });
                 },
                 error: function(xhr, status, error) {
@@ -337,6 +344,54 @@
                 }
             });
         });
+
+        function confirmButton() {
+            event.preventDefault();
+            let scheduleName = $('input[name="name_schedule"]').val();
+            let scheduleTimes = [];
+            let idMachines = [];
+
+            $('input[name="schedule_time"]').each(function() {
+                scheduleTimes.push($(this).val());
+            });
+            $('input[name="id_machine"]').each(function() {
+                idMachines.push($(this).val());
+            });
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("addmachineschedule") }}',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'name_schedule' : scheduleName,
+                    'schedule_time[]': scheduleTimes,
+                    'id_machine[]': idMachines,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const successMessage = response.success;
+                        $('#successText').text(successMessage);
+                        $('#successModal').modal('show');
+                    }
+                    setTimeout(function() {
+                        $('#successModal').modal('hide');
+                        $('#scheduleModal').modal('hide');
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.responseText) {
+                        const warningMessage = xhr.responseText;
+                        $('#failedText').text(warningMessage);
+                        $('#failedModal').modal('show');
+                    }
+                    setTimeout(function() {
+                        $('#failedModal').modal('hide');
+                        $('#scheduleModal').modal('hide');
+                    }, 2000);
+                }
+            }).always(function() {
+                table.ajax.reload(null, false);
+            });
+        }
 
 
         // fungsi delete button untuk hapus mesin
