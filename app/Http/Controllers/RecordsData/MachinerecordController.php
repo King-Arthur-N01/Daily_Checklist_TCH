@@ -48,19 +48,15 @@ class MachinerecordController extends Controller
     {
         try {
             $schedule = Schedule::find($id);
-            $machinearray = json_decode($schedule->id_machine, true);
-            $getmachineid = [];
-            $getmachinescheduleid = [];
+            $machinearray = json_decode($schedule->machine_collection, true);
+            $getmachines = [];
 
             foreach ($machinearray as $eachmachineid) {
-                $machine = Machine::where('id', $eachmachineid)->first();
-                $getmachineid[] = $machine;
-                $machineschedule = Machineschedule::where('id_machine2', $machine->id)->get();
-                $getmachinescheduleid[] = $machineschedule;
+                $machineid = Machine::where('id', $eachmachineid)->get();
+                $getmachines[] = $machineid;
             }
             return response()->json([
-                'getmachineid' => $getmachineid,
-                'getmachinescheduleid' => $getmachinescheduleid
+                'getmachines' => $getmachines,
             ]);
         } catch (\Exception $e) {
             Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);

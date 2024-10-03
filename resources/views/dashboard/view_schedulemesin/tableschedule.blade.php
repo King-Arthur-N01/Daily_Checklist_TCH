@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div class="div-tables">
                         <div class="col-sm-12 col-md-12">
-                            <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#addModal" tabindex="0">+ Schedule mesin</a>
+                            <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#addModal" tabindex="0">+ Schedule Tahunan Mesin</a>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -68,21 +68,6 @@
     </div>
     <!-- End Edit Modal-->
 
-    <!-- View Modal -->
-    <div class="modal fade" id="scheduleModal" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header" id="modal_title_schedule">
-                </div>
-                <div class="modal-body" id="modal_data_schedule">
-                </div>
-                <div class="modal-footer" id="modal_button_schedule">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End View Modal-->
-
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -99,21 +84,21 @@
     </div>
     <!-- End Alert Success Modal -->
 
-    <!-- Alert Warning Modal -->
-    <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
+    <!-- Alert Danger Modal -->
+    <div class="modal fade" id="failedModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle me-1"></i>
-                        <span id="warningText" class="modal-alert"></span>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-octagon me-1"></i>
+                        <span id="failedText" class="modal-alert"></span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Alert Warning Modal -->
+    <!-- End Alert Danger Modal -->
 @endsection
 
 @push('style')
@@ -143,7 +128,7 @@
                         return {
                             no: index + 1,
                             name_schedule: refreshschedule.name_schedule,
-                            id_machine: JSON.parse(refreshschedule.id_machine.split(',').length),
+                            id_machine: JSON.parse(refreshschedule.machine_collection.split(',').length),
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
                                 month: 'long',
@@ -153,8 +138,8 @@
                                 <div class="dynamic-button-group">
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
                                     <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item-custom-more-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#scheduleModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;More Edit</a>
-                                        <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
+                                        <a class="dropdown-item-custom-more-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;More Edit</a>
+                                        <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
                                         <a class="dropdown-item-custom-delete" data-id="${refreshschedule.id}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                     </div>
                                 </div>
@@ -335,7 +320,11 @@
                     document.getElementById("modal_button_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
                             nameSchedule = $('#name_schedule').val();
-                            changeMenu(2);
+                            if (nameSchedule === "") {
+                                alert("Harap masukan nama untuk jadwal.!!!");
+                            } else {
+                                changeMenu(2);
+                            }
                         }
                     });
                 },
@@ -359,7 +348,7 @@
             });
             $.ajax({
                 type: 'POST',
-                url: '{{ route("addmachineschedule") }}',
+                url: '{{ route("addschedule") }}',
                 data: {
                     '_token': '{{ csrf_token() }}',
                     'name_schedule' : scheduleName,
@@ -374,18 +363,19 @@
                     }
                     setTimeout(function() {
                         $('#successModal').modal('hide');
-                        $('#scheduleModal').modal('hide');
+                        $('#addModal').modal('hide');
                     }, 2000);
                 },
                 error: function(xhr, status, error) {
                     if (xhr.responseText) {
-                        const warningMessage = xhr.responseText;
+                        console.error(xhr.responseText);
+                        const warningMessage = JSON.parse(xhr.responseText).error;
                         $('#failedText').text(warningMessage);
                         $('#failedModal').modal('show');
                     }
                     setTimeout(function() {
                         $('#failedModal').modal('hide');
-                        $('#scheduleModal').modal('hide');
+                        $('#addModal').modal('hide');
                     }, 2000);
                 }
             }).always(function() {
@@ -399,7 +389,7 @@
             e.preventDefault();
             const button = $(this);
             const machineId = button.data('id');
-            if (confirm("Apakah yakin menghapus mesin ini?")) {
+            if (confirm("Apakah yakin menghapus schedule ini?")) {
                 $.ajax({
                     type: 'DELETE',
                     url: '{{ route("removeschedule", ':id') }}'.replace(':id', machineId),

@@ -132,7 +132,7 @@
                             return {
                                 id: refreshschedule.id,
                                 name_schedule: refreshschedule.name_schedule,
-                                id_machine: refreshschedule.id_machine.split(',').length,
+                                id_machine: refreshschedule.machine_collection.split(',').length,
                                 schedule_status: refreshschedule.schedule_status,
                             };
                         });
@@ -190,7 +190,7 @@
                                 '<tbody>';
 
                             let currentTime = new Date();
-                            data.getmachineid.forEach(machine => {
+                            data.getmachines.forEach(machine => {
                                 let schedule = data.getmachinescheduleid.find(schedules => schedules[0].id_machine2 === machine.id);
                                 let scheduleEnd = new Date(schedule[0].schedule_end);
                                 let isPast = scheduleEnd && scheduleEnd < currentTime;

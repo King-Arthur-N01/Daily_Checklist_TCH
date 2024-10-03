@@ -7,9 +7,11 @@ use Carbon\Carbon;
 use App\Schedule;
 use App\Machine;
 use App\MachineSchedule;
+use App\Plannedschedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class ScheduleController extends Controller
 {
@@ -114,12 +116,37 @@ class ScheduleController extends Controller
     public function createschedule(Request $request)
     {
         try {
-            $id_machine_array = json_encode($request->input('id_machine'));
+            $request->validate([
+                'name_schedule' => 'required',
+            ]);
+
+            $machine_keys = $request->input('id_machine');
+            $schedule_times = $request->input('schedule_time');
+
+            // Ensure both arrays have the same number of elements
+            if (count($machine_keys) !== count($schedule_times)) {
+                return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
+            }
+
             $StoreSchedule = new Schedule();
             $StoreSchedule->name_schedule = $request->input('name_schedule');
-            
-            $StoreSchedule->id_machine = $id_machine_array;
+            $StoreSchedule->machine_collection = json_encode($machine_keys);
             $StoreSchedule->save();
+
+            $schedule_id = Schedule::latest('id')->first()->id;
+
+            foreach ($machine_keys as $index => $machine_id) {
+                $ScheduleStart = $schedule_times[$index];
+                $getschedulestart = Carbon::parse($ScheduleStart);
+                $ScheduleEnd = $getschedulestart->addDays(7);
+
+                $StorePlannedSchedule = new Plannedschedule();
+                $StorePlannedSchedule->schedule_start = $ScheduleStart;
+                $StorePlannedSchedule->schedule_end = $ScheduleEnd;
+                $StorePlannedSchedule->id_machine = $machine_id;
+                $StorePlannedSchedule->id_schedule = $schedule_id;
+                $StorePlannedSchedule->save();
+            }
 
             return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
         } catch (\Exception $e) {
@@ -127,6 +154,7 @@ class ScheduleController extends Controller
             return response()->json(['error' => 'Error adding data'], 500);
         }
     }
+
 
     public function updateschedule(Request $request, $id)
     {
@@ -145,13 +173,8 @@ class ScheduleController extends Controller
 
     public function deleteschedule($id)
     {
-        try{
+        try {
             $DeleteSchedule = Schedule::find($id);
-            $machinearray = json_decode($DeleteSchedule->id_machine, true);
-
-            foreach ($machinearray as $eachmachineid) {
-                Machineschedule::where('id_machine3', $eachmachineid)->delete();
-            }
             $DeleteSchedule->delete();
             return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
         } catch (\Exception $e) {
