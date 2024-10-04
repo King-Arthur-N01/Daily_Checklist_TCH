@@ -16,7 +16,7 @@ class CreateMachineschedulesTable extends Migration
         Schema::create('machineschedules', function (Blueprint $table) {
             $table->id();
             $table->integer('schedule_duration');
-            $table->timestamp('schedule_time');
+            $table->timestamp('schedule_date');
             $table->timestamp('schedule_record')->nullable();
             $table->unsignedBigInteger('id_machine2')->nullable();
             $table->unsignedBigInteger('id_schedule2')->nullable();

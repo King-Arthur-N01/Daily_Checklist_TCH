@@ -22,28 +22,48 @@ class MachinescheduleController extends Controller
         //
     }
 
-    public function readdatamachineschedule($id)
+    public function readdataschedule($id)
     {
         try {
-            $getschedule = Schedule::find($id);
-            $machinearray = json_decode($getschedule->id_machine, true);
-            $getmachineid = [];
+            $schedule = Schedule::find($id);
+            $machinearray = json_decode($schedule->machine_collection, true);
+            $getmachines = [];
 
-            foreach ($machinearray as $eachmachineid){
-                $machine = Machine::find($eachmachineid);
-                $getmachineid[] = $machine;
+            foreach ($machinearray as $eachmachineid) {
+                $machineid = Machine::where('id', $eachmachineid)->get();
+                $getmachines[] = $machineid;
             }
             return response()->json([
-                'getschedule' => $getschedule,
-                'getmachineid' => $getmachineid,
-                'schedule_id' => $id
+                'getmachines' => $getmachines,
+                'getschedule' => $id
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
 
-    public function createmachineschedule(Request $request)
+    // public function readdatamachineschedule($id)
+    // {
+    //     try {
+    //         $getschedule = Schedule::find($id);
+    //         $machinearray = json_decode($getschedule->id_machine, true);
+    //         $getmachineid = [];
+
+    //         foreach ($machinearray as $eachmachineid){
+    //             $machine = Machine::find($eachmachineid);
+    //             $getmachineid[] = $machine;
+    //         }
+    //         return response()->json([
+    //             'getschedule' => $getschedule,
+    //             'getmachineid' => $getmachineid,
+    //             'schedule_id' => $id
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
+
+    public function createschedulemonth(Request $request)
     {
         try {
             dd($request);

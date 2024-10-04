@@ -54,6 +54,19 @@ class ScheduleController extends Controller
         }
     }
 
+    public function refreshdetailtableschedule($id)
+    {
+        try {
+            // $refreshmachine = Machine::all();
+            $refreshschedule= Schedule::all();
+            return response()->json([
+                'refreshschedule' => $refreshschedule,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     // untuk test fecth data dummy calendar
     Public function datacalendar() {
         $data = [
@@ -97,21 +110,21 @@ class ScheduleController extends Controller
         }
     }
 
-    public function readdataschedule($id)
-    {
-        try {
-            $getschedule = Schedule::find($id);
-            $machinearray = json_decode($getschedule->id_machine, true);
-            $refreshmachine = Machine::all();
-            return response()->json([
-                'getschedule' => $getschedule,
-                'machinearray' => $machinearray,
-                'refreshmachine' => $refreshmachine
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error fetching data'], 500);
-        }
-    }
+    // public function readdataschedule($id)
+    // {
+    //     try {
+    //         $getschedule = Schedule::find($id);
+    //         $machinearray = json_decode($getschedule->id_machine, true);
+    //         $refreshmachine = Machine::all();
+    //         return response()->json([
+    //             'getschedule' => $getschedule,
+    //             'machinearray' => $machinearray,
+    //             'refreshmachine' => $refreshmachine
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
 
     public function createschedule(Request $request)
     {
