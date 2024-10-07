@@ -148,15 +148,17 @@ class ScheduleController extends Controller
 
             $schedule_id = Schedule::latest('id')->first()->id;
 
-            foreach ($machine_keys as $index => $machine_id) {
-                $ScheduleStart = $schedule_times[$index];
-                $getschedulestart = Carbon::parse($ScheduleStart);
-                $ScheduleEnd = $getschedulestart->addDays(7);
+            foreach ($machine_keys as $index => $key) {
+                $ScheduleTimeRange = $request->input('schedule_time')[$index];
+                list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
+
+                $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
+                $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
                 $StorePlannedSchedule = new Plannedschedule();
-                $StorePlannedSchedule->schedule_start = $ScheduleStart;
-                $StorePlannedSchedule->schedule_end = $ScheduleEnd;
-                $StorePlannedSchedule->id_machine = $machine_id;
+                $StorePlannedSchedule->schedule_start = $ScheduleStartCarbon;
+                $StorePlannedSchedule->schedule_end = $ScheduleEndCarbon;
+                $StorePlannedSchedule->id_machine = $key;
                 $StorePlannedSchedule->id_schedule = $schedule_id;
                 $StorePlannedSchedule->save();
             }

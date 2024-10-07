@@ -118,9 +118,12 @@
 
 @push('style')
     {{-- <link href="{{ mix('css/app.css') }}" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/daterange-picker/daterangepicker.css') }}">
 @endpush
 
 @push('script')
+    <script src="{{ asset('assets/vendor/daterange-picker/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/daterange-picker/daterangepicker.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/jquery-maskedinput/jquery.maskedinput.js') }}"></script> --}}
     {{-- <script src="{{ mix('js/app.js') }}" defer></script> --}}
 <script>
@@ -133,10 +136,6 @@
                 overlay.removeClass('is-active');
             });
         }, 60000); // 60000 milidetik = 60 second
-
-        $(function() {
-            $('#date_picker').daterangepicker();
-        });
 
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
@@ -295,6 +294,18 @@
                         sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
                     }
 
+                    function selectDateRange() {
+                        $('.daterange-picker').daterangepicker({
+                            showDropdowns: true,
+                            locale: {
+                                format: 'DD-MM-YYYY'
+                            },
+                            maxSpan: {
+                                days: 6
+                            },
+                        });
+                    }
+
                     // Display machines in the first modal (selection menu)
                     function renderFirstMenu() {
                         let tableRows1 = `
@@ -383,7 +394,7 @@
                                                 <td>${machine.machine_type}</td>
                                                 <td>${machine.machine_brand}</td>
                                                 <td>
-                                                    <input class="form-control" type="text" id="date_picker" name="schedule_time">
+                                                    <input class="form-control daterange-picker" type="text" name="schedule_time">
                                                     <input type="hidden" name="id_machine" value="${machine.id}">
                                                 </td>
                                             </tr>
@@ -436,6 +447,7 @@
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2);
+                                selectDateRange();
                             }
                         }
                     });
@@ -531,7 +543,7 @@
                                                 <i class="bi bi-calendar3"></i>
                                             </div>
                                         </div>
-                                        <input name="schedule_date[]" type="date" class="form-control ui-datepicker" placeholder="DD/MM/YYYY">
+                                        <input name="schedule_date[]" type="text" class="form-control datepicker">
                                         <input type="hidden" name="id_machine[]" value="${machine.id}">
                                         <input type="hidden" name="id_schedule" value="${data.getschedule}">
                                     </div>
@@ -572,6 +584,15 @@
                     $('#modal_title_month_add').html(header_modal);
                     $('#modal_data_month_add').html(data_modal);
                     $('#modal_button_month_add').html(button_modal);
+                    $('.datepicker').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        minDate: '01/04/2024', //perlu disesuaikan ulang agar sesuai dengan jadwal schedule pertahun
+                        maxDate: '21/04/2024',
+                        locale: {
+                            format: 'DD-MM-YYYY'
+                        }
+                    });
 
                     // Save button
                     $('#saveButton').on('click', function() {
@@ -635,7 +656,7 @@
         });
 
         // fungsi delete button untuk hapus mesin
-        $('#scheduleTables').on('click', '.dropdown-item-custom-delete', function(e) {
+        $('#scheduleTables').on('click', '.deleteButton', function(e) {
             e.preventDefault();
             const button = $(this);
             const machineId = button.data('id');
