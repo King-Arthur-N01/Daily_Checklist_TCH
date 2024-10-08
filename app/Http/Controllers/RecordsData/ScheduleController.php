@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\MachineData;
+namespace App\Http\Controllers\RecordsData;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Schedule;
 use App\Machine;
-use App\MachineSchedule;
-use App\Plannedschedule;
+use App\MonthlySchedule;
+use App\YearlySchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Symfony\Contracts\Service\Attribute\Required;
 
 class ScheduleController extends Controller
 {
@@ -155,7 +154,7 @@ class ScheduleController extends Controller
                 $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                $StorePlannedSchedule = new Plannedschedule();
+                $StorePlannedSchedule = new YearlySchedule();
                 $StorePlannedSchedule->schedule_start = $ScheduleStartCarbon;
                 $StorePlannedSchedule->schedule_end = $ScheduleEndCarbon;
                 $StorePlannedSchedule->id_machine = $key;

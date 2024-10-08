@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMachineschedulesTable extends Migration
+class CreateMonthlySchedulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateMachineschedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('machineschedules', function (Blueprint $table) {
+        Schema::create('monthly_schedules', function (Blueprint $table) {
             $table->id();
             $table->integer('schedule_duration');
             $table->timestamp('schedule_date');
             $table->timestamp('schedule_record')->nullable();
-            $table->unsignedBigInteger('id_machine2')->nullable();
             $table->unsignedBigInteger('id_schedule2')->nullable();
             $table->boolean('machineschedule_status')->default(false);
             $table->timestamps();
@@ -32,6 +31,6 @@ class CreateMachineschedulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('machineschedules');
+        Schema::dropIfExists('monthly_schedules');
     }
 }

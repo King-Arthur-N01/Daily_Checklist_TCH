@@ -21,7 +21,7 @@ class CreateMachinerecordsTable extends Migration
             $table->json('create_by')->nullable();
             $table->unsignedBigInteger('correct_by')->nullable();
             $table->unsignedBigInteger('approve_by')->nullable();
-            $table->unsignedBigInteger('id_machineschedule')->nullable();
+            $table->unsignedBigInteger('id_monthlyschedules')->nullable();
             $table->json('operator_action');
             $table->json('result');
             $table->boolean('machinerecord_status');

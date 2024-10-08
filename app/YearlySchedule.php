@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Plannedschedule extends Model
+class YearlySchedule extends Model
 {
     protected $fillable = [
         'schedule_start',

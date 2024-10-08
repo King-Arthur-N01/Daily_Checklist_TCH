@@ -1901,3 +1901,150 @@ const table = $('#recordTables').DataTable({
                 }
             });
         });
+
+        $('#addScheduleMonth').on('shown.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const machineId = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("readscheduledata", ':id') }}'.replace(':id', machineId),
+                success: function(data) {
+
+                    let tableRows = '';
+                    data.getmachines.forEach((machine, key) => {
+                        tableRows += `
+                            <tr>
+                                <td>${key + 1}</td>
+                                <td>${machine.invent_number}</td>
+                                <td>${machine.machine_number}</td>
+                                <td>${machine.machine_name}</td>
+                                <td>${machine.machine_type}</td>
+                                <td>${machine.machine_brand}</td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="bi bi-hourglass-split"></i>
+                                            </div>
+                                        </div>
+                                        <input name="schedule_time[]" type="number" class="form-control" placeholder="Dihitung Perjam">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="bi bi-calendar3"></i>
+                                            </div>
+                                        </div>
+                                        <input name="schedule_date[]" type="text" class="form-control datepicker">
+                                        <input type="hidden" name="id_machine[]" value="${machine.yearlyschedule.id}">
+                                        <input type="hidden" name="id_schedule" value="${machine.getschedule}">
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    const header_modal = `
+                        <h5 class="modal-title">Edit Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+                    const data_modal = `
+                        <form id=" addForm" method="post">
+                            <table class="table table-bordered" id="machineTables" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>NO.</th>
+                                        <th>NO INVENT</th>
+                                        <th>NO MESIN</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>MODEL/TYPE</th>
+                                        <th>BRAND/MERK</th>
+                                        <th>DURASI</th>
+                                        <th>RENCANA TGL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </form>
+                    `;
+                    const button_modal = `
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+                    `;
+                    $('#modal_title_month_add').html(header_modal);
+                    $('#modal_data_month_add').html(data_modal);
+                    $('#modal_button_month_add').html(button_modal);
+                    $('.datepicker').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        minDate: '01/04/2024',
+                        maxDate: '21/04/2024',
+                        locale: {
+                            format: 'DD-MM-YYYY'
+                        }
+                    });
+
+                    // Save button
+                    $('#saveButton').on('click', function() {
+                        event.preventDefault();
+                        let scheduleId = $('input[name="id_schedule"]').val();
+                        let scheduleDuration = [];
+                        let scheduleDate = [];
+                        let machinesId = [];
+
+                        $('input[name="schedule_duration"]').each(function() {
+                            scheduleDuration.push($(this).val());
+                        });
+                        $('input[name="schedule_date"]').each(function() {
+                            scheduleDate.push($(this).val());
+                        });
+                        $('input[name="id_machine"]').each(function() {
+                            machinesId.push($(this).val());
+                        });
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("addschedulemonth") }}',
+                            data: {
+                                '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                'id_schedule' : scheduleName,
+                                'schedule_duration[]': formData.scheduleDuration,
+                                'schedule_date[]': formData.scheduleDate,
+                                'id_machine[]': formData.machinesId
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    const successMessage = response.success;
+                                    $('#successText').text(successMessage);
+                                    $('#successModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#successModal').modal('hide');
+                                    $('#editModal').modal('hide');
+                                }, 2000);
+                            },
+                            error: function(xhr, status, error) {
+                                if (xhr.responseText) {
+                                    const warningMessage = JSON.parse(xhr.responseText).error;
+                                    $('#failedText').text(warningMessage);
+                                    $('#failedModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#failedModal').modal('hide');
+                                    $('#editModal').modal('hide');
+                                }, 2000);
+                            }
+                        }).always(function() {
+                            table.ajax.reload(null, false);
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('error:', error);
+                    $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                }
+            });
+        });
