@@ -56,12 +56,18 @@ class ScheduleController extends Controller
     public function refreshdetailtableschedule($id)
     {
         try {
-            // $refreshmachine = Machine::all();
-            $refreshschedule= Schedule::all();
+            $refreshscheduledetail = DB::table('schedules')
+                ->select('schedules.id', 'yearly_schedules.id', 'monthly_schedules.*', 'machines.*')
+                ->join('yearly_schedules', 'schedules.id', '=', 'yearly_schedules.id_schedule')
+                ->join('machines', 'yearly_schedules.id_machine', '=', 'machines.id')
+                ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule2')
+                ->where('schedules.id', '=', $id)
+                ->get();
             return response()->json([
-                'refreshschedule' => $refreshschedule,
+                'refreshscheduledetail' => $refreshscheduledetail,
             ]);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }

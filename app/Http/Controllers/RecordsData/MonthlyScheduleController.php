@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\RecordsData;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use App\MonthlySchedule;
 use App\YearlySchedule;
 use App\Schedule;
@@ -37,24 +38,17 @@ class MonthlyScheduleController extends Controller
     public function createschedulemonth(Request $request)
     {
         try {
-            dd($request);
-            $id_schedule = $request->input('id_schedule');
-            $machinekey = $request->input('id_machine', []);
+            // dd($request);
             $schedule_duration = $request->input('schedule_duration', []);
-            $schedule_time = $request->input('schedule_time', []);
-
-            // Ensure the number of machine keys matches the schedule durations and times
-            if (count($machinekey) !== count($schedule_duration) || count($machinekey) !== count($schedule_time)) {
-                return response()->json(['error' => 'Input array lengths do not match'], 400);
-            }
+            $schedule_date = $request->input('schedule_date', []);
+            $schedulekey = $request->input('id_schedule2', []);
 
             // Loop through each machine key and create a Machineschedule record
-            foreach ($machinekey as $index => $key) {
+            foreach ($schedulekey as $index => $key) {
                 $StoreSchedule = new MonthlySchedule;
-                $StoreSchedule->schedule_duration = $schedule_duration[$index];  // Assign individual duration
-                $StoreSchedule->schedule_time = $schedule_time[$index];          // Assign individual time
-                $StoreSchedule->id_schedule = $id_schedule;
-                $StoreSchedule->id_machine2 = $key;  // Assuming 'id_machine2' refers to the machine's key
+                $StoreSchedule->schedule_duration = $schedule_duration[$index];
+                $StoreSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
+                $StoreSchedule->id_schedule2 = $key;
                 $StoreSchedule->save();
             }
 
