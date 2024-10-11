@@ -2,24 +2,19 @@
 
 namespace App;
 
+use App\Http\Controllers\MachineScheduleMonthController;
 use Illuminate\Database\Eloquent\Model;
 
 class MonthlySchedule extends Model
 {
     protected $fillable = [
-        'schedule_duration',
-        'schedule_time',
-        'schedule_record',
-        'id_schedule2',
+        'name_schedule',
+        'machine_collection',
+        'schedule_status'
     ];
 
-    public function getparentschedule()
+    public function machine_month_children()
     {
-        return $this->hasMany(YearlySchedule::class);
-    }
-
-    public function getchildernrecord()
-    {
-        return $this->belongsTo(Machinerecord::class);
+        return $this->belongsTo(MachineScheduleMonth::class);
     }
 }

@@ -15,11 +15,9 @@ class CreateMonthlySchedulesTable extends Migration
     {
         Schema::create('monthly_schedules', function (Blueprint $table) {
             $table->id();
-            $table->integer('schedule_duration');
-            $table->timestamp('schedule_date');
-            $table->timestamp('schedule_record')->nullable();
-            $table->unsignedBigInteger('id_schedule2')->nullable();
-            $table->boolean('machineschedule_status')->default(false);
+            $table->string('name_schedule_month');
+            $table->boolean('schedule_status')->default(false);
+            $table->unsignedBigInteger('id_schedule_year2')->nullable();
             $table->timestamps();
         });
     }

@@ -49,22 +49,23 @@ Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyControl
 Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end
 
-// schedule route
-Route::get ('/schedule','RecordsData\ScheduleController@indexschedule')->name('indexschedule');
-Route::post('/schedule/create','RecordsData\ScheduleController@createschedule')->name('addschedule');
-Route::put ('/schedule/update/{id}','RecordsData\ScheduleController@updateschedule')->name('updateschedule');
-Route::delete('/schedule/delete/{id}','RecordsData\ScheduleController@deleteschedule')->name('removeschedule');
-Route::get ('/schedule/read/machinedata','RecordsData\ScheduleController@readdatamachine')->name('fetchmachine');
+// schedule year route
+Route::get ('/schedule','ScheduleData\YearlyScheduleController@indexschedule')->name('indexschedule');
+Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createschedule')->name('addschedule');
+Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('updateschedule');
+Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeschedule');
+Route::get ('/schedule/read/machinedata','ScheduleData\YearlyScheduleController@readdatamachine')->name('readmachineall');
 ;
-Route::get ('/schedule/table/refresh','RecordsData\ScheduleController@refreshtableschedule')->name('refreshschedule');
-Route::get ('/schedule/table/refresh/{id}','RecordsData\ScheduleController@refreshdetailtableschedule')->name('refreshdetailschedule');
-// Route::get ('/schedule/calendar/read','RecordsData\ScheduleController@datacalendar')->name('datacalendar');
-// schedule route end
+Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshschedule');
+Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleController@refreshdetailtableschedule')->name('refreshdetailschedule');
+// Route::get ('/schedule/calendar/read','ScheduleData\ScheduleController@datacalendar')->name('datacalendar');
+// schedule year route end
 
 // schedule month route
-Route::get ('/schedule/month/read/{id}','RecordsData\MonthlyScheduleController@readdataschedule')->name('readscheduledata');
-Route::post('/schedule/month/create','RecordsData\MonthlyScheduleController@createschedulemonth')->name('addschedulemonth');
-// Route::get ('/schedule/machineschedule/read/{id}','RecordsData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
+Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@readdataschedule')->name('readscheduledata');
+Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addschedulemonth');
+Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewschedulemonth');
+// Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
 // schedule month route
 
 

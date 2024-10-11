@@ -1,32 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\RecordsData;
+namespace App\Http\Controllers\ScheduleData;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use App\Schedule;
-use App\Machine;
-use App\MonthlySchedule;
 use App\YearlySchedule;
+use App\Machine;
+use App\MachineScheduleYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class ScheduleController extends Controller
+class YearlyScheduleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function indexschedule()
     {
         return view('dashboard.view_schedulemesin.tableschedule');
     }
 
-    public function formmachineschedule($id)
+    public function formmachinescheduleNOTUSE($id)
     {
-        $getschedule = Schedule::find($id);
+        $getschedule = YearlySchedule::find($id);
         $machinearray = json_decode($getschedule->id_machine, true);
         $getmachineid = [];
 
@@ -44,7 +38,7 @@ class ScheduleController extends Controller
     {
         try {
             // $refreshmachine = Machine::all();
-            $refreshschedule= Schedule::all();
+            $refreshschedule= YearlySchedule::all();
             return response()->json([
                 'refreshschedule' => $refreshschedule,
             ]);
@@ -56,15 +50,14 @@ class ScheduleController extends Controller
     public function refreshdetailtableschedule($id)
     {
         try {
-            $refreshscheduledetail = DB::table('schedules')
-                ->select('schedules.id', 'yearly_schedules.id', 'monthly_schedules.*', 'machines.*')
-                ->join('yearly_schedules', 'schedules.id', '=', 'yearly_schedules.id_schedule')
-                ->join('machines', 'yearly_schedules.id_machine', '=', 'machines.id')
-                ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule2')
-                ->where('schedules.id', '=', $id)
+            $refreshscheduledetail = DB::table('yearly_schedules')
+                ->select('monthly_schedules.*', 'yearly_schedules.id', 'monthly_schedules.id as getmonthid')
+                ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule_year2')
+                ->where('yearly_schedules.id', '=', $id)
                 ->get();
             return response()->json([
                 'refreshscheduledetail' => $refreshscheduledetail,
+                'getmonthid'
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -146,12 +139,12 @@ class ScheduleController extends Controller
                 return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
             }
 
-            $StoreSchedule = new Schedule();
-            $StoreSchedule->name_schedule = $request->input('name_schedule');
+            $StoreSchedule = new YearlySchedule();
+            $StoreSchedule->name_schedule_year = $request->input('name_schedule');
             $StoreSchedule->machine_collection = json_encode($machine_keys);
             $StoreSchedule->save();
 
-            $schedule_id = Schedule::latest('id')->first()->id;
+            $schedule_id = YearlySchedule::latest('id')->first()->id;
 
             foreach ($machine_keys as $index => $key) {
                 $ScheduleTimeRange = $request->input('schedule_time')[$index];
@@ -160,12 +153,12 @@ class ScheduleController extends Controller
                 $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                $StorePlannedSchedule = new YearlySchedule();
-                $StorePlannedSchedule->schedule_start = $ScheduleStartCarbon;
-                $StorePlannedSchedule->schedule_end = $ScheduleEndCarbon;
-                $StorePlannedSchedule->id_machine = $key;
-                $StorePlannedSchedule->id_schedule = $schedule_id;
-                $StorePlannedSchedule->save();
+                $StoreMachineSchedule = new MachineScheduleYear();
+                $StoreMachineSchedule->schedule_start = $ScheduleStartCarbon;
+                $StoreMachineSchedule->schedule_end = $ScheduleEndCarbon;
+                $StoreMachineSchedule->id_machine = $key;
+                $StoreMachineSchedule->id_schedule_year = $schedule_id;
+                $StoreMachineSchedule->save();
             }
 
             return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
@@ -180,7 +173,7 @@ class ScheduleController extends Controller
     {
         try {
             $id_machine_array = json_encode($request->input('id_machine'));
-            $UpdateSchedule = Schedule::find($id);
+            $UpdateSchedule = YearlySchedule::find($id);
             $UpdateSchedule->name_schedule = $request->input('name_schedule');
             $UpdateSchedule->id_machine = $id_machine_array;
             $UpdateSchedule->save();
@@ -194,7 +187,7 @@ class ScheduleController extends Controller
     public function deleteschedule($id)
     {
         try {
-            $DeleteSchedule = Schedule::find($id);
+            $DeleteSchedule = YearlySchedule::find($id);
             $DeleteSchedule->delete();
             return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
         } catch (\Exception $e) {

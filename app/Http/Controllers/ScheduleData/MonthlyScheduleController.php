@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\RecordsData;
+namespace App\Http\Controllers\ScheduleData;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -8,6 +8,7 @@ use App\MonthlySchedule;
 use App\YearlySchedule;
 use App\Schedule;
 use App\Machine;
+use App\MachineScheduleMonth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -18,10 +19,10 @@ class MonthlyScheduleController extends Controller
     {
         try {
 
-            $getmachines = DB::table('yearly_schedules')
-                ->select('yearly_schedules.*', 'machines.*','yearly_schedules.id as getscheduleid')
-                ->join('machines', 'yearly_schedules.id_machine', '=', 'machines.id')
-                ->where('yearly_schedules.id_schedule', '=', $id)
+            $getmachines = DB::table('machine_schedule_years')
+                ->select('machine_schedule_years.*', 'machines.*', 'machine_schedule_years.id as getscheduleid')
+                ->join('machines', 'machine_schedule_years.id_machine', '=', 'machines.id')
+                ->where('machine_schedule_years.id_schedule_year', '=', $id)
                 ->get();
             // dd($getmachines);
 
@@ -39,17 +40,26 @@ class MonthlyScheduleController extends Controller
     {
         try {
             // dd($request);
+            $name_schedule = $request->input('name_schedule');
+            $id_schedule = $request->input('id_schedule');
             $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
-            $schedulekey = $request->input('id_schedule2', []);
+            $schedulekey = $request->input('id_machine_schedule', []);
 
-            // Loop through each machine key and create a Machineschedule record
+            $StoreSchedule = new MonthlySchedule();
+            $StoreSchedule->name_schedule_month = $name_schedule;
+            $StoreSchedule->id_schedule_year2 = $id_schedule;
+            $StoreSchedule->save();
+
+            $getmonthlyid = MonthlySchedule::latest('id')->first()->id;
+
             foreach ($schedulekey as $index => $key) {
-                $StoreSchedule = new MonthlySchedule;
-                $StoreSchedule->schedule_duration = $schedule_duration[$index];
-                $StoreSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
-                $StoreSchedule->id_schedule2 = $key;
-                $StoreSchedule->save();
+                $StoreMachineSchedule = new MachineScheduleMonth();
+                $StoreMachineSchedule->schedule_duration = $schedule_duration[$index];
+                $StoreMachineSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
+                $StoreMachineSchedule->id_schedule_month = $getmonthlyid;
+                $StoreMachineSchedule->id_machine_schedule_year = $key;
+                $StoreMachineSchedule->save();
             }
 
             return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
@@ -57,6 +67,26 @@ class MonthlyScheduleController extends Controller
             Log::error($e->getMessage());
             return response()->json(['error' => 'Error creating data'], 500);
         }
+    }
+
+    public function viewdataschedule($id)
+    {
+        try {
+
+            $getscheduledetail = DB::table('monthly_schedules')
+            ->select('monthly_schedules.*', 'machine_schedule_years.id', 'machines.*', 'machine_schedule_months.*')
+            ->join('machine_schedule_years', 'monthly_schedules.id_schedule_year2', '=', 'machine_schedule_years.id_schedule_year')
+            ->join('machines', 'machine_schedule_years.id_machine', '=', 'machines.id')
+            ->join('machine_schedule_months', 'monthly_schedules.id', '=', 'machine_schedule_months.id_schedule_month')
+            ->where('monthly_schedules.id', '=', $id)
+            ->get();
+
+            return response()->json(['getscheduledetail' => $getscheduledetail]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+
     }
 
     /**

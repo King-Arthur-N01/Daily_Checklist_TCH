@@ -15,12 +15,9 @@ class CreateYearlySchedulesTable extends Migration
     {
         Schema::create('yearly_schedules', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('schedule_start')->nullable();
-            $table->timestamp('schedule_end')->nullable();
-            $table->timestamp('schedule_next')->nullable();
+            $table->string('name_schedule_year');
+            $table->json('machine_collection');
             $table->boolean('schedule_status')->default(false);
-            $table->unsignedBigInteger('id_machine')->nullable();
-            $table->unsignedBigInteger('id_schedule')->nullable();
             $table->timestamps();
         });
     }

@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class YearlySchedule extends Model
 {
     protected $fillable = [
-        'schedule_start',
-        'schedule_end',
-        'schedule_next',
-        'schedule_status',
-        'id_machine',
-        'id_schedule'
+        'name_schedule',
+        'machine_collection',
+        'schedule_status'
     ];
+
+    public function machine_schedule_year_children()
+    {
+        return $this->belongsTo(MachineScheduleYear::class);
+    }
 }
