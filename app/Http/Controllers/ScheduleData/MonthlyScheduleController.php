@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\MonthlySchedule;
 use App\YearlySchedule;
-use App\Schedule;
 use App\Machine;
-use App\MachineScheduleMonth;
+use App\MachineSchedule;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -18,11 +17,11 @@ class MonthlyScheduleController extends Controller
     public function readdataschedule($id)
     {
         try {
-
-            $getmachines = DB::table('machine_schedule_years')
-                ->select('machine_schedule_years.*', 'machines.*', 'machine_schedule_years.id as getscheduleid')
-                ->join('machines', 'machine_schedule_years.id_machine', '=', 'machines.id')
-                ->where('machine_schedule_years.id_schedule_year', '=', $id)
+            $getmachines = DB::table('yearly_schedules')
+                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as getmachinescheduleid')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('yearly_schedules.id', '=', $id)
                 ->get();
             // dd($getmachines);
 
@@ -41,24 +40,23 @@ class MonthlyScheduleController extends Controller
         try {
             // dd($request);
             $name_schedule = $request->input('name_schedule');
-            $id_schedule = $request->input('id_schedule');
+            $id_schedule = $request->input('id_schedule_year');
             $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
-            $schedulekey = $request->input('id_machine_schedule', []);
+            $schedulekey = $request->input('machine_schedule_id', []);
 
             $StoreSchedule = new MonthlySchedule();
             $StoreSchedule->name_schedule_month = $name_schedule;
-            $StoreSchedule->id_schedule_year2 = $id_schedule;
+            $StoreSchedule->id_schedule_year = $id_schedule;
             $StoreSchedule->save();
 
             $getmonthlyid = MonthlySchedule::latest('id')->first()->id;
 
             foreach ($schedulekey as $index => $key) {
-                $StoreMachineSchedule = new MachineScheduleMonth();
+                $StoreMachineSchedule = MachineSchedule::find($key);
                 $StoreMachineSchedule->schedule_duration = $schedule_duration[$index];
                 $StoreMachineSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
-                $StoreMachineSchedule->id_schedule_month = $getmonthlyid;
-                $StoreMachineSchedule->id_machine_schedule_year = $key;
+                $StoreMachineSchedule->monthly_id = $getmonthlyid;
                 $StoreMachineSchedule->save();
             }
 
@@ -72,12 +70,10 @@ class MonthlyScheduleController extends Controller
     public function viewdataschedule($id)
     {
         try {
-
             $getscheduledetail = DB::table('monthly_schedules')
-            ->select('monthly_schedules.*', 'machine_schedule_years.id', 'machines.*', 'machine_schedule_months.*')
-            ->join('machine_schedule_years', 'monthly_schedules.id_schedule_year2', '=', 'machine_schedule_years.id_schedule_year')
-            ->join('machines', 'machine_schedule_years.id_machine', '=', 'machines.id')
-            ->join('machine_schedule_months', 'monthly_schedules.id', '=', 'machine_schedule_months.id_schedule_month')
+            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*')
+            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->where('monthly_schedules.id', '=', $id)
             ->get();
 

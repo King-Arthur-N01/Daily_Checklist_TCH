@@ -17,7 +17,7 @@ class CreateMonthlySchedulesTable extends Migration
             $table->id();
             $table->string('name_schedule_month');
             $table->boolean('schedule_status')->default(false);
-            $table->unsignedBigInteger('id_schedule_year2')->nullable();
+            $table->unsignedBigInteger('id_schedule_year')->nullable();
             $table->timestamps();
         });
     }

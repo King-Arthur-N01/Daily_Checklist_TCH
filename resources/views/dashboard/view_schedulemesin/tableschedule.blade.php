@@ -590,9 +590,9 @@
 
                     // Display machines in the first modal (selection menu)
                     function renderFirstMenu() {
-                        // MENGAMBIL 1 VALUE PADA ARRAY MACHINE_SCHEDULE_YEARS UNTUK MENGISI MONTHLY_SCHEDULES id_schedulez_year2
-                        let singleScheduleValue = data.getmachines[0].id_schedule_year;
-                        getYearId = singleScheduleValue;
+                        // MENGAMBIL 1 VALUE PADA ARRAY MACHINE_SCHEDULE_YEARS UNTUK MENGISI MONTHLY_SCHEDULES id_schedule_year
+                        let singleScheduleValue = data.getmachines[0].yearly_id;
+                        getyearlyschedule = singleScheduleValue;
 
                         let tableRows1 = `
                             <div class="row" align-items="center">
@@ -661,7 +661,7 @@
                         let tableRows2 = `
                             <form id="addSchedule" method="post">
                                 <input type="hidden" name="name_schedule_month" value="${nameScheduleMonth}">
-                                <input type="hidden" name="id_schedule" value="${getYearId}">
+                                <input type="hidden" name="id_schedule_year" value="${getyearlyschedule}">
                                 <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
                                         <tr>
@@ -704,7 +704,7 @@
                                                             </div>
                                                         </div>
                                                         <input name="schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.id}">
-                                                        <input type="hidden" name="id_machine_schedule" value="${machine.getscheduleid}">
+                                                        <input type="hidden" name="machine_schedule_id" value="${machine.getmachinescheduleid}">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -779,7 +779,7 @@
         function addMonthlySchedule() {
             event.preventDefault();
             let scheduleName = $('input[name="name_schedule_month"]').val();
-            let scheduleId = $('input[name="id_schedule"]').val();
+            let scheduleYearId = $('input[name="id_schedule_year"]').val();
             let scheduleDuration = [];
             let scheduleDate = [];
             let idMachineSchedule = [];
@@ -790,7 +790,7 @@
             $('input[name="schedule_date"]').each(function() {
                 scheduleDate.push($(this).val());
             });
-            $('input[name="id_machine_schedule"]').each(function() {
+            $('input[name="machine_schedule_id"]').each(function() {
                 idMachineSchedule.push($(this).val());
             });
             $.ajax({
@@ -799,10 +799,10 @@
                 data: {
                     '_token': '{{ csrf_token() }}',
                     'name_schedule' : scheduleName,
-                    'id_schedule' : scheduleId,
+                    'id_schedule_year' : scheduleYearId,
                     'schedule_duration[]': scheduleDuration,
                     'schedule_date[]': scheduleDate,
-                    'id_machine_schedule[]': idMachineSchedule,
+                    'machine_schedule_id[]': idMachineSchedule,
                 },
                 success: function(response) {
                     if (response.success) {
@@ -870,7 +870,7 @@
                                 </thead>
                                 <tbody>
                                 ${data.getscheduledetail.map((schedule, index) => {
-                                    const scheduleId = schedule.id; // Define a new variable
+                                    const scheduleId = schedule.id;
                                     return `
                                         <tr>
                                             <td>${index + 1}</td>
@@ -909,7 +909,7 @@
             });
         });
         // <===========================================================================================>
-        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END<VIEW MONTHLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW MONTHLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
         // fungsi delete button untuk hapus mesin

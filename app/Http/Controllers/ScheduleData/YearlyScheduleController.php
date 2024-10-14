@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\YearlySchedule;
 use App\Machine;
-use App\MachineScheduleYear;
+use App\MachineSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -52,7 +52,7 @@ class YearlyScheduleController extends Controller
         try {
             $refreshscheduledetail = DB::table('yearly_schedules')
                 ->select('monthly_schedules.*', 'yearly_schedules.id', 'monthly_schedules.id as getmonthid')
-                ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule_year2')
+                ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule_year')
                 ->where('yearly_schedules.id', '=', $id)
                 ->get();
             return response()->json([
@@ -153,11 +153,11 @@ class YearlyScheduleController extends Controller
                 $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                $StoreMachineSchedule = new MachineScheduleYear();
+                $StoreMachineSchedule = new MachineSchedule();
                 $StoreMachineSchedule->schedule_start = $ScheduleStartCarbon;
                 $StoreMachineSchedule->schedule_end = $ScheduleEndCarbon;
-                $StoreMachineSchedule->id_machine = $key;
-                $StoreMachineSchedule->id_schedule_year = $schedule_id;
+                $StoreMachineSchedule->machine_id = $key;
+                $StoreMachineSchedule->yearly_id = $schedule_id;
                 $StoreMachineSchedule->save();
             }
 
