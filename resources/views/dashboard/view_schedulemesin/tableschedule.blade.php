@@ -304,7 +304,7 @@
                     `;
 
                     let combinedMachineId = [];
-                    let nameSchedule = '';
+                    let nameScheduleYear = '';
 
                     // Check if previous selections exist in sessionStorage
                     let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
@@ -381,7 +381,7 @@
 
                         let inputSchedule = document.getElementById("name_schedule");
                         inputSchedule.addEventListener('input', function() {
-                            nameSchedule = inputSchedule.value;
+                            nameScheduleYear = inputSchedule.value;
                         });
 
                         let checkboxes = document.getElementsByName("machineinput");
@@ -397,7 +397,7 @@
                         let tableRows2 = `
                             <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
                             <form id="addSchedule" method="post">
-                                <input type="hidden" name="name_schedule" value="${nameSchedule}">
+                                <input type="hidden" name="name_schedule_year" value="${nameScheduleYear}">
                                 <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
                                         <tr>
@@ -470,10 +470,10 @@
 
                     document.getElementById("modal_button_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
-                            if (nameSchedule === "") {
+                            if (nameScheduleYear === "") {
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
-                                changeMenu(2, nameSchedule);
+                                changeMenu(2, nameScheduleYear);
                                 selectDateRange();
                             }
                         }
@@ -488,7 +488,7 @@
         // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
         function addYearlySchedule() {
             event.preventDefault();
-            let scheduleName = $('input[name="name_schedule"]').val();
+            let scheduleName = $('input[name="name_schedule_year"]').val();
             let scheduleTimes = [];
             let idMachines = [];
 
@@ -559,7 +559,7 @@
                     `;
 
                     let combinedMachineId = [];
-                    let nameSchedule = '';
+                    let nameScheduleMonth = '';
                     let idSchedule = '';
 
                     // Check if previous selections exist in sessionStorage
@@ -644,7 +644,7 @@
 
                         let inputSchedule = document.getElementById("name_schedule");
                         inputSchedule.addEventListener('input', function() {
-                            nameSchedule = inputSchedule.value;
+                            nameScheduleMonth = inputSchedule.value;
                         });
 
                         // Re-add event listeners for new checkboxes
@@ -660,7 +660,7 @@
 
                         let tableRows2 = `
                             <form id="addSchedule" method="post">
-                                <input type="hidden" name="name_schedule" value="${nameSchedule}">
+                                <input type="hidden" name="name_schedule_month" value="${nameScheduleMonth}">
                                 <input type="hidden" name="id_schedule" value="${getYearId}">
                                 <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
@@ -760,10 +760,10 @@
 
                     document.getElementById("modal_button_month_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
-                            if (nameSchedule === "") {
+                            if (nameScheduleMonth === "") {
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
-                                changeMenu(2, nameSchedule, idSchedule);
+                                changeMenu(2, nameScheduleMonth, idSchedule);
                                 selectSingleDate();
                             }
                         }
@@ -778,7 +778,7 @@
         // FUNGSI UNTUK SAVE BUTTON MONTHLY SCHEDULE DAN MENGIRIM REQUEST AJAX
         function addMonthlySchedule() {
             event.preventDefault();
-            let scheduleName = $('input[name="name_schedule"]').val();
+            let scheduleName = $('input[name="name_schedule_month"]').val();
             let scheduleId = $('input[name="id_schedule"]').val();
             let scheduleDuration = [];
             let scheduleDate = [];
