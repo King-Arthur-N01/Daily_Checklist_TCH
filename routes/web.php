@@ -71,7 +71,7 @@ Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@
 
 // machine record
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get ('/machinerecord/machine/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
+Route::get ('/machinerecord/schedule/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
 Route::post('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('addrecord');
 Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
 Route::get ('/machinerecord/table/refresh/{id}','RecordsData\MachinerecordController@refreshdetailtablerecord')->name('refreshdetailrecord');

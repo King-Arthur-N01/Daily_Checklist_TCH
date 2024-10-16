@@ -53,11 +53,15 @@ class YearlyScheduleController extends Controller
             $refreshscheduledetail = DB::table('yearly_schedules')
                 ->select('monthly_schedules.*', 'yearly_schedules.id', 'monthly_schedules.id as getmonthid')
                 ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule_year')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+                ->groupBy('monthly_schedules.id')
+                ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
                 ->where('yearly_schedules.id', '=', $id)
                 ->get();
             return response()->json([
                 'refreshscheduledetail' => $refreshscheduledetail,
-                'getmonthid'
+                'getmonthid' => $refreshscheduledetail->pluck('getmonthid'),
+                'machine_count' => $refreshscheduledetail->pluck('machine_count')
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

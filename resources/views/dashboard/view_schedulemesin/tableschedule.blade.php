@@ -235,6 +235,7 @@
                                     <tr>
                                         <td>${key + 1}</td>
                                         <td>${schedulemonth.name_schedule_month}</td>
+                                        <td>${schedulemonth.machine_count}</td>
                                         <td>
                                             ${schedulemonth.schedule_status === 0 ? '<span class="badge badge-danger">UNFINISHED</span>' : schedulemonth.schedule_status === 1 ? '<span class="badge badge-success">COMPLETED</span>' : ''}
                                         </td>
@@ -259,6 +260,7 @@
                                     <tr>
                                         <th>NO.</th>
                                         <th>SCHEDULE PERBULAN</th>
+                                        <th>JUMLAH MESIN</th>
                                         <th>STATUS SCHEDULE</th>
                                         <th>ACTION</th>
                                     </tr>

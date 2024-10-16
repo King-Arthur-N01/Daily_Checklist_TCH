@@ -128,12 +128,12 @@
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
-                        return data.refreshschedule.map(function(refreshschedule) {
+                        return data.refreshrecords.map(function(refreshrecords) {
                             return {
-                                id: refreshschedule.id,
-                                name_schedule: refreshschedule.name_schedule,
-                                id_machine: refreshschedule.machine_collection.split(',').length,
-                                schedule_status: refreshschedule.schedule_status,
+                                id: refreshrecords.id,
+                                name_schedule: refreshrecords.name_schedule_month,
+                                total_machine: refreshrecords.machine_count,
+                                schedule_status: refreshrecords.schedule_status,
                             };
                         });
                     }
@@ -148,7 +148,7 @@
                         "orderable": false,
                     },
                     { data: 'name_schedule' },
-                    { data: 'id_machine' },
+                    { data: 'total_machine' },
                     { data: 'schedule_status', render: function(data, type, row) {
                         if (data === 0) {
                             return '<span class="badge badge-danger">UNFINISHED</span>';
@@ -190,24 +190,23 @@
                                 '<tbody>';
 
                             let currentTime = new Date();
-                            data.getmachines.forEach(machine => {
-                                let schedule = data.getmachinescheduleid.find(schedules => schedules[0].id_machine2 === machine.id);
-                                let scheduleEnd = new Date(schedule[0].schedule_end);
+                            data.refreshdetailrecord.forEach(recordmachine => {
+                                let scheduleEnd = new Date(recordmachine.schedule_end);
                                 let isPast = scheduleEnd && scheduleEnd < currentTime;
 
                                 detailTable += '<tr class="' + (isPast ? 'elapsed-time' : '') + '">' +
-                                    '<td>' + machine.invent_number + '</td>' +
-                                    '<td>' + machine.machine_number + '</td>' +
-                                    '<td>' + machine.machine_name + '</td>' +
-                                    '<td>' + machine.machine_brand + '</td>' +
-                                    '<td>' + machine.machine_type + '</td>' +
+                                    '<td>' + recordmachine.invent_number + '</td>' +
+                                    '<td>' + recordmachine.machine_number + '</td>' +
+                                    '<td>' + recordmachine.machine_name + '</td>' +
+                                    '<td>' + recordmachine.machine_brand + '</td>' +
+                                    '<td>' + recordmachine.machine_type + '</td>' +
                                     '<td>' + (scheduleEnd ? scheduleEnd.toLocaleString('en-ID', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: '2-digit',
                                     }) : 'N/A') + '</td>' +
                                     '<td><a class="btn btn-primary btn-sm btn-Id" style="color:white" href="' +
-                                    '{{ route("formpreventive", ":id") }}'.replace(':id', schedule.id) + '">' +
+                                    '{{ route("formpreventive", ":id") }}'.replace(':id', recordmachine.schedule_id) + '">' +
                                     '<img style="height: 20px" src="{{ asset("assets/icons/edit_white_table.png") }}">' +
                                     '</a></td>' +
                                     '</tr>';

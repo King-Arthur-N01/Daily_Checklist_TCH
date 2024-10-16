@@ -9,12 +9,12 @@ class MonthlySchedule extends Model
 {
     protected $fillable = [
         'name_schedule',
-        'machine_collection',
-        'schedule_status'
+        'schedule_status',
+        'id_schedule_year'
     ];
 
     public function machine_month_children()
     {
-        return $this->belongsTo(MachineScheduleMonth::class);
+        return $this->belongsTo(MachineSchedule::class);
     }
 }

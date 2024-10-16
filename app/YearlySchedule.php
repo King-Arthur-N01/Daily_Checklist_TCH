@@ -14,6 +14,6 @@ class YearlySchedule extends Model
 
     public function machine_schedule_year_children()
     {
-        return $this->belongsTo(MachineScheduleYear::class);
+        return $this->belongsTo(MachineSchedule::class);
     }
 }

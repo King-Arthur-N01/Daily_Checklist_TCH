@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\User;
 use App\Machine;
-use App\Schedule;
+use App\YearlySchedule;
+use App\MonthlySchedule;
 use App\Machinerecord;
 use App\Machineschedule;
 use Illuminate\Http\Request;
@@ -35,9 +36,16 @@ class MachinerecordController extends Controller
     // fungsi menampilkan tabel dan merefresh tabel preventice
     public function refreshtablerecord() {
         try {
-            $refreshschedule = Schedule::latest()->get();
+            // $refreshschedule = MonthlySchedule::latest()->get();
+                $refreshrecords = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.monthly_id')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+                ->groupBy('monthly_schedules.id')
+                ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
+                ->orderBy('monthly_schedules.id', 'asc')
+                ->get();
             return response()->json([
-                'refreshschedule' => $refreshschedule
+                'refreshrecords' => $refreshrecords
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -47,16 +55,17 @@ class MachinerecordController extends Controller
     public function refreshdetailtablerecord($id)
     {
         try {
-            $schedule = Schedule::find($id);
-            $machinearray = json_decode($schedule->machine_collection, true);
-            $getmachines = [];
+            // $schedule = MonthlySchedule::find($id);
 
-            foreach ($machinearray as $eachmachineid) {
-                $machineid = Machine::where('id', $eachmachineid)->get();
-                $getmachines[] = $machineid;
-            }
+            $refreshdetailrecord = DB::table('monthly_schedules')
+            ->select('monthly_schedules.id', 'machines.*', 'machine_schedules.*', 'machine_schedules.id as schedule_id')
+            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('monthly_schedules.id', '=', $id)
+            ->get();
             return response()->json([
-                'getmachines' => $getmachines,
+                'refreshdetailrecord' => $refreshdetailrecord,
+                'schedule_id' => $refreshdetailrecord->pluck('schedule_id')
             ]);
         } catch (\Exception $e) {
             Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
@@ -143,20 +152,22 @@ class MachinerecordController extends Controller
         $users = User::get();
         $timenow = Carbon::now();
 
-        $getcomponen = DB::table('machines')
-        ->select('machines.*', 'machineproperties.*', 'componenchecks.*')
+        $getcomponen = DB::table('machine_schedules')
+        ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*')
+        ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
         ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
         ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
-        ->where('machines.id', '=', $id)
+        ->where('machine_schedules.id', '=', $id)
         ->get();
 
-        $joinmachine = DB::table('machines')
-        ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+        $joinmachine = DB::table('machine_schedules')
+        ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+        ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
         ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
         ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
         ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
         ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
-        ->where('machines.id', '=', $id)
+        ->where('machine_schedules.id', '=', $id)
         ->get();
 
         if ($joinmachine->isEmpty()) {
@@ -174,7 +185,8 @@ class MachinerecordController extends Controller
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function createmachinerecord(Request $request)
     {
-        $machineid = ($request->input('id_machine'));
+        // dd($request);
+        $schedule_id = ($request->input('id_schedule'));
         $abnormal = ($request->input('combined_abnormal'));
 
         $abnormal_json = json_encode($abnormal);
@@ -183,14 +195,9 @@ class MachinerecordController extends Controller
         $result_json = json_encode(array_values($request->input('result')));
 
         // Check the table to see if data has been filled in before
-        $lastsubmissiontime = Machinerecord::where('id_machine2', $machineid)->value('created_at');
+        $submit_schedule = Machineschedule::where('id', $schedule_id)->value('schedule_start');
         $currenttime = Carbon::now();
-
-        // $machineschedule = DB::table('machines')
-        // ->select('machines.id', 'machineschedules.*')
-        // ->join('machineschedules', 'machines.id', '=', 'machineschedules.id_machine3')
-        // ->where('machines.id', '=', $machineid)
-        // ->get();
+        $schedulenext = $currenttime->addMonths(7);
 
         $getshifttime = Carbon::now()->format('H:i');
         if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
@@ -214,42 +221,15 @@ class MachinerecordController extends Controller
             return false;
         }
 
-        if ($lastsubmissiontime){
-            $lastsubmit = Carbon::parse($lastsubmissiontime);
-
-            if ($currenttime->diffInHours($lastsubmit) < 24 ){
-                return redirect()->route('indexmachinerecord')->with('error', 'You can submit the form again after 24 hours.');
-            }else{
-                $StoreRecords = new Machinerecord();
-                $StoreRecords->machine_number2 = $request->input('machine_number');
-                $StoreRecords->shift = $shifttime;
-                $StoreRecords->note = $request->input('note');
-                $StoreRecords->id_machine2 = $machineid;
-                $StoreRecords->operator_action = $operator_action_json;
-                $StoreRecords->result = $result_json;
-                $StoreRecords->create_by = $create_by_json;
-                $StoreRecords->start_preventive = $currenttime;
-                if (hasValidAbnormalData($abnormal)) {
-                    $StoreRecords->abnormal_record = $abnormal_json;
-                    $StoreRecords->machinerecord_status = false;
-                    $StoreRecords->finish_preventive = null;
-                } else {
-                    $StoreRecords->abnormal_record = null;
-                    $StoreRecords->machinerecord_status = true;
-                    $StoreRecords->finish_preventive = $currenttime;
-                }
-                $StoreRecords->save();
-
-                $StoreSchedule = Machineschedule::where('id_machine3',$machineid);
-                $StoreSchedule->schedule_record = $currenttime;
-                $StoreSchedule->save();
-            }
-        }else if(!$lastsubmissiontime){
+        $submission_time = Carbon::parse($submit_schedule);
+        if ($currenttime == $submission_time){
+            return redirect()->route('indexmachinerecord')->with('error', 'You can fill out the form at the specified preventive time.');
+        }else{
             $StoreRecords = new Machinerecord();
             $StoreRecords->machine_number2 = $request->input('machine_number');
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
-            $StoreRecords->id_machine2 = $machineid;
+            $StoreRecords->id_machine_schedule = $schedule_id;
             $StoreRecords->operator_action = $operator_action_json;
             $StoreRecords->result = $result_json;
             $StoreRecords->create_by = $create_by_json;
@@ -265,32 +245,14 @@ class MachinerecordController extends Controller
             }
             $StoreRecords->save();
 
-            $StoreSchedule = Machineschedule::where('id_machine3',$machineid);
-            $StoreSchedule->schedule_record = $currenttime;
+            $StoreSchedule = Machineschedule::find($schedule_id);
+            $StoreSchedule->schedule_next = $schedulenext;
+            $StoreSchedule->machine_schedule_status = true;
             $StoreSchedule->save();
         }
 
-        // $StoreSchedule = Schedule::where('id',$scheduleid)->first();
-        // $machinearray =  json_decode($StoreSchedule->id_machine);
-        // $machinecount = count($machinearray);
-
-        // $recordscount = DB::table('schedules')
-        //     ->select('schedules.*', 'machinerecords.*')
-        //     ->join('machinerecords', 'schedules.id', '=', 'machinerecords.id_schedule')
-        //     ->where('schedules.id', '=', $scheduleid)
-        //     ->groupBy('machinerecords.id_schedule')
-        //     ->count();
-
-        // if ($machinecount == $recordscount) {
-        //     $StoreSchedule->schedule_status = true;
-        //     $StoreSchedule->save();
-        // }
-
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
-
-
-
 
     // <<<============================================================================================>>>
     // <<<===============================batas koreksi machine records================================>>>
