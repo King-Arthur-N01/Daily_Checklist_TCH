@@ -39,15 +39,15 @@
                             <thead>
                                 <tr>
                                     <th>NO.</th>
-                                    <th>Nama Mesin</th>
-                                    <th>Type Mesin</th>
-                                    <th>Nomor Mesin</th>
-                                    <th>Status</th>
-                                    <th>Status</th>
-                                    <th>Status Preventive</th>
-                                    <th>Shift</th>
-                                    <th>Waktu</th>
-                                    <th>Action</th>
+                                    <th>NAMA MESIN</th>
+                                    <th>TYPE MESIN</th>
+                                    <th>NOMOR MESIN</th>
+                                    <th>STATUS</th>
+                                    <th>STATUS</th>
+                                    <th>STATUS PREVENTIVE</th>
+                                    <th>SHIFT</th>
+                                    <th>WAKTU PREVENTIVE</th>
+                                    <th>ACTION</th>
                                 </tr>
                             </thead>
                         </table>
@@ -111,9 +111,9 @@
                                 approve_status: joinrecords.getapprove ? joinrecords.getapprove : 'Belum disetujui',
                                 record_status: joinrecords.machinerecord_status,
                                 shift: joinrecords.shift,
-                                getcreatedate: joinrecords.getcreatedate,
+                                getcreatedate: joinrecords.created_date,
                                 actions: `
-                                    <a class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}"></a>
+                                    <a class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.records_id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}"></a>
                                 `
                             };
                         });
@@ -201,11 +201,11 @@
                                 <div class="header-input">
                                     <div class="col-6">
                                         <a>NO.MESIN :</a>
-                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.recordsdata[0].machine_number2}" readonly>
+                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.usersdata[0].machine_number2}" readonly>
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
-                                        <input class="form-control" value="${new Date(data.recordsdata[0].created_at).toLocaleDateString()}" readonly>
+                                        <input class="form-control" value="${new Date(data.usersdata[0].created_at).toLocaleDateString()}" readonly>
                                     </div>
                                 </div>
                                 <table class="table table-bordered" id="dataTables" width="100%">
@@ -225,7 +225,7 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>${data.recordsdata[0].note}</textarea>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>${data.usersdata[0].note}</textarea>
                                 </div>
                                     <a>Abnormality terhadap preventive</a>
                                     <input class="form-control" value="${data.abnormals}" readonly>
@@ -240,9 +240,9 @@
                                                 <th colspan="4">Dibuat oleh :</th>
                                             </tr>
                                             <tr>
-                                                <td>${data.recordsdata[0].shift}</td>
-                                                <td>${data.recordsdata.approve_by_name ? data.recordsdata.approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.recordsdata.correct_by_name ? data.recordsdata.correct_by_name : 'Belum dikoreksi'}</td>
+                                                <td>${data.usersdata[0].shift}</td>
+                                                <td>${data.usersdata[0].approve_by_name ? data.usersdata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.usersdata[0].correct_by_name ? data.usersdata[0].correct_by_name : 'Belum dikoreksi'}</td>
                                                 ${data.usernames.map((get_user_id) => `
                                                     <td>${get_user_id}</td>
                                                 `).join('')}

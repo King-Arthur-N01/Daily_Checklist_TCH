@@ -44,13 +44,13 @@
                         <table class="table table-bordered" id="preventiveTables2" width="100%">
                             <thead>
                                 <th>NO.</th>
-                                <th>PIC</th>
-                                <th>SHIFT</th>
                                 <th>NAMA MESIN</th>
-                                <th>MODEL/TYPE</th>
-                                <th>NO. MESIN</th>
-                                <th>WAKTU PREVENTIVE</th>
+                                <th>TYPE MESIN</th>
+                                <th>NOMOR MESIN</th>
                                 <th>STATUS</th>
+                                <th>STATUS PREVENTIVE</th>
+                                <th>SHIFT</th>
+                                <th>WAKTU PREVENTIVE</th>
                                 <th>ACTION</th>
                             </thead>
                         </table>
@@ -65,7 +65,7 @@
 
     <!-- Approval Modal -->
     <div class="modal fade" id="approveModal" tabindex="-1">
-        <div class="modal-dialog modal-xxl">
+        <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_approve">
                 </div>
@@ -151,38 +151,39 @@
                 ajax: {
                     url: '{{ route("refreshapproval") }}',
                     dataSrc: function(data) {
-                        if (data && data.refreshrecord) {
-                            return data.refreshrecord.map((refreshrecord, index) => {
-                                return {
-                                    no: index + 1,
-                                    pic: refreshrecord.getuser,
-                                    shift: refreshrecord.shift,
-                                    nama_mesin: refreshrecord.machine_name,
-                                    model_type: refreshrecord.machine_type,
-                                    no_mesin: refreshrecord.machine_number2,
-                                    waktu_preventive: refreshrecord.created_at,
-                                    status: refreshrecord.approve_by ? (refreshrecord.approve_by > 0 ? 'Sudah Disetujui' : 'Belum Disetujui') : 'Belum Disetujui',
-                                    action: `
-                                        <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#approveModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
-                                    `
-                                };
-                            });
-                        } else {
-                            console.error('Invalid data received from server:', data);
-                            return [];
-                        }
+                        return data.refreshrecord.map((refreshrecord, index) => {
+                            return {
+                                number: index + 1,
+                                machine_name: refreshrecord.machine_name,
+                                machine_type: refreshrecord.machine_type,
+                                machine_number: refreshrecord.machine_number,
+                                status: refreshrecord.approve_by ? (refreshrecord.approve_by > 0 ? 'Sudah Sudah Disetujui' : 'Belum Disetujui') : 'Belum Disetujui',
+                                record_status: refreshrecord.machinerecord_status,
+                                shift: refreshrecord.shift,
+                                getcreatedate: refreshrecord.created_date,
+                                actions: `
+                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#approveModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                `
+                            };
+                        });
                     }
                 },
                 columns: [
-                    { data: 'no' },
-                    { data: 'pic' },
-                    { data: 'shift' },
-                    { data: 'nama_mesin' },
-                    { data: 'model_type' },
-                    { data: 'no_mesin' },
-                    { data: 'waktu_preventive' },
+                    { data: 'number' },
+                    { data: 'machine_name' },
+                    { data: 'machine_type' },
+                    { data: 'machine_number' },
                     { data: 'status' },
-                    { data: 'action', orderable: false, searchable: false }
+                    { data: 'record_status', render: function(data, type, row) {
+                        if (data === 0) {
+                            return '<span class="badge badge-danger">ABNORMAL</span>';
+                        } else if (data === 1) {
+                            return '<span class="badge badge-success">NORMAL</span>';
+                        }
+                    }},
+                    { data: 'shift' },
+                    { data: 'getcreatedate' },
+                    { data: 'actions', orderable: false, searchable: false }
                 ]
             });
 
@@ -194,7 +195,7 @@
                     url: '{{ route("readapproval", ':id') }}'.replace(':id', approveId),
                     success: function(data) {
                         let table_modal = '';
-                        data.combinedata.forEach((rowdata, index) => {
+                        data.machinedata.forEach((rowdata, index) => {
                             const actions = JSON.parse(data.combineresult[0].operator_action)[index].join(' & ');
                             const result = JSON.parse(data.combineresult[0].result)[index];
 
@@ -209,51 +210,92 @@
                                 </tr>
                             `;
                         });
+
                         const header_modal = `
                             <h5 class="modal-title">Extra Large Modal</h5>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
+
                         const data_modal = `
-                            <table class="table table-bordered">
-                                <tr><th>No. Invent Mesin :</th><td>${data.machinedata[0].invent_number}</td><th>Spec/Tonage :</th><td>${data.machinedata[0].machine_spec}</td></tr>
-                                <tr><th>Nama Mesin :</th><td>${data.machinedata[0].machine_name}</td><th>Buatan :</th><td>${data.machinedata[0].machine_made}</td></tr>
-                                <tr><th>Brand/Merk :</th><td>${data.machinedata[0].machine_brand}</td><th>Mfg.NO :</th><td>${data.machinedata[0].mfg_number}</td></tr>
-                                <tr><th>Model/Type :</th><td>${data.machinedata[0].machine_type}</td><th>Install Date :</th><td>${data.machinedata[0].install_date}</td></tr>
-                            </table>
-                            <h4>History Records</h4>
-                            <table class="table table-bordered" id="dataTables">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Bagian Yang Dicheck</th>
-                                        <th>Standart/Parameter</th>
-                                        <th>Metode Pengecekan</th>
-                                        <th>Action</th>
-                                        <th>Result</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${table_modal}
-                                </tbody>
-                            </table>
-                            <div class="form-custom">
-                                <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                <textarea id="input_note" type="text" rows="6" cols="50">${data.machinedata[0].note}</textarea>
+                            <div class="table-responsive">
+                                <table class="table table-header" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th>No. Invent Mesin :</th>
+                                            <th>${data.machinedata[0].invent_number}</th>
+                                            <th>Spec/Tonage :</th>
+                                            <th>${data.machinedata[0].machine_spec}</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Nama Mesin :</th>
+                                            <th>${data.machinedata[0].machine_name}</th>
+                                            <th>Buatan :</th>
+                                            <th>${data.machinedata[0].machine_made}</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Brand/Merk :</th>
+                                            <th>${data.machinedata[0].machine_brand}</th>
+                                            <th>Mfg.NO :</th>
+                                            <th>${data.machinedata[0].mfg_number}</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Model/Type :</th>
+                                            <th>${data.machinedata[0].machine_type}</th>
+                                            <th>Install Date :</th>
+                                            <th>${data.machinedata[0].install_date}</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="header-input">
+                                    <div class="col-6">
+                                        <a>NO.MESIN :</a>
+                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.usersdata[0].machine_number2}" readonly>
+                                    </div>
+                                    <div class="col-6">
+                                        <a>WAKTU PREVENTIVE :</a>
+                                        <input class="form-control" value="${new Date(data.usersdata[0].created_at).toLocaleDateString()}" readonly>
+                                    </div>
+                                </div>
+                                <table class="table table-bordered" id="dataTables" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Bagian Yang Dicheck</th>
+                                            <th>Standart/Parameter</th>
+                                            <th>Metode Pengecekan</th>
+                                            <th>Action</th>
+                                            <th>Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${table_modal}
+                                    </tbody>
+                                </table>
+                                <div class="form-custom">
+                                    <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note}</textarea>
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered table-custom" id="userTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Shift :</th>
+                                                <th>Disetujui oleh :</th>
+                                                <th>Dikoreksi oleh :</th>
+                                                <th colspan="4">Dibuat oleh :</th>
+                                            </tr>
+                                            <tr>
+                                                <td>${data.usersdata[0].shift}</td>
+                                                <td>${data.usersdata.approve_by_name ? data.usersdata.approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.usersdata.correct_by_name ? data.usersdata.correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${data.usernames.map((get_user_id) => `
+                                                    <td>${get_user_id}</td>
+                                                `).join('')}
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
-                            <table class="table table-bordered" id="userTable">
-                                <thead>
-                                    <tr>
-                                        <th>Disetujui oleh :</th>
-                                        <th>Dikoreksi oleh :</th>
-                                        <th>Dibuat oleh :</th>
-                                    </tr>
-                                    <tr>
-                                        <td>${data.recordsdata[0].approve_by_name}</td>
-                                        <td>${data.recordsdata[0].correct_by_name}</td>
-                                        <td>${data.usernames.join(' & ')}</td>
-                                    </tr>
-                                </thead>
-                            </table>
                         `;
                         const button_modal =`
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

@@ -44,14 +44,14 @@
                         <table class="table table-bordered" id="preventiveTables1" width="100%">
                             <thead>
                                 <th>NO.</th>
-                                <th>Nama Mesin</th>
-                                <th>Type Mesin</th>
-                                <th>Nomor Mesin</th>
-                                <th>Status</th>
-                                <th>Status Preventive</th>
-                                <th>Shift</th>
-                                <th>Waktu</th>
-                                <th>Action</th>
+                                <th>NAMA MESIN</th>
+                                <th>TYPE MESIN</th>
+                                <th>NOMOR MESIN</th>
+                                <th>STATUS</th>
+                                <th>STATUS PREVENTIVE</th>
+                                <th>SHIFT</th>
+                                <th>WAKTU PREVENTIVE</th>
+                                <th>ACTION</th>
                             </thead>
                         </table>
                     </div>
@@ -63,7 +63,7 @@
         <!-- ============================================================== -->
     </div>
 
-    <!-- Extra Large Modal -->
+    <!-- Correct Modal -->
     <div class="modal fade" id="correctModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-    <!-- End Extra Large Modal-->
+    <!-- End Correct Modal-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -187,7 +187,6 @@
                 ]
             });
 
-
             $('#correctModal').on('shown.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
                 let correctId = button.data('id');
@@ -250,11 +249,11 @@
                                 <div class="header-input">
                                     <div class="col-6">
                                         <a>NO.MESIN :</a>
-                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.recordsdata[0].machine_number2}" readonly>
+                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.usersdata[0].machine_number2}" readonly>
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
-                                        <input class="form-control" value="${new Date(data.recordsdata[0].created_at).toLocaleDateString()}" readonly>
+                                        <input class="form-control" value="${new Date(data.usersdata[0].created_at).toLocaleDateString()}" readonly>
                                     </div>
                                 </div>
                                 <table class="table table-bordered" id="dataTables" width="100%">
@@ -274,10 +273,19 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.recordsdata[0].note}</textarea>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note}</textarea>
                                 </div>
+                                <div class="form-custom">
+                                    <label>Opsi clear abnormal terhadap preventive</label>
+                                    <div class="switch-container">
+                                        <label>Clear Abnormals</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="clear_abnormals" value="0">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
                                     <a>Abnormality terhadap preventive</a>
-                                    <input class="form-control" value="${data.abnormals}" readonly>
+                                    <input class="form-control" id="abnormals_value" value="${data.abnormals}" readonly>
                                 </div>
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
@@ -289,9 +297,9 @@
                                                 <th colspan="4">Dibuat oleh :</th>
                                             </tr>
                                             <tr>
-                                                <td>${data.recordsdata[0].shift}</td>
-                                                <td>${data.recordsdata.approve_by_name ? data.recordsdata.approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.recordsdata.correct_by_name ? data.recordsdata.correct_by_name : 'Belum dikoreksi'}</td>
+                                                <td>${data.usersdata[0].shift}</td>
+                                                <td>${data.usersdata.approve_by_name ? data.usersdata.approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.usersdata.correct_by_name ? data.usersdata.correct_by_name : 'Belum dikoreksi'}</td>
                                                 ${data.usernames.map((get_user_id) => `
                                                     <td>${get_user_id}</td>
                                                 `).join('')}
@@ -313,8 +321,25 @@
                         $('#modal_button_correct').html(button_modal);
                         mergeCells();
 
+                        document.getElementById('clear_abnormals').addEventListener('change', function() {
+                            const abnormalsInput = document.getElementById('abnormals_value');
+                            const clearAbnormals = document.getElementById('clear_abnormals');
+                            if (this.checked) {
+                                abnormalsInput.removeAttribute('readonly');
+                                abnormalsInput.style.textDecoration = 'line-through';
+                                clearAbnormals.value = '1';
+                                abnormalsInput.setAttribute('readonly', true);
+                            } else {
+                                abnormalsInput.removeAttribute('readonly');
+                                abnormalsInput.style.textDecoration = 'none';
+                                clearAbnormals.value = '0';
+                                abnormalsInput.setAttribute('readonly', true);
+                            }
+                        });
+
                         // Save button
                         $('#saveButton').on('click', function() {
+                            let clearAbnormals = $('#clear_abnormals').val();
                             let note = $('#input_note').val();
                             let correctedBy = '{{ Auth::user()->id }}';
                             if (confirm("Apakah yakin mengkoreksi preventive ini?")) {
@@ -322,7 +347,8 @@
                                     type: 'PUT',
                                     url: '{{ route("insertcorrection", ':id') }}'.replace(':id', correctId),
                                     data: {
-                                        '_token': '{{ csrf_token() }}', // Include the CSRF token
+                                        '_token': '{{ csrf_token() }}',
+                                        'clear_abnormals': clearAbnormals,
                                         'correct_by': correctedBy,
                                         'note': note
                                     },

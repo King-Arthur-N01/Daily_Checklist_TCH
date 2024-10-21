@@ -68,11 +68,9 @@ class ImportdataController extends Controller
         try {
             $fetchmachine = Machine::find($id);
             $fetchproperty = Machineproperty::get();
-            $fetchschedule = Schedule::get();
             return response()->json([
                 'fetchmachine' => $fetchmachine,
-                'fetchproperty' => $fetchproperty,
-                'fetchschedule' => $fetchschedule
+                'fetchproperty' => $fetchproperty
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);

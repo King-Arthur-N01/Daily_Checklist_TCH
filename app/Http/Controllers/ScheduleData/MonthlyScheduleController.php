@@ -23,7 +23,6 @@ class MonthlyScheduleController extends Controller
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('yearly_schedules.id', '=', $id)
                 ->get();
-            // dd($getmachines);
 
             return response()->json([
                 'getmachines' => $getmachines,
@@ -38,15 +37,16 @@ class MonthlyScheduleController extends Controller
     public function createschedulemonth(Request $request)
     {
         try {
-            // dd($request);
             $name_schedule = $request->input('name_schedule');
             $id_schedule = $request->input('id_schedule_year');
             $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
             $schedulekey = $request->input('machine_schedule_id', []);
+            $total_schedule = count($schedulekey);
 
             $StoreSchedule = new MonthlySchedule();
             $StoreSchedule->name_schedule_month = $name_schedule;
+            $StoreSchedule->total_machine_schedule = $total_schedule;
             $StoreSchedule->id_schedule_year = $id_schedule;
             $StoreSchedule->save();
 

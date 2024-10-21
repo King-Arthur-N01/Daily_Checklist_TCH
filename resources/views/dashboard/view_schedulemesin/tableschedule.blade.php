@@ -179,7 +179,8 @@
                             }),
                             actions: `
                                 <div class="dynamic-button-group">
-                                    <button class="btn btn-success btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i>&nbsp;Schedule Bulanan</button>
+                                    <button class="btn btn-success btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i>&nbsp;Schedule Perbulan</button>
+                                    <button class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i></i>&nbsp;Schedule Perbulan</button>
                                     <button class="btn btn-danger btn-sm deleteButton" style="color:white" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete Schedule</button>
                                 </div>
                             `
@@ -224,8 +225,8 @@
                         if (!data.refreshscheduledetail || data.refreshscheduledetail.length === 0) {
                             tableRows = `
                                 <tr>
-                                    <td colspan="3">
-                                        <h5 style="text-align: center;">ERROR NO DATA AVAILABEL!</h5>
+                                    <td colspan="5">
+                                        <h5 style="text-align: center;">ERROR DATA PERBULAN TIDAK DITEMUKAN!</h5>
                                     </td>
                                 </tr>
                             `;
@@ -342,7 +343,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
-                                            <input class="form-control" id="name_schedule" type="text" placeholder="Nama Jadwal">
+                                            <input class="form-control" id="name_schedule_year" type="text" placeholder="Nama Jadwal">
                                         </div>
                                     </div>
                                 </div>
@@ -381,7 +382,7 @@
 
                         document.getElementById("modal_data_add").innerHTML = tableRows1;
 
-                        let inputSchedule = document.getElementById("name_schedule");
+                        let inputSchedule = document.getElementById("name_schedule_year");
                         inputSchedule.addEventListener('input', function() {
                             nameScheduleYear = inputSchedule.value;
                         });
@@ -602,7 +603,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                         <div>
-                                            <input class="form-control" id="name_schedule" type="text" placeholder="Periode :">
+                                            <input class="form-control" id="name_schedule_month" type="text" placeholder="Periode :">
                                         </div>
                                     </div>
                                 </div>
@@ -644,7 +645,7 @@
 
                         document.getElementById("modal_data_month_add").innerHTML = tableRows1;
 
-                        let inputSchedule = document.getElementById("name_schedule");
+                        let inputSchedule = document.getElementById("name_schedule_month");
                         inputSchedule.addEventListener('input', function() {
                             nameScheduleMonth = inputSchedule.value;
                         });
