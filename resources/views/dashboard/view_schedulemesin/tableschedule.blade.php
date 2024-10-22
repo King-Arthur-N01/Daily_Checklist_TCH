@@ -161,6 +161,9 @@
             return `${day}-${month}-${year}`;
         }
 
+        let nameScheduleYear = "";
+        let nameScheduleMonth = "";
+        let combinedMachineId = [];
 
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
@@ -181,7 +184,7 @@
                                 <div class="dynamic-button-group">
                                     <button class="btn btn-success btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i>&nbsp;Schedule Perbulan</button>
                                     <button class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i></i>&nbsp;Schedule Perbulan</button>
-                                    <button class="btn btn-danger btn-sm deleteButton" style="color:white" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete Schedule</button>
+                                    <button class="btn btn-danger btn-sm delete_button_year" style="color:white" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete Schedule</button>
                                 </div>
                             `
                         };
@@ -246,7 +249,7 @@
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                                     <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
                                                     <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#editModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                                    <a class="dropdown-item-custom-delete" data-id="${schedulemonth.getmonthid}"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                                    <a class="dropdown-item-custom-delete delete_button_month" data-id="${schedulemonth.getmonthid}" id="delete_schedule_month"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -306,8 +309,8 @@
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
-                    let combinedMachineId = [];
-                    let nameScheduleYear = '';
+                    combinedMachineId = [];
+                    nameScheduleYear = "";
 
                     // Check if previous selections exist in sessionStorage
                     let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
@@ -561,8 +564,8 @@
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
-                    let combinedMachineId = [];
-                    let nameScheduleMonth = '';
+                    combinedMachineId = [];
+                    nameScheduleMonth = "";
                     let idSchedule = '';
 
                     // Check if previous selections exist in sessionStorage
@@ -915,8 +918,8 @@
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW MONTHLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
-        // fungsi delete button untuk hapus mesin
-        $('#scheduleTables').on('click', '.deleteButton', function(e) {
+        // fungsi delete button untuk hapus schedule pertahun
+        $('#scheduleTables').on('click', '.delete_button_year', function(e) {
             e.preventDefault();
             const button = $(this);
             const machineId = button.data('id');
@@ -924,6 +927,39 @@
                 $.ajax({
                     type: 'DELETE',
                     url: '{{ route("removeschedule", ':id') }}'.replace(':id', machineId),
+                    data: {
+                        '_token': '{{ csrf_token() }}'
+                    }
+                }).done(function(response) {
+                    if (response.success.trim()) {
+                        const successMessage = response.success.trim();
+                        $('#successText').text(successMessage);
+                        $('#successModal').modal('show');
+                    }
+                    setTimeout(function() {
+                            $('#successModal').modal('hide'); // Hide success modal
+                    }, 2000);
+                }).fail(function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    const warningMessage = JSON.parse(xhr.responseText).error;
+                    $('#failedText').text(warningMessage);
+                    $('#failedModal').modal('show');
+                }).always(function() {
+                    table.ajax.reload(null, false);
+                });
+            } else {
+                // User cancelled the deletion, do nothing
+            }
+        });
+
+        $('#scheduleTables tbody').on('click', '.delete_button_month', function(e) {
+            e.preventDefault();
+            const button = $(this);
+            const machineId = button.data('id');
+            if (confirm("Apakah yakin menghapus schedule ini?")) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '{{ route("removeschedulemonth", ':id') }}'.replace(':id', machineId),
                     data: {
                         '_token': '{{ csrf_token() }}'
                     }

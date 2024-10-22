@@ -85,6 +85,18 @@ class MonthlyScheduleController extends Controller
 
     }
 
+    public function deleteschedulemonth($id)
+    {
+        try {
+            $DeleteSchedule = MonthlySchedule::find($id);
+            $DeleteSchedule->delete();
+            return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error delete data'], 500);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *

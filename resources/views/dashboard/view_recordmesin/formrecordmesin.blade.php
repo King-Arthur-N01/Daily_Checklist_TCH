@@ -209,7 +209,7 @@
             });
 
             // Initialize Select2 for abnormality selection
-                $('#abnormality').select2();
+            $('#abnormality').select2();
 
             // Event listener for abnormality select changes
             $('#abnormality').on('change', function() {
