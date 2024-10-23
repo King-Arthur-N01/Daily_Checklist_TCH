@@ -112,6 +112,27 @@ class YearlyScheduleController extends Controller
         }
     }
 
+    public function readdatamachineid($id)
+    {
+        try {
+            $refreshschedule = YearlySchedule::find($id);
+            $refreshmachine = Machine::all();
+
+            $refreshmachineschedule = DB::table('yearly_schedules')
+            ->select('yearly_schedules.id', 'machine_schedules.*')
+            ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+            ->where('yearly_schedules.id', '=', $id)
+            ->get();
+
+            return response()->json([
+                'refreshschedule' => $refreshschedule,
+                'refreshmachine' => $refreshmachine,
+                'refreshmachineschedule' => $refreshmachineschedule
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
     // public function readdataschedule($id)
     // {
     //     try {

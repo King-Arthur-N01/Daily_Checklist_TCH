@@ -181,11 +181,18 @@
                                 day: '2-digit'
                             }),
                             actions: `
-                                <div class="dynamic-button-group">
-                                    <button class="btn btn-success btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i>&nbsp;Schedule Perbulan</button>
-                                    <button class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i></i>&nbsp;Schedule Perbulan</button>
-                                    <button class="btn btn-danger btn-sm delete_button_year" style="color:white" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete Schedule</button>
-                                </div>
+
+
+                                        <div class="dynamic-button-group">
+                                            <button class="btn btn-success btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i>&nbsp;Schedule Perbulan</button>
+                                            <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                                <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+                                                    <a class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}" id="delete_schedule_month"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
+                                                </div
+                                            </a>
+                                        </div>
+
                             `
                         };
                     });
@@ -477,10 +484,12 @@
                     document.getElementById("modal_button_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
                             if (nameScheduleYear === "") {
+                                console.log(nameScheduleYear);
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2, nameScheduleYear);
                                 selectDateRange();
+                                console.log(nameScheduleYear);
                             }
                         }
                     });
@@ -542,6 +551,285 @@
         }
         // <===========================================================================================>
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END ADD YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <===========================================================================================>
+
+
+
+        // <===========================================================================================>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<EDIT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <===========================================================================================>
+
+        // FUNGSI UBAH MESIN PERTAHUN & PERKIRAAN WAKTU PREVENTIVE
+        $('#editScheduleYear').on('shown.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const scheduleId = button.data('id');
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("readmachineid", ':id') }}'.replace(':id', scheduleId),
+                success: function(data) {
+
+                    const header_modal = `
+                        <h5 class="modal-title">Edit Schedule Mesin Periode Pertahun</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    combinedMachineId = [];
+                    nameScheduleYear = "";
+
+                    // Check if previous selections exist in sessionStorage
+                    let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
+
+                    // Function to update selected machines
+                    function updateSelectedMachines() {
+                        combinedMachineId = [];
+                        let checkboxes = document.getElementsByName("machineinput");
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                combinedMachineId.push(checkbox.value);
+                            }
+                        });
+                        sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                    }
+
+                    // Function to initialize date range picker with dynamic values
+                    function selectDateRange(inputSelector, startDate, endDate) {
+                        $(inputSelector).daterangepicker({
+                            startDate: startDate,
+                            endDate: endDate,
+                            showDropdowns: true,
+                            locale: {
+                                format: 'DD-MM-YYYY'
+                            },
+                            maxSpan: {
+                                days: 6
+                            }
+                        });
+                    }
+
+                    // Function to render the first menu
+                    function renderFirstMenu() {
+                        let tableRows1 = `
+                            <div class="row align-items-center">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                        <div>
+                                            <input class="form-control" id="name_schedule_year_edit" type="text" placeholder="Nama Jadwal" value="${data.refreshschedule.name_schedule_year}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="machineTables1" width="100%">
+                                        <thead>
+                                            <th>NO.</th>
+                                            <th>NO INVENT</th>
+                                            <th>NO MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>ADD</th>
+                                        </thead>
+                                        <tbody>
+                                    `;
+                                        let machineIds = JSON.parse(data.refreshschedule.machine_collection);
+                                        data.refreshmachine.forEach((machine, index) => {
+                                            tableRows1 += `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${machine.invent_number}</td>
+                                                    <td>${machine.machine_number}</td>
+                                                    <td>${machine.machine_name}</td>
+                                                    <td>${machine.machine_type}</td>
+                                                    <td>${machine.machine_brand}</td>
+                                                    <td>
+                                                        <input type="checkbox" name="machineinput" value="${machine.id}" ${machineIds.map(String).includes(String(machine.id)) ? 'checked' : ''}>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        });
+                        tableRows1 += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>`;
+
+                        document.getElementById("modal_data_edit").innerHTML = tableRows1;
+
+                        let inputSchedule = document.getElementById("name_schedule_year_edit");
+                        nameScheduleYear = inputSchedule.value;
+                        inputSchedule.addEventListener('input', function() {
+                            nameScheduleYear = inputSchedule.value;
+                        });
+
+                        combinedMachineId = [];
+                        let checkboxes = document.getElementsByName("machineinput");
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                combinedMachineId.push(checkbox.value);
+                            }
+                            checkbox.addEventListener('change', updateSelectedMachines);
+                        });
+
+                        sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                    }
+
+                    // Function to render the second menu with dynamic date ranges
+                    function renderSecondMenu() {
+                        const selectedMachines = data.refreshmachine.filter(machine =>
+                            combinedMachineId.includes(machine.id.toString())
+                        );
+
+                        let tableRows2 = `
+                            <h5>SAAT PEMBUATAN JADWAL PREVENTIVE DIUSAHAKAN AMBIL DITANGGAL YANG BERTEPATAN DENGAN HARI SENIN!!!!</h5>
+                            <form id="addSchedule" method="post">
+                                <input type="hidden" name="name_schedule_year_edit" value="${nameScheduleYear}">
+                                <table class="table table-bordered" id="machineTables2" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>NO.</th>
+                                            <th>NO INVENT</th>
+                                            <th>NO MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>RENCANA PREVENTIVE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                `;
+                                    selectedMachines.forEach((machine, index) => {
+                                        let machineSchedule = data.refreshmachineschedule.find(schedule => schedule.machine_id === machine.id);
+                                        let startDate = machineSchedule ? moment(machineSchedule.schedule_start).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY');
+                                        let endDate = machineSchedule ? moment(machineSchedule.schedule_end).format('DD-MM-YYYY') : moment().add(6, 'days').format('DD-MM-YYYY');
+
+                                        tableRows2 += `
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>${machine.invent_number}</td>
+                                                <td>${machine.machine_number}</td>
+                                                <td>${machine.machine_name}</td>
+                                                <td>${machine.machine_type}</td>
+                                                <td>${machine.machine_brand}</td>
+                                                <td>
+                                                    <input class="form-control daterange-picker" id="schedule_time_${machine.id}" type="text" name="schedule_time">
+                                                    <input type="hidden" name="id_machine" value="${machine.id}">
+                                                </td>
+                                            </tr>
+                                        `;
+
+                                        setTimeout(() => {
+                                            selectDateRange(`#schedule_time_${machine.id}`, startDate, endDate);
+                                        }, 0);
+                                    });
+                    tableRows2 += `
+                                    </tbody>
+                                </table>
+                            </form>`;
+
+                        document.getElementById("modal_data_edit").innerHTML = tableRows2;
+                    }
+
+                    // Modal button functionality to switch between menus
+                    function changeMenu(step) {
+                        const button_modal1 = `
+                            <button class="btn dynamic-button btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
+                            <button class="btn dynamic-button btn-primary" id="nextButton">Next<i class="bi bi-arrow-right"></i></button>
+                        `;
+                        const button_modal2 = `
+                            <button class="btn dynamic-button btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
+                            <button class="btn dynamic-button btn-primary" id="editYearlyButton">Confirm<i class="bi bi-check2-circle"></i></button>
+                        `;
+                        if (step === 1) {
+                            renderFirstMenu();
+                            document.getElementById("modal_button_edit").innerHTML = button_modal1;
+                            document.getElementById("previousButton").disabled = true;
+                        } else if (step === 2) {
+                            renderSecondMenu();
+                            document.getElementById("modal_button_edit").innerHTML = button_modal2;
+                            document.getElementById("editYearlyButton").addEventListener('click', function() {
+                                editYearlySchedule();
+                            });
+                        }
+                    }
+
+                    $('#modal_title_edit').html(header_modal);
+                    changeMenu(1);
+
+                    document.getElementById("modal_button_edit").addEventListener('click', function(event) {
+                        if (event.target.id === "previousButton") {
+                            changeMenu(1);
+                        } else if (event.target.id === "nextButton") {
+                            if (nameScheduleYear === "") {
+                                console.log(nameScheduleYear);
+                                alert("Harap masukan nama untuk jadwal.!!!");
+                            } else {
+                                changeMenu(2, nameScheduleYear);
+                                selectDateRange();
+                                console.log(nameScheduleYear);
+                            }
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+
+
+
+        // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
+        function editYearlySchedule() {
+            event.preventDefault();
+            let scheduleName = $('input[name="name_schedule_year_edit"]').val();
+            let scheduleTimes = [];
+            let idMachines = [];
+
+            $('input[name="schedule_time"]').each(function() {
+                scheduleTimes.push($(this).val());
+            });
+            $('input[name="id_machine"]').each(function() {
+                idMachines.push($(this).val());
+            });
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("addschedule") }}',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'name_schedule' : scheduleName,
+                    'schedule_time[]': scheduleTimes,
+                    'id_machine[]': idMachines,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const successMessage = response.success;
+                        $('#successText').text(successMessage);
+                        $('#successModal').modal('show');
+                    }
+                    setTimeout(function() {
+                        $('#successModal').modal('hide');
+                        $('#addScheduleYear').modal('hide');
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.responseText) {
+                        console.error(xhr.responseText);
+                        const warningMessage = JSON.parse(xhr.responseText).error;
+                        $('#failedText').text(warningMessage);
+                        $('#failedModal').modal('show');
+                    }
+                    setTimeout(function() {
+                        $('#failedModal').modal('hide');
+                        $('#addScheduleYear').modal('hide');
+                    }, 2000);
+                }
+            }).always(function() {
+                table.ajax.reload(null, false);
+            });
+        }
+        // <===========================================================================================>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END EDIT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
 
@@ -767,10 +1055,12 @@
                     document.getElementById("modal_button_month_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
                             if (nameScheduleMonth === "") {
+                                console.log(nameScheduleMonth);
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2, nameScheduleMonth, idSchedule);
                                 selectSingleDate();
+                                console.log(nameScheduleMonth);
                             }
                         }
                     });
