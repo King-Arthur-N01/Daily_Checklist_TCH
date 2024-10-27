@@ -171,144 +171,136 @@
 
             // kode $ajax untuk menampilkan menu register
             $('#RegisterModal').on('shown.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var userId = button.data('id');
-                $.ajax({
-                    type: 'GET',
-                    url: '{{ route("readuser", ':id') }}'.replace(':id', userId),
-                    success: function(data) {
-                        const header_modal = `
-                            <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>                    <h5 class="modal-title">Register User</h5>
-                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                        `;
-                        const data_modal = `
-                            <form id="registerform" method="post">
-                                <div class="row" align-items="center">
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
-                                            <div>
-                                                <input class="form-control form-control-user" type="text" name="name" placeholder="Username">
-                                            </div>
-                                        </div>
+                const header_modal = `
+                    <h5 class="modal-title">Register User</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                `;
+                const data_modal = `
+                    <form id="registerform" method="post">
+                        <div class="row" align-items="center">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama User</label>
+                                    <div>
+                                        <input class="form-control form-control-user" type="text" name="name" placeholder="Username">
                                     </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
-                                            <div>
-                                                <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK">
-                                            </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">NIK</label>
+                                    <div>
+                                        <input class="form-control form-control-user" type="text" name="nik" placeholder="NIK">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
+                                    <div>
+                                        <select selected="selected" class="form-control" name="status" id="category-input">
+                                            <option value="1">Aktif</option>
+                                            <option value="0">Nonaktif</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
+                                    <div>
+                                        <input class="form-control form-control-user" type="text" name="department" placeholder="Department">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
+                                        <div class="form-group" style="margin: 0px;">
+                                            <input class="form-control" type="password" name="password" required placeholder="Enter Password" id="password">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" align-items="center">
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Status</label>
-                                            <div>
-                                                <select selected="selected" class="form-control" name="status" id="category-input">
-                                                    <option value="1">Aktif</option>
-                                                    <option value="0">Nonaktif</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Department</label>
-                                            <div>
-                                                <input class="form-control form-control-user" type="text" name="department" placeholder="Department">
-                                            </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>
+                                        <div class="form-group" style="margin: 0px;">
+                                            <input class="form-control" type="password" name="password_confirmation" placeholder="Confirm Password" id="confirm_password">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" align-items="center">
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <div>
-                                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Password</label>
-                                                <div class="form-group" style="margin: 0px;">
-                                                    <input class="form-control" type="password" name="password" required placeholder="Enter Password" id="password">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <div>
-                                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Confirm Password</label>
-                                                <div class="form-group" style="margin: 0px;">
-                                                    <input class="form-control" type="password" name="password_confirmation" placeholder="Confirm Password" id="confirm_password">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        `;
-                        const button_modal = `
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="registerButton">Submit</button>
-                        `;
-                        $('#modal_title_register').html(header_modal);
-                        $('#modal_data_register').html(data_modal);
-                        $('#modal_button_register').html(button_modal);
+                            </div>
+                        </div>
+                    </form>
+                `;
+                const button_modal = `
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-space btn-primary" data-toggle="modal" id="registerButton">Submit</button>
+                `;
+                $('#modal_title_register').html(header_modal);
+                $('#modal_data_register').html(data_modal);
+                $('#modal_button_register').html(button_modal);
 
-                        // kode $ajax untuk mengirim request register user baru
-                        $('#registerButton').on('click', function(e) {
-                            e.preventDefault();
-                            var formData = {
-                                'name': $('input[name="name"]').val(),
-                                'nik': $('input[name="nik"]').val(),
-                                'status': $('select[name="status"]').val(),
-                                'department': $('input[name="department"]').val(),
-                                'password': $('input[name="password"]').val(),
-                                'password_confirmation': $('input[name="password_confirmation"]').val()
-                            };
-                            if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
-                                $.ajax({
-                                    type: 'POST',
-                                    url: '{{ route("registeruser") }}',
-                                    data: {
-                                        '_token': '{{ csrf_token() }}',
-                                        'name': formData.name,
-                                        'nik': formData.nik,
-                                        'status': formData.status,
-                                        'department': formData.department,
-                                        'password': formData.password,
-                                        'password_confirmation': formData.password_confirmation
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            const successMessage = response.success;
-                                            $('#successText').text(successMessage);
-                                            $('#successModal').modal('show');
-                                            overlay.toggleClass('is-active');
-                                        }
-                                        setTimeout(function() {
-                                                $('#successModal').modal('hide');
-                                                $('#RegisterModal').modal('hide');
-                                                overlay.removeClass('is-active');
-                                        }, 2000);
-                                    },
-                                    error: function(xhr, status, error) {
-                                        if (xhr.responseText) {
-                                            const warningMessage = JSON.parse(xhr.responseText).error;
-                                            $('#failedText').text(warningMessage);
-                                            $('#failedModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#failedModal').modal('hide');
-                                            $('#RegisterModal').modal('hide');
-                                        }, 2000);
-                                    }
-                                }).always(function() {
-                                    table.ajax.reload(null, false);
-                                });
-                            } else {
-                                // User cancelled the deletion, do nothing
+                // kode $ajax untuk mengirim request register user baru
+                $('#registerButton').on('click', function(e) {
+                    e.preventDefault();
+                    var formData = {
+                        'name': $('input[name="name"]').val(),
+                        'nik': $('input[name="nik"]').val(),
+                        'status': $('select[name="status"]').val(),
+                        'department': $('input[name="department"]').val(),
+                        'password': $('input[name="password"]').val(),
+                        'password_confirmation': $('input[name="password_confirmation"]').val()
+                    };
+                    if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("registeruser") }}',
+                            data: {
+                                '_token': '{{ csrf_token() }}',
+                                'name': formData.name,
+                                'nik': formData.nik,
+                                'status': formData.status,
+                                'department': formData.department,
+                                'password': formData.password,
+                                'password_confirmation': formData.password_confirmation
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    const successMessage = response.success;
+                                    $('#successText').text(successMessage);
+                                    $('#successModal').modal('show');
+                                    overlay.toggleClass('is-active');
+                                }
+                                setTimeout(function() {
+                                        $('#successModal').modal('hide');
+                                        $('#RegisterModal').modal('hide');
+                                        overlay.removeClass('is-active');
+                                }, 2000);
+                            },
+                            error: function(xhr, status, error) {
+                                if (xhr.responseText) {
+                                    const warningMessage = JSON.parse(xhr.responseText).error;
+                                    $('#failedText').text(warningMessage);
+                                    $('#failedModal').modal('show');
+                                }
+                                setTimeout(function() {
+                                    $('#failedModal').modal('hide');
+                                    $('#RegisterModal').modal('hide');
+                                }, 2000);
                             }
+                        }).always(function() {
+                            table.ajax.reload(null, false);
                         });
+                    } else {
+                        // User cancelled the deletion, do nothing
                     }
                 });
             });
@@ -319,7 +311,7 @@
                 var userId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("readuser", ':id') }}'.replace(':id', userId),
+                    url: '{{ route("finduserid", ':id') }}'.replace(':id', userId),
                     success: function(data) {
                         const header_modal = `
                             <h5 class="modal-title">Edit User</h5>
@@ -388,7 +380,7 @@
                             formData +='&_token={{ csrf_token() }}'; // Add CSRF token
                             $.ajax({
                                 type: 'PUT',
-                                url: '{{ route("updateuser", ':id') }}'.replace(':id', userId),
+                                url: '{{ route("edituser", ':id') }}'.replace(':id', userId),
                                 data: formData,
                                 success: function(response) {
                                     if (response.success) {

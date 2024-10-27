@@ -100,7 +100,7 @@ class YearlyScheduleController extends Controller
         return response()->json($data);
     }
 
-    public function readdatamachine()
+    public function readmachinedata()
     {
         try {
             $refreshmachine = Machine::all();
@@ -112,7 +112,7 @@ class YearlyScheduleController extends Controller
         }
     }
 
-    public function readdatamachineid($id)
+    public function findschedule($id)
     {
         try {
             $refreshschedule = YearlySchedule::find($id);
@@ -197,11 +197,40 @@ class YearlyScheduleController extends Controller
     public function updateschedule(Request $request, $id)
     {
         try {
-            $id_machine_array = json_encode($request->input('id_machine'));
+            // dd($request);
+            $request->validate([
+                'name_schedule_edit' => 'required',
+            ]);
+
+            $machine_keys = $request->input('id_machine');
+            $schedule_times = $request->input('schedule_time');
+
+            // Ensure both arrays have the same number of elements
+            if (count($machine_keys) !== count($schedule_times)) {
+                return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
+            }
+
             $UpdateSchedule = YearlySchedule::find($id);
-            $UpdateSchedule->name_schedule = $request->input('name_schedule');
-            $UpdateSchedule->id_machine = $id_machine_array;
+            $UpdateSchedule->name_schedule_year = $request->input('name_schedule_edit');
+            $UpdateSchedule->machine_collection = json_encode($machine_keys);
             $UpdateSchedule->save();
+
+            $schedule_id = $UpdateSchedule->id;
+
+            foreach ($machine_keys as $index => $key) {
+                $ScheduleTimeRange = $request->input('schedule_time')[$index];
+                list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
+
+                $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
+                $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
+
+                $UpdateMachineSchedule = MachineSchedule::find($key);
+                $UpdateMachineSchedule->schedule_start = $ScheduleStartCarbon;
+                $UpdateMachineSchedule->schedule_end = $ScheduleEndCarbon;
+                $UpdateMachineSchedule->machine_id = $key;
+                $UpdateMachineSchedule->yearly_id = $schedule_id;
+                $UpdateMachineSchedule->save();
+            }
             return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

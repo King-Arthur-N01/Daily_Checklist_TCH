@@ -24,8 +24,8 @@ Route::post('/login','Auth\LoginController@authenticateuser')->name('pushlogin')
 Route::get ('/manageuser','Auth\RegisterController@indexusertable')->name('manageuser');
 Route::get ('/manageuser/table/refresh','Auth\RegisterController@refreshtableuser')->name('refreshuser');
 Route::post('/manageuser/register','Auth\RegisterController@authenticatecreate')->name('registeruser');
-Route::get ('/manageuser/read/{id}','Auth\RegisterController@readdatauser')->name('readuser');
-Route::put ('/manageuser/update/{id}','Auth\RegisterController@authenticateedit')->name('updateuser');
+Route::get ('/manageuser/find/{id}','Auth\RegisterController@finduser')->name('finduserid');
+Route::put ('/manageuser/update/{id}','Auth\RegisterController@authenticateedit')->name('edituser');
 Route::delete('/manageuser/delete/{id}','Auth\RegisterController@deleteuser')->name('removeuser');
 Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 // page home route end
@@ -34,12 +34,12 @@ Route::get ('/logout','Auth\LoginController@signout')->name('logout');
 Route::get ('/machinedata','MachineData\ImportdataController@indeximport')->name('indexmachinedata');
 Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refreshtableimport')->name('refreshmachinedata');
 Route::post('/machinedata/create','MachineData\MachineController@createmachine')->name('addmachine');
-Route::put ('/machinedata/update/{id}','MachineData\MachineController@updatemachine')->name('updatemachine');
+Route::put ('/machinedata/update/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::delete('/machinedata/delete/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
 Route::post('/machinedata/import','MachineData\ImportdataController@importdata')->name('uploadfile');
 Route::get ('/machinedata/export/{id}','MachineData\ImportdataController@exportpdf')->name('exportfile');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
-Route::get ('/machinedata/read/{id}','MachineData\ImportdataController@readdatamachine')->name('readmachinedata');
+Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachine')->name('findmachineid');
 // machine import route end
 
 // machine property route
@@ -52,18 +52,21 @@ Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyControl
 // schedule year route
 Route::get ('/schedule','ScheduleData\YearlyScheduleController@indexschedule')->name('indexschedule');
 Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createschedule')->name('addschedule');
-Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('updateschedule');
+Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('editschedule');
 Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeschedule');
-Route::get ('/schedule/read/machinedata','ScheduleData\YearlyScheduleController@readdatamachine')->name('readmachineall');
-Route::get ('/schedule/read/machinedata/{id}','ScheduleData\YearlyScheduleController@readdatamachineid')->name('readmachineid');
+
+Route::get ('/schedule/read','ScheduleData\YearlyScheduleController@readmachinedata')->name('readmachinedata');
+Route::get ('/schedule/find/{id}','ScheduleData\YearlyScheduleController@findschedule')->name('findscheduleid');
 Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshschedule');
 Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleController@refreshdetailtableschedule')->name('refreshdetailschedule');
 // Route::get ('/schedule/calendar/read','ScheduleData\ScheduleController@datacalendar')->name('datacalendar');
 // schedule year route end
 
 // schedule month route
-Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@readdataschedule')->name('readscheduledata');
+Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@readscheduleyeardata')->name('readscheduleyear');
+Route::get ('/schedule/month/find/{id}','ScheduleData\MonthlyScheduleController@findschedulemonth')->name('findschedulemonthid');
 Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addschedulemonth');
+Route::post('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editschedulemonth');
 Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewschedulemonth');
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removeschedulemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');

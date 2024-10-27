@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class MonthlyScheduleController extends Controller
 {
-    public function readdataschedule($id)
+    public function readscheduleyeardata($id)
     {
         try {
             $getmachines = DB::table('yearly_schedules')
@@ -34,6 +34,27 @@ class MonthlyScheduleController extends Controller
         }
     }
 
+    public function findschedulemonth($id)
+    {
+        try {
+            $refreshschedule = MonthlySchedule::find($id);
+
+            $getmachines = DB::table('yearly_schedules')
+                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as getmachinescheduleid')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('yearly_schedules.id', '=', $id)
+                ->get();
+
+            return response()->json([
+                'refreshschedule' => $refreshschedule,
+                'getmachines' => $getmachines
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     public function createschedulemonth(Request $request)
     {
         try {
@@ -41,18 +62,18 @@ class MonthlyScheduleController extends Controller
             $id_schedule = $request->input('id_schedule_year');
             $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
-            $schedulekey = $request->input('machine_schedule_id', []);
-            $total_schedule = count($schedulekey);
+            $schedule_key = $request->input('machine_schedule_id', []);
+            $machine_key = $request->input('machine_id', []);
 
             $StoreSchedule = new MonthlySchedule();
             $StoreSchedule->name_schedule_month = $name_schedule;
-            $StoreSchedule->total_machine_schedule = $total_schedule;
+            $StoreSchedule->machine_collection2 = json_encode($machine_key);
             $StoreSchedule->id_schedule_year = $id_schedule;
             $StoreSchedule->save();
 
             $getmonthlyid = MonthlySchedule::latest('id')->first()->id;
 
-            foreach ($schedulekey as $index => $key) {
+            foreach ($schedule_key as $index => $key) {
                 $StoreMachineSchedule = MachineSchedule::find($key);
                 $StoreMachineSchedule->schedule_duration = $schedule_duration[$index];
                 $StoreMachineSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');

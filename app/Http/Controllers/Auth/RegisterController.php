@@ -33,7 +33,7 @@ class RegisterController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
-    public function readdatauser($id)
+    public function finduser($id)
     {
         $getusers=User::find($id);
         return response()->json(['getusers' => $getusers]);

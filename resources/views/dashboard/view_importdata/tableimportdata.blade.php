@@ -438,7 +438,7 @@
                 const machineId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("readmachinedata", ':id') }}'.replace(':id', machineId),
+                    url: '{{ route("findmachineid", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         let options = '';
                         if (Array.isArray(data.fetchproperty)) {
@@ -573,7 +573,7 @@
                             };
                             $.ajax({
                                 type: 'PUT',
-                                url: '{{ route("updatemachine", ':id') }}'.replace(':id', machineId),
+                                url: '{{ route("editmachine", ':id') }}'.replace(':id', machineId),
                                 data: {
                                     '_token': '{{ csrf_token() }}', // Include the CSRF token
                                     'invent_number': formData.inventNumber,
