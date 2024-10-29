@@ -18,22 +18,6 @@ class YearlyScheduleController extends Controller
         return view('dashboard.view_schedulemesin.tableschedule');
     }
 
-    public function formmachinescheduleNOTUSE($id)
-    {
-        $getschedule = YearlySchedule::find($id);
-        $machinearray = json_decode($getschedule->id_machine, true);
-        $getmachineid = [];
-
-        foreach ($machinearray as $eachmachineid){
-            $machine = Machine::find($eachmachineid);
-            $getmachineid[] = $machine;
-        }
-
-        return view('dashboard.view_schedulemesin.formschedulemesin', [
-            'getschedule' => $getschedule,
-            'getmachineid' => $getmachineid,
-        ]);
-    }
     public function refreshtableschedule()
     {
         try {
@@ -119,7 +103,7 @@ class YearlyScheduleController extends Controller
             $refreshmachine = Machine::all();
 
             $refreshmachineschedule = DB::table('yearly_schedules')
-            ->select('yearly_schedules.id', 'machine_schedules.*')
+            ->select('yearly_schedules.id', 'machine_schedules.*', 'machine_schedules.id as getmachinescheduleid')
             ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
             ->where('yearly_schedules.id', '=', $id)
             ->get();
@@ -127,7 +111,7 @@ class YearlyScheduleController extends Controller
             return response()->json([
                 'refreshschedule' => $refreshschedule,
                 'refreshmachine' => $refreshmachine,
-                'refreshmachineschedule' => $refreshmachineschedule
+                'refreshmachineschedule' => $refreshmachineschedule,
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -156,7 +140,7 @@ class YearlyScheduleController extends Controller
                 'name_schedule' => 'required',
             ]);
 
-            $machine_keys = $request->input('id_machine');
+            $machine_keys = $request->input('machine_id');
             $schedule_times = $request->input('schedule_time');
 
             // Ensure both arrays have the same number of elements
@@ -202,41 +186,64 @@ class YearlyScheduleController extends Controller
                 'name_schedule_edit' => 'required',
             ]);
 
-            $machine_keys = $request->input('id_machine');
+            $machine_array = $request->input('machine_id');
+            $update_machine_ids = $request->input('machine_schedule_id');
             $schedule_times = $request->input('schedule_time');
 
-            // Ensure both arrays have the same number of elements
-            if (count($machine_keys) !== count($schedule_times)) {
+            // Validasi jumlah elemen pada kedua array
+            if (count($machine_array) !== count($schedule_times)) {
                 return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
             }
 
+            // dd($machine_array);
+            // Ambil data ID MachineSchedule berdasarkan yearly_id yang ada
+            $previous_machine_ids = DB::table('yearly_schedules')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->where('yearly_schedules.id', '=', $id)
+                ->pluck('machine_schedules.id')
+                ->toArray();
+
+            // Tentukan ID yang perlu dihapus
+            $delete_unused_ids = array_diff($previous_machine_ids, $update_machine_ids);
+
+            // Hapus semua MachineSchedule yang tidak ada di request terbaru
+            foreach ($delete_unused_ids as $delete_id) {
+                $DeleteMachineSchedule = MachineSchedule::find($delete_id);
+                $DeleteMachineSchedule->delete();
+            }
+
+            // Update YearlySchedule
             $UpdateSchedule = YearlySchedule::find($id);
             $UpdateSchedule->name_schedule_year = $request->input('name_schedule_edit');
-            $UpdateSchedule->machine_collection = json_encode($machine_keys);
+            $UpdateSchedule->machine_collection = json_encode($machine_array);
             $UpdateSchedule->save();
 
             $schedule_id = $UpdateSchedule->id;
 
-            foreach ($machine_keys as $index => $key) {
-                $ScheduleTimeRange = $request->input('schedule_time')[$index];
+            // Update atau buat MachineSchedule baru
+            foreach ($update_machine_ids as $index => $machine_schedule_id) {
+                $ScheduleTimeRange = $schedule_times[$index];
                 list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
 
                 $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                $UpdateMachineSchedule = MachineSchedule::find($key);
+                // Temukan atau buat entri baru di MachineSchedule
+                $UpdateMachineSchedule = MachineSchedule::find($machine_schedule_id) ?? new MachineSchedule();
                 $UpdateMachineSchedule->schedule_start = $ScheduleStartCarbon;
                 $UpdateMachineSchedule->schedule_end = $ScheduleEndCarbon;
-                $UpdateMachineSchedule->machine_id = $key;
+                $UpdateMachineSchedule->machine_id = $machine_array[$index]; // Use $index to get the correct machine_id
                 $UpdateMachineSchedule->yearly_id = $schedule_id;
                 $UpdateMachineSchedule->save();
             }
+
             return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Error updating data'], 500);
         }
     }
+
 
     public function deleteschedule($id)
     {

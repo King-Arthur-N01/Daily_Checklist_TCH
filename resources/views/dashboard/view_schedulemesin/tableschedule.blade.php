@@ -450,7 +450,7 @@
                                                 <td>${machine.machine_brand}</td>
                                                 <td>
                                                     <input class="form-control daterange-picker" type="text" name="schedule_time">
-                                                    <input type="hidden" name="id_machine" value="${machine.id}">
+                                                    <input type="hidden" name="machine_id" value="${machine.id}">
                                                 </td>
                                             </tr>
                                         `;
@@ -524,7 +524,7 @@
             $('input[name="schedule_time"]').each(function() {
                 scheduleTimes.push($(this).val());
             });
-            $('input[name="id_machine"]').each(function() {
+            $('input[name="machine_id"]').each(function() {
                 idMachines.push($(this).val());
             });
             $.ajax({
@@ -534,7 +534,7 @@
                     '_token': '{{ csrf_token() }}',
                     'name_schedule' : scheduleName,
                     'schedule_time[]': scheduleTimes,
-                    'id_machine[]': idMachines,
+                    'machine_id[]': idMachines,
                 },
                 success: function(response) {
                     if (response.success) {
@@ -713,9 +713,9 @@
                                 `;
                                     selectedMachines.forEach((machine, index) => {
                                         let machineSchedule = data.refreshmachineschedule.find(schedule => schedule.machine_id === machine.id);
+                                        let ScheduleIds = machineSchedule ? machineSchedule.id : ''; // Assign schedule ID if available
                                         let startDate = machineSchedule ? moment(machineSchedule.schedule_start).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY');
                                         let endDate = machineSchedule ? moment(machineSchedule.schedule_end).format('DD-MM-YYYY') : moment().add(6, 'days').format('DD-MM-YYYY');
-
                                         tableRows2 += `
                                             <tr>
                                                 <td>${index + 1}</td>
@@ -726,7 +726,8 @@
                                                 <td>${machine.machine_brand}</td>
                                                 <td>
                                                     <input class="form-control daterange-picker" id="schedule_time_${machine.id}" type="text" name="schedule_time">
-                                                    <input type="hidden" name="id_machine" value="${machine.id}">
+                                                    <input type="hidden" name="machine_id" value="${machine.id}">
+                                                    <input type="hidden" name="machine_schedule_id" value="${ScheduleIds}">
                                                 </td>
                                             </tr>
                                         `;
@@ -792,18 +793,23 @@
 
 
 
+
         // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
         function editYearlySchedule(scheduleId) {
             event.preventDefault();
             let scheduleName = $('input[name="name_schedule_year_edit"]').val();
             let scheduleTimes = [];
             let idMachines = [];
+            let idMachineSchedule = [];
 
             $('input[name="schedule_time"]').each(function() {
                 scheduleTimes.push($(this).val());
             });
-            $('input[name="id_machine"]').each(function() {
+            $('input[name="machine_id"]').each(function() {
                 idMachines.push($(this).val());
+            });
+            $('input[name="machine_schedule_id"]').each(function() {
+                idMachineSchedule.push($(this).val());
             });
             $.ajax({
                 type: 'PUT',
@@ -812,7 +818,8 @@
                     '_token': '{{ csrf_token() }}',
                     'name_schedule_edit' : scheduleName,
                     'schedule_time[]': scheduleTimes,
-                    'id_machine[]': idMachines,
+                    'machine_id[]': idMachines,
+                    'machine_schedule_id[]': idMachineSchedule,
                 },
                 success: function(response) {
                     if (response.success) {
@@ -822,7 +829,7 @@
                     }
                     setTimeout(function() {
                         $('#successModal').modal('hide');
-                        $('#addScheduleYear').modal('hide');
+                        $('#editScheduleYear').modal('hide');
                     }, 2000);
                 },
                 error: function(xhr, status, error) {
@@ -834,7 +841,7 @@
                     }
                     setTimeout(function() {
                         $('#failedModal').modal('hide');
-                        $('#addScheduleYear').modal('hide');
+                        $('#editScheduleYear').modal('hide');
                     }, 2000);
                 }
             }).always(function() {
