@@ -39,7 +39,7 @@
     </div>
 
     <!-- Add Modal -->
-    <div class="modal fade" id="addScheduleYear" tabindex="-1">
+    <div class="modal faden show" id="addScheduleYear" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_add">
@@ -196,18 +196,19 @@
                                 month: 'long',
                                 day: '2-digit'
                             }),
-                            actions: `
-                                        <div class="dynamic-button-group">
-                                            <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
-                                            <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                                <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
-                                                    <a class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}" id="delete_schedule_month"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
-                                                </div
-                                            </a>
-                                        </div>
-
-                            `
+                            actions:
+                                `
+                                    <div class="dynamic-button-group">
+                                        <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
+                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewScheduleYear"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
+                                                <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+                                                <a class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}" id="delete_schedule_month"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
+                                            </div>
+                                        </a>
+                                    </div>
+                                `
                         };
                     });
                 }
@@ -307,7 +308,6 @@
                         }
                         setTimeout(function() {
                             $('#warningModal').modal('hide');
-                            $('#correctModal').modal('hide');
                         }, 2000);
                     }
                 });
@@ -400,6 +400,12 @@
                         tableRows1 += `
                                         </tbody>
                                     </table>
+                                    <div class="form-check-custom">
+                                        <input class="form-check-input" type="checkbox" id="checkAll">
+                                        <label class="form-check-label" style="margin-right: 20px;" for="gridCheck1">
+                                            Check All
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -413,6 +419,15 @@
 
                         let checkboxes = document.getElementsByName("machineinput");
                         checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateSelectedMachines));
+
+                        // Add event listener for the "Check All" checkbox
+                        const checkAll = document.getElementById("checkAll");
+                        checkAll.addEventListener('change', function() {
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = checkAll.checked;
+                            });
+                            updateSelectedMachines();
+                        });
                     }
 
                     // Display the selected machines in the second modal (confirmation menu)
@@ -498,12 +513,10 @@
                     document.getElementById("modal_button_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
                             if (nameScheduleYear === "") {
-                                console.log(nameScheduleYear);
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2, nameScheduleYear);
                                 selectDateRange();
-                                console.log(nameScheduleYear);
                             }
                         }
                     });
@@ -664,6 +677,12 @@
                         tableRows1 += `
                                         </tbody>
                                     </table>
+                                    <div class="form-check-custom">
+                                        <input class="form-check-input" type="checkbox" id="checkAll">
+                                        <label class="form-check-label" style="margin-right: 20px;" for="gridCheck1">
+                                            Check All
+                                        </label>
+                                    </div>
                                 </div>
                             </div>`;
 
@@ -681,9 +700,18 @@
                             if (checkbox.checked) {
                                 combinedMachineId.push(checkbox.value);
                             }
-                            checkbox.addEventListener('change', updateSelectedMachines);
+                            $('#modal_data_edit').off('change', "input[name='machineinput']").on('change', "input[name='machineinput']", updateSelectedMachines);
+                            // checkbox.addEventListener('change', updateSelectedMachines);
                         });
-
+                        // Add event listener for the "Check All" checkbox
+                        const checkAll = document.getElementById("checkAll");
+                        checkAll.addEventListener('change', function() {
+                            checkboxes.forEach(checkbox => {
+                                checkbox.checked = checkAll.checked;
+                            });
+                            updateSelectedMachines();
+                        });
+                        updateSelectedMachines();
                         sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
                     }
 
@@ -775,12 +803,10 @@
                             changeMenu(1);
                         } else if (event.target.id === "nextButton") {
                             if (nameScheduleYear === "") {
-                                console.log(nameScheduleYear);
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2, nameScheduleYear);
                                 selectDateRange();
-                                console.log(nameScheduleYear);
                             }
                         }
                     });
@@ -790,9 +816,6 @@
                 }
             });
         });
-
-
-
 
         // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
         function editYearlySchedule(scheduleId) {
@@ -905,9 +928,6 @@
                     // Display machines in the first modal (selection menu)
                     function renderFirstMenu() {
                         // MENGAMBIL 1 VALUE PADA ARRAY MACHINE_SCHEDULE_YEARS UNTUK MENGISI MONTHLY_SCHEDULES id_schedule_year
-                        let singleScheduleValue = data.getmachines[0].yearly_id;
-                        getyearlyschedule = singleScheduleValue;
-
                         let tableRows1 = `
                             <div class="row" align-items="center">
                                 <div class="col-xl-12">
@@ -975,7 +995,7 @@
                         let tableRows2 = `
                             <form id="addSchedule" method="post">
                                 <input type="hidden" name="name_schedule_month" value="${nameScheduleMonth}">
-                                <input type="hidden" name="id_schedule_year" value="${getyearlyschedule}">
+                                <input type="hidden" name="id_schedule_year" value="${selectedMachines[0].yearly_id}">
                                 <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
                                         <tr>
@@ -1076,12 +1096,10 @@
                     document.getElementById("modal_button_month_add").addEventListener('click', function(event) {
                         if (event.target.id === "nextButton") {
                             if (nameScheduleMonth === "") {
-                                console.log(nameScheduleMonth);
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2, nameScheduleMonth, idSchedule);
                                 selectSingleDate();
-                                console.log(nameScheduleMonth);
                             }
                         }
                     });
@@ -1172,7 +1190,7 @@
                 success: function(data) {
 
                     const header_modal = `
-                        <h5 class="modal-title">Tambah Schedule Mesin Periode Perbulan</h5>
+                        <h5 class="modal-title">Edit Schedule Mesin Periode Perbulan</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
@@ -1310,7 +1328,7 @@
                                                                 <i class="bi bi-hourglass-split"></i>
                                                             </div>
                                                         </div>
-                                                        <input name="schedule_duration" type="number" class="form-control" placeholder="Dihitung Perjam">
+                                                        <input name="schedule_duration" type="number" class="form-control" value="${machine.schedule_duration}" placeholder="Dihitung Perjam">
                                                     </div>
                                                 </td>
                                                 <td>
@@ -1322,6 +1340,7 @@
                                                         </div>
                                                         <input name="schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.id}">
                                                         <input type="hidden" name="machine_schedule_id" value="${machine.getmachinescheduleid}">
+                                                        <input type="hidden" name="machine_id" value="${machine.id}">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1351,7 +1370,7 @@
                         `;
                         const button_modal2 = `
                             <button class="btn dynamic-button btn-secondary" id="previousButton"><i class="bi bi-arrow-left"></i>Previous</button>
-                            <button class="btn dynamic-button btn-primary" id="addMonthlyButton">Confirm<i class="bi bi-check2-circle"></i></button>
+                            <button class="btn dynamic-button btn-primary" id="editMonthlyButton">Confirm<i class="bi bi-check2-circle"></i></button>
                         `;
                         if (step === 1) {
                             renderFirstMenu();
@@ -1360,8 +1379,8 @@
                         } else if (step === 2) {
                             renderSecondMenu();
                             document.getElementById("modal_button_month_edit").innerHTML = button_modal2;
-                            document.getElementById("addMonthlyButton").addEventListener('click', function() {
-                                addMonthlySchedule();
+                            document.getElementById("editMonthlyButton").addEventListener('click', function() {
+                                editMonthlySchedule(scheduleId);
                             });
                         }
                     }
@@ -1379,12 +1398,10 @@
                         if (event.target.id === "nextButton") {
                             updateSelectedMachines();
                             if (nameScheduleMonth === "") {
-                                console.log(nameScheduleMonth);
                                 alert("Harap masukan nama untuk jadwal.!!!");
                             } else {
                                 changeMenu(2, nameScheduleMonth, idSchedule);
                                 selectSingleDate();
-                                console.log(nameScheduleMonth);
                             }
                         }
                     });
@@ -1396,12 +1413,12 @@
         });
 
         // FUNGSI UNTUK SAVE BUTTON MONTHLY SCHEDULE DAN MENGIRIM REQUEST AJAX
-        function editMonthlySchedule() {
+        function editMonthlySchedule(scheduleId) {
             event.preventDefault();
             let scheduleName = $('input[name="name_schedule_month_edit"]').val();
-            let scheduleYearId = $('input[name="id_schedule_year"]').val();
             let scheduleDuration = [];
             let scheduleDate = [];
+            let idMachines = [];
             let idMachineSchedule = [];
 
             $('input[name="schedule_duration"]').each(function() {
@@ -1410,18 +1427,21 @@
             $('input[name="schedule_date"]').each(function() {
                 scheduleDate.push($(this).val());
             });
+            $('input[name="machine_id"]').each(function() {
+                idMachines.push($(this).val());
+            });
             $('input[name="machine_schedule_id"]').each(function() {
                 idMachineSchedule.push($(this).val());
             });
             $.ajax({
-                type: 'POST',
+                type: 'PUT',
                 url: '{{ route("editschedulemonth", ':id') }}'.replace(':id', scheduleId),
                 data: {
                     '_token': '{{ csrf_token() }}',
                     'name_schedule' : scheduleName,
-                    'id_schedule_year' : scheduleYearId,
                     'schedule_duration[]': scheduleDuration,
                     'schedule_date[]': scheduleDate,
+                    'machine_id[]': idMachines,
                     'machine_schedule_id[]': idMachineSchedule,
                 },
                 success: function(response) {
@@ -1432,7 +1452,7 @@
                     }
                     setTimeout(function() {
                         $('#successModal').modal('hide');
-                        $('#addScheduleMonth').modal('hide');
+                        $('#editScheduleMonth').modal('hide');
                     }, 2000);
                 },
                 error: function(xhr, status, error) {
@@ -1443,7 +1463,7 @@
                     }
                     setTimeout(function() {
                         $('#failedModal').modal('hide');
-                        $('#addScheduleMonth').modal('hide');
+                        $('#editScheduleMonth').modal('hide');
                     }, 2000);
                 }
             }).always(function() {
@@ -1466,31 +1486,38 @@
                 type: 'GET',
                 url: '{{ route("viewschedulemonth", ':id') }}'.replace(':id', scheduleId),
                 success: function(data) {
-                    if (!data || !data.getscheduledetail || data.getscheduledetail.length === 0) {
-                        $('#modal_data_view').html(
-                            '<h4 style="text-align: center;">Error data property mesin belum tersedia!</h4>'
-                        );
-                    } else {
-                        const header_modal = `
-                            <h5 class="modal-title">Detail Preventive Mesin</h5>
-                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                        `;
-                        const data_modal = `
-                            <table class="table table-bordered" id="dataTables">
-                                <thead>
-                                    <tr>
-                                        <th>NO.</th>
-                                        <th>NAMA MESIN</th>
-                                        <th>NO INVENTARIS</th>
-                                        <th>KAPASITAS</th>
-                                        <th>NOMOR MESIN</th>
-                                        <th>DURASI</th>
-                                        <th>RENCANA TANGGAL</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    const header_modal = `
+                        <h5 class="modal-title">Detail Preventive Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+                    const data_modal = `
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                <div>
+                                    <input class="form-control" type="text" value="${data.getscheduledetail[0].name_schedule_month}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered" id="dataTables">
+                            <thead>
+                                <tr>
+                                    <th>NO.</th>
+                                    <th>NAMA MESIN</th>
+                                    <th>NO INVENTARIS</th>
+                                    <th>KAPASITAS</th>
+                                    <th>NOMOR MESIN</th>
+                                    <th>DURASI</th>
+                                    <th>RENCANA TANGGAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 ${data.getscheduledetail.map((schedule, index) => {
-                                    const scheduleId = schedule.id;
+                                    let scheduleStart = new Date(schedule.schedule_start);
+                                    let scheduleEnd = new Date(schedule.schedule_end);
+                                    let scheduleDate = new Date(schedule.schedule_date);
+                                    let isNotCorrect = !(scheduleDate >= scheduleStart && scheduleDate <= scheduleEnd);
+                                    let displayDate = isNotCorrect ? 'Data Perlu Diperbaiki' : formatDate(schedule.schedule_date);
                                     return `
                                         <tr>
                                             <td>${index + 1}</td>
@@ -1499,28 +1526,27 @@
                                             <td>${schedule.machine_type}</td>
                                             <td>${schedule.machine_number}</td>
                                             <td>${schedule.schedule_duration}</td>
-                                            <td>${formatDate(schedule.schedule_date)}</td>
+                                            <td>${displayDate}</td>
                                         </tr>
                                     `;
                                 }).join('')}
-                                </tbody>
-                            </table>
-                        `;
-                        const button_modal = `
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" data-id="${scheduleId}" id="printButton">Print Mesin</button>
-                        `;
-                        $('#modal_title_month_view').html(header_modal);
-                        $('#modal_data_month_view').html(data_modal);
-                        $('#modal_button_month_view').html(button_modal);
+                            </tbody>
+                        </table>
+                    `;
+                    const button_modal = `
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="printButton">Print Mesin</button>
+                    `;
+                    $('#modal_title_month_view').html(header_modal);
+                    $('#modal_data_month_view').html(data_modal);
+                    $('#modal_button_month_view').html(button_modal);
 
-                        // Add event listener to print button
-                        $('#printButton').on('click', function() {
-                            new_url_pdf = '{{ route("exportfile", ':id') }}'.replace(':id', machineId);
-                            window.open(new_url_pdf, '_blank');
-                            return;
-                        });
-                    }
+                    // Add event listener to print button
+                    $('#printButton').on('click', function() {
+                        new_url_pdf = '{{ route("exportfile", ':id') }}'.replace(':id', machineId);
+                        window.open(new_url_pdf, '_blank');
+                        return;
+                    });
                 },
                 error: function(xhr, status, error) {
                     console.error('error:', error);
@@ -1566,6 +1592,7 @@
             }
         });
 
+        // fungsi delete button untuk hapus schedule perbulan
         $('#scheduleTables tbody').on('click', '.delete_button_month', function(e) {
             e.preventDefault();
             const button = $(this);

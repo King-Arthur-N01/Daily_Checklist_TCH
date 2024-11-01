@@ -34,7 +34,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="successMessages">
+                    {{-- <div id="successMessages">
                         @if (session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
@@ -43,7 +43,7 @@
                         @if (session('error'))
                             <div class="alert alert-danger">{{ session('error') }}</div>
                         @endif
-                    </div>
+                    </div> --}}
                     <div class="table-responsive">
                         <table class="table table-bordered" id="recordTables" width="100%">
                             <thead>
@@ -82,7 +82,6 @@
     <!-- End Alert Success Modal -->
 
     @elseif(session('failed'))
-
     <!-- Alert Warning Modal -->
     <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -162,8 +161,14 @@
             $('#recordTables tbody').on('click', 'td.table-accordion', function () {
                 let tr = $(this).closest('tr');
                 let row = table.row(tr);
-                let rowId = row.data().id;
 
+                // Ensure row.data() is valid
+                if (!row.data()) {
+                    console.error("Row data is not available.");
+                    return;
+                }
+
+                let rowId = row.data().id;
                 const toggleIcon = this.querySelector('.toggle-icon');
 
                 if (row.child.isShown()) {
@@ -175,44 +180,49 @@
                         type: 'GET',
                         url: '{{route("refreshdetailrecord", ":id")}}'.replace(':id', rowId),
                         success: function(data) {
-                            let detailTable = '<table class="table-child" id="recordTablesChild">' +
-                                '<thead>' +
-                                '<tr>' +
-                                '<th>INVENT NUMBER</th>' +
-                                '<th>NOMOR MESIN</th>' +
-                                '<th>NAMA MESIN</th>' +
-                                '<th>BRAND MESIN</th>' +
-                                '<th>TYPE MESIN</th>' +
-                                '<th>BATAS WAKTU PREVENTIVE</th>' +
-                                '<th>ACTION</th>' +
-                                '</tr>' +
-                                '</thead>' +
-                                '<tbody>';
-
+                            let detailTable = `
+                                <table class="table-child" id="recordTablesChild">
+                                    <thead>
+                                        <tr>
+                                            <th>INVENT NUMBER</th>
+                                            <th>NOMOR MESIN</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>BRAND MESIN</th>
+                                            <th>TYPE MESIN</th>
+                                            <th>BATAS WAKTU PREVENTIVE</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
                             let currentTime = new Date();
                             data.refreshdetailrecord.forEach(recordmachine => {
                                 let scheduleEnd = new Date(recordmachine.schedule_end);
                                 let isPast = scheduleEnd && scheduleEnd < currentTime;
-
-                                detailTable += '<tr class="' + (isPast ? 'elapsed-time' : '') + '">' +
-                                    '<td>' + recordmachine.invent_number + '</td>' +
-                                    '<td>' + recordmachine.machine_number + '</td>' +
-                                    '<td>' + recordmachine.machine_name + '</td>' +
-                                    '<td>' + recordmachine.machine_brand + '</td>' +
-                                    '<td>' + recordmachine.machine_type + '</td>' +
-                                    '<td>' + (scheduleEnd ? scheduleEnd.toLocaleString('en-ID', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: '2-digit',
-                                    }) : 'N/A') + '</td>' +
-                                    '<td><a class="btn btn-primary btn-sm btn-Id" style="color:white" href="' +
-                                    '{{ route("formpreventive", ":id") }}'.replace(':id', recordmachine.schedule_id) + '">' +
-                                    '<img style="height: 20px" src="{{ asset("assets/icons/edit_white_table.png") }}">' +
-                                    '</a></td>' +
-                                    '</tr>';
+                                detailTable += `
+                                    <tr class="${(isPast ? 'elapsed-time' : '')}">
+                                        <td>${recordmachine.invent_number}</td>
+                                        <td>${recordmachine.machine_number}</td>
+                                        <td>${recordmachine.machine_name}</td>
+                                        <td>${recordmachine.machine_brand}</td>
+                                        <td>${recordmachine.machine_type}</td>
+                                        <td>${(scheduleEnd ? scheduleEnd.toLocaleString('en-ID', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: '2-digit',
+                                        }) : 'N/A')}</td>
+                                        <td>
+                                            <a class="btn btn-primary btn-sm btn-Id" href="${'{{ route("formpreventive", ":id") }}'.replace(':id', recordmachine.schedule_id)}">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                `;
                             });
-
-                            detailTable += '</tbody></table>';
+                            detailTable += `
+                                    </tbody>
+                                </table>
+                            `;
 
                             row.child(detailTable).show();
                             tr.addClass('shown');

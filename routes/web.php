@@ -66,7 +66,7 @@ Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleControlle
 Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@readscheduleyeardata')->name('readscheduleyear');
 Route::get ('/schedule/month/find/{id}','ScheduleData\MonthlyScheduleController@findschedulemonth')->name('findschedulemonthid');
 Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addschedulemonth');
-Route::post('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editschedulemonth');
+Route::put('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editschedulemonth');
 Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewschedulemonth');
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removeschedulemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');

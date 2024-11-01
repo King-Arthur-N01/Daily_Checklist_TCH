@@ -43,7 +43,7 @@ class MonthlyScheduleController extends Controller
                 ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as getmachinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->where('yearly_schedules.id', '=', $id)
+                ->orderBy('yearly_schedules.id', 'desc')
                 ->get();
 
             return response()->json([
@@ -65,6 +65,11 @@ class MonthlyScheduleController extends Controller
             $schedule_key = $request->input('machine_schedule_id', []);
             $machine_key = $request->input('machine_id', []);
 
+            // Validasi jumlah elemen pada kedua array
+            if (count($machine_key) !== count($schedule_key)) {
+                return response()->json(['error' => 'Mismatch between machines and schedule ids'], 400);
+            }
+
             $StoreSchedule = new MonthlySchedule();
             $StoreSchedule->name_schedule_month = $name_schedule;
             $StoreSchedule->machine_collection2 = json_encode($machine_key);
@@ -82,6 +87,63 @@ class MonthlyScheduleController extends Controller
             }
 
             return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error creating data'], 500);
+        }
+    }
+
+    public function updatechedulemonth(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'name_schedule' => 'required',
+            ]);
+
+            $name_schedule = $request->input('name_schedule');
+            $schedule_duration = $request->input('schedule_duration', []);
+            $schedule_date = $request->input('schedule_date', []);
+            $update_machine_ids = $request->input('machine_schedule_id', []);
+            $machine_key = $request->input('machine_id', []);
+
+            // Validasi jumlah elemen pada kedua array
+            if (count($machine_key) !== count($schedule_date)) {
+                return response()->json(['error' => 'Mismatch between machines and schedule ids'], 400);
+            }
+
+            // Ambil data ID MachineSchedule berdasarkan monthly_id yang ada
+            $previous_machine_ids = DB::table('monthly_schedules')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->pluck('machine_schedules.id')
+                ->toArray();
+
+            // Tentukan ID yang perlu dihapus
+            $delete_unused_ids = array_diff($previous_machine_ids, $update_machine_ids);
+
+            // Hapus semua value MachineSchedule->monthy_id yang tidak memiliki hubungan dengan monthly_schedules di request terbaru
+            foreach ($delete_unused_ids as $delete_id) {
+                $DeleteMachineSchedule = MachineSchedule::find($delete_id);
+                $DeleteMachineSchedule->monthly_id = null;
+                $DeleteMachineSchedule->save();
+            }
+
+            $UpdateSchedule = MonthlySchedule::find($id);
+            $UpdateSchedule->name_schedule_month = $name_schedule;
+            $UpdateSchedule->machine_collection2 = json_encode($machine_key);
+            $UpdateSchedule->save();
+
+            $schedule_id = $UpdateSchedule->id;
+
+            foreach ($update_machine_ids as $index => $key) {
+                $UpdateMachineSchedule = MachineSchedule::find($key) ?? new MachineSchedule();
+                $UpdateMachineSchedule->schedule_duration = $schedule_duration[$index];
+                $UpdateMachineSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
+                $UpdateMachineSchedule->monthly_id = $schedule_id;
+                $UpdateMachineSchedule->save();
+            }
+
+            return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Error creating data'], 500);

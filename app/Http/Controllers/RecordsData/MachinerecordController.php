@@ -54,6 +54,7 @@ class MachinerecordController extends Controller
     public function refreshdetailtablerecord($id)
     {
         try {
+
             $refreshdetailrecord = DB::table('monthly_schedules')
             ->select('monthly_schedules.id', 'machines.*', 'machine_schedules.*', 'machine_schedules.id as schedule_id')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
@@ -181,6 +182,7 @@ class MachinerecordController extends Controller
             'users' => $users,
         ]);
     }
+
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function createmachinerecord(Request $request)
     {
@@ -241,8 +243,31 @@ class MachinerecordController extends Controller
         $StoreSchedule->machine_schedule_status = true;
         $StoreSchedule->save();
 
+        $monthly_id = ($StoreSchedule->monthly_id);
+        $this->checkstatusmonth($monthly_id);
+
         return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
+
+    private function checkstatusmonth($monthly_id) {
+        $CheckSchedule = MonthlySchedule::find($monthly_id);
+        $machinecount =  count(json_decode($CheckSchedule->machine_collection2));
+
+        $recordscount = DB::table('monthly_schedules')
+        ->select('monthly_schedules.*', 'machine_schedules.*')
+        ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+        ->where('monthly_schedules.id', '=', $monthly_id)
+        ->where('machine_schedules.machine_schedule_status', '=', true)
+        ->count();
+
+        if ($machinecount == $recordscount) {
+            $CheckSchedule->schedule_status = true;
+            $CheckSchedule->save();
+        }
+    }
+
+
+
 
     // <<<============================================================================================>>>
     // <<<===============================batas koreksi machine records================================>>>

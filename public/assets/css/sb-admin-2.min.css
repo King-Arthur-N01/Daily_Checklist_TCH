@@ -2432,10 +2432,18 @@ textarea.form-control {
     padding-left: 5px
 }
 
+.form-check-custom {
+    position: relative;
+    display: flex;
+    padding-right: 1.25rem;
+    justify-content: flex-end;
+}
+
 .form-check {
     position: relative;
     display: block;
     padding-left: 1.25rem;
+    justify-content: flex-end;
 }
 
 .form-check-input {
@@ -3783,7 +3791,7 @@ input[type=submit].btn-block {
     padding: .25rem 1.5rem;
     clear: both;
     font-weight: 400;
-    color: #3a3b45;
+    color: #ffffff;
     text-align: center;
     white-space: nowrap;
     background-color: #42fb2a;
@@ -3796,7 +3804,7 @@ input[type=submit].btn-block {
     padding: .25rem 1.5rem;
     clear: both;
     font-weight: 400;
-    color: #3a3b45;
+    color: #ffffff;
     text-align: center;
     white-space: nowrap;
     background-color: #5969ff;
@@ -3809,7 +3817,7 @@ input[type=submit].btn-block {
     padding: .25rem 1.5rem;
     clear: both;
     font-weight: 400;
-    color: #3a3b45;
+    color: #ffffff;
     text-align: center;
     white-space: nowrap;
     background-color: #29a6ff;
@@ -3822,7 +3830,7 @@ input[type=submit].btn-block {
     padding: .25rem 1.5rem;
     clear: both;
     font-weight: 400;
-    color: #3a3b45;
+    color: #ffffff;
     text-align: center;
     white-space: nowrap;
     background-color: #ef172c;

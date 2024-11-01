@@ -140,22 +140,22 @@ class YearlyScheduleController extends Controller
                 'name_schedule' => 'required',
             ]);
 
-            $machine_keys = $request->input('machine_id');
+            $machine_key = $request->input('machine_id');
             $schedule_times = $request->input('schedule_time');
 
-            // Ensure both arrays have the same number of elements
-            if (count($machine_keys) !== count($schedule_times)) {
+            // Validasi jumlah elemen pada kedua array
+            if (count($machine_key) !== count($schedule_times)) {
                 return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
             }
 
             $StoreSchedule = new YearlySchedule();
             $StoreSchedule->name_schedule_year = $request->input('name_schedule');
-            $StoreSchedule->machine_collection = json_encode($machine_keys);
+            $StoreSchedule->machine_collection = json_encode($machine_key);
             $StoreSchedule->save();
 
             $schedule_id = YearlySchedule::latest('id')->first()->id;
 
-            foreach ($machine_keys as $index => $key) {
+            foreach ($machine_key as $index => $key) {
                 $ScheduleTimeRange = $request->input('schedule_time')[$index];
                 list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
 
@@ -181,7 +181,6 @@ class YearlyScheduleController extends Controller
     public function updateschedule(Request $request, $id)
     {
         try {
-            // dd($request);
             $request->validate([
                 'name_schedule_edit' => 'required',
             ]);
@@ -195,7 +194,6 @@ class YearlyScheduleController extends Controller
                 return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
             }
 
-            // dd($machine_array);
             // Ambil data ID MachineSchedule berdasarkan yearly_id yang ada
             $previous_machine_ids = DB::table('yearly_schedules')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
@@ -221,7 +219,7 @@ class YearlyScheduleController extends Controller
             $schedule_id = $UpdateSchedule->id;
 
             // Update atau buat MachineSchedule baru
-            foreach ($update_machine_ids as $index => $machine_schedule_id) {
+            foreach ($update_machine_ids as $index => $key) {
                 $ScheduleTimeRange = $schedule_times[$index];
                 list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
 
@@ -229,7 +227,7 @@ class YearlyScheduleController extends Controller
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
                 // Temukan atau buat entri baru di MachineSchedule
-                $UpdateMachineSchedule = MachineSchedule::find($machine_schedule_id) ?? new MachineSchedule();
+                $UpdateMachineSchedule = MachineSchedule::find($key) ?? new MachineSchedule();
                 $UpdateMachineSchedule->schedule_start = $ScheduleStartCarbon;
                 $UpdateMachineSchedule->schedule_end = $ScheduleEndCarbon;
                 $UpdateMachineSchedule->machine_id = $machine_array[$index]; // Use $index to get the correct machine_id
