@@ -54,7 +54,6 @@ class MachinerecordController extends Controller
     public function refreshdetailtablerecord($id)
     {
         try {
-
             $refreshdetailrecord = DB::table('monthly_schedules')
             ->select('monthly_schedules.id', 'machines.*', 'machine_schedules.*', 'machine_schedules.id as schedule_id')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
@@ -75,14 +74,14 @@ class MachinerecordController extends Controller
     // fungsi menampilkan tabel dan merefresh tabel history preventice
     public function refreshtablehistory()
     {
-        $refreshrecord = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
+        $joinrecords = DB::table('machinerecords')
+            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove', 'machinerecords.create_date as getcreate')
             ->join('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'desc')
             ->get();
         return response()->json([
-            'joinrecords' => $refreshrecord
+            'joinrecords' => $joinrecords
         ]);
     }
 
@@ -186,67 +185,74 @@ class MachinerecordController extends Controller
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
     public function createmachinerecord(Request $request)
     {
-        $schedule_id = ($request->input('id_schedule'));
-        $abnormal = ($request->input('combined_abnormal'));
+        try {
+            $schedule_id = ($request->input('id_schedule'));
+            $abnormal = ($request->input('combined_abnormal'));
 
-        $abnormal_json = json_encode($abnormal);
-        $create_by_json = json_encode($request->input('combined_create_by'));
-        $operator_action_json = json_encode(array_values($request->input('operator_action')));
-        $result_json = json_encode(array_values($request->input('result')));
+            $abnormal_json = json_encode($abnormal);
+            $create_by_json = json_encode($request->input('combined_create_by'));
+            $operator_action_json = json_encode(array_values($request->input('operator_action')));
+            $result_json = json_encode(array_values($request->input('result')));
 
-        $currenttime = Carbon::now('Asia/Jakarta');
-        $schedulenext = $currenttime->copy()->addMonths(6);
+            $currenttime = Carbon::now('Asia/Jakarta');
+            $schedulenext = $currenttime->copy()->addMonths(6);
 
-        $getshifttime = Carbon::now()->format('H:i');
-        if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
-            $shifttime = 'Shift 1';
-        } elseif ($getshifttime >= '16:00' && $getshifttime < '00:15') {
-            $shifttime = 'Shift 2';
-        } else {
-            $shifttime = 'Diluar Shift Atau Lembur';
-        }
+            $getshifttime = Carbon::now()->format('H:i');
+            if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
+                $shifttime = 'Shift 1';
+            } elseif ($getshifttime >= '16:00' && $getshifttime < '00:15') {
+                $shifttime = 'Shift 2';
+            } else {
+                $shifttime = 'Diluar Shift Atau Lembur';
+            }
 
-        function hasValidAbnormalData($abnormal)
-        {
-            if (is_array($abnormal)) {
-                foreach ($abnormal as $value) {
-                    if (!is_null($value) && $value !== '') {
-                        return true;
+            function hasValidAbnormalData($abnormal)
+            {
+                if (is_array($abnormal)) {
+                    foreach ($abnormal as $value) {
+                        if (!is_null($value) && $value !== '') {
+                            return true;
+                        }
                     }
                 }
+                return false;
             }
-            return false;
+
+            $StoreRecords = new Machinerecord();
+            $StoreRecords->machine_number2 = $request->input('machine_number');
+            $StoreRecords->shift = $shifttime;
+            $StoreRecords->note = $request->input('note');
+            $StoreRecords->id_machine_schedule = $schedule_id;
+            $StoreRecords->operator_action = $operator_action_json;
+            $StoreRecords->result = $result_json;
+            $StoreRecords->create_by = $create_by_json;
+            $StoreRecords->start_preventive = $currenttime;
+            if (hasValidAbnormalData($abnormal)) {
+                $StoreRecords->abnormal_record = $abnormal_json;
+                $StoreRecords->machinerecord_status = false;
+                $StoreRecords->finish_preventive = null;
+            } else {
+                $StoreRecords->abnormal_record = null;
+                $StoreRecords->machinerecord_status = true;
+                $StoreRecords->finish_preventive = $currenttime;
+            }
+            $StoreRecords->save();
+
+            $StoreSchedule = Machineschedule::find($schedule_id);
+            $StoreSchedule->schedule_next = $schedulenext;
+            $StoreSchedule->machine_schedule_status = true;
+            $StoreSchedule->save();
+
+            $monthly_id = ($StoreSchedule->monthly_id);
+            $yearly_id = ($StoreSchedule->yearly_id);
+
+            $this->checkstatusmonth($monthly_id);
+            $this->checkstatusyear($yearly_id);
+
+            return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['Error!!!! Checklist failed to add.' => $e->getMessage()]);
         }
-
-        $StoreRecords = new Machinerecord();
-        $StoreRecords->machine_number2 = $request->input('machine_number');
-        $StoreRecords->shift = $shifttime;
-        $StoreRecords->note = $request->input('note');
-        $StoreRecords->id_machine_schedule = $schedule_id;
-        $StoreRecords->operator_action = $operator_action_json;
-        $StoreRecords->result = $result_json;
-        $StoreRecords->create_by = $create_by_json;
-        $StoreRecords->start_preventive = $currenttime;
-        if (hasValidAbnormalData($abnormal)) {
-            $StoreRecords->abnormal_record = $abnormal_json;
-            $StoreRecords->machinerecord_status = false;
-            $StoreRecords->finish_preventive = null;
-        } else {
-            $StoreRecords->abnormal_record = null;
-            $StoreRecords->machinerecord_status = true;
-            $StoreRecords->finish_preventive = $currenttime;
-        }
-        $StoreRecords->save();
-
-        $StoreSchedule = Machineschedule::find($schedule_id);
-        $StoreSchedule->schedule_next = $schedulenext;
-        $StoreSchedule->machine_schedule_status = true;
-        $StoreSchedule->save();
-
-        $monthly_id = ($StoreSchedule->monthly_id);
-        $this->checkstatusmonth($monthly_id);
-
-        return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
     }
 
     private function checkstatusmonth($monthly_id) {
@@ -266,7 +272,22 @@ class MachinerecordController extends Controller
         }
     }
 
+    private function checkstatusyear($yearly_id) {
+        $CheckSchedule = YearlySchedule::find($yearly_id);
+        $machinecount =  count(json_decode($CheckSchedule->machine_collection));
 
+        $recordscount = DB::table('yearly_schedules')
+        ->select('yearly_schedules.*', 'machine_schedules.*')
+        ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+        ->where('yearly_schedules.id', '=', $yearly_id)
+        ->where('machine_schedules.machine_schedule_status', '=', true)
+        ->count();
+
+        if ($machinecount == $recordscount) {
+            $CheckSchedule->schedule_status = true;
+            $CheckSchedule->save();
+        }
+    }
 
 
     // <<<============================================================================================>>>
@@ -289,7 +310,7 @@ class MachinerecordController extends Controller
                 ->orderBy('machine_schedules.id', 'asc')
                 ->get();
 
-        return response()->json([
+            return response()->json([
                 'refreshrecord' => $refreshrecord
             ]);
         } catch (\Exception $e) {
@@ -392,12 +413,12 @@ class MachinerecordController extends Controller
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
     public function deletecorrection($id) {
-        $deleterecords = Machinerecord::where('id', $id)->delete();
-
-        if ($deleterecords > 0) {
+        try {
+            $DeleteRecords = Machinerecord::find($id);
+            $DeleteRecords->delete();
             return response()->json(['success' => 'Record deleted successfully!']);
-        } else {
-            return response()->json(['error' => 'Failed to delete record.'], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete record.'], 500);
         }
     }
     // <<<============================================================================================>>>

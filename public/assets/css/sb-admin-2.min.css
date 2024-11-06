@@ -95,7 +95,7 @@ h4,
 h5,
 h6 {
     margin-top: 0;
-    margin-bottom: .5rem
+    margin-bottom: .5rem;
 }
 
 p {
@@ -4018,6 +4018,7 @@ input[type=submit].btn-block {
     align-items: center;
     flex-wrap: wrap;
     justify-content: flex-end;
+    width: 100%;
 }
 
 .dynamic-input-group input {
@@ -5496,6 +5497,11 @@ input:checked + .slider:before {
     border-radius: 8px 8px 0 0;
 }
 
+.custom-header {
+    display: flex;
+    align-items: center;
+}
+
 .card-header-custom{
     display: flex;
 }
@@ -5830,13 +5836,24 @@ input:checked + .slider:before {
 }
 
 .badge {
-    /* display: inline-block; */
+    display: inline-block;
     padding: .35em .10em;
     font-size: 75%;
     font-weight: 700;
-    line-height: 1;
+    /* line-height: 1; */
     text-align: center;
     white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .35rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
+}
+
+.badge-custom {
+    margin: .0em .60em;
+    padding: .40em .20em;
+    font-size: 75%;
+    font-weight: 700;
+    text-align: center;
     vertical-align: baseline;
     border-radius: .35rem;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out

@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Tambah Data Mesin</h1>
-            <div class="card shadow mt-4 mb-4">
+            <div class="card shadow">
                 <div class="card card-filter collapse" id="filterCard">
                     <div class="card-header">
                         <h6 class="m-0 font-weight-bold text-primary">Filter</h6>

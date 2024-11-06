@@ -9,14 +9,41 @@
         <div class="container-fluid">
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Table Schedule</h1>
-            <div class="card-calendar shadow">
-                <div class="card-header py-3">
+            <div class="card shadow">
+                <div class="card card-filter collapse" id="filterCard">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
+                    </div>
+                    <div class="table-filter">
+                        <div class="col-4">
+                            <p class="mg-b-10">Tahun Schedule </p>
+                            <input class="form-control" id="filterByNumber">
+                        </div>
+                        <div class="col-4">
+                            <p class="mg-b-10">Nama Mesin</p>
+                            <input class="form-control" id="filterByName">
+                        </div>
+                        <div class="col-4">
+                            <p class="mg-b-10">Standarisasi Mesin</p>
+                            <select class="form-control" id="filterByProperty">
+                                {{-- <option selected="selected">Select :</option>
+                                @foreach ($fetchmachines as $getmachine)
+                                    <option value="{{$getmachine->name_property}}">{{$getmachine->name_property}}</option>
+                                @endforeach --}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
                 </div>
                 <div class="card-body">
                     <div class="div-tables">
-                        <div class="col-sm-12 col-md-12">
-                            <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#addScheduleYear" tabindex="0">+ Schedule Tahunan Mesin</a>
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#addScheduleYear" tabindex="0"><i class="bi bi-calendar2-plus-fill"></i>&nbsp; Schedule Tahunan Mesin</button>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -25,6 +52,7 @@
                                 <th>ACTION</th>
                                 <th>SCHEDULE PERTAHUN</th>
                                 <th>JUMLAH MESIN</th>
+                                <th>STATUS SCHEDULE</th>
                                 <th>TANGGAL PEMBUATAN</th>
                                 <th>ACTION</th>
                             </thead>
@@ -39,7 +67,7 @@
     </div>
 
     <!-- Add Modal -->
-    <div class="modal faden show" id="addScheduleYear" tabindex="-1">
+    <div class="modal fade show" id="addScheduleYear" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_add">
@@ -54,7 +82,7 @@
     <!-- End Add Modal-->
 
     <!-- Edit Modal -->
-    <div class="modal fade" id="editScheduleYear" tabindex="-1">
+    <div class="modal fade show" id="editScheduleYear" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_edit">
@@ -155,6 +183,7 @@
 @push('script')
     <script src="{{ asset('assets/vendor/daterange-picker/moment.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/daterange-picker/daterangepicker.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/formatdate.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/jquery-maskedinput/jquery.maskedinput.js') }}"></script> --}}
     {{-- <script src="{{ mix('js/app.js') }}" defer></script> --}}
 <script>
@@ -167,15 +196,6 @@
                 overlay.removeClass('is-active');
             });
         }, 60000); // 60000 milidetik = 60 second
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const day = date.getDate();
-            const month = monthNames[date.getMonth()];
-            const year = date.getFullYear();
-            return `${day}-${month}-${year}`;
-        }
 
         let nameScheduleYear = "";
         let nameScheduleMonth = "";
@@ -191,23 +211,23 @@
                             id: refreshschedule.id,
                             name_schedule_year: refreshschedule.name_schedule_year,
                             id_machine: JSON.parse(refreshschedule.machine_collection.split(',').length),
+                            schedule_status: refreshschedule.schedule_status,
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: '2-digit'
                             }),
-                            actions:
-                                `
-                                    <div class="dynamic-button-group">
-                                        <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
-                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
-                                            <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewScheduleYear"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
-                                                <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
-                                                <a class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}" id="delete_schedule_month"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
-                                            </div>
-                                        </a>
-                                    </div>
+                            actions: `
+                                <div class="dynamic-button-group">
+                                    <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
+                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewScheduleYear"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
+                                            <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+                                            <a class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}" id="delete_schedule_month"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
+                                        </div>
+                                    </a>
+                                </div>
                                 `
                         };
                     });
@@ -224,6 +244,13 @@
                 },
                 { data: 'name_schedule_year' },
                 { data: 'id_machine' },
+                { data: 'schedule_status', render: function(data, type, row) {
+                    if (data === 0) {
+                        return '<span class="badge badge-danger">UNFINISHED</span>';
+                    } else if (data === 1) {
+                        return '<span class="badge badge-success">COMPLETED</span>';
+                    }
+                }},
                 { data: 'created_at' },
                 { data: 'actions', orderable: false, searchable: false }
             ]
@@ -349,6 +376,7 @@
 
                     function selectDateRange() {
                         $('.daterange-picker').daterangepicker({
+                            parentEl: '#modal_data_add',
                             showDropdowns: true,
                             locale: {
                                 format: 'DD-MM-YYYY'
@@ -465,7 +493,7 @@
                                                 <td>${machine.machine_brand}</td>
                                                 <td>
                                                     <input class="form-control daterange-picker" type="text" name="schedule_time">
-                                                    <input type="hidden" name="machine_id" value="${machine.id}">
+                                                    <input type="hidden" name="machine_id_year" value="${machine.id}">
                                                 </td>
                                             </tr>
                                         `;
@@ -537,7 +565,7 @@
             $('input[name="schedule_time"]').each(function() {
                 scheduleTimes.push($(this).val());
             });
-            $('input[name="machine_id"]').each(function() {
+            $('input[name="machine_id_year"]').each(function() {
                 idMachines.push($(this).val());
             });
             $.ajax({
@@ -621,6 +649,7 @@
                     // Function to initialize date range picker with dynamic values
                     function selectDateRange(inputSelector, startDate, endDate) {
                         $(inputSelector).daterangepicker({
+                            parentEl: '#modal_data_edit',
                             startDate: startDate,
                             endDate: endDate,
                             showDropdowns: true,
@@ -754,7 +783,7 @@
                                                 <td>${machine.machine_brand}</td>
                                                 <td>
                                                     <input class="form-control daterange-picker" id="schedule_time_${machine.id}" type="text" name="schedule_time">
-                                                    <input type="hidden" name="machine_id" value="${machine.id}">
+                                                    <input type="hidden" name="machine_id_year2" value="${machine.id}">
                                                     <input type="hidden" name="machine_schedule_id" value="${ScheduleIds}">
                                                 </td>
                                             </tr>
@@ -828,7 +857,7 @@
             $('input[name="schedule_time"]').each(function() {
                 scheduleTimes.push($(this).val());
             });
-            $('input[name="machine_id"]').each(function() {
+            $('input[name="machine_id_year2"]').each(function() {
                 idMachines.push($(this).val());
             });
             $('input[name="machine_schedule_id"]').each(function() {
@@ -915,6 +944,7 @@
 
                     function selectSingleDate(inputElement, minDate, maxDate) {
                         $(inputElement).daterangepicker({
+                            parentEl: '#modal_data_month_add',
                             singleDatePicker: true,
                             showDropdowns: true,
                             minDate: minDate,
@@ -1039,7 +1069,7 @@
                                                         </div>
                                                         <input name="schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.id}">
                                                         <input type="hidden" name="machine_schedule_id" value="${machine.getmachinescheduleid}">
-                                                        <input type="hidden" name="machine_id" value="${machine.id}">
+                                                        <input type="hidden" name="machine_id_month" value="${machine.id}">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1100,6 +1130,7 @@
                             } else {
                                 changeMenu(2, nameScheduleMonth, idSchedule);
                                 selectSingleDate();
+                                console.log(combinedMachineId);
                             }
                         }
                     });
@@ -1126,7 +1157,7 @@
             $('input[name="schedule_date"]').each(function() {
                 scheduleDate.push($(this).val());
             });
-            $('input[name="machine_id"]').each(function() {
+            $('input[name="machine_id_month"]').each(function() {
                 idMachines.push($(this).val());
             });
             $('input[name="machine_schedule_id"]').each(function() {
@@ -1214,6 +1245,7 @@
 
                     function selectSingleDate(inputElement, minDate, maxDate) {
                         $(inputElement).daterangepicker({
+                            parentEl: '#modal_data_month_edit',
                             singleDatePicker: true,
                             showDropdowns: true,
                             minDate: minDate,
@@ -1340,7 +1372,7 @@
                                                         </div>
                                                         <input name="schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.id}">
                                                         <input type="hidden" name="machine_schedule_id" value="${machine.getmachinescheduleid}">
-                                                        <input type="hidden" name="machine_id" value="${machine.id}">
+                                                        <input type="hidden" name="machine_id_month2" value="${machine.id}">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1427,7 +1459,7 @@
             $('input[name="schedule_date"]').each(function() {
                 scheduleDate.push($(this).val());
             });
-            $('input[name="machine_id"]').each(function() {
+            $('input[name="machine_id_month2"]').each(function() {
                 idMachines.push($(this).val());
             });
             $('input[name="machine_schedule_id"]').each(function() {
@@ -1487,7 +1519,13 @@
                 url: '{{ route("viewschedulemonth", ':id') }}'.replace(':id', scheduleId),
                 success: function(data) {
                     const header_modal = `
-                        <h5 class="modal-title">Detail Preventive Mesin</h5>
+                        <div class="custom-header">
+                            <h5 class="modal-title">Detail Preventive Mesin</h5>
+                            ${data.getscheduledetail[0].schedule_status === 0 ?
+                                '<span class="badge-custom badge-danger">UNFINISHED</span>' :
+                                '<span class="badge-custom badge-success">COMPLETED</span>'
+                            }
+                        </div>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
                     const data_modal = `
@@ -1626,5 +1664,12 @@
             }
         });
     });
+
+    //fungsi filter button
+        $('#filterButton').on('click', function() {
+        const filterCard = $('#filterCard');
+        filterCard.collapse('toggle');
+    });
 </script>
+
 @endpush

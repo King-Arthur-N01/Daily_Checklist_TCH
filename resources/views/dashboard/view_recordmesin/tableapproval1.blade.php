@@ -162,7 +162,7 @@
                                 shift: refreshrecord.shift,
                                 getcreatedate: refreshrecord.created_date,
                                 actions: `
-                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#correctModal"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}"></button>
+                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#correctModal"><i class="bi bi-pencil-square"></i></button>
                                 `
                             };
                         });

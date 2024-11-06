@@ -64,7 +64,6 @@
         <!-- ============================================================== -->
     </div>
 
-    @if (session('success'))
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -72,7 +71,7 @@
                 <div class="modal-body">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle me-1"></i>
-                        <span id="successText" class="modal-alert">Checklist added successfully.</span>
+                        <span id="successText" class="modal-alert"></span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -81,7 +80,6 @@
     </div>
     <!-- End Alert Success Modal -->
 
-    @elseif(session('failed'))
     <!-- Alert Warning Modal -->
     <div class="modal fade" id="warningModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -89,7 +87,7 @@
                 <div class="modal-body">
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle me-1"></i>
-                        <span id="warningText" class="modal-alert">You can submit the form again after 24 hours.</span>
+                        <span id="warningText" class="modal-alert"></span>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                 </div>
@@ -97,7 +95,6 @@
         </div>
     </div>
     <!-- End Alert Warning Modal -->
-    @endif
 @endsection
 
 @push('style')
@@ -106,6 +103,23 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                $('#successText').text("{{ session('success') }}");
+                $('#successModal').modal('show');
+                setTimeout(function() {
+                    $('#successModal').modal('hide');
+                }, 2000);
+            @elseif (session('failed'))
+                $('#warningText').text("{{ session('failed') }}");
+                $('#warningModal').modal('show');
+                setTimeout(function() {
+                    $('#warningModal').modal('hide');
+                }, 2000);
+            @endif
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('.select2').select2({

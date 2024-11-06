@@ -81,6 +81,7 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/formatdate.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery-simple-datetimepicker/jquery-ui.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery-simple-datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
@@ -111,9 +112,9 @@
                                 approve_status: joinrecords.getapprove ? joinrecords.getapprove : 'Belum disetujui',
                                 record_status: joinrecords.machinerecord_status,
                                 shift: joinrecords.shift,
-                                getcreatedate: joinrecords.created_date,
+                                create_date: joinrecords.getcreate,
                                 actions: `
-                                    <a class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.records_id}" data-target="#viewModal"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}"></a>
+                                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.records_id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></button>
                                 `
                             };
                         });
@@ -134,7 +135,12 @@
                         }
                     }},
                     { data: 'shift' },
-                    { data: 'getcreatedate' },
+                    {
+                        data: 'create_date',
+                        render: function(data) {
+                            return formatDate(data);
+                        }
+                    },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
             });
