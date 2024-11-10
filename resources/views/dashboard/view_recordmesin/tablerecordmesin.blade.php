@@ -17,15 +17,11 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="table-filter">
                             <div class="col-4">
-                                <p class="mg-b-10">Input Nomor Mesin </p>
-                                <input class="form-control" id="filterByNumber">
-                            </div>
-                            <div class="col-4">
-                                <p class="mg-b-10">Nama Mesin</p>
+                                <p class="mg-b-10">Nama Schedule</p>
                                 <input class="form-control" id="filterByName">
                             </div>
                             <div class="col-4">
-                                <p class="mg-b-10">Status Mesin</p>
+                                <p class="mg-b-10">Status Schedule</p>
                                 <select class="form-control" name="sample" id="filterByStatus">
                                     <option selected="selected">Select :</option>
                                     <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
@@ -34,21 +30,12 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div id="successMessages">
-                        @if (session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-                    </div>
-                    <div id="errorMessages">
-                        @if (session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
-                        @endif
-                    </div> --}}
                     <div class="table-responsive">
                         <table class="table table-bordered" id="recordTables" width="100%">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>ACTION</th>
+                                    <th>NO.</th>
                                     <th>NAMA SCHEDULE</th>
                                     <th>JUMLAH MESIN</th>
                                     <th>STATUS</th>
@@ -141,8 +128,9 @@
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
-                        return data.refreshrecords.map(function(refreshrecords) {
+                        return data.refreshrecords.map((refreshrecords, index) => {
                             return {
+                                number: index + 1,
                                 id: refreshrecords.id,
                                 name_schedule: refreshrecords.name_schedule_month,
                                 total_machine: refreshrecords.machine_count,
@@ -160,13 +148,14 @@
                         "className": 'table-accordion',
                         "orderable": false,
                     },
+                    { data: 'number' },
                     { data: 'name_schedule' },
                     { data: 'total_machine' },
                     { data: 'schedule_status', render: function(data, type, row) {
                         if (data === 0) {
-                            return '<span class="badge badge-danger">UNFINISHED</span>';
+                            return '<span class="badge badge-danger" value="0">UNFINISHED</span>';
                         } else if (data === 1) {
-                            return '<span class="badge badge-success">COMPLETED</span>';
+                            return '<span class="badge badge-success" value="1">COMPLETED</span>';
                         }
                     }}
                 ]
@@ -258,7 +247,7 @@
             });
         });
     </script>
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const filterByNumber = document.getElementById('filterByNumber');
             const filterByName = document.getElementById('filterByName');
@@ -297,5 +286,5 @@
             filterByName.addEventListener('input', filterTable);
             filterByStatus.addEventListener('change', filterTable);
         });
-    </script>
+    </script> --}}
 @endpush

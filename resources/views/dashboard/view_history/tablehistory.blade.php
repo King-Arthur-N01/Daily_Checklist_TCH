@@ -261,13 +261,20 @@
 
                         const button_modal = `
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="printButton">Print</button>
+                            <button type="submit" class="btn btn-primary" data-id="${data.usersdata[0].record_id}" id="printButton">Print</button>
                         `;
 
                         $('#modal_title_view').html(header_modal);
                         $('#modal_data_view').html(data_modal);
                         $('#modal_button_view').html(button_modal);
                         mergeCells();
+
+                        // Add event listener to print button
+                        $('#printButton').on('click', function() {
+                            new_url_pdf = '{{ route("printrecord", ':id') }}'.replace(':id', machineId);
+                            window.open(new_url_pdf, '_blank');
+                            return;
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.error('error:', error);

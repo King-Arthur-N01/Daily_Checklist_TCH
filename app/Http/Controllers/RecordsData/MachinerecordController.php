@@ -13,6 +13,7 @@ use App\Machineschedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class MachinerecordController extends Controller
 {
@@ -41,7 +42,7 @@ class MachinerecordController extends Controller
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
                 ->groupBy('monthly_schedules.id')
                 ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
-                ->orderBy('monthly_schedules.id', 'asc')
+                ->orderBy('monthly_schedules.id', 'desc')
                 ->get();
             return response()->json([
                 'refreshrecords' => $refreshrecords
@@ -75,13 +76,14 @@ class MachinerecordController extends Controller
     public function refreshtablehistory()
     {
         $joinrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove', 'machinerecords.create_date as getcreate')
+            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove', 'machinerecords.created_at as getcreate')
             ->join('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'desc')
             ->get();
         return response()->json([
-            'joinrecords' => $joinrecords
+            'joinrecords' => $joinrecords,
+            'getcreate' => $joinrecords->pluck('getcreate'),
         ]);
     }
 
@@ -101,7 +103,7 @@ class MachinerecordController extends Controller
                 ->get();
 
             $usersdata = DB::table('machinerecords')
-                ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+                ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'machinerecords.id as record_id')
                 ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
                 ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
                 ->where('machinerecords.id', '=', $id)
@@ -139,6 +141,61 @@ class MachinerecordController extends Controller
                 'usernames' => $usernames,
                 'abnormals' => $abnormals,
             ]);
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    public function printdatarecord($id)
+    {
+        try{
+            $machinedata = DB::table('machinerecords')
+                ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+                ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
+                ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machinerecords.id', '=', $id)
+                ->get();
+
+            $usersdata = DB::table('machinerecords')
+                ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'machinerecords.id as record_id')
+                ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
+                ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
+                ->where('machinerecords.id', '=', $id)
+                ->get();
+
+            $usernames = [];
+            $userarray = json_decode($usersdata->first()->create_by);
+            $userids = explode(',', $userarray[0]);
+
+            foreach ($userids as $eachuserid){
+                $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+            }
+
+            $IsAbnormalExist = $usersdata->first()->abnormal_record;
+            $abnormals = [];
+            if ($IsAbnormalExist != null) {
+                $abnormal_array = json_decode($usersdata->first()->abnormal_record);
+                $abnormalid = explode(',', $abnormal_array[0]);
+
+                foreach ($abnormalid as $eachabnormal) {
+                    $abnormals[] = DB::table('componenchecks')->select('name_componencheck')->where('id', $eachabnormal)->first()->name_componencheck;
+                }
+            }
+
+            $combineresult[] = [
+                'operator_action' => $usersdata->first()->operator_action,
+                'result' => $usersdata->first()->result
+            ];
+
+            // Render PDF
+            $pdf = PDF::loadView('dashboard.view_history.printrecord', compact(['machinedata', 'usersdata', 'combineresult', 'usernames', 'abnormals']));
+            $pdf->setPaper('A4', 'portrait');
+            return $pdf->stream();
         } catch (\Exception $e) {
             Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error fetching data'], 500);

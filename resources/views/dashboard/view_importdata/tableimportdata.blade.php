@@ -698,7 +698,7 @@
 
                             // Add event listener to print button
                             $('#printButton').on('click', function() {
-                                new_url_pdf = '{{ route("exportfile", ':id') }}'.replace(':id', machineId);
+                                new_url_pdf = '{{ route("printmachine", ':id') }}'.replace(':id', machineId);
                                 window.open(new_url_pdf, '_blank');
                                 return;
                             });

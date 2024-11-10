@@ -49,12 +49,15 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="scheduleTables" width="100%">
                             <thead>
-                                <th>ACTION</th>
-                                <th>SCHEDULE PERTAHUN</th>
-                                <th>JUMLAH MESIN</th>
-                                <th>STATUS SCHEDULE</th>
-                                <th>TANGGAL PEMBUATAN</th>
-                                <th>ACTION</th>
+                                <tr>
+                                    <th>ACTION</th>
+                                    <th>NO.</th>
+                                    <th>SCHEDULE PERTAHUN</th>
+                                    <th>JUMLAH MESIN</th>
+                                    <th>STATUS SCHEDULE</th>
+                                    <th>TANGGAL PEMBUATAN</th>
+                                    <th>ACTION</th>
+                                </tr>
                             </thead>
                         </table>
                     </div>
@@ -206,8 +209,9 @@
             ajax: {
                 url: '{{ route("refreshschedule") }}',
                 dataSrc: function(data) {
-                    return data.refreshschedule.map(function(refreshschedule) {
+                    return data.refreshschedule.map((refreshschedule, index) => {
                         return {
+                            number: index + 1,
                             id: refreshschedule.id,
                             name_schedule_year: refreshschedule.name_schedule_year,
                             id_machine: JSON.parse(refreshschedule.machine_collection.split(',').length),
@@ -220,7 +224,7 @@
                             actions: `
                                 <div class="dynamic-button-group">
                                     <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
-                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                             <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewScheduleYear"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
                                             <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
@@ -242,6 +246,7 @@
                     "className": 'table-accordion',
                     "orderable": false,
                 },
+                { data: 'number' },
                 { data: 'name_schedule_year' },
                 { data: 'id_machine' },
                 { data: 'schedule_status', render: function(data, type, row) {
@@ -294,11 +299,11 @@
                                         </td>
                                         <td>
                                             <div class="dynamic-button-group">
-                                                <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                                <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><img style="height: 20px" src="{{ asset('assets/icons/eye_white.png') }}">&nbsp;Detail</a>
-                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#editScheduleMonth"><img style="height: 20px" src="{{ asset('assets/icons/edit_white_table.png') }}">&nbsp;Edit</a>
-                                                    <a class="dropdown-item-custom-delete delete_button_month" data-id="${schedulemonth.getmonthid}" id="delete_schedule_month"><img style="height: 20px" src="{{ asset('assets/icons/trash_white.png') }}">&nbsp;Delete</a>
+                                                    <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
+                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+                                                    <a class="dropdown-item-custom-delete delete_button_month" data-id="${schedulemonth.getmonthid}" id="delete_schedule_month"><i class="bi bi-trash-fill"></i>&nbsp;Delete</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -1581,7 +1586,7 @@
 
                     // Add event listener to print button
                     $('#printButton').on('click', function() {
-                        new_url_pdf = '{{ route("exportfile", ':id') }}'.replace(':id', machineId);
+                        new_url_pdf = '{{ route("printschedulemonth", ':id') }}'.replace(':id', scheduleId);
                         window.open(new_url_pdf, '_blank');
                         return;
                     });

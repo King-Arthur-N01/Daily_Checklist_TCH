@@ -2048,3 +2048,90 @@ const table = $('#recordTables').DataTable({
                 }
             });
         });
+
+
+
+
+
+
+
+
+
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="2" rowspan="5">PLACE IMAGE HERE!!!!</th>
+                    <th colspan="4"> INFORMASI PREV.MTC.MACHINE</th>
+                    <th>DI SETUJUI</th>
+                    <th colspan="2">DI KETAHUI</th>
+                    <th>DI BUAT</th>
+                </tr>
+                <tr>
+                    {{-- <th></th> --}}
+                    <th colspan="4" rowspan="4">{{ $scheduledata[0]->name_schedule_month}}</th>
+                    <th rowspan="2"></th>
+                    <th rowspan="2" colspan="2"></th>
+                    <th rowspan="2"></th>
+                </tr>
+                <tr>
+
+                </tr>
+                <tr>
+                    {{-- <th colspan="2"></th> --}}
+                    {{-- <th colspan="4"></th> --}}
+                    <th></th>
+                    <th colspan="2"></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    {{-- <th colspan="2"></th> --}}
+                    {{-- <th colspan="4"></th> --}}
+                    <th></th>
+                    <th colspan="2"></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th>NO.</th>
+                    <th>NAMA MESIN</th>
+                    <th>NO. INVENT</th>
+                    <th>KAPASITAS</th>
+                    <th>NO. MESIN</th>
+                    <th>DURASI</th>
+                    <th>RENCANA</th>
+                    <th colspan="2">KETERSEDIAAN</th>
+                    <th>PARAF/OKE</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>TGL</th>
+                    <th>TGL</th>
+                    <th>JAM</th>
+                    <th>(PPC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($scheduledata as $key => $printdata)
+                @for ($number=0; $number<=$key; $number ++)
+                @endfor
+                    <tr>
+                        <td style="text-align: center;">{{ $number }}</td>
+                        <td>{{ $printdata->machine_name }}</td>
+                        <td>{{ $printdata->invent_number }}</td>
+                        <td>{{ $printdata->machine_spec }}</td>
+                        <td>{{ $printdata->machine_number }}</td>
+                        <td>{{ $printdata->schedule_duration }}</td>
+                        <td>{{ $printdata->schedule_date }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>

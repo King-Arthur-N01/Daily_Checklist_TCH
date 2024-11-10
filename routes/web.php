@@ -37,7 +37,7 @@ Route::post('/machinedata/create','MachineData\MachineController@createmachine')
 Route::put ('/machinedata/update/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::delete('/machinedata/delete/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
 Route::post('/machinedata/import','MachineData\ImportdataController@importdata')->name('uploadfile');
-Route::get ('/machinedata/export/{id}','MachineData\ImportdataController@exportpdf')->name('exportfile');
+Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
 Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachine')->name('findmachineid');
 // machine import route end
@@ -68,6 +68,7 @@ Route::get ('/schedule/month/find/{id}','ScheduleData\MonthlyScheduleController@
 Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addschedulemonth');
 Route::put('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editschedulemonth');
 Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewschedulemonth');
+Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController@printdataschedule')->name('printschedulemonth');
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removeschedulemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
 // schedule month route
@@ -101,6 +102,7 @@ Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordCo
 Route::get ('/historyrecord','RecordsData\MachinerecordController@indexhistoryrecord')->name('indexhistoryrecord');
 Route::get ('/historyrecord/table/refresh','RecordsData\MachinerecordController@refreshtablehistory')->name('refreshistory');
 Route::get ('/historyrecord/view/{id}','RecordsData\MachinerecordController@detailpreventive')->name('detailhistory');
+Route::get ('/historyrecord/print/{id}','RecordsData\MachinerecordController@printdatarecord')->name('printrecord');
 // record data machine route end
 
 

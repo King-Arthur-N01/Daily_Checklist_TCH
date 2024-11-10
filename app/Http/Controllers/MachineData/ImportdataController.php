@@ -91,10 +91,10 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Data Preventive FAILED to be upload !!!!'], 500);
         }
     }
-    public function exportpdf($id)
+    public function printdatamachine($id)
     {
         try {
-            $joinmachine = DB::table('machines')
+            $machinedata = DB::table('machines')
                 ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
                 ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
                 ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
@@ -103,10 +103,6 @@ class ImportdataController extends Controller
                 ->where('machines.id', '=', $id)
                 ->get();
 
-            // Convert collection to array
-            // $machinedata = get_object_vars($joinmachine);
-            $machinedata = $joinmachine->toArray();
-
             // Render PDF
             $pdf = PDF::loadView('dashboard.view_importdata.viewprintpdf', compact('machinedata'));
             $pdf->setPaper('A4', 'portrait');
@@ -114,9 +110,8 @@ class ImportdataController extends Controller
             return $pdf->stream();
             // return $pdf->download('data.pdf');
         } catch (\Exception $e) {
-            // Log the error for debugging purposes
             Log::error('DOM PDF failed: '.$e->getMessage());
-            return response()->json(['error' => 'Data Preventive FAILED to be downloaded!']);
+            return response()->json(['error' => 'Error getting data']);
         }
     }
 
