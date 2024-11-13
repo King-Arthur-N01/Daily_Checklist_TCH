@@ -662,19 +662,6 @@ pre code {
     padding-left: .75rem;
 }
 
-.card-calendar{
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    /* padding: 1.25rem; */
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    /* background-clip: border-box; */
-    border: 1px solid #e3e6f0;
-    border-radius: .50rem;
-}
-
 .no-gutters {
     margin-right: 0;
     margin-left: 0

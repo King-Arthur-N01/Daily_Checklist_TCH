@@ -160,7 +160,6 @@
                     - Pada saat waktu preventive maintenance mesin dilaksanakan, kami harap sebelum nya mesin dalam keadaan tidak dioperasikan/tidak ada SPK
                     <br>- Atas perhatian dan kerja sama nya kami ucapkan terimakasih.
                     <br>- Untuk jam pelaksanaan preventive harus diisi departement PPC
-
                 </td>
             </tr>
         </tbody>

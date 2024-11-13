@@ -154,14 +154,14 @@ class MonthlyScheduleController extends Controller
     public function viewdataschedule($id)
     {
         try {
-            $getscheduledetail = DB::table('monthly_schedules')
+            $getschedulemonth = DB::table('monthly_schedules')
             ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->where('monthly_schedules.id', '=', $id)
             ->get();
 
-            return response()->json(['getscheduledetail' => $getscheduledetail]);
+            return response()->json(['getschedulemonth' => $getschedulemonth]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Error getting data'], 500);

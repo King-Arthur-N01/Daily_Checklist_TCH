@@ -216,7 +216,7 @@
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi',
                                 actions: `
                                     <div class="dynamic-button-group">
-                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img style="height: 20px" src="{{ asset('assets/icons/list_table.png') }}"></a>
+                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                             <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
                                             <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>

@@ -69,7 +69,7 @@
         <!-- ============================================================== -->
     </div>
 
-    <!-- Add Modal -->
+    <!-- Add Modal Year -->
     <div class="modal fade show" id="addScheduleYear" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
@@ -82,9 +82,9 @@
             </div>
         </div>
     </div>
-    <!-- End Add Modal-->
+    <!-- End Add Modal Year-->
 
-    <!-- Edit Modal -->
+    <!-- Edit Modal Year -->
     <div class="modal fade show" id="editScheduleYear" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
@@ -97,7 +97,7 @@
             </div>
         </div>
     </div>
-    <!-- End Edit Modal-->
+    <!-- End Edit Modal Year-->
 
     <!-- Add Modal Month -->
     <div class="modal fade" id="addScheduleMonth" tabindex="-1">
@@ -130,7 +130,7 @@
     <!-- End Edit Modal Month-->
 
 
-    <!-- Add Modal Month -->
+    <!-- View Schedule Month -->
     <div class="modal fade" id="viewScheduleMonth" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
@@ -143,7 +143,7 @@
             </div>
         </div>
     </div>
-    <!-- End Add Modal Month-->
+    <!-- End View Schedule Month-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -226,9 +226,9 @@
                                     <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewScheduleYear"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
-                                            <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
-                                            <a class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}" id="delete_schedule_month"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
+                                            <button class="dropdown-item-custom-detail view_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
+                                            <button class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
+                                            <button class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
                                         </div>
                                     </a>
                                 </div>
@@ -301,9 +301,9 @@
                                             <div class="dynamic-button-group">
                                                 <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                                 <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
-                                                    <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
-                                                    <a class="dropdown-item-custom-delete delete_button_month" data-id="${schedulemonth.getmonthid}" id="delete_schedule_month"><i class="bi bi-trash-fill"></i>&nbsp;Delete</a>
+                                                    <button class="dropdown-item-custom-detail" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
+                                                    <button class="dropdown-item-custom-edit" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
+                                                    <button class="dropdown-item-custom-delete delete_button_month" data-id="${schedulemonth.getmonthid}"><i class="bi bi-trash-fill"></i>&nbsp;Delete</button>
                                                 </div>
                                             </div>
                                         </td>
@@ -907,6 +907,21 @@
         }
         // <===========================================================================================>
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END EDIT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <===========================================================================================>
+
+
+
+        // <===========================================================================================>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<VIEW YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <===========================================================================================>
+        $(document).on('click', '.view_schedule_year', function(event) {
+            let button = $(this); // Use 'this' to refer to the clicked button
+            let scheduleId = button.data('id');
+            let new_view_print = '{{ route("viewscheduleyear", ":id") }}'.replace(':id', scheduleId);
+            window.open(new_view_print, '_blank');
+        });
+        // <===========================================================================================>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
 
@@ -1526,7 +1541,7 @@
                     const header_modal = `
                         <div class="custom-header">
                             <h5 class="modal-title">Detail Preventive Mesin</h5>
-                            ${data.getscheduledetail[0].schedule_status === 0 ?
+                            ${data.getschedulemonth[0].schedule_status === 0 ?
                                 '<span class="badge-custom badge-danger">UNFINISHED</span>' :
                                 '<span class="badge-custom badge-success">COMPLETED</span>'
                             }
@@ -1538,7 +1553,7 @@
                             <div class="form-group">
                                 <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                 <div>
-                                    <input class="form-control" type="text" value="${data.getscheduledetail[0].name_schedule_month}" readonly>
+                                    <input class="form-control" type="text" value="${data.getschedulemonth[0].name_schedule_month}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -1555,7 +1570,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${data.getscheduledetail.map((schedule, index) => {
+                                ${data.getschedulemonth.map((schedule, index) => {
                                     let scheduleStart = new Date(schedule.schedule_start);
                                     let scheduleEnd = new Date(schedule.schedule_end);
                                     let scheduleDate = new Date(schedule.schedule_date);

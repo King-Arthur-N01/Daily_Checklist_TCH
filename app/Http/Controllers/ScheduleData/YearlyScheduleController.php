@@ -53,37 +53,6 @@ class YearlyScheduleController extends Controller
         }
     }
 
-    // untuk test fecth data dummy calendar
-    Public function datacalendar() {
-        $data = [
-            [
-                'id' => '1',
-                'title' => 'WELDING CO2 MANUAL',
-                'start' => '2024-08-01',
-                'end' => '2024-08-07'
-            ],
-            [
-                'id' => '2',
-                'title' => 'WELDING ROBOT',
-                'start' => '2024-07-07',
-                'end' => '2024-08-14'
-            ],
-            [
-                'id' => '3',
-                'title' => 'SCREW COMPRESSORE',
-                'start' => '2024-08-26',
-                'end' => '2024-08-31'
-            ],
-            [
-                'id' => '4',
-                'title' => 'POWER PRESS',
-                'start' => '2024-09-01',
-                'end' => '2024-09-10'
-            ]
-        ];
-        return response()->json($data);
-    }
-
     public function readmachinedata()
     {
         try {
@@ -117,22 +86,42 @@ class YearlyScheduleController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
-    // public function readdataschedule($id)
-    // {
-    //     try {
-    //         $getschedule = Schedule::find($id);
-    //         $machinearray = json_decode($getschedule->id_machine, true);
-    //         $refreshmachine = Machine::all();
-    //         return response()->json([
-    //             'getschedule' => $getschedule,
-    //             'machinearray' => $machinearray,
-    //             'refreshmachine' => $refreshmachine
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Error fetching data'], 500);
-    //     }
-    // }
 
+    public function viewdataschedule()
+    {
+        return view('dashboard.view_schedulemesin.printscheduleyear');
+    }
+
+    public function datacalendar() {
+        $events = [
+            [
+                'id' => '1',
+                'title' => 'WELDING CO2 MANUAL',
+                'start' => '2024-08-01',
+                'end' => '2024-08-07'
+            ],
+            [
+                'id' => '2',
+                'title' => 'WELDING ROBOT',
+                'start' => '2024-07-07',
+                'end' => '2024-08-14'
+            ],
+            [
+                'id' => '3',
+                'title' => 'SCREW COMPRESSORE',
+                'start' => '2024-08-26',
+                'end' => '2024-08-31'
+            ],
+            [
+                'id' => '4',
+                'title' => 'POWER PRESS',
+                'start' => '2024-09-01',
+                'end' => '2024-09-10'
+            ]
+        ];
+        return response()->json($events);
+    }
+    
     public function createschedule(Request $request)
     {
         try {

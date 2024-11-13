@@ -139,8 +139,38 @@
             border: 0.5px solid #000000;
             /* border-radius: .35rem; */
         }
-        .textarea-control{
-            height: 150px;
+
+        .table-note{
+            width: 100%;
+            clear: both;
+            border-spacing: 0;
+            font-size: 0.6rem;
+            align-items: center;
+            border: 0.4px solid #000000;
+        }
+        .table-note tr td{
+            border: 0.3px solid #000000;
+            padding: 3px;
+            justify-content: start;
+            text-align: left;
+        }
+        .table-note tr th{
+            text-transform: uppercase;
+            border: 0.3px solid #000000;
+            padding: 3px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .check-mark{
+            display:inline;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .text-area{
+            border-color: transparent;
+            height: 14%;
         }
 
         #hidden-column {
@@ -190,13 +220,19 @@
             </tr>
         </tbody>
     </table>
+    @php
+        $date = new DateTime($usersdata[0]->created_at);
+        $formattedDate = $date->format('d-m-Y');
+    @endphp
     <table class="table-input">
         <tbody>
             <tr>
                 <th width="10%">NO. MESIN</th>
                 <th width="25%">:</th>
+                <th width="25%">{{$usersdata[0]->machine_number2}}</th>
                 <th width="10%" style="border-left: 0.5px solid #000000">TANGGAL</th>
                 <th width="25%">:</th>
+                <th width="25%">{{$formattedDate}}</th>
             </tr>
         </tbody>
     </table>
@@ -244,15 +280,15 @@
             </tr>
             <tr>
                 <td></td>
-                <td> ✓ = Check</td>
-                <td> ✓ = Adjust</td>
+                <td><input class="check-mark" type="checkbox" checked> = Check</td>
+                <td><input class="check-mark" type="checkbox" checked> = Adjust</td>
                 <td></td>
                 <td>O = OKE</td>
             </tr>
             <tr>
                 <td></td>
-                <td> ✓ = Cleaning</td>
-                <td> ✓ = Replace/ganti</td>
+                <td><input class="check-mark" type="checkbox" checked> = Cleaning</td>
+                <td><input class="check-mark" type="checkbox" checked> = Replace/ganti</td>
                 <td></td>
                 <td>X = NG</td>
             </tr>
@@ -263,13 +299,13 @@
             </tr>
         </tbody>
     </table>
-    <table class="table">
+    <table class="table-note">
         <tbody>
             <tr>
                 <th>keterangan :</th>
             </tr>
             <tr>
-                <th height="14%"></th>
+                <td height="14%"><textarea class="text-area">{{$usersdata[0]->note}}</textarea></td>
             </tr>
         </tbody>
     </table>

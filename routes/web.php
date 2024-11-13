@@ -54,7 +54,8 @@ Route::get ('/schedule','ScheduleData\YearlyScheduleController@indexschedule')->
 Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createschedule')->name('addschedule');
 Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('editschedule');
 Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeschedule');
-
+Route::get ('/schedule/view/{id}','ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewscheduleyear');
+Route::get ('/schedule/view/data','ScheduleData\YearlyScheduleController@datacalendar')->name('datacalendar');
 Route::get ('/schedule/read','ScheduleData\YearlyScheduleController@readmachinedata')->name('readmachinedata');
 Route::get ('/schedule/find/{id}','ScheduleData\YearlyScheduleController@findschedule')->name('findscheduleid');
 Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshschedule');

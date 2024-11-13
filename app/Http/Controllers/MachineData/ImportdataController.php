@@ -104,7 +104,7 @@ class ImportdataController extends Controller
                 ->get();
 
             // Render PDF
-            $pdf = PDF::loadView('dashboard.view_importdata.viewprintpdf', compact('machinedata'));
+            $pdf = PDF::loadView('dashboard.view_importdata.printmachine', compact('machinedata'));
             $pdf->setPaper('A4', 'portrait');
 
             return $pdf->stream();

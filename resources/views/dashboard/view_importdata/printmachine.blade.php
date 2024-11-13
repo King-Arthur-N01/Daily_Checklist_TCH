@@ -143,6 +143,12 @@
             height: 150px;
         }
 
+        .check-mark{
+            display:inline;
+            justify-content: center;
+            align-content: center;
+        }
+
         #hidden-column {
             border: none
         }
@@ -248,15 +254,15 @@
             </tr>
             <tr>
                 <td></td>
-                <td> ✓ = Check</td>
-                <td> ✓ = Adjust</td>
+                <td><input class="check-mark" type="checkbox" checked> = Check</td>
+                <td><input class="check-mark" type="checkbox" checked> = Adjust</td>
                 <td></td>
                 <td>O = OKE</td>
             </tr>
             <tr>
                 <td></td>
-                <td> ✓ = Cleaning</td>
-                <td> ✓ = Replace/ganti</td>
+                <td><input class="check-mark" type="checkbox" checked> = Cleaning</td>
+                <td><input class="check-mark" type="checkbox" checked> = Replace/ganti</td>
                 <td></td>
                 <td>X = NG</td>
             </tr>
