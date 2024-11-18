@@ -25,8 +25,9 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Nama Standarisasi Mesin</th>
-                                    <th>Nama Mesin</th>
-                                    <th>Nomor Mesin</th>
+                                    <th>Jumlah Componencheck</th>
+                                    <th>Jumlah Standart/Parameter</th>
+                                    <th>Jumlah Metode Pengecekan</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -107,6 +108,74 @@
     </div>
     <!-- End Register Modal-->
 
+    <!-- Update Modal -->
+    <div class="modal fade" id="updateModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <form id="updateform" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Standarisasi</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Standarisasi</label>
+                            <div>
+                                <input class="form-control form-control-user" type="text" name="name_property" placeholder="Nama Standarisasi">
+                                <input type="hidden" name="id_property" id="property_id">
+                            </div>
+                        </div>
+                        <table class="table table-bordered" id="dynamicEditTable" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Bagian Yang Dicheck</th>
+                                    <th>Standart/Parameter</th>
+                                    <th>Metode Pengecekan</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="editTableBody">
+                                <tr>
+                                    <td id="columnContainerA_1_Edit">
+                                        <div class="dynamic-input-group" id="inputContainerA_1_1_Edit">
+                                            <textarea type="text" class="form-control" style="height: 90px;" name="bagian_yang_dicheck[]" id="componencheck_1_1_Edit" placeholder="Example : Push Button"></textarea>
+                                            <input type="hidden" name="total_user_input[]" id="userInputCount_1_Edit" value="1">
+                                        </div>
+                                    </td>
+                                    <td id="columnContainerB_1_Edit">
+                                        <div class="dynamic-input-group" id="inputContainerB_1_1_Edit">
+                                            <input type="text" class="form-control form-control-user" name="standart_parameter[]" id="parameter_1_1_Edit" placeholder="Example : Berfungsi dengan baik">
+                                            <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_1_1_Edit"><i class="fas fa-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_1_1_Edit"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </td>
+                                    <td id="columnContainerC_1_Edit">
+                                        <div class="dynamic-input-group" id="inputContainerC_1_1_Edit">
+                                            <input type="text" class="form-control form-control-user" name="metode_pengecekan[]" id="metodecheck_1_1_Edit" placeholder="Example : Dioperasikan">
+                                            <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_1_1_Edit"><i class="fas fa-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_1_1_Edit"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="dynamic-button-group">
+                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtnEdit">Add Rows</i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtnEdit">Delete Rows</i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Update Modal-->
+
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -160,7 +229,7 @@
 @endpush
 
 @push('script')
-    <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script> --}}
     <script>
         $(document).ready(function() {
             // Set automatic soft refresh table
@@ -172,20 +241,27 @@
                 });
             }, 60000); // 60000 milidetik = 60 second
 
+            // Ambil nilai data-id dari tombol updatemodal
+            $(document).on('click', '.btn-primary', function() {
+                var propertyId = $(this).data('id');
+                $('input[id="property_id"]').val(propertyId);
+            });
+
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#propertyTables').DataTable({
                 ajax: {
                     url: '{{ route("refreshproperty") }}',
                     dataSrc: function(data) {
-                        return data.joinproperty.map((joinproperty, index) => {
+                        return data.getproperty.map((getproperty, index) => {
                             return {
                                 no: index + 1,
-                                standart_name: joinproperty.name_property,
-                                machine_name: joinproperty.machine_name,
-                                machine_number: joinproperty.machine_number,
+                                standart_name: getproperty.name_property,
+                                componencheck: getproperty.componencheck_count,
+                                parameter: getproperty.parameter_count,
+                                metodecheck: getproperty.metodecheck_count,
                                 actions: `
-                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${joinproperty.id}" data-toggle="modal" data-target="#EditModal">Edit</a>
-                                    <a class="btn btn-danger btn-sm btn-delete" data-id="${joinproperty.id}" id="deleteButton" style="color:white">Delete</a>
+                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${getproperty.id}" data-toggle="modal" data-target="#updateModal">Edit</a>
+                                    <a class="btn btn-danger btn-sm btn-delete" data-id="${getproperty.id}" id="deleteButton" style="color:white">Delete</a>
                                 `
                             };
                         });
@@ -194,8 +270,9 @@
                 columns: [
                     { data: 'no' },
                     { data: 'standart_name' },
-                    { data: 'machine_name' },
-                    { data: 'machine_number' },
+                    { data: 'componencheck' },
+                    { data: 'parameter' },
+                    { data: 'metodecheck' },
                     { data: 'actions', orderable: false, searchable: false}
                 ]
             });
@@ -272,7 +349,84 @@
                         table.ajax.reload(null, false);
                     });
                 } else {
-                    // User cancelled the deletion, do nothing
+                    // User cancelled the registration, do nothing
+                }
+            });
+
+            $('#updateform').on('submit', function(event) {
+                event.preventDefault();
+                let formData = {
+                    '_token': '{{ csrf_token() }}',
+                    name_property: $('input[name="name_property"]').val(),
+                    id_property: $('input[name="id_property"]').val(),
+                };
+
+                $('#tableBody tr').each(function(index) {
+                    const rowIdSuffix = $(this).find('td:first-child').attr('id').split('_')[1];
+                    const dynamicArrayName = `dataRows_${rowIdSuffix}`;
+                    if (!formData[dynamicArrayName]) {
+                        formData[dynamicArrayName] = {
+                            componencheck: [],
+                            parameter: [],
+                            metodecheck: []
+                        };
+                    }
+
+                    $(this).find('textarea').each(function() {
+                        const textareaId = $(this).attr('id');
+                        const textareaName = $(this).attr('name');
+                        const textareaValue = $(this).val();
+
+                        if (textareaId.startsWith(`componencheck_${rowIdSuffix}_`)) {
+                            formData[dynamicArrayName].componencheck.push(textareaValue);
+                        }
+                    });
+                    $(this).find('input').each(function() {
+                        const inputId = $(this).attr('id');
+                        const inputName = $(this).attr('name');
+                        const inputValue = $(this).val();
+
+                        if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
+                            formData[dynamicArrayName].parameter.push(inputValue);
+                        } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
+                            formData[dynamicArrayName].metodecheck.push(inputValue);
+                        } else if (inputId.startsWith(`userInputCount_${rowIdSuffix}`)) {
+                            formData[dynamicArrayName].user_input_count = inputValue;
+                        }
+                    });
+                });
+                if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
+                    $.ajax({
+                        url: '{{ route("editproperty", ":id") }}'.replace(':id', formData.id_property),
+                        type: 'PUT',
+                        data: formData,
+                        success: function(response) {
+                            if (response.success) {
+                                const successMessage = response.success;
+                                $('#successText').text(successMessage);
+                                $('#successModal').modal('show');
+                            }
+                            setTimeout(function() {
+                                    $('#successModal').modal('hide');
+                                    $('#registerModal').modal('hide');
+                            }, 2000);
+                        },
+                        error: function(xhr, status, error) {
+                            if (xhr.responseText) {
+                                const warningMessage = JSON.parse(xhr.responseText).error;
+                                $('#failedText').text(warningMessage);
+                                $('#failedModal').modal('show');
+                            }
+                            setTimeout(function() {
+                                $('#failedModal').modal('hide');
+                                $('#registerModal').modal('hide');
+                            }, 2000);
+                        }
+                    }).always(function() {
+                        table.ajax.reload(null, false);
+                    });
+                } else {
+                    // User cancelled the update, do nothing
                 }
             });
 
@@ -308,6 +462,192 @@
                     // User cancelled the deletion, do nothing
                 }
             });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const addRowBtn = document.getElementById("addRowBtnEdit");
+            const removeRowBtn = document.getElementById("removeRowBtnEdit");
+
+            if (addRowBtn) {
+                addRowBtn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    addRow();
+                });
+            }
+
+            if (removeRowBtn) {
+                removeRowBtn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    removeRow();
+                });
+            }
+
+            let rowCount = 1;
+            const inputCounts = {1: {A: 1, B: 1, C: 1}};
+
+            function addRow() {
+                const tableBody = document.getElementById("editTableBody");
+                const newRow = tableBody.insertRow(-1);
+                rowCount++;
+                const rowIdSuffix = rowCount;
+                inputCounts[rowIdSuffix] = {A: 1, B: 1, C: 1};
+
+                newRow.innerHTML =`
+                    <td id="columnContainerA_${rowIdSuffix}_Edit">
+                        <div class="dynamic-input-group" id="inputContainerA_${rowIdSuffix}_1_Edit">
+                            <textarea type="text" class="form-control" style="height: 100px;" name="bagian_yang_dicheck[]" id="componencheck_${rowIdSuffix}_1_Edit" placeholder="Example : Push Button"></textarea>
+                            <input type="hidden" name="total_user_input" id="userInputCount_${rowIdSuffix}_Edit" value="1">
+                        </div>
+                    </td>
+                    <td id="columnContainerB_${rowIdSuffix}_Edit">
+                        <div class="dynamic-input-group" id="inputContainerB_${rowIdSuffix}_1_Edit">
+                            <input type="text" class="form-control form-control-user" name="standart_parameter[]" id="parameter_${rowIdSuffix}_1_Edit" placeholder="Example : Berfungsi dengan baik">
+                            <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnB_${rowIdSuffix}_1_Edit"><i class="fas fa-plus"></i></button>
+                            <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnB_${rowIdSuffix}_1_Edit"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                    <td id="columnContainerC_${rowIdSuffix}_Edit">
+                        <div class="dynamic-input-group" id="inputContainerC_${rowIdSuffix}_1_Edit">
+                            <input type="text" class="form-control form-control-user" name="metode_pengecekan[]" id="metodecheck_${rowIdSuffix}_1_Edit" placeholder="Example : Dioperasikan">
+                            <button type="button" class="btn btn-success btn-circle btn-sm" id="addColumnBtnC_${rowIdSuffix}_1_Edit"><i class="fas fa-plus"></i></button>
+                            <button type="button" class="btn btn-danger btn-circle btn-sm" id="removeColumnBtnC_${rowIdSuffix}_1_Edit"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="dynamic-button-group">
+                            <button type="button" class="btn btn-success btn-sm addRowBtn">Add Rows</button>
+                            <button type="button" class="btn btn-danger btn-sm removeRowBtn">Delete Rows</button>
+                        </div>
+                    </td>
+                `;
+
+                attachEventListeners(newRow, rowIdSuffix);
+            }
+
+            function attachEventListeners(row, rowIdSuffix) {
+                row.querySelector(`#addColumnBtnB_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
+                    event.preventDefault();
+                    addInput(`columnContainerB_${rowIdSuffix}_Edit`, "standart_parameter[]", `parameter_${rowIdSuffix}_Edit`, "Example: Berfungsi dengan baik", rowIdSuffix, 'B');
+                });
+
+                row.querySelector(`#addColumnBtnC_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
+                    event.preventDefault();
+                    addInput(`columnContainerC_${rowIdSuffix}_Edit`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}_Edit`, "Example: Dioperasikan", rowIdSuffix, 'C');
+                });
+
+                row.querySelector(`#removeColumnBtnB_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
+                    event.preventDefault();
+                    removeInput(this, `columnContainerB_${rowIdSuffix}_Edit`);
+                });
+
+                row.querySelector(`#removeColumnBtnC_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
+                    event.preventDefault();
+                    removeInput(this, `columnContainerC_${rowIdSuffix}_Edit`);
+                });
+
+                row.querySelector(".addRowBtnEdit").addEventListener("click", function (event) {
+                    event.preventDefault();
+                    addRow();
+                });
+
+                row.querySelector(".removeRowBtnEdit").addEventListener("click", function (event) {
+                    event.preventDefault();
+                    removeRow();
+                });
+            }
+
+            function removeRow() {
+                const tableBody = document.getElementById("editTableBody");
+                const rows = tableBody.rows;
+                if (rows.length > 1) {
+                    tableBody.deleteRow(-1);
+                } else {
+                    alert("At least one row must remain.");
+                }
+            }
+
+            document.getElementById("addColumnBtnB_1_1_Edit").addEventListener("click", function (event) {
+                event.preventDefault();
+                addInput("columnContainerB_1_Edit", "standart_parameter[]", "parameter_1_Edit", "Example: Berfungsi dengan baik", 1, 'B');
+            });
+
+            document.getElementById("addColumnBtnC_1_1_Edit").addEventListener("click", function (event) {
+                event.preventDefault();
+                addInput("columnContainerC_1_Edit", "metode_pengecekan[]", "metodecheck_1_Edit", "Example: Dioperasikan", 1, 'C');
+            });
+
+            document.getElementById("removeColumnBtnB_1_1_Edit").addEventListener("click", function (event) {
+                event.preventDefault();
+                removeInput(this, `inputContainerB_1_1_Edit`);
+            });
+
+            document.getElementById("removeColumnBtnC_1_1_Edit").addEventListener("click", function (event) {
+                event.preventDefault();
+                removeInput(this, `inputContainerC_1_1_Edit`);
+            });
+
+            function addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId) {
+                const inputContainer = document.getElementById(containerId);
+                if (!inputCounts[rowIdSuffix]) {
+                    inputCounts[rowIdSuffix] = {A: 1, B: 1, C: 1};
+                }
+                const inputGroupCount = ++inputCounts[rowIdSuffix][columnId];
+                const newInputGroup = document.createElement("div");
+                newInputGroup.className = "dynamic-input-group";
+
+                const newInput = document.createElement("input");
+                newInput.type = "text";
+                newInput.className = "form-control form-control-user";
+                newInput.name = inputName;
+                newInput.id = `${inputIdPrefix}_${inputGroupCount}`;
+                newInput.placeholder = placeholder;
+
+                const addButton = document.createElement("button");
+                addButton.type = "button";
+                addButton.className = "btn btn-success btn-circle btn-sm";
+                addButton.innerHTML = '<i class="fas fa-plus"></i>';
+                addButton.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId);
+                });
+
+                const removeButton = document.createElement("button");
+                removeButton.type = "button";
+                removeButton.className = "btn btn-danger btn-circle btn-sm";
+                removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                removeButton.onclick = function () {
+                    removeInput(this, containerId);
+                };
+
+                newInputGroup.appendChild(newInput);
+                newInputGroup.appendChild(addButton);
+                newInputGroup.appendChild(removeButton);
+                inputContainer.appendChild(newInputGroup);
+
+                // Increment the hidden input value
+                document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value = inputGroupCount;
+            }
+
+            function removeInput(button, containerId) {
+                const inputContainer = document.getElementById(containerId);
+                if (inputContainer) {
+                    const inputGroups = inputContainer.querySelectorAll(".dynamic-input-group");
+                    if (inputGroups.length > 1) {
+                        const inputGroup = button.parentNode;
+                        inputGroup.parentNode.removeChild(inputGroup);
+
+                        // Decrement the hidden input value
+                        const rowIdSuffix = containerId.split('_').pop();
+                        const currentCount = parseInt(document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value, 10);
+                        document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value = currentCount - 1;
+                    } else {
+                        alert("At least one input must remain.");
+                    }
+                } else {
+                    console.error(`Element with id "${containerId}" not found`);
+                }
+            }
         });
     </script>
 @endpush

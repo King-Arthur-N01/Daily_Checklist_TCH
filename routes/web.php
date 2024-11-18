@@ -45,6 +45,8 @@ Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachi
 // machine property route
 Route::get ('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
 Route::post('/machineproperty/create','MachineData\MachinepropertyController@createproperty')->name('addproperty');
+Route::put ('/machineproperty/update/{id}','MachineData\MachinepropertyController@updateproperty')->name('editproperty');
+// Route::get('/machineproperty/find/{id}','MachineData\MachinepropertyController@findproperty')->name('findproperty');
 Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyController@refreshtableproperty')->name('refreshproperty');
 Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end

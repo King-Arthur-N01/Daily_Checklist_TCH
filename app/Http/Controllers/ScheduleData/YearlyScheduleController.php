@@ -94,34 +94,15 @@ class YearlyScheduleController extends Controller
 
     public function datacalendar() {
         $events = [
-            [
-                'id' => '1',
-                'title' => 'WELDING CO2 MANUAL',
-                'start' => '2024-08-01',
-                'end' => '2024-08-07'
-            ],
-            [
-                'id' => '2',
-                'title' => 'WELDING ROBOT',
-                'start' => '2024-07-07',
-                'end' => '2024-08-14'
-            ],
-            [
-                'id' => '3',
-                'title' => 'SCREW COMPRESSORE',
-                'start' => '2024-08-26',
-                'end' => '2024-08-31'
-            ],
-            [
-                'id' => '4',
-                'title' => 'POWER PRESS',
-                'start' => '2024-09-01',
-                'end' => '2024-09-10'
-            ]
+            ['title' => 'Demo Event-1', 'start' => '2021-07-11', 'end' => '2021-07-12', 'resourceId' => 'a'],
+            ['title' => 'Demo Event-2', 'start' => '2021-07-11', 'end' => '2021-07-13', 'resourceId' => 'b'],
+            ['title' => 'Demo Event-3', 'start' => '2021-07-14', 'end' => '2021-07-14', 'resourceId' => 'a'],
+            ['title' => 'Demo Event-4', 'start' => '2021-07-17', 'end' => '2021-07-17', 'resourceId' => 'b'],
         ];
+
         return response()->json($events);
     }
-    
+
     public function createschedule(Request $request)
     {
         try {

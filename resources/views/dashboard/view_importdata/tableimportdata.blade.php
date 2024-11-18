@@ -769,7 +769,7 @@
                 for (let i = 1; i < rows.length; i++) {
                     const numberCell = rows[i].getElementsByTagName('td')[0];
                     const nameCell = rows[i].getElementsByTagName('td')[1];
-                    const propertyCell = rows[i].getElementsByTagName('td')[5];
+                    const propertyCell = rows[i].getElementsByTagName('td')[4];
 
                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';

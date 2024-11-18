@@ -16,16 +16,16 @@
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
                         <div class="table-filter">
-                            <div class="col-4">
+                            <div class="col-6">
                                 <p class="mg-b-10">Nama Schedule</p>
                                 <input class="form-control" id="filterByName">
                             </div>
-                            <div class="col-4">
+                            <div class="col-6">
                                 <p class="mg-b-10">Status Schedule</p>
                                 <select class="form-control" name="sample" id="filterByStatus">
                                     <option selected="selected">Select :</option>
-                                    <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
-                                    <option>Belum Dipreventive</option>
+                                    <option>COMPLETED</option>
+                                    <option>UNFINISHED</option>
                                 </select>
                             </div>
                         </div>
@@ -247,9 +247,8 @@
             });
         });
     </script>
-    {{-- <script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const filterByNumber = document.getElementById('filterByNumber');
             const filterByName = document.getElementById('filterByName');
             const filterByStatus = document.getElementById('filterByStatus');
             const table = document.getElementById('recordTables');
@@ -258,33 +257,27 @@
             // Function to filter table
             function filterTable() {
                 const nameValue = filterByName.value.toLowerCase();
-                const numberValue = filterByNumber.value.toLowerCase();
                 const statusValue = filterByStatus.value.toLowerCase();
 
                 for (let i = 1; i < rows.length; i++) {
-                    const numberCell = rows[i].getElementsByTagName('td')[1];
                     const nameCell = rows[i].getElementsByTagName('td')[2];
-                    const statusCell = rows[i].getElementsByTagName('td')[5];
+                    const statusCell = rows[i].getElementsByTagName('td')[4];
 
-                    const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
                     const propertyText = statusCell ? statusCell.textContent.toLowerCase() : '';
 
-                    // Check if row matches the filter criteria
                     if (nameText.includes(nameValue) &&
-                        numberText.includes(numberValue) &&
                         (statusValue === "select :" || propertyText.includes(statusValue))) {
-                        rows[i].style.display = '';  // Show the row
+                        rows[i].style.display = '';
                     } else {
-                        rows[i].style.display = 'none';  // Hide the row
+                        rows[i].style.display = 'none';
                     }
                 }
             }
 
             // Attach event listeners
-            filterByNumber.addEventListener('input', filterTable);
             filterByName.addEventListener('input', filterTable);
             filterByStatus.addEventListener('change', filterTable);
         });
-    </script> --}}
+    </script>
 @endpush

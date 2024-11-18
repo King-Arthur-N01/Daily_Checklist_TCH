@@ -22,18 +22,46 @@ class MachinepropertyController extends Controller
     public function refreshtableproperty()
     {
         try {
-            $joinproperty = DB::table('machineproperties')
-                ->select('machineproperties.*', 'machines.*')
-                ->leftJoin('machines', 'machineproperties.id', '=', 'machines.id_property')
-                ->orderBy('machineproperties.id', 'asc')
-                ->get();
+            $getproperty = DB::table('machineproperties')
+            ->select('machineproperties.*', DB::raw('COUNT(DISTINCT componenchecks.id) as componencheck_count'), DB::raw('COUNT(DISTINCT parameters.id) as parameter_count'), DB::raw('COUNT(DISTINCT metodechecks.id) as metodecheck_count'))
+            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+            ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+            ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+            ->groupBy('machineproperties.id')
+            ->get();
             return response()->json([
-                'joinproperty' => $joinproperty
+                'getproperty' => $getproperty
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
+    // public function findproperty($id)
+    // {
+    //     try {
+    //         $joinproperty = DB::table('machineproperties')
+    //             ->select('machineproperties.id', 'componenchecks.id', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'componenchecks.id as join_id')
+    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+    //             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+    //             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+    //             ->where('machineproperties.id', '=', $id)
+    //             ->get();
+
+    //         $joincomponent = DB::table('machineproperties')
+    //             ->select('machineproperties.*', 'componenchecks.name_componencheck', 'componenchecks.id as componen_id')
+    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+    //             ->where('machineproperties.id', '=', $id)
+    //             ->get();
+
+    //         return response()->json([
+    //             'joinproperty' => $joinproperty,
+    //             'joincomponent' => $joincomponent
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
 
     public function createproperty(Request $request)
     {
@@ -79,6 +107,53 @@ class MachinepropertyController extends Controller
             return response()->json(['error' => 'Error machine property failed to add!!!!'], 500);
         }
     }
+
+    public function updateproperty(Request $request, $id)
+    {
+        try {
+            dd($request);
+            $StoreProperty = new Machineproperty();
+            $StoreProperty->name_property = $request->input('name_property');
+            $StoreProperty->save();
+
+            $machinepropertyid = Machineproperty::latest('id')->first()->id;
+
+            foreach ($request->all() as $key => $dataRow) {
+                if (strpos($key, 'dataRows_') === 0) {
+                    $componentChecks = $dataRow['componencheck'];
+                    $parameters = $dataRow['parameter'];
+                    $checkMethods = $dataRow['metodecheck'];
+                    $userInputCount = (int) $dataRow['user_input_count'];
+
+                    $StoreComponent = new Componencheck();
+                    $StoreComponent->name_componencheck = $componentChecks[0];
+                    $StoreComponent->id_property2 = $machinepropertyid;
+                    $StoreComponent->save();
+
+                    $componencheckid = Componencheck::latest('id')->first()->id;
+
+                    for ($i = 0; $i < $userInputCount; $i++) {
+                        $StoreParameter = new Parameter();
+                        $StoreParameter->name_parameter = $parameters[$i];
+                        $StoreParameter->id_componencheck = $componencheckid;
+                        $StoreParameter->save();
+
+                        $parameterid = Parameter::latest('id')->first()->id;
+
+                        $StoreMethod = new Metodecheck();
+                        $StoreMethod->name_metodecheck = $checkMethods[$i];
+                        $StoreMethod->id_parameter = $parameterid;
+                        $StoreMethod->save();
+                    }
+                }
+                return response()->json(['success' => 'Machine property created successfully.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Error machine property failed to add!!!!'], 500);
+        }
+    }
+
     public function deleteproperty($id)
     {
         try {
