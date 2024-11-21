@@ -101,9 +101,11 @@
                                                 <div>
                                                     <select name="result[{{ $key }}]" id="result[{{ $key }}]" required>
                                                         <option label="Result" disabled selected></option>
+                                                        <option value="custom">Others</option>
                                                         <option value="good">OK</option>
                                                         <option value="not good">NG</option>
                                                     </select>
+                                                    <input class="custom-input-option" type="text" id="custom_input_{{ $key }}" placeholder="Enter your own result"/>
                                                 </div>
                                             </td>
                                         </tr>
@@ -202,7 +204,7 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
     <script>
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", () => {
             $('.select2').select2({
                 placeholder: 'Select :',
                 searchInputPlaceholder: 'Search'
@@ -216,6 +218,40 @@
                 var selectedValues = $(this).val();
                 $('#combined_abnormal_value').val(selectedValues);
             });
+
+            document.querySelectorAll('select[name^="result"]').forEach(select => {
+                select.addEventListener("change", function () {
+                    const key = this.id.match(/\d+/)[0]; // Mendapatkan kunci dari id
+                    const customInput = document.getElementById(`custom_input_${key}`);
+                    if (this.value === 'custom') {
+                        customInput.style.display = 'block';
+                        customInput.required = true;
+                    } else {
+                        customInput.style.display = 'none';
+                        customInput.required = false;
+                    }
+                    customInput.removeEventListener("change", handleCustomInputChange);
+                    customInput.addEventListener("change", handleCustomInputChange);
+                });
+            });
+
+            function handleCustomInputChange(event) {
+                const customInput = event.target;
+                const key = customInput.id.match(/\d+/)[0];
+                const select = document.getElementById(`result[${key}]`);
+
+                // Cek apakah opsi sudah ada
+                const existingOption = Array.from(select.options).find(
+                    option => option.value === customInput.value
+                );
+                if (!existingOption) {
+                    const newOption = document.createElement("option");
+                    newOption.text = customInput.value;
+                    newOption.value = customInput.value;
+                    select.add(newOption, select.options[select.selectedIndex]);
+                }
+                select.value = customInput.value;
+            }
 
             // Enable/Disable abnormality select based on the switch
             $('input[name="option"]').on('change', function() {

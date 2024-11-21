@@ -108,8 +108,8 @@
                                 machine_name: joinrecords.machine_name,
                                 machine_type: joinrecords.machine_type,
                                 machine_number: joinrecords.machine_number,
-                                correct_status: joinrecords.getcorrect ? joinrecords.getcorrect : 'Belum dikoreksi',
-                                approve_status: joinrecords.getapprove ? joinrecords.getapprove : 'Belum disetujui',
+                                correct_status: joinrecords.getcorrect,
+                                approve_status: joinrecords.getapprove,
                                 record_status: joinrecords.machinerecord_status,
                                 shift: joinrecords.shift,
                                 create_date: joinrecords.getcreate,
@@ -282,6 +282,28 @@
                     }
                 });
             });
+
+            // fungsi table untuk melihat status dari sebuah preventive
+            table.on('draw', function() {
+                $('#historyTables tbody tr').each(function() {
+                    var correctCell = $(this).find('td:eq(4)');
+                    var approveCell = $(this).find('td:eq(5)');
+                    var correct = correctCell.text().trim();
+                    var approve = approveCell.text().trim();
+
+                    if (correct !== '' && approve !== '') {
+                        correctCell.text('Sudah dikoreksi');
+                        approveCell.text('Sudah disetujui');
+                    } else if (correct !== '' && approve === '') {
+                        correctCell.text('Sudah dikoreksi');
+                        approveCell.text('Belum disetujui');
+                    } else if (correct === '' && approve === '') {
+                        correctCell.text('Belum dikoreksi');
+                        approveCell.text('Belum disetujui');
+                    }
+                });
+            });
+
 
             // fungsi table untuk melihat status dari sebuah preventive
             // $('#historyTables tr').each(function() {

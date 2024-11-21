@@ -245,6 +245,7 @@ class MachinerecordController extends Controller
     public function createmachinerecord(Request $request)
     {
         try {
+            // dd($request)->all();
             $schedule_id = ($request->input('id_schedule'));
             $abnormal = ($request->input('combined_abnormal'));
 
@@ -366,7 +367,7 @@ class MachinerecordController extends Controller
                 ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
-                ->orderBy('machine_schedules.id', 'asc')
+                ->orderBy('machinerecords.id', 'desc')
                 ->get();
 
             return response()->json([
@@ -507,7 +508,7 @@ class MachinerecordController extends Controller
                 ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
-                ->orderBy('machine_schedules.id', 'asc')
+                ->orderBy('machinerecords.id', 'desc')
                 ->get();
 
         return response()->json([
