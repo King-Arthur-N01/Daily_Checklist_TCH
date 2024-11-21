@@ -90,8 +90,8 @@
                                     </td>
                                     <td>
                                         <div class="dynamic-button-group">
-                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add Rows</i></button>
-                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Delete Rows</i></button>
+                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtn">Add Rows</button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtn">Delete Rows</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -112,7 +112,7 @@
     <div class="modal fade" id="updateModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                <form id="updateform" method="post">
+                <form id="updateform" method="put">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Standarisasi</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -121,7 +121,7 @@
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Standarisasi</label>
                             <div>
-                                <input class="form-control form-control-user" type="text" name="name_property" placeholder="Nama Standarisasi">
+                                <input class="form-control form-control-user" type="text" name="name_property_edit" placeholder="Nama Standarisasi">
                                 <input type="hidden" name="id_property" id="property_id">
                             </div>
                         </div>
@@ -158,8 +158,8 @@
                                     </td>
                                     <td>
                                         <div class="dynamic-button-group">
-                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtnEdit">Add Rows</i></button>
-                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtnEdit">Delete Rows</i></button>
+                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtnEdit">Add Rows</button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtnEdit">Delete Rows</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -229,7 +229,7 @@
 @endpush
 
 @push('script')
-    {{-- <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script> --}}
+    <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
     <script>
         $(document).ready(function() {
             // Set automatic soft refresh table
@@ -242,9 +242,9 @@
             }, 60000); // 60000 milidetik = 60 second
 
             // Ambil nilai data-id dari tombol updatemodal
-            $(document).on('click', '.btn-primary', function() {
-                var propertyId = $(this).data('id');
-                $('input[id="property_id"]').val(propertyId);
+            $(document).on('click', '.btn-edit[data-toggle="modal"]', function() {
+                const propertyId = $(this).data('id');
+                $('#property_id').val(propertyId);
             });
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
@@ -260,7 +260,7 @@
                                 parameter: getproperty.parameter_count,
                                 metodecheck: getproperty.metodecheck_count,
                                 actions: `
-                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${getproperty.id}" data-toggle="modal" data-target="#updateModal">Edit</a>
+                                    <a class="btn btn-primary btn-sm btn-edit" style="color:white" data-id="${getproperty.id}" data-toggle="modal" data-target="#updateModal">Edit</a>
                                     <a class="btn btn-danger btn-sm btn-delete" data-id="${getproperty.id}" id="deleteButton" style="color:white">Delete</a>
                                 `
                             };
@@ -357,11 +357,11 @@
                 event.preventDefault();
                 let formData = {
                     '_token': '{{ csrf_token() }}',
-                    name_property: $('input[name="name_property"]').val(),
+                    name_property: $('input[name="name_property_edit"]').val(),
                     id_property: $('input[name="id_property"]').val(),
                 };
 
-                $('#tableBody tr').each(function(index) {
+                $('#editTableBody tr').each(function(index) {
                     const rowIdSuffix = $(this).find('td:first-child').attr('id').split('_')[1];
                     const dynamicArrayName = `dataRows_${rowIdSuffix}`;
                     if (!formData[dynamicArrayName]) {
@@ -374,16 +374,15 @@
 
                     $(this).find('textarea').each(function() {
                         const textareaId = $(this).attr('id');
-                        const textareaName = $(this).attr('name');
                         const textareaValue = $(this).val();
 
                         if (textareaId.startsWith(`componencheck_${rowIdSuffix}_`)) {
                             formData[dynamicArrayName].componencheck.push(textareaValue);
                         }
                     });
+
                     $(this).find('input').each(function() {
                         const inputId = $(this).attr('id');
-                        const inputName = $(this).attr('name');
                         const inputValue = $(this).val();
 
                         if (inputId.startsWith(`parameter_${rowIdSuffix}_`)) {
@@ -395,6 +394,8 @@
                         }
                     });
                 });
+                console.log(formData);
+
                 if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
                     $.ajax({
                         url: '{{ route("editproperty", ":id") }}'.replace(':id', formData.id_property),
@@ -407,8 +408,8 @@
                                 $('#successModal').modal('show');
                             }
                             setTimeout(function() {
-                                    $('#successModal').modal('hide');
-                                    $('#registerModal').modal('hide');
+                                $('#successModal').modal('hide');
+                                $('#updateModal').modal('hide');
                             }, 2000);
                         },
                         error: function(xhr, status, error) {
@@ -419,7 +420,7 @@
                             }
                             setTimeout(function() {
                                 $('#failedModal').modal('hide');
-                                $('#registerModal').modal('hide');
+                                $('#updateModal').modal('hide');
                             }, 2000);
                         }
                     }).always(function() {
@@ -431,7 +432,7 @@
             });
 
             $('#propertyTables').on('click', '.btn-delete', function(e) {
-                e.preventDefault();
+                event.preventDefault();
                 const button = $(this);
                 const propertyId = button.data('id');
                 if (confirm("Apakah yakin menghapus standarisasi ini?")) {
@@ -516,8 +517,8 @@
                     </td>
                     <td>
                         <div class="dynamic-button-group">
-                            <button type="button" class="btn btn-success btn-sm addRowBtn">Add Rows</button>
-                            <button type="button" class="btn btn-danger btn-sm removeRowBtn">Delete Rows</button>
+                            <button type="button" class="btn btn-success btn-sm addRowBtnEdit">Add Rows</button>
+                            <button type="button" class="btn btn-danger btn-sm removeRowBtnEdit">Delete Rows</button>
                         </div>
                     </td>
                 `;

@@ -38,6 +38,8 @@
                                     <th>NO.</th>
                                     <th>NAMA SCHEDULE</th>
                                     <th>JUMLAH MESIN</th>
+                                    <th>SUDAH DIKERJAKAN</th>
+                                    <th>BELUM DIKERJAKAN</th>
                                     <th>STATUS</th>
                                 </tr>
                             </thead>
@@ -128,15 +130,39 @@
                 ajax: {
                     url: '{{ route("refreshrecord") }}',
                     dataSrc: function(data) {
-                        return data.refreshrecords.map((refreshrecords, index) => {
-                            return {
-                                number: index + 1,
-                                id: refreshrecords.id,
-                                name_schedule: refreshrecords.name_schedule_month,
-                                total_machine: refreshrecords.machine_count,
-                                schedule_status: refreshrecords.schedule_status,
-                            };
+                        let groupedData = {};
+                        // Group data by monthly_id
+                        data.refreshrecords.forEach(record => {
+                            let month = record.monthly_id;
+                            if (!groupedData[month]) {
+                                groupedData[month] = {
+                                    monthly_id: month,
+                                    schedule_id: record.schedule_id,
+                                    name_schedule: record.name_schedule_month,
+                                    array_machine: JSON.parse(record.machine_collection2),
+                                    completed: 0,
+                                    uncompleted: 0,
+                                    schedule_status: record.schedule_status
+                                };
+                            }
+                            // Increment counts based on machine_schedule_status
+                            if (record.machine_schedule_status === 1) {
+                                groupedData[month].completed += 1;
+                            } else if (record.machine_schedule_status === 0) {
+                                groupedData[month].uncompleted += 1;
+                            }
                         });
+
+                        // Convert grouped data back into an array
+                        return Object.values(groupedData).map((record, index) => ({
+                            number: index + 1,
+                            id: record.schedule_id,
+                            name_schedule: record.name_schedule,
+                            total_machine: record.array_machine.length,
+                            completed: record.completed,
+                            uncompleted: record.uncompleted,
+                            schedule_status: record.schedule_status
+                        }));
                     }
                 },
                 columns: [
@@ -151,13 +177,18 @@
                     { data: 'number' },
                     { data: 'name_schedule' },
                     { data: 'total_machine' },
-                    { data: 'schedule_status', render: function(data, type, row) {
-                        if (data === 0) {
-                            return '<span class="badge badge-danger" value="0">UNFINISHED</span>';
-                        } else if (data === 1) {
-                            return '<span class="badge badge-success" value="1">COMPLETED</span>';
+                    { data: 'completed' },
+                    { data: 'uncompleted' },
+                    {
+                        data: 'schedule_status',
+                        render: function(data, type, row) {
+                            if (data === 0) {
+                                return '<span class="badge badge-danger" value="0">UNFINISHED</span>';
+                            } else if (data === 1) {
+                                return '<span class="badge badge-success" value="1">COMPLETED</span>';
+                            }
                         }
-                    }}
+                    }
                 ]
             });
 
@@ -202,8 +233,14 @@
                             data.refreshdetailrecord.forEach(recordmachine => {
                                 let scheduleEnd = new Date(recordmachine.schedule_end);
                                 let isPast = scheduleEnd && scheduleEnd < currentTime;
+                                let check_status = recordmachine.machine_schedule_status;
+                                let rowClass = isPast ? 'elapsed-time' : '';
+
+                                if (check_status === 1) {
+                                    rowClass += 'status-clear'; // Add the special class to the row dynamically
+                                }
                                 detailTable += `
-                                    <tr class="${(isPast ? 'elapsed-time' : '')}">
+                                    <tr class="${rowClass}">
                                         <td>${recordmachine.invent_number}</td>
                                         <td>${recordmachine.machine_number}</td>
                                         <td>${recordmachine.machine_name}</td>

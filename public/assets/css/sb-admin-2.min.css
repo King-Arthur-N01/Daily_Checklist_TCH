@@ -3825,7 +3825,11 @@ input[type=submit].btn-block {
 }
 
 .elapsed-time {
-    background-color: #ff0000ad;
+    background-color: #ff00004b;
+}
+
+.status-clear {
+    background-color: #00ff004b;
 }
 
 .dropdown-item:focus,

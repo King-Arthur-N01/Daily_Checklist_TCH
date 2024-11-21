@@ -66,6 +66,7 @@ class MachinepropertyController extends Controller
     public function createproperty(Request $request)
     {
         try {
+            dd($request);
             $StoreProperty = new Machineproperty();
             $StoreProperty->name_property = $request->input('name_property');
             $StoreProperty->save();
@@ -111,13 +112,29 @@ class MachinepropertyController extends Controller
     public function updateproperty(Request $request, $id)
     {
         try {
-            dd($request);
-            $StoreProperty = new Machineproperty();
+            $StoreProperty = Machineproperty::find($id);
             $StoreProperty->name_property = $request->input('name_property');
             $StoreProperty->save();
 
-            $machinepropertyid = Machineproperty::latest('id')->first()->id;
+            $property_id = $StoreProperty->id;
 
+            $joinproperty = DB::table('machineproperties')
+                ->select('machineproperties.id', 'componenchecks.id', 'parameters.id', 'metodechecks.id',
+                        'machineproperties.id as property_id', 'componenchecks.id as componen_id', 'parameters.id as parameter_id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machineproperties.id', '=', $id)
+                ->get();
+
+            // Delete each related record
+            foreach ($joinproperty as $property) {
+                DB::table('componenchecks')->where('id_property2', $property->property_id)->delete();
+                DB::table('parameters')->where('id_componencheck', $property->componen_id)->delete();
+                DB::table('metodechecks')->where('id_parameter', $property->parameter_id)->delete();
+            }
+
+            // Memproses semua dataRows
             foreach ($request->all() as $key => $dataRow) {
                 if (strpos($key, 'dataRows_') === 0) {
                     $componentChecks = $dataRow['componencheck'];
@@ -127,10 +144,10 @@ class MachinepropertyController extends Controller
 
                     $StoreComponent = new Componencheck();
                     $StoreComponent->name_componencheck = $componentChecks[0];
-                    $StoreComponent->id_property2 = $machinepropertyid;
+                    $StoreComponent->id_property2 = $property_id;
                     $StoreComponent->save();
 
-                    $componencheckid = Componencheck::latest('id')->first()->id;
+                    $componencheckid = $StoreComponent->id; // Ambil ID dari objek yang baru disimpan
 
                     for ($i = 0; $i < $userInputCount; $i++) {
                         $StoreParameter = new Parameter();
@@ -138,7 +155,7 @@ class MachinepropertyController extends Controller
                         $StoreParameter->id_componencheck = $componencheckid;
                         $StoreParameter->save();
 
-                        $parameterid = Parameter::latest('id')->first()->id;
+                        $parameterid = $StoreParameter->id; // Ambil ID dari objek yang baru disimpan
 
                         $StoreMethod = new Metodecheck();
                         $StoreMethod->name_metodecheck = $checkMethods[$i];
@@ -146,14 +163,13 @@ class MachinepropertyController extends Controller
                         $StoreMethod->save();
                     }
                 }
-                return response()->json(['success' => 'Machine property created successfully.']);
             }
+            return response()->json(['success' => 'Machine property updated successfully.']);
         } catch (\Exception $e) {
             Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
-            return response()->json(['error' => 'Error machine property failed to add!!!!'], 500);
+            return response()->json(['error' => 'Error machine property failed to update!!!!'], 500);
         }
     }
-
     public function deleteproperty($id)
     {
         try {

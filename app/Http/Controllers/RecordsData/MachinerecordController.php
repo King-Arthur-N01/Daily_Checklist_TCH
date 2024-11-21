@@ -35,22 +35,24 @@ class MachinerecordController extends Controller
     }
 
     // fungsi menampilkan tabel dan merefresh tabel preventice
-    public function refreshtablerecord() {
+    public function refreshtablerecord()
+    {
         try {
-                $refreshrecords = DB::table('monthly_schedules')
-                ->select('monthly_schedules.*', 'machine_schedules.monthly_id')
+            $refreshrecords = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'monthly_schedules.id as schedule_id')
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-                ->groupBy('monthly_schedules.id')
-                ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
                 ->orderBy('monthly_schedules.id', 'desc')
                 ->get();
+
             return response()->json([
-                'refreshrecords' => $refreshrecords
+                'refreshrecords' => $refreshrecords,
             ]);
         } catch (\Exception $e) {
+            Log::error('fetch data error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
 
     public function refreshdetailtablerecord($id)
     {

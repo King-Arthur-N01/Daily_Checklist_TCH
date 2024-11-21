@@ -239,12 +239,14 @@
     <table class="table">
         <thead>
             <tr>
-                <th width="4%">No.</th>
-                <th width="23%">Bagian Yang Dicheck</th>
-                <th width="23%">Standart/Parameter</th>
-                <th width="20%">Metode Pengecekan</th>
-                <th width="15%">Action</th>
-                <th width="12%">Result</th>
+                <th rowspan="2" width="4%">No.</th>
+                <th rowspan="2" width="23%">Bagian Yang Dicheck</th>
+                <th rowspan="2" width="23%">Standart/Parameter</th>
+                <th rowspan="2" width="20%">Metode Pengecekan</th>
+                <th rowspan="2" width="16%">Action</th>
+                <th rowspan="2" width="14%">Result</th>
+            </tr>
+            <tr>
             </tr>
         </thead>
         <tbody>
