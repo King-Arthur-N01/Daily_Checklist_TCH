@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Haruncpi\LaravelIdGenerator\IdGenerator;
 class Machinerecord extends Model
 {
     protected $fillable = [
@@ -13,7 +12,7 @@ class Machinerecord extends Model
         'create_by',
         'correct_by',
         'approve_by',
-        'id_machineschedule',
+        'id_machine_schedule',
         'operator_action',
         'result',
         'machinerecord_status',

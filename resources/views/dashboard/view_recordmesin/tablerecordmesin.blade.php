@@ -24,8 +24,8 @@
                                 <p class="mg-b-10">Status Schedule</p>
                                 <select class="form-control" name="sample" id="filterByStatus">
                                     <option selected="selected">Select :</option>
-                                    <option>COMPLETED</option>
-                                    <option>UNFINISHED</option>
+                                    <option value="1">COMPLETED</option>
+                                    <option value="0">UNFINISHED</option>
                                 </select>
                             </div>
                         </div>
@@ -298,13 +298,13 @@
 
                 for (let i = 1; i < rows.length; i++) {
                     const nameCell = rows[i].getElementsByTagName('td')[2];
-                    const statusCell = rows[i].getElementsByTagName('td')[4];
+                    const statusCell = rows[i].getElementsByTagName('td')[6];
 
                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                    const propertyText = statusCell ? statusCell.textContent.toLowerCase() : '';
+                    const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
 
                     if (nameText.includes(nameValue) &&
-                        (statusValue === "select :" || propertyText.includes(statusValue))) {
+                        (statusValue === "select :" || statusText.includes(statusValue))) {
                         rows[i].style.display = '';
                     } else {
                         rows[i].style.display = 'none';

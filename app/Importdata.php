@@ -23,7 +23,6 @@ class Importdata implements ToModel
             if ($existingMachine) {
                 $errorMessage = 'Duplicate invent_number: ' . $row[1];
                 Log::error($errorMessage);
-
                 return response()->json(['error' => $errorMessage], 422);
             }
 

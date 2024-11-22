@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class MonthlySchedule extends Model
 {
     protected $fillable = [
-        'name_schedule',
+        'name_schedule_month',
+        'machine_collection2',
         'schedule_status',
         'id_schedule_year'
     ];

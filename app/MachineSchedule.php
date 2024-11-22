@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class MachineSchedule extends Model
 {
     protected $fillable = [
-
-
         'schedule_start',
         'schedule_end',
         'schedule_next',
@@ -19,4 +17,13 @@ class MachineSchedule extends Model
         'yearly_id',
         'monthly_id',
     ];
+
+    public function getparentschedule()
+    {
+        return $this->hasMany(YearlySchedule::class);
+    }
+    public function getparentuser()
+    {
+        return $this->hasMany(User::class);
+    }
 }

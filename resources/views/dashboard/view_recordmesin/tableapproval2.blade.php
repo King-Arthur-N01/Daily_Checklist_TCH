@@ -134,6 +134,7 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/formatdate.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script> --}}
     <script>
         $(document).ready(function() {
@@ -182,7 +183,12 @@
                         }
                     }},
                     { data: 'shift' },
-                    { data: 'getcreatedate' },
+                    {
+                        data: 'getcreatedate',
+                        render: function(data) {
+                            return formatDate(data);
+                        }
+                    },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
             });

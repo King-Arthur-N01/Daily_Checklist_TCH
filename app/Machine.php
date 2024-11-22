@@ -17,10 +17,6 @@ class Machine extends Model
         'mfg_number',
         'install_date',
         'id_property',
-        'schdule_1_month',
-        'schdule_3_month',
-        'schdule_6_month',
-        'schdule_12_month',
     ];
     public function getchildernproperty()
     {
@@ -28,10 +24,10 @@ class Machine extends Model
     }
     public function getchildernrecord()
     {
-        return $this->belongsTo(Machinerecord::class);
+        return $this->belongsTo(MachineSchedule::class);
     }
     public function getchildernschedule()
     {
-        return $this->belongsTo(Schedule::class);
+        return $this->belongsTo(Machinerecord::class);
     }
 }
