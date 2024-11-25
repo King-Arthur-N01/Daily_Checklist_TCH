@@ -19,6 +19,7 @@ class Machinerecord extends Model
         'abnormal_record',
         'start_preventive',
         'finish_preventive',
+        'record_date',
     ];
     // public static function boot()
     // {

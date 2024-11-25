@@ -112,7 +112,7 @@
                                 approve_status: joinrecords.getapprove,
                                 record_status: joinrecords.machinerecord_status,
                                 shift: joinrecords.shift,
-                                create_date: joinrecords.getcreate,
+                                create_date: joinrecords.created_date,
                                 actions: `
                                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.records_id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></button>
                                 `
@@ -211,7 +211,7 @@
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
-                                        <input class="form-control" value="${new Date(data.usersdata[0].created_at).toLocaleDateString()}" readonly>
+                                        <input class="form-control" value="${new Date(data.usersdata[0].record_date).toLocaleDateString()}" readonly>
                                     </div>
                                 </div>
                                 <table class="table table-bordered" id="dataTables" width="100%">

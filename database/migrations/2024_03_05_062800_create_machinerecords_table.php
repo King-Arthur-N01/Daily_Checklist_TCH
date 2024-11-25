@@ -28,6 +28,7 @@ class CreateMachinerecordsTable extends Migration
             $table->json('abnormal_record')->nullable();
             $table->timestamp('start_preventive')->nullable();
             $table->timestamp('finish_preventive')->nullable();
+            $table->timestamp('record_date')->nullable();
             $table->timestamps();
         });
     }

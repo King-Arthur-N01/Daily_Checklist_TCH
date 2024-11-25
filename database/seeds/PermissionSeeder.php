@@ -26,63 +26,63 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'create_records']);
         Permission::create(['name' => 'edit_records']);
-        Permission::create(['name' => 'viewtable_records']);
+        Permission::create(['name' => 'view_records']);
         Permission::create(['name' => 'delete_records']);
         Permission::create(['name' => 'corrected_records']);
         Permission::create(['name' => 'approval_records']);
-        Permission::create(['name' => 'managemachine']);
-        Permission::create(['name' => 'manageuser']);
+        Permission::create(['name' => 'manage_machine']);
+        Permission::create(['name' => 'manage_user']);
         Permission::create(['name' => 'permit']);
         Permission::create(['name' => 'restric']);
 
         //create roles and assign existing permissions
         $operatorRole = Role::create(['name' => 'operator']);
         $operatorRole->givePermissionTo('create_records');
-        $operatorRole->givePermissionTo('viewtable_records');
+        $operatorRole->givePermissionTo('view_records');
 
         $leaderRole = Role::create(['name' => 'leader']);
         $leaderRole->givePermissionTo('create_records');
         $leaderRole->givePermissionTo('edit_records');
-        $leaderRole->givePermissionTo('viewtable_records');
+        $leaderRole->givePermissionTo('view_records');
         $leaderRole->givePermissionTo('corrected_records');
-        $leaderRole->givePermissionTo('managemachine');
+        $leaderRole->givePermissionTo('manage_machine');
 
         $foremanRole = Role::create(['name' => 'foreman']);
         $foremanRole->givePermissionTo('create_records');
         $foremanRole->givePermissionTo('edit_records');
-        $foremanRole->givePermissionTo('viewtable_records');
+        $foremanRole->givePermissionTo('view_records');
         $foremanRole->givePermissionTo('corrected_records');
-        $foremanRole->givePermissionTo('managemachine');
-        $foremanRole->givePermissionTo('manageuser');
+        $foremanRole->givePermissionTo('manage_machine');
+        $foremanRole->givePermissionTo('manage_user');
 
         $supervisorRole = Role::create(['name' => 'supervisor']);
         $supervisorRole->givePermissionTo('create_records');
         $supervisorRole->givePermissionTo('edit_records');
-        $supervisorRole->givePermissionTo('viewtable_records');
+        $supervisorRole->givePermissionTo('view_records');
         $supervisorRole->givePermissionTo('corrected_records');
         $supervisorRole->givePermissionTo('approval_records');
-        $supervisorRole->givePermissionTo('managemachine');
-        $supervisorRole->givePermissionTo('manageuser');
+        $supervisorRole->givePermissionTo('manage_machine');
+        $supervisorRole->givePermissionTo('manage_user');
 
         $managerRole = Role::create(['name' => 'manager']);
         $managerRole->givePermissionTo('create_records');
         $managerRole->givePermissionTo('edit_records');
         $managerRole->givePermissionTo('edit_records');
-        $managerRole->givePermissionTo('viewtable_records');
+        $managerRole->givePermissionTo('view_records');
         $managerRole->givePermissionTo('corrected_records');
         $managerRole->givePermissionTo('approval_records');
-        $managerRole->givePermissionTo('managemachine');
-        $managerRole->givePermissionTo('manageuser');
+        $managerRole->givePermissionTo('manage_machine');
+        $managerRole->givePermissionTo('manage_user');
 
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo('create_records');
         $adminRole->givePermissionTo('edit_records');
-        $adminRole->givePermissionTo('viewtable_records');
+        $adminRole->givePermissionTo('view_records');
         $adminRole->givePermissionTo('delete_records');
         $adminRole->givePermissionTo('corrected_records');
         $adminRole->givePermissionTo('approval_records');
-        $adminRole->givePermissionTo('managemachine');
-        $adminRole->givePermissionTo('manageuser');
+        $adminRole->givePermissionTo('manage_machine');
+        $adminRole->givePermissionTo('manage_user');
         $adminRole->givePermissionTo('permit');
         $adminRole->givePermissionTo('restric');
 

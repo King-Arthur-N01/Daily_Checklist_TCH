@@ -50,7 +50,7 @@
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
-                                <th>STANDARISASI</th>
+                                <th>KATEGORI CHECKSHEET</th>
                                 <th>ACTION</th>
                             </thead>
                         </table>
@@ -213,7 +213,7 @@
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
-                                name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada standarisasi',
+                                name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada kategori',
                                 actions: `
                                     <div class="dynamic-button-group">
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
@@ -535,7 +535,7 @@
                             </div>
                             <table class="table table-bordered" id="editTables" width="100%">
                                 <thead>
-                                    <th>Standarisasi Mesin</th>
+                                    <th>Kategori Mesin</th>
                                 <tbody>
                                     <tr>
                                         <td colspan="4">

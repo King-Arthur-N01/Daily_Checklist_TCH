@@ -259,7 +259,7 @@
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
-                                        <input class="form-control" value="${new Date(data.usersdata[0].created_at).toLocaleDateString()}" readonly>
+                                        <input class="form-control" value="${new Date(data.usersdata[0].record_date).toLocaleDateString()}" readonly>
                                     </div>
                                 </div>
                                 <table class="table table-bordered" id="dataTables" width="100%">
@@ -292,8 +292,8 @@
                                             </tr>
                                             <tr>
                                                 <td>${data.usersdata[0].shift}</td>
-                                                <td>${data.usersdata.approve_by_name ? data.usersdata.approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.usersdata.correct_by_name ? data.usersdata.correct_by_name : 'Belum dikoreksi'}</td>
+                                                <td>${data.usersdata[0].approve_by_name ? data.usersdata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.usersdata[0].correct_by_name ? data.usersdata[0].correct_by_name : 'Belum dikoreksi'}</td>
                                                 ${data.usernames.map((get_user_id) => `
                                                     <td>${get_user_id}</td>
                                                 `).join('')}

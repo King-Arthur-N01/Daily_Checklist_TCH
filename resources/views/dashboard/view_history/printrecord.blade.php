@@ -221,7 +221,7 @@
         </tbody>
     </table>
     @php
-        $date = new DateTime($usersdata[0]->created_at);
+        $date = new DateTime($usersdata[0]->record_date);
         $formattedDate = $date->format('d-m-Y');
     @endphp
     <table class="table-input">

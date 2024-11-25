@@ -78,7 +78,7 @@ class MachinerecordController extends Controller
     public function refreshtablehistory()
     {
         $joinrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove', 'machinerecords.created_at as getcreate')
+            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
             ->join('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'desc')
@@ -254,8 +254,8 @@ class MachinerecordController extends Controller
             $operator_action_json = json_encode(array_values($request->input('operator_action')));
             $result_json = json_encode(array_values($request->input('result')));
 
+            $record_date = Carbon::parse($request->input('record_date'));
             $currenttime = Carbon::now('Asia/Jakarta');
-            $schedulenext = $currenttime->copy()->addMonths(6);
 
             $getshifttime = Carbon::now()->format('H:i');
             if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
@@ -286,6 +286,7 @@ class MachinerecordController extends Controller
             $StoreRecords->operator_action = $operator_action_json;
             $StoreRecords->result = $result_json;
             $StoreRecords->create_by = $create_by_json;
+            $StoreRecords->record_date = $record_date;
             $StoreRecords->start_preventive = $currenttime;
             if (hasValidAbnormalData($abnormal)) {
                 $StoreRecords->abnormal_record = $abnormal_json;
@@ -299,6 +300,8 @@ class MachinerecordController extends Controller
             $StoreRecords->save();
 
             $StoreSchedule = Machineschedule::find($schedule_id);
+            $schedule_date = Carbon::parse($StoreSchedule->schedule_date);
+            $schedulenext = $schedule_date->copy()->addMonths(6);
             $StoreSchedule->schedule_next = $schedulenext;
             $StoreSchedule->machine_schedule_status = true;
             $StoreSchedule->save();
@@ -364,7 +367,7 @@ class MachinerecordController extends Controller
     {
         try {
             $refreshrecord = DB::table('machine_schedules')
-                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
+                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as created_date')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
                 ->orderBy('machinerecords.id', 'desc')
@@ -446,28 +449,24 @@ class MachinerecordController extends Controller
         $currenttime = Carbon::now('Asia/Jakarta');
         $clear_abnormal = $request->input('clear_abnormals');
 
-        if ($clear_abnormal == 1) {
-            $record_status = true;
-        } else {
-            $record_status = false;
-        }
-
         $StoreRecords = Machinerecord::find($id);
 
         if (!$StoreRecords) {
             return response()->json(['error' => 'Record not found !!!!'], 404);
-        }
-        else if ($StoreRecords->correct_by) {
+        } else if ($StoreRecords->correct_by) {
             return response()->json(['error' => 'Pembaruan data gagal. Data sudah dikoreksi oleh orang lain.'], 422);
-        }
-        else {
-            $StoreRecords->update([
-                'machinerecord_status' => $record_status,
+        } else {
+            $updateData = [
                 'correct_by' => $request->input('correct_by'),
                 'note' => $request->input('note'),
                 'finish_preventive' => $currenttime,
-            ]);
+            ];
+            if ($clear_abnormal == 1) {
+                $updateData['machinerecord_status'] = true;
+            }
+            $StoreRecords->update($updateData);
         }
+
         return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
     }
 
@@ -505,7 +504,7 @@ class MachinerecordController extends Controller
     {
         try {
             $refreshrecord = DB::table('machine_schedules')
-                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.created_at as created_date')
+                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as created_date')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
                 ->orderBy('machinerecords.id', 'desc')
