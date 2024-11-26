@@ -260,7 +260,7 @@ class MachinerecordController extends Controller
             $getshifttime = Carbon::now()->format('H:i');
             if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
                 $shifttime = 'Shift 1';
-            } elseif ($getshifttime >= '16:00' && $getshifttime < '00:15') {
+            } elseif ($getshifttime >= '16:00' && $getshifttime < '23:59') {
                 $shifttime = 'Shift 2';
             } else {
                 $shifttime = 'Diluar Shift Atau Lembur';

@@ -201,21 +201,30 @@
                     url: '{{ route("readcorrection", ':id') }}'.replace(':id', correctId),
                     success: function(data) {
                         let table_modal = '';
-                        data.machinedata.forEach((rowdata, index) => {
-                            const actions = JSON.parse(data.combineresult[0].operator_action)[index].join(' & ');
-                            const result = JSON.parse(data.combineresult[0].result)[index];
+                        const operatorActionArray = JSON.parse(data.combineresult[0].operator_action || '[]');
+                        const resultArray = JSON.parse(data.combineresult[0].result || '[]');
+                        const maxLength = Math.min(
+                            data.machinedata.length,
+                            operatorActionArray.length,
+                            resultArray.length
+                        );
+
+                        for (let index = 0; index < maxLength; index++) {
+                            const actions = operatorActionArray[index]?.join(' & ') || 'No actions';
+                            const result = resultArray[index] || 'No result';
 
                             table_modal += `
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${rowdata.name_componencheck}</td>
-                                    <td>${rowdata.name_parameter}</td>
-                                    <td>${rowdata.name_metodecheck}</td>
+                                    <td>${data.machinedata[index].name_componencheck}</td>
+                                    <td>${data.machinedata[index].name_parameter}</td>
+                                    <td>${data.machinedata[index].name_metodecheck}</td>
                                     <td>${actions}</td>
                                     <td>${result}</td>
                                 </tr>
                             `;
-                        });
+                        }
+
 
                         const header_modal = `
                             <h5 class="modal-title">Extra Large Modal</h5>
