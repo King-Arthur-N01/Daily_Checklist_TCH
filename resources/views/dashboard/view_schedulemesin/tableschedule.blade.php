@@ -228,7 +228,7 @@
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                             <button class="dropdown-item-custom-detail view_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
                                             <button class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
-                                            <button class="dropdown-item-custom-delete delete_button_year" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
+                                            <button class="dropdown-item-custom-delete delete_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
                                         </div>
                                     </a>
                                 </div>
@@ -384,6 +384,7 @@
                             parentEl: '#modal_data_add',
                             showDropdowns: true,
                             locale: {
+                                firstDay: 1,
                                 format: 'DD-MM-YYYY'
                             },
                             maxSpan: {
@@ -1617,7 +1618,7 @@
         // <===========================================================================================>
 
         // fungsi delete button untuk hapus schedule pertahun
-        $('#scheduleTables').on('click', '.delete_button_year', function(e) {
+        $('#scheduleTables').on('click', '.delete_schedule_year', function(e) {
             e.preventDefault();
             const button = $(this);
             const machineId = button.data('id');

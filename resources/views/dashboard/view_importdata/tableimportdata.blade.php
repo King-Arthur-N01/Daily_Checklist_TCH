@@ -632,7 +632,7 @@
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
                             $('#modal_data_view').html(
-                                '<h4 style="text-align: center;">Error data property mesin belum tersedia!</h4>'
+                                '<h4 style="text-align: center;">Error data ketegory mesin belum tersedia!</h4>'
                             );
                         } else {
                             const machine = data.fetchmachines[0];

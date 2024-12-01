@@ -87,21 +87,93 @@ class YearlyScheduleController extends Controller
         }
     }
 
-    public function viewdataschedule()
+    public function viewdataschedule($id)
     {
-        return view('dashboard.view_schedulemesin.printscheduleyear');
+        // Pass ID to the view for use in JavaScript
+        return view('dashboard.view_schedulemesin.printscheduleyear', compact('id'));
     }
 
-    public function datacalendar() {
-        $events = [
-            ['title' => 'Demo Event-1', 'start' => '2021-07-11', 'end' => '2021-07-12', 'resourceId' => 'a'],
-            ['title' => 'Demo Event-2', 'start' => '2021-07-11', 'end' => '2021-07-13', 'resourceId' => 'b'],
-            ['title' => 'Demo Event-3', 'start' => '2021-07-14', 'end' => '2021-07-14', 'resourceId' => 'a'],
-            ['title' => 'Demo Event-4', 'start' => '2021-07-17', 'end' => '2021-07-17', 'resourceId' => 'b'],
-        ];
+    public function datacalendar($id)
+    {
+        // $schedule_data = MachineSchedule::where('id', $id)->get();
+
+        $schedule_data = DB::table('machine_schedules')
+        ->select('machine_schedules.*', 'machines.*')
+        ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+        ->where('machine_schedules.yearly_id', '=', $id)
+        ->get();
+
+        // Transform data for FullCalendar
+        $events = $schedule_data->map(function ($schedule) {
+            return [
+                'id' => $schedule->machine_number,
+                'title' => $schedule->machine_name,
+                'start' => Carbon::parse($schedule->schedule_start)->format('Y-m-d'),
+                'end' => Carbon::parse($schedule->schedule_end)->format('Y-m-d'),
+            ];
+        });
 
         return response()->json($events);
     }
+
+    // Public function datacalendar() {
+    //     $events = [
+    //         [
+    //             'id' => 1,
+    //             'title' => 'Meeting with Team',
+    //             'start' => '2024-01-02 10:00:00',
+    //             'end' => '2024-01-02 12:00:00',
+    //         ],
+    //         [
+    //             'id' => 2,
+    //             'title' => 'System Maintenance',
+    //             'start' => '2024-01-05',
+    //             'end' => '2024-01-06',
+    //         ],
+    //         [
+    //             'id' => 3,
+    //             'title' => 'Weekly Progress Review',
+    //             'start' => '2024-01-10',
+    //         ],
+    //         [
+    //             'id' => 4,
+    //             'title' => 'Project Launch',
+    //             'start' => '2024-01-15 09:00:00',
+    //             'end' => '2024-01-15 17:00:00',
+    //         ]
+    //     ];
+    //     return response()->json($events);
+    // }
+
+    // Public function datacalendar() {
+    //     $data = [
+    //         [
+    //             'id' => '1',
+    //             'title' => 'WELDING CO2 MANUAL',
+    //             'start' => '2024-08-01',
+    //             'end' => '2024-08-07'
+    //         ],
+    //         [
+    //             'id' => '2',
+    //             'title' => 'WELDING ROBOT',
+    //             'start' => '2024-07-07',
+    //             'end' => '2024-08-14'
+    //         ],
+    //         [
+    //             'id' => '3',
+    //             'title' => 'SCREW COMPRESSORE',
+    //             'start' => '2024-08-26',
+    //             'end' => '2024-08-31'
+    //         ],
+    //         [
+    //             'id' => '4',
+    //             'title' => 'POWER PRESS',
+    //             'start' => '2024-09-01',
+    //             'end' => '2024-09-10'
+    //         ]
+    //     ];
+    //     return response()->json($data);
+    // }
 
     public function createschedule(Request $request)
     {
