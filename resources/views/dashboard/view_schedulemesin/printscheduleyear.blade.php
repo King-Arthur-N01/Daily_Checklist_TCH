@@ -93,7 +93,7 @@
                 <th rowspan="2" width="10%">NAMA MESIN</th>
                 <th rowspan="2" width="6%">BRAND/MERK</th>
                 <th rowspan="2" width="6%">LOKASI/NO.MESIN</th>
-                <th rowspan="2" width="1%">P/A</th>
+                <th rowspan="2" width="2%">P/A</th>
                 <th rowspan="2" width="5%">JANUARY</th>
                 <th rowspan="2" width="5%">FEBRUARI</th>
                 <th rowspan="2" width="5%">MARET</th>
@@ -115,8 +115,9 @@
         <tbody>
             @foreach ($scheduledata as $key => $printdata)
                 @php
-                    $format_date = Carbon\Carbon::parse($printdata->schedule_date);
-                    $month = $format_date->month;
+                    $schedule_start = Carbon\Carbon::parse($printdata->schedule_start);
+                    $schedule_end = Carbon\Carbon::parse($printdata->schedule_end);
+                    $month = $schedule_start->month;
                 @endphp
                 <tr>
                     <td rowspan="2">{{ $key + 1 }}</td>
@@ -128,7 +129,7 @@
                     @for ($i = 1; $i <= 12; $i++)
                         <td style="{{ $month === $i ? 'background-color: #53CCF8' : '' }}">
                             @if ($month === $i)
-                                {{ $format_date->format('d-F-y') }}
+                                {{ $schedule_start->format('d') }} - {{ $schedule_end->format('d-F') }}
                             @endif
                         </td>
                     @endfor
@@ -163,7 +164,7 @@
                 <td>= PLANT</td>
             </tr>
             <tr>
-                <td width="2%"><input type="checkbox" style="background-color: #000000; color: transparent"></td>
+                <td width="2%"><input type="checkbox" style="background-color: #fcff40; color: transparent"></td>
                 <td>= ACTUAL</td>
             </tr>
         </tbody>
