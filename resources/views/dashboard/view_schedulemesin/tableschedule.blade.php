@@ -226,6 +226,7 @@
                                     <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                            <button class="dropdown-item-custom-more-edit print_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print</button>
                                             <button class="dropdown-item-custom-detail view_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
                                             <button class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
                                             <button class="dropdown-item-custom-delete delete_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
@@ -923,6 +924,21 @@
         });
         // <===========================================================================================>
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <===========================================================================================>
+
+
+
+        // <===========================================================================================>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<PRINT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <===========================================================================================>
+        $(document).on('click', '.print_schedule_year', function(event) {
+            let button = $(this); // Use 'this' to refer to the clicked button
+            let scheduleId = button.data('id');
+            let new_view_print = '{{ route("printschedule", ":id") }}'.replace(':id', scheduleId);
+            window.open(new_view_print, '_blank');
+        });
+        // <===========================================================================================>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END PRINT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
 

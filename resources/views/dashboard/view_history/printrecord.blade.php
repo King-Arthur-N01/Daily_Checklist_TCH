@@ -307,7 +307,9 @@
                 <th>keterangan :</th>
             </tr>
             <tr>
-                <td height="14%"><textarea class="text-area">{{$usersdata[0]->note}}</textarea></td>
+                <td height="14%">
+                    <textarea class="text-area">{{$usersdata[0]->note}} @if (!empty($abnormals)) @foreach($abnormals as $abnormal) Abnormality=( {{$abnormal}} ) @endforeach @endif</textarea>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -334,5 +336,4 @@
         </tbody>
     </table>
 </body>
-
 </html>

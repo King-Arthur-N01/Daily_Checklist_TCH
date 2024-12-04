@@ -10,6 +10,7 @@ use App\MachineSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class YearlyScheduleController extends Controller
 {
@@ -90,15 +91,13 @@ class YearlyScheduleController extends Controller
     public function viewdataschedule($id)
     {
         // Pass ID to the view for use in JavaScript
-        return view('dashboard.view_schedulemesin.printscheduleyear', compact('id'));
+        return view('dashboard.view_schedulemesin.viewscheduleyear', compact('id'));
     }
 
-    public function datacalendar($id)
+    public function eventcalendar($id)
     {
-        // $schedule_data = MachineSchedule::where('id', $id)->get();
-
         $schedule_data = DB::table('machine_schedules')
-        ->select('machine_schedules.*', 'machines.*')
+        ->select('machine_schedules.*', 'machines.*', 'machines.id as machine_id')
         ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
         ->where('machine_schedules.yearly_id', '=', $id)
         ->get();
@@ -106,8 +105,8 @@ class YearlyScheduleController extends Controller
         // Transform data for FullCalendar
         $events = $schedule_data->map(function ($schedule) {
             return [
-                'id' => $schedule->machine_number,
-                'title' => $schedule->machine_name,
+                'resourceId' => $schedule->machine_id,
+                'title' => $schedule->machine_number,
                 'start' => Carbon::parse($schedule->schedule_start)->format('Y-m-d'),
                 'end' => Carbon::parse($schedule->schedule_end)->format('Y-m-d'),
             ];
@@ -116,64 +115,50 @@ class YearlyScheduleController extends Controller
         return response()->json($events);
     }
 
-    // Public function datacalendar() {
-    //     $events = [
-    //         [
-    //             'id' => 1,
-    //             'title' => 'Meeting with Team',
-    //             'start' => '2024-01-02 10:00:00',
-    //             'end' => '2024-01-02 12:00:00',
-    //         ],
-    //         [
-    //             'id' => 2,
-    //             'title' => 'System Maintenance',
-    //             'start' => '2024-01-05',
-    //             'end' => '2024-01-06',
-    //         ],
-    //         [
-    //             'id' => 3,
-    //             'title' => 'Weekly Progress Review',
-    //             'start' => '2024-01-10',
-    //         ],
-    //         [
-    //             'id' => 4,
-    //             'title' => 'Project Launch',
-    //             'start' => '2024-01-15 09:00:00',
-    //             'end' => '2024-01-15 17:00:00',
-    //         ]
-    //     ];
-    //     return response()->json($events);
-    // }
+    public function resourcecalendar($id)
+    {
+        $schedule_data = DB::table('machine_schedules')
+        ->select('machine_schedules.*', 'machines.*', 'machines.id as machine_id')
+        ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+        ->where('machine_schedules.yearly_id', '=', $id)
+        ->get();
 
-    // Public function datacalendar() {
-    //     $data = [
-    //         [
-    //             'id' => '1',
-    //             'title' => 'WELDING CO2 MANUAL',
-    //             'start' => '2024-08-01',
-    //             'end' => '2024-08-07'
-    //         ],
-    //         [
-    //             'id' => '2',
-    //             'title' => 'WELDING ROBOT',
-    //             'start' => '2024-07-07',
-    //             'end' => '2024-08-14'
-    //         ],
-    //         [
-    //             'id' => '3',
-    //             'title' => 'SCREW COMPRESSORE',
-    //             'start' => '2024-08-26',
-    //             'end' => '2024-08-31'
-    //         ],
-    //         [
-    //             'id' => '4',
-    //             'title' => 'POWER PRESS',
-    //             'start' => '2024-09-01',
-    //             'end' => '2024-09-10'
-    //         ]
-    //     ];
-    //     return response()->json($data);
-    // }
+        // Function to generate random hex color
+        function generateColor() {
+            return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+        }
+
+        // Transform data for FullCalendar
+        $events = $schedule_data->map(function ($schedule) {
+            return [
+                'id' => $schedule->machine_id,
+                'title' => $schedule->machine_name,
+                'eventColor' => generateColor(),
+            ];
+        });
+
+        return response()->json($events);
+    }
+
+    public function printdataschedule($id)
+    {
+        try {
+            $scheduledata = DB::table('yearly_schedules')
+            ->select('yearly_schedules.*', 'machine_schedules.*', 'machines.*')
+            ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('yearly_schedules.id', '=', $id)
+            ->get();
+
+            // Render PDF
+            $pdf = PDF::loadView('dashboard.view_schedulemesin.printscheduleyear', compact('scheduledata'));
+            $pdf->setPaper('A3', 'landscape');
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+    }
 
     public function createschedule(Request $request)
     {

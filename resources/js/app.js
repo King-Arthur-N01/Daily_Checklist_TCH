@@ -10,18 +10,18 @@ document.addEventListener("DOMContentLoaded", function () {
     let id = calendarEl.dataset.id; // Ambil ID dari atribut data-id
     let calendar = new Calendar(calendarEl, {
         schedulerLicenseKey: "CC-Attribution-NonCommercial-NoDerivatives",
-        plugins: [dayGridPlugin],
+        plugins: [resourceTimelinePlugin],
         timeZone: 'UTC',
         editable: false,
         // selectable:false,
-        initialView: "dayGridMonth",
+        initialView: "resourceTimelineYear",
         aspectRatio: 2,
         firstDay: 1,
         resourceAreaHeaderContent: 'Machine',
         headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridYear',
+            left: "today prev,next",
+            center: "title",
+            right: "resourceTimelineMonth,resourceTimelineYear",
         },
         eventTimeFormat: false,
         // eventTimeFormat: { // Format waktu
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //     minute: "2-digit",
         //     hour12: false
         // },
-        // resources: "/schedule/calendar/resource",
+        resources: `/schedule/view/resources/${id}`,
         events: `/schedule/view/events/${id}`,
         eventSourceSuccess: function(data) {
             console.log("Data JSON dari server:", data);

@@ -223,7 +223,7 @@
                                             <th>NAMA MESIN</th>
                                             <th>BRAND MESIN</th>
                                             <th>TYPE MESIN</th>
-                                            <th>BATAS WAKTU PREVENTIVE</th>
+                                            <th>WAKTU PREVENTIVE</th>
                                             <th>ACTION</th>
                                         </tr>
                                     </thead>

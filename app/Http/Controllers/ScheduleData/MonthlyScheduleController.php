@@ -168,7 +168,7 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    public function printdataschedule($id)
+    public function printdataschedulemonth($id)
     {
         try {
             $scheduledata = DB::table('monthly_schedules')

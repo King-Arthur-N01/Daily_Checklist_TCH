@@ -300,10 +300,17 @@ class MachinerecordController extends Controller
             $StoreRecords->save();
 
             $StoreSchedule = Machineschedule::find($schedule_id);
+            $schedule_start = Carbon::parse($StoreSchedule->schedule_start);
+            $schedule_end = Carbon::parse($StoreSchedule->schedule_end);
             $schedule_date = Carbon::parse($StoreSchedule->schedule_date);
             $schedulenext = $schedule_date->copy()->addMonths(6);
             $StoreSchedule->schedule_next = $schedulenext;
             $StoreSchedule->machine_schedule_status = true;
+            if ($record_date->between($schedule_start, $schedule_end)) {
+                $StoreSchedule->schedule_time_status = true;
+            } else {
+                $StoreSchedule->schedule_time_status = false;
+            }
             $StoreSchedule->save();
 
             $monthly_id = ($StoreSchedule->monthly_id);
