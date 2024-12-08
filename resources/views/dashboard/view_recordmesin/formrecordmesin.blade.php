@@ -50,7 +50,7 @@
                             <div class="header-input">
                                 <div class="col-6">
                                     <a>NO.MESIN :</a>
-                                    <input class="form-control" type="int" name="machine_number" id="machine_number" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
+                                    <input class="form-control" type="int" id="machine_number" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
                                 </div>
                                 <div class="col-6">
                                     <a>WAKTU PREVENTIVE :</a>
@@ -102,8 +102,8 @@
                                                     <select name="result[{{ $key }}]" id="result[{{ $key }}]" required>
                                                         <option label="Result" disabled selected></option>
                                                         <option value="custom">Others</option>
-                                                        <option value="good">OK</option>
-                                                        <option value="not good">NG</option>
+                                                        <option value="OK">OK</option>
+                                                        <option value="NG">NG</option>
                                                     </select>
                                                     <input class="custom-input-option" type="text" id="custom_input_{{ $key }}" placeholder="Enter your own result"/>
                                                 </div>

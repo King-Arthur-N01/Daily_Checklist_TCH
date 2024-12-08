@@ -196,13 +196,18 @@
             </tr>
         </tbody>
     </table>
+    @php
+        $formattedDate = Carbon\Carbon::now()->format('d-m-Y');
+    @endphp
     <table class="table-input">
         <tbody>
             <tr>
                 <th width="10%">NO. MESIN</th>
                 <th width="25%">:</th>
+                <th width="25%">{{$machinedata[0]->machine_number}}</th>
                 <th width="10%" style="border-left: 0.5px solid #000000">TANGGAL</th>
                 <th width="25%">:</th>
+                <th width="25%">{{$formattedDate}}</th>
             </tr>
         </tbody>
     </table>

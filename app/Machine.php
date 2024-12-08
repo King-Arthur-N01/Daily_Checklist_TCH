@@ -14,6 +14,7 @@ class Machine extends Model
         'machine_type',
         'machine_spec',
         'machine_made',
+        'machine_status',
         'mfg_number',
         'install_date',
         'id_property',

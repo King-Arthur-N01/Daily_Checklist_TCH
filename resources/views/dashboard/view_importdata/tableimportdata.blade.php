@@ -51,6 +51,7 @@
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
                                 <th>KATEGORI CHECKSHEET</th>
+                                <th>STATUS MESIN</th>
                                 <th>ACTION</th>
                             </thead>
                         </table>
@@ -214,6 +215,7 @@
                                 machine_type: refreshmachine.machine_type,
                                 machine_brand: refreshmachine.machine_brand,
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada kategori',
+                                machine_status: refreshmachine.machine_status,
                                 actions: `
                                     <div class="dynamic-button-group">
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
@@ -234,6 +236,13 @@
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
                     { data: 'name_property' },
+                    { data: 'machine_status', render: function(data, type, row) {
+                        if (data === 0) {
+                            return '<span class="badge badge-danger">NONACTIVE</span>';
+                        } else if (data === 1) {
+                            return '<span class="badge badge-success">ACTIVE</span>';
+                        }
+                    }},
                     { data: 'actions', orderable: false, searchable: false }
                 ]
             });
@@ -265,7 +274,7 @@
                     },
                     error: function(xhr, status, error) {
                         if (xhr.responseText) {
-                            const warningMessage = xhr.responseText;
+                            const warningMessage = JSON.parse(xhr.responseText).error;
                             $('#failedText').text(warningMessage);
                             $('#failedModal').modal('show');
                         }
@@ -535,13 +544,23 @@
                             </div>
                             <table class="table table-bordered" id="editTables" width="100%">
                                 <thead>
-                                    <th>Kategori Mesin</th>
+                                    <tr>
+                                        <th>Kategori Mesin</th>
+                                        <th>Status Mesin</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="4">
-                                            <select class="form-control select2" id="getproperty">
+                                        <td>
+                                            <select class="form-control" id="getproperty">
                                                 <option value="">Tidak ada</option>
                                                 ${options}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="getstatus">
+                                                <option value="1" ${data.fetchmachine.machine_status == 1 ? 'selected' : ''}>Aktif</option>
+                                                <option value="0" ${data.fetchmachine.machine_status == 0 ? 'selected' : ''}>Nonaktif</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -569,7 +588,8 @@
                                 machineType: $('input[name="machine_type"]').val(),
                                 installDate: $('input[name="install_date"]').val(),
                                 machineNumber: $('input[name="machine_number"]').val(),
-                                idProperty : $('#getproperty').val()
+                                idProperty : $('#getproperty').val(),
+                                machineStatus : $('#getstatus').val()
                             };
                             $.ajax({
                                 type: 'PUT',
@@ -585,7 +605,8 @@
                                     'machine_type': formData.machineType,
                                     'install_date': formData.installDate,
                                     'machine_number': formData.machineNumber,
-                                    'id_property': formData.idProperty
+                                    'id_property': formData.idProperty,
+                                    'machine_status': formData.machineStatus
                                 },
                                 success: function(response) {
                                     if (response.success) {

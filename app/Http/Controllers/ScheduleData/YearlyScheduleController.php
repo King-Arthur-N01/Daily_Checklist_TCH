@@ -144,14 +144,21 @@ class YearlyScheduleController extends Controller
     {
         try {
             $scheduledata = DB::table('yearly_schedules')
-            ->select('yearly_schedules.*', 'machine_schedules.*', 'machines.*')
+            ->select('yearly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
             ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->where('yearly_schedules.id', '=', $id)
             ->get();
 
+            $recorddata = DB::table('yearly_schedules')
+            ->select('yearly_schedules.id', 'machine_schedules.id', 'machinerecords.*', 'machine_schedules.id as record_id')
+            ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+            ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
+            ->where('yearly_schedules.id', '=', $id)
+            ->get();
+
             // Render PDF
-            $pdf = PDF::loadView('dashboard.view_schedulemesin.printscheduleyear', compact('scheduledata'));
+            $pdf = PDF::loadView('dashboard.view_schedulemesin.printscheduleyear', compact(['scheduledata','recorddata']));
             $pdf->setPaper('A3', 'landscape');
             return $pdf->stream();
         } catch (\Exception $e) {

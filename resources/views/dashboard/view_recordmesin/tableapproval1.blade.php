@@ -225,7 +225,6 @@
                             `;
                         }
 
-
                         const header_modal = `
                             <h5 class="modal-title">Extra Large Modal</h5>
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -264,7 +263,7 @@
                                 <div class="header-input">
                                     <div class="col-6">
                                         <a>NO.MESIN :</a>
-                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.usersdata[0].machine_number2}" readonly>
+                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number}" readonly>
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>

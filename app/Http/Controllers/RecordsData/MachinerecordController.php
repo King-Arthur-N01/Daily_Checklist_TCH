@@ -279,7 +279,7 @@ class MachinerecordController extends Controller
             }
 
             $StoreRecords = new Machinerecord();
-            $StoreRecords->machine_number2 = $request->input('machine_number');
+            // $StoreRecords->machine_number2 = $request->input('machine_number');
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine_schedule = $schedule_id;

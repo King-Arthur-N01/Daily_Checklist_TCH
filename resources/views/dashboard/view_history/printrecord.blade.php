@@ -229,7 +229,7 @@
             <tr>
                 <th width="10%">NO. MESIN</th>
                 <th width="25%">:</th>
-                <th width="25%">{{$usersdata[0]->machine_number2}}</th>
+                <th width="25%">{{$machinedata[0]->machine_number}}</th>
                 <th width="10%" style="border-left: 0.5px solid #000000">TANGGAL</th>
                 <th width="25%">:</th>
                 <th width="25%">{{$formattedDate}}</th>
@@ -329,9 +329,11 @@
             </tr>
             <tr>
                 <td width="55%" id="hidden-column"></td>
-                <th>&nbsp;</th>
-                <th>&nbsp;</th>
-                <th>&nbsp;</th>
+                <th>{{$usersdata[0]->correct_by_name}}</th>
+                <th>{{$usersdata[0]->approve_by_name}}</th>
+                <th>@foreach ($usernames as $get_user_id)
+                    {{$get_user_id}},
+                @endforeach</th>
             </tr>
         </tbody>
     </table>

@@ -13,13 +13,14 @@ class CreateMachinesTable extends Migration
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
             $table->string('invent_number')->unique();
-            $table->string('machine_number')->index();
+            $table->string('machine_number')->nullable();
             $table->string('machine_name');
             $table->string('machine_brand')->nullable();
             $table->string('machine_type')->nullable();
             $table->string('machine_spec')->nullable();
             $table->string('machine_made')->nullable();
-            $table->string('mfg_number');
+            $table->boolean('machine_status')->default(true);
+            $table->string('mfg_number')->nullable();
             $table->string('install_date');
             $table->unsignedBigInteger('id_property')->nullable();
             $table->timestamps();

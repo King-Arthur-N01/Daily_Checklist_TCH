@@ -8,7 +8,6 @@ class Machinerecord extends Model
     protected $fillable = [
         'shift',
         'note',
-        'machine_number2',
         'create_by',
         'correct_by',
         'approve_by',

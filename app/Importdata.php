@@ -21,9 +21,9 @@ class Importdata implements ToModel
             $existingMachine = Machine::where('invent_number', $row[1])->first();
 
             if ($existingMachine) {
-                $errorMessage = 'Duplicate invent_number: ' . $row[1];
+                $errorMessage = 'Duplicate NO.INVENT : ' . $row[1];
                 Log::error($errorMessage);
-                return response()->json(['error' => $errorMessage], 422);
+                throw new \Exception($errorMessage);
             }
 
             return new Machine([
@@ -39,7 +39,7 @@ class Importdata implements ToModel
             ]);
         } catch (\Exception $e) {
             Log::error('Error importing row: ' . $e->getMessage());
-            return null;
+            throw $e;
         }
     }
 }

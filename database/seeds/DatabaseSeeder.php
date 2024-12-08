@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         ComponencheckSeeder::class,
         ParameterSeeder::class,
         MetodecheckSeeder::class,
-        MachinesSeeder::class,
+        // MachinesSeeder::class,
         ]);
     }
 }

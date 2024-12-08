@@ -113,18 +113,19 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($scheduledata as $key => $printdata)
+            @foreach ($scheduledata as $key => $printdata1)
                 @php
-                    $schedule_start = Carbon\Carbon::parse($printdata->schedule_start);
-                    $schedule_end = Carbon\Carbon::parse($printdata->schedule_end);
+                    $printdata2 = $recorddata->firstWhere('id_machine_schedule', $printdata1->id);
+                    $schedule_start = Carbon\Carbon::parse($printdata1->schedule_start);
+                    $schedule_end = Carbon\Carbon::parse($printdata1->schedule_end);
                     $month = $schedule_start->month;
                 @endphp
                 <tr>
                     <td rowspan="2">{{ $key + 1 }}</td>
-                    <td rowspan="2">{{ $printdata->invent_number }}</td>
-                    <td rowspan="2">{{ $printdata->machine_name }}</td>
-                    <td rowspan="2">{{ $printdata->machine_brand }}</td>
-                    <td rowspan="2">{{ $printdata->machine_number }}</td>
+                    <td rowspan="2">{{ $printdata1->invent_number }}</td>
+                    <td rowspan="2">{{ $printdata1->machine_name }}</td>
+                    <td rowspan="2">{{ $printdata1->machine_brand }}</td>
+                    <td rowspan="2">{{ $printdata1->machine_number }}</td>
                     <td>P</td>
                     @for ($i = 1; $i <= 12; $i++)
                         <td style="{{ $month === $i ? 'background-color: #53CCF8' : '' }}">
@@ -137,9 +138,24 @@
                 </tr>
                 <tr>
                     <td>A</td>
-                    @for ($i = 1; $i <= 12; $i++)
-                        <td></td> <!-- Kolom kosong untuk baris kedua -->
-                    @endfor
+                    @if ($printdata2)
+                        @php
+                            $record_date = Carbon\Carbon::parse($printdata2->record_date);
+                            $record_month = $record_date->month;
+                        @endphp
+                        @for ($i = 1; $i <= 12; $i++)
+                            <td style="{{ $record_month === $i ? 'background-color: #fcff40' : '' }}">
+                                @if ($record_month === $i)
+                                    {{ $record_date->format('d-F') }}
+                                @endif
+                            </td>
+                        @endfor
+                    @else
+                        {{-- Jika tidak ada record terkait, tampilkan sel kosong --}}
+                        @for ($i = 1; $i <= 12; $i++)
+                            <td></td>
+                        @endfor
+                    @endif
                     <td></td>
                 </tr>
             @endforeach
