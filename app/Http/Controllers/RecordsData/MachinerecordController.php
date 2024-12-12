@@ -78,14 +78,13 @@ class MachinerecordController extends Controller
     public function refreshtablehistory()
     {
         $joinrecords = DB::table('machinerecords')
-            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as created_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
+            ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as preventive_date', 'machinerecords.correct_by as getcorrect', 'machinerecords.approve_by as getapprove')
             ->join('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->orderBy('machinerecords.id', 'desc')
             ->get();
         return response()->json([
-            'joinrecords' => $joinrecords,
-            'getcreate' => $joinrecords->pluck('getcreate'),
+            'joinrecords' => $joinrecords
         ]);
     }
 
@@ -374,7 +373,7 @@ class MachinerecordController extends Controller
     {
         try {
             $refreshrecord = DB::table('machine_schedules')
-                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as created_date')
+                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as preventive_date')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
                 ->orderBy('machinerecords.id', 'desc')
@@ -511,7 +510,7 @@ class MachinerecordController extends Controller
     {
         try {
             $refreshrecord = DB::table('machine_schedules')
-                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as created_date')
+                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as preventive_date')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
                 ->orderBy('machinerecords.id', 'desc')

@@ -45,12 +45,13 @@
                             <thead>
                                 <th>NO.</th>
                                 <th>NAMA MESIN</th>
-                                <th>TYPE MESIN</th>
-                                <th>NOMOR MESIN</th>
+                                <th>NO.INVENT</th>
+                                <th>SPEC/TONAGE</th>
+                                <th>NO.MESIN/AREA</th>
                                 <th>STATUS</th>
-                                <th>STATUS PREVENTIVE</th>
+                                <th>STATUS PM</th>
                                 <th>SHIFT</th>
-                                <th>WAKTU PREVENTIVE</th>
+                                <th>WAKTU PM</th>
                                 <th>ACTION</th>
                             </thead>
                         </table>
@@ -156,12 +157,14 @@
                             return {
                                 number: index + 1,
                                 machine_name: refreshrecord.machine_name,
-                                machine_type: refreshrecord.machine_type,
-                                machine_number: refreshrecord.machine_number,
+                                invent_number: refreshrecord.invent_number,
+                                machine_spec: refreshrecord.machine_spec ?? '-',
+                                machine_number: refreshrecord.machine_number ?? '-',
                                 status: refreshrecord.approve_by ? (refreshrecord.approve_by > 0 ? 'Sudah Sudah Disetujui' : 'Belum Disetujui') : 'Belum Disetujui',
                                 record_status: refreshrecord.machinerecord_status,
                                 shift: refreshrecord.shift,
-                                getcreatedate: refreshrecord.created_date,
+                                getcreatedate: refreshrecord.preventive_date,
+                                schedule_status: refreshrecord.schedule_time_status,
                                 actions: `
                                     <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#approveModal"><i class="bi bi-pencil-square"></i></button>
                                 `
@@ -172,10 +175,11 @@
                 columns: [
                     { data: 'number' },
                     { data: 'machine_name' },
-                    { data: 'machine_type' },
+                    { data: 'invent_number' },
+                    { data: 'machine_spec' },
                     { data: 'machine_number' },
                     { data: 'status' },
-                    { data: 'record_status', render: function(data, type, row) {
+                    { data: 'record_status', render: function(data) {
                         if (data === 0) {
                             return '<span class="badge badge-danger">ABNORMAL</span>';
                         } else if (data === 1) {
@@ -185,7 +189,11 @@
                     { data: 'shift' },
                     {
                         data: 'getcreatedate',
-                        render: function(data) {
+                        render: function(data, type, row) {
+                            // Cek status dan ubah warna latar belakang jika perlu
+                            if (row.schedule_status == false) {
+                                return `<span style="color: red;">${formatDate(data)}</span>`;
+                            }
                             return formatDate(data);
                         }
                     },
@@ -238,32 +246,32 @@
                                             <th>No. Invent Mesin :</th>
                                             <th>${data.machinedata[0].invent_number}</th>
                                             <th>Spec/Tonage :</th>
-                                            <th>${data.machinedata[0].machine_spec}</th>
+                                            <th>${data.machinedata[0].machine_spec || '-'}</th>
                                         </tr>
                                         <tr>
                                             <th>Nama Mesin :</th>
                                             <th>${data.machinedata[0].machine_name}</th>
                                             <th>Buatan :</th>
-                                            <th>${data.machinedata[0].machine_made}</th>
+                                            <th>${data.machinedata[0].machine_made || '-'}</th>
                                         </tr>
                                         <tr>
                                             <th>Brand/Merk :</th>
-                                            <th>${data.machinedata[0].machine_brand}</th>
+                                            <th>${data.machinedata[0].machine_brand || '-'}</th>
                                             <th>Mfg.NO :</th>
-                                            <th>${data.machinedata[0].mfg_number}</th>
+                                            <th>${data.machinedata[0].mfg_number || '-'}</th>
                                         </tr>
                                         <tr>
                                             <th>Model/Type :</th>
-                                            <th>${data.machinedata[0].machine_type}</th>
+                                            <th>${data.machinedata[0].machine_type || '-'}</th>
                                             <th>Install Date :</th>
-                                            <th>${data.machinedata[0].install_date}</th>
+                                            <th>${data.machinedata[0].install_date || '-'}</th>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <div class="header-input">
                                     <div class="col-6">
                                         <a>NO.MESIN :</a>
-                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number}" readonly>
+                                        <input class="form-control" value="${data.machinedata[0].machine_number || '-'}" readonly>
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
@@ -287,7 +295,7 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note}</textarea>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note || '-'}</textarea>
                                 </div>
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">

@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ScheduleData\YearlyScheduleController;
+use App\MachineSchedule;
+use App\MonthlySchedule;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +29,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard.home');
+        try{
+            $yearnow = Carbon::now()->format('Y');
+
+            $scheduledata = MachineSchedule::all();
+
+            // dd($yearlydata);
+
+            return view('dashboard.home', compact('scheduledata'));
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
 }

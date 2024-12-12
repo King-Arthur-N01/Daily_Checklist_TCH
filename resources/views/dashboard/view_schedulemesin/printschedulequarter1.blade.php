@@ -65,14 +65,14 @@
         <thead>
             <tr>
                 <th colspan="2" rowspan="4"><img src="../public/assets/icons/trmitra_logo.png" height="70"></th>
-                <th colspan="11"><h1>SCHEDULE PREVENTIVE MAINTENANCE MESIN</h1></th>
+                <th colspan="5"><h1>SCHEDULE PREVENTIVE MAINTENANCE MESIN</h1></th>
                 <td colspan="2"><h3>DI SETUJUI</h3></td>
                 <td colspan="2"><h3>DI KETAHUI</h3></td>
                 <td colspan="2"><h3>DI BUAT</h3></td>
             </tr>
             <tr>
                 {{-- <th></th> --}}
-                <th colspan="11" rowspan="3"><h2>{{ $scheduledata[0]->name_schedule_year}}</h2></th>
+                <th colspan="5" rowspan="3"><h2>{{ $scheduledata[0]->name_schedule_year}}</h2></th>
                 <th colspan="2" rowspan="2"></th>
                 <th colspan="2" rowspan="2"></th>
                 <th colspan="2" rowspan="2"></th>
@@ -88,25 +88,19 @@
                 <td colspan="2">SPV. PROD</td>
             </tr>
             <tr>
-                <th rowspan="2" width="1%">NO.</th>
-                <th rowspan="2" width="10%">NO.INVENTARIS</th>
-                <th rowspan="2" width="10%">NAMA MESIN</th>
-                <th rowspan="2" width="6%">BRAND/MERK</th>
-                <th rowspan="2" width="6%">LOKASI/NO.MESIN</th>
+                <th rowspan="2" width="2%">NO.</th>
+                <th rowspan="2" width="15%">NO.INVENTARIS</th>
+                <th rowspan="2" width="15%">NAMA MESIN</th>
+                <th rowspan="2" width="10%">BRAND/MERK</th>
+                <th rowspan="2" width="10%">LOKASI/NO.MESIN</th>
                 <th rowspan="2" width="2%">P/A</th>
-                <th rowspan="2" width="5%">JANUARY</th>
-                <th rowspan="2" width="5%">FEBRUARI</th>
-                <th rowspan="2" width="5%">MARET</th>
-                <th rowspan="2" width="5%">APRIL</th>
-                <th rowspan="2" width="5%">MEI</th>
-                <th rowspan="2" width="5%">JUNI</th>
-                <th rowspan="2" width="5%">JULY</th>
-                <th rowspan="2" width="5%">AGUSTUS</th>
-                <th rowspan="2" width="5%">SEPTEMBER</th>
-                <th rowspan="2" width="5%">OKTOBER</th>
-                <th rowspan="2" width="5%">NOVEMBER</th>
-                <th rowspan="2" width="5%">DESEMBER</th>
-                <th rowspan="2" width="5%">KETERANGAN</th>
+                <th rowspan="2" width="8%">JANUARY</th>
+                <th rowspan="2" width="8%">FEBRUARI</th>
+                <th rowspan="2" width="8%">MARET</th>
+                <th rowspan="2" width="8%">APRIL</th>
+                <th rowspan="2" width="8%">MEI</th>
+                <th rowspan="2" width="8%">JUNI</th>
+                <th rowspan="2" width="8%">KETERANGAN</th>
             </tr>
             <tr>
 
@@ -127,7 +121,7 @@
                     <td rowspan="2">{{ $printdata1->machine_brand }}</td>
                     <td rowspan="2">{{ $printdata1->machine_number }}</td>
                     <td>P</td>
-                    @for ($i = 1; $i <= 12; $i++)
+                    @for ($i = 1; $i <= 6; $i++)
                         <td style="{{ $month === $i ? 'background-color: #53CCF8' : '' }}">
                             @if ($month === $i)
                                 {{ $schedule_start->format('d') }} - {{ $schedule_end->format('d-F') }}
@@ -143,7 +137,7 @@
                             $record_date = Carbon\Carbon::parse($printdata2->record_date);
                             $record_month = $record_date->month;
                         @endphp
-                        @for ($i = 1; $i <= 12; $i++)
+                        @for ($i = 1; $i <= 6; $i++)
                             <td style="{{ $record_month === $i ? 'background-color: #fcff40' : '' }}">
                                 @if ($record_month === $i)
                                     {{ $record_date->format('d-F') }}
@@ -152,7 +146,7 @@
                         @endfor
                     @else
                         {{-- Jika tidak ada record terkait, tampilkan sel kosong --}}
-                        @for ($i = 1; $i <= 12; $i++)
+                        @for ($i = 1; $i <= 6; $i++)
                             <td></td>
                         @endfor
                     @endif

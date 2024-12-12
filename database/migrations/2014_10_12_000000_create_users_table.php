@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('nik')->unique();
             $table->boolean('status')->default(true);
             $table->string('department')->nullable();
+            $table->string('user_note')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

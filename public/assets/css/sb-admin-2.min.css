@@ -3840,6 +3840,10 @@ input[type=submit].btn-block {
     border: 0
 }
 
+.urgent-time {
+    background-color: #ffff004b;
+}
+
 .elapsed-time {
     background-color: #ff00004b;
 }

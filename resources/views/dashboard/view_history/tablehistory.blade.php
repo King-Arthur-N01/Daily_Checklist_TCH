@@ -40,13 +40,13 @@
                                 <tr>
                                     <th>NO.</th>
                                     <th>NAMA MESIN</th>
+                                    <th>NO.INVENT</th>
                                     <th>TYPE MESIN</th>
                                     <th>NOMOR MESIN</th>
                                     <th>STATUS</th>
                                     <th>STATUS</th>
-                                    <th>STATUS PREVENTIVE</th>
-                                    <th>SHIFT</th>
-                                    <th>WAKTU PREVENTIVE</th>
+                                    <th>STATUS PM</th>
+                                    <th>WAKTU PM</th>
                                     <th>ACTION</th>
                                 </tr>
                             </thead>
@@ -106,13 +106,14 @@
                             return {
                                 number: index + 1,
                                 machine_name: joinrecords.machine_name,
+                                invent_number: joinrecords.invent_number,
                                 machine_type: joinrecords.machine_type,
-                                machine_number: joinrecords.machine_number,
+                                machine_number: joinrecords.machine_number ?? '-',
                                 correct_status: joinrecords.getcorrect,
                                 approve_status: joinrecords.getapprove,
                                 record_status: joinrecords.machinerecord_status,
-                                shift: joinrecords.shift,
-                                create_date: joinrecords.created_date,
+                                getcreatedate: joinrecords.preventive_date,
+                                schedule_status: joinrecords.schedule_time_status,
                                 actions: `
                                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.records_id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></button>
                                 `
@@ -123,6 +124,7 @@
                 columns: [
                     { data: 'number' },
                     { data: 'machine_name' },
+                    { data: 'invent_number' },
                     { data: 'machine_type' },
                     { data: 'machine_number' },
                     { data: 'correct_status' },
@@ -134,10 +136,13 @@
                             return '<span class="badge badge-success">NORMAL</span>';
                         }
                     }},
-                    { data: 'shift' },
                     {
-                        data: 'create_date',
-                        render: function(data) {
+                        data: 'getcreatedate',
+                        render: function(data, type, row) {
+                            // Cek status dan ubah warna latar belakang jika perlu
+                            if (row.schedule_status == false) {
+                                return `<span style="color: red;">${formatDate(data)}</span>`;
+                            }
                             return formatDate(data);
                         }
                     },
@@ -215,7 +220,7 @@
                                 <div class="header-input">
                                     <div class="col-6">
                                         <a>NO.MESIN :</a>
-                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number}" readonly>
+                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number || '-'}" readonly>
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
@@ -239,7 +244,7 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>${data.usersdata[0].note}</textarea>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>${data.usersdata[0].note || '-'}</textarea>
                                 </div>
                                     <a>Abnormality terhadap preventive</a>
                                     <input class="form-control" value="${data.abnormals}" readonly>
@@ -294,8 +299,8 @@
             // fungsi table untuk melihat status dari sebuah preventive
             table.on('draw', function() {
                 $('#historyTables tbody tr').each(function() {
-                    var correctCell = $(this).find('td:eq(4)');
-                    var approveCell = $(this).find('td:eq(5)');
+                    var correctCell = $(this).find('td:eq(5)');
+                    var approveCell = $(this).find('td:eq(6)');
                     var correct = correctCell.text().trim();
                     var approve = approveCell.text().trim();
 

@@ -57,9 +57,11 @@ class YearlyScheduleController extends Controller
     public function readmachinedata()
     {
         try {
-            $refreshmachine = Machine::all();
+            $refreshmachine = Machine::all()->filter(function ($machine) {
+                return $machine->machine_status == true; // Atau bisa juga menggunakan $machine->machine_status === 1
+            });
             return response()->json([
-                'refreshmachine' => $refreshmachine
+                'refreshmachine' => $refreshmachine->values() // values() untuk mengatur ulang kunci array
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -140,25 +142,39 @@ class YearlyScheduleController extends Controller
         return response()->json($events);
     }
 
-    public function printdataschedule($id)
+    public function printScheduleAnnual($id)
+    {
+        return $this->generatePDF('dashboard.view_schedulemesin.printscheduleyear', $id);
+    }
+
+    public function printScheduleQuarter1($id)
+    {
+        return $this->generatePDF('dashboard.view_schedulemesin.printschedulequarter1', $id);
+    }
+
+    public function printScheduleQuarter2($id)
+    {
+        return $this->generatePDF('dashboard.view_schedulemesin.printschedulequarter2', $id);
+    }
+
+    private function generatePDF($view, $id)
     {
         try {
             $scheduledata = DB::table('yearly_schedules')
-            ->select('yearly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
-            ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
-            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->where('yearly_schedules.id', '=', $id)
-            ->get();
+                ->select('yearly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('yearly_schedules.id', '=', $id)
+                ->get();
 
             $recorddata = DB::table('yearly_schedules')
-            ->select('yearly_schedules.id', 'machine_schedules.id', 'machinerecords.*', 'machine_schedules.id as record_id')
-            ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
-            ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
-            ->where('yearly_schedules.id', '=', $id)
-            ->get();
+                ->select('yearly_schedules.id', 'machine_schedules.id', 'machinerecords.*', 'machine_schedules.id as record_id')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
+                ->where('yearly_schedules.id', '=', $id)
+                ->get();
 
-            // Render PDF
-            $pdf = PDF::loadView('dashboard.view_schedulemesin.printscheduleyear', compact(['scheduledata','recorddata']));
+            $pdf = PDF::loadView($view, compact(['scheduledata', 'recorddata']));
             $pdf->setPaper('A3', 'landscape');
             return $pdf->stream();
         } catch (\Exception $e) {

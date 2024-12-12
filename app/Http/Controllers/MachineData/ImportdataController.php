@@ -95,13 +95,21 @@ class ImportdataController extends Controller
     {
         try {
             $machinedata = DB::table('machines')
-                ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
-                ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-                ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
-                ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
-                ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
-                ->where('machines.id', '=', $id)
-                ->get();
+            ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
+            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
+            ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
+            ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
+            ->where('machines.id', '=', $id)
+            ->get()
+            ->map(function ($item) {
+                foreach ($item as $key => $value) {
+                    if ($value === null || $value === 'null') {
+                        $item->$key = '-';
+                    }
+                }
+                return $item;
+            });
 
             // Render PDF
             $pdf = PDF::loadView('dashboard.view_importdata.printmachine', compact('machinedata'));

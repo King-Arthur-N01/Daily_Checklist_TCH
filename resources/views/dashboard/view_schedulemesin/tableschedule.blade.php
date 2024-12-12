@@ -38,6 +38,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
                 </div>
                 <div class="card-body">
+                    <div id="errorMessages"></div>
                     <div class="div-tables">
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" data-toggle="modal" data-target="#addScheduleYear" tabindex="0"><i class="bi bi-calendar2-plus-fill"></i>&nbsp; Schedule Tahunan Mesin</button>
@@ -226,7 +227,9 @@
                                     <button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>
                                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                            <button class="dropdown-item-custom-more-edit print_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print</button>
+                                            <button class="dropdown-item-custom-more-edit print_quarter2" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print Quarter 2</button>
+                                            <button class="dropdown-item-custom-more-edit print_quarter1" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print Quarter 1</button>
+                                            <button class="dropdown-item-custom-more-edit print_year" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;Print Annual</button>
                                             <button class="dropdown-item-custom-detail view_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
                                             <button class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
                                             <button class="dropdown-item-custom-delete delete_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
@@ -410,8 +413,8 @@
                                     <table class="table table-bordered" id="machineTables1" width="100%">
                                         <thead>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -424,10 +427,10 @@
                                                 <tr>
                                                     <td>${index + 1}</td>
                                                     <td>${machine.invent_number}</td>
-                                                    <td>${machine.machine_number}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>${machine.machine_name}</td>
-                                                    <td>${machine.machine_type}</td>
-                                                    <td>${machine.machine_brand}</td>
+                                                    <td>${machine.machine_type || '-'}</td>
+                                                    <td>${machine.machine_brand || '-'}</td>
                                                     <td><input type="checkbox" name="machineinput" value="${machine.id}"></td>
                                                 </tr>
                                             `;
@@ -479,8 +482,8 @@
                                     <thead>
                                         <tr>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -494,10 +497,10 @@
                                             <tr>
                                                 <td>${index + 1}</td>
                                                 <td>${machine.invent_number}</td>
-                                                <td>${machine.machine_number}</td>
+                                                <td>${machine.machine_number || '-'}</td>
                                                 <td>${machine.machine_name}</td>
-                                                <td>${machine.machine_type}</td>
-                                                <td>${machine.machine_brand}</td>
+                                                <td>${machine.machine_type || '-'}</td>
+                                                <td>${machine.machine_brand || '-'}</td>
                                                 <td>
                                                     <input class="form-control daterange-picker" type="text" name="schedule_time">
                                                     <input type="hidden" name="machine_id_year" value="${machine.id}">
@@ -685,8 +688,8 @@
                                     <table class="table table-bordered" id="machineTables1" width="100%">
                                         <thead>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -700,10 +703,10 @@
                                                 <tr>
                                                     <td>${index + 1}</td>
                                                     <td>${machine.invent_number}</td>
-                                                    <td>${machine.machine_number}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>${machine.machine_name}</td>
-                                                    <td>${machine.machine_type}</td>
-                                                    <td>${machine.machine_brand}</td>
+                                                    <td>${machine.machine_type || '-'}</td>
+                                                    <td>${machine.machine_brand || '-'}</td>
                                                     <td>
                                                         <input type="checkbox" name="machineinput" value="${machine.id}" ${machineIds.map(String).includes(String(machine.id)) ? 'checked' : ''}>
                                                     </td>
@@ -765,8 +768,8 @@
                                     <thead>
                                         <tr>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -784,10 +787,10 @@
                                             <tr>
                                                 <td>${index + 1}</td>
                                                 <td>${machine.invent_number}</td>
-                                                <td>${machine.machine_number}</td>
+                                                <td>${machine.machine_number || '-'}</td>
                                                 <td>${machine.machine_name}</td>
-                                                <td>${machine.machine_type}</td>
-                                                <td>${machine.machine_brand}</td>
+                                                <td>${machine.machine_type || '-'}</td>
+                                                <td>${machine.machine_brand || '-'}</td>
                                                 <td>
                                                     <input class="form-control daterange-picker" id="schedule_time_${machine.id}" type="text" name="schedule_time">
                                                     <input type="hidden" name="machine_id_year2" value="${machine.id}">
@@ -919,8 +922,8 @@
         $(document).on('click', '.view_schedule_year', function(event) {
             let button = $(this); // Use 'this' to refer to the clicked button
             let scheduleId = button.data('id');
-            let new_view_print = '{{ route("viewscheduleyear", ":id") }}'.replace(':id', scheduleId);
-            window.open(new_view_print, '_blank');
+            let new_view = '{{ route("viewscheduleyear", ":id") }}'.replace(':id', scheduleId);
+            window.open(new_view, '_blank');
         });
         // <===========================================================================================>
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -931,10 +934,22 @@
         // <===========================================================================================>
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<PRINT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
-        $(document).on('click', '.print_schedule_year', function(event) {
+        $(document).on('click', '.print_quarter2', function(event) {
             let button = $(this); // Use 'this' to refer to the clicked button
             let scheduleId = button.data('id');
-            let new_view_print = '{{ route("printschedule", ":id") }}'.replace(':id', scheduleId);
+            let new_view_print = '{{ route("print_quarter2", ":id") }}'.replace(':id', scheduleId);
+            window.open(new_view_print, '_blank');
+        });
+        $(document).on('click', '.print_quarter1', function(event) {
+            let button = $(this); // Use 'this' to refer to the clicked button
+            let scheduleId = button.data('id');
+            let new_view_print = '{{ route("print_quarter1", ":id") }}'.replace(':id', scheduleId);
+            window.open(new_view_print, '_blank');
+        });
+        $(document).on('click', '.print_year', function(event) {
+            let button = $(this); // Use 'this' to refer to the clicked button
+            let scheduleId = button.data('id');
+            let new_view_print = '{{ route("print_year", ":id") }}'.replace(':id', scheduleId);
             window.open(new_view_print, '_blank');
         });
         // <===========================================================================================>
@@ -1009,8 +1024,8 @@
                                     <table class="table table-bordered" id="machineTables1" width="100%">
                                         <thead>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -1024,10 +1039,10 @@
                                                 <tr>
                                                     <td>${index + 1}</td>
                                                     <td>${machine.invent_number}</td>
-                                                    <td>${machine.machine_number}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>${machine.machine_name}</td>
-                                                    <td>${machine.machine_type}</td>
-                                                    <td>${machine.machine_brand}</td>
+                                                    <td>${machine.machine_type || '-'}</td>
+                                                    <td>${machine.machine_brand || '-'}</td>
                                                     <td>${formatDate(machine.schedule_start)}</td>
                                                     <td>${formatDate(machine.schedule_end)}</td>
                                                     <td><input type="checkbox" name="machineinput" value="${machine.id}"></td>
@@ -1067,8 +1082,8 @@
                                     <thead>
                                         <tr>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -1083,10 +1098,10 @@
                                             <tr>
                                                 <td>${index + 1}</td>
                                                 <td>${machine.invent_number}</td>
-                                                <td>${machine.machine_number}</td>
+                                                <td>${machine.machine_number || '-'}</td>
                                                 <td>${machine.machine_name}</td>
-                                                <td>${machine.machine_type}</td>
-                                                <td>${machine.machine_brand}</td>
+                                                <td>${machine.machine_type || '-'}</td>
+                                                <td>${machine.machine_brand || '-'}</td>
                                                 <td>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -1094,7 +1109,7 @@
                                                                 <i class="bi bi-hourglass-split"></i>
                                                             </div>
                                                         </div>
-                                                        <input name="schedule_duration" type="number" class="form-control" placeholder="Dihitung Perjam">
+                                                        <input name="schedule_duration" type="number" class="form-control" placeholder="Dihitung Perjam" required>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -1309,8 +1324,8 @@
                                     <table class="table table-bordered" id="machineTables1" width="100%">
                                         <thead>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -1325,10 +1340,10 @@
                                                 <tr>
                                                     <td>${index + 1}</td>
                                                     <td>${machine.invent_number}</td>
-                                                    <td>${machine.machine_number}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>${machine.machine_name}</td>
-                                                    <td>${machine.machine_type}</td>
-                                                    <td>${machine.machine_brand}</td>
+                                                    <td>${machine.machine_type || '-'}</td>
+                                                    <td>${machine.machine_brand || '-'}</td>
                                                     <td>${formatDate(machine.schedule_start)}</td>
                                                     <td>${formatDate(machine.schedule_end)}</td>
                                                     <td>
@@ -1364,14 +1379,14 @@
                         );
 
                         let tableRows2 = `
-                            <form id="addSchedule" method="post">
+                            <form id="editSchedule" method="post">
                                 <input type="hidden" name="name_schedule_month_edit" value="${nameScheduleMonth}">
                                 <table class="table table-bordered" id="machineTables2" width="100%">
                                     <thead>
                                         <tr>
                                             <th>NO.</th>
-                                            <th>NO INVENT</th>
-                                            <th>NO MESIN</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
@@ -1386,10 +1401,10 @@
                                             <tr>
                                                 <td>${index + 1}</td>
                                                 <td>${machine.invent_number}</td>
-                                                <td>${machine.machine_number}</td>
+                                                <td>${machine.machine_number || '-'}</td>
                                                 <td>${machine.machine_name}</td>
-                                                <td>${machine.machine_type}</td>
-                                                <td>${machine.machine_brand}</td>
+                                                <td>${machine.machine_type || '-'}</td>
+                                                <td>${machine.machine_brand || '-'}</td>
                                                 <td>
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -1397,7 +1412,7 @@
                                                                 <i class="bi bi-hourglass-split"></i>
                                                             </div>
                                                         </div>
-                                                        <input name="schedule_duration" type="number" class="form-control" value="${machine.schedule_duration}" placeholder="Dihitung Perjam">
+                                                        <input name="schedule_duration" type="number" class="form-control" value="${machine.schedule_duration}" placeholder="Dihitung Perjam" required>
                                                     </div>
                                                 </td>
                                                 <td>

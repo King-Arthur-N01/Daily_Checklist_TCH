@@ -13,7 +13,7 @@
                     </div>
                     <div class="table-filter">
                         <div class="col-4">
-                            <p class="mg-b-10">Nomor Mesin </p>
+                            <p class="mg-b-10">Nomor Invent </p>
                             <input class="form-control" id="filterByNumber">
                         </div>
                         <div class="col-4">
@@ -46,7 +46,8 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="importTables" width="100%">
                             <thead>
-                                <th>NO MESIN</th>
+                                <th>NO.INVENT</th>
+                                <th>NO.MESIN/AREA</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
@@ -210,10 +211,11 @@
                                 return property.id === refreshmachine.id_property;
                             });
                             return {
-                                machine_number: refreshmachine.machine_number,
+                                invent_number: refreshmachine.invent_number,
+                                machine_number: refreshmachine.machine_number ?? '-',
                                 machine_name: refreshmachine.machine_name,
-                                machine_type: refreshmachine.machine_type,
-                                machine_brand: refreshmachine.machine_brand,
+                                machine_type: refreshmachine.machine_type ?? '-',
+                                machine_brand: refreshmachine.machine_brand ?? '-',
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada kategori',
                                 machine_status: refreshmachine.machine_status,
                                 actions: `
@@ -231,6 +233,7 @@
                     }
                 },
                 columns: [
+                    { data: 'invent_number' },
                     { data: 'machine_number' },
                     { data: 'machine_name' },
                     { data: 'machine_type' },
@@ -368,7 +371,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_number" placeholder="Nomor Mesin">
+                                        <input style="text-transform: uppercase;" class="form-control" type="text" name="machine_number">
                                     </div>
                                 </div>
                             </div>
@@ -469,7 +472,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
                                         <div>
-                                            <input style="text-transform: uppercase;" class="form-control" id="inventNumber" type="text" name="invent_number" value="${data.fetchmachine.invent_number}" placeholder="_-__-__-____">
+                                            <input style="text-transform: uppercase;" class="form-control" id="inventNumber" type="text" name="invent_number" value="${data.fetchmachine.invent_number || ''}" placeholder="_-__-__-____">
                                         </div>
                                     </div>
                                 </div>
@@ -477,7 +480,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_name" value="${data.fetchmachine.machine_name}" placeholder="Nama Mesin">
+                                            <input class="form-control" type="text" name="machine_name" value="${data.fetchmachine.machine_name || ''}" placeholder="Nama Mesin">
                                         </div>
                                     </div>
                                 </div>
@@ -485,7 +488,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_brand" value="${data.fetchmachine.machine_brand}" placeholder="Brand/Merk Mesin">
+                                            <input class="form-control" type="text" name="machine_brand" value="${data.fetchmachine.machine_brand || ''}" placeholder="Brand/Merk Mesin">
                                         </div>
                                     </div>
                                 </div>
@@ -495,7 +498,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Model/Type Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_type" value="${data.fetchmachine.machine_type}" placeholder="Model/Type Mesin">
+                                            <input class="form-control" type="text" name="machine_type" value="${data.fetchmachine.machine_type || ''}" placeholder="Model/Type Mesin">
                                         </div>
                                     </div>
                                 </div>
@@ -503,7 +506,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_spec" value="${data.fetchmachine.machine_spec}" placeholder="Spec/Tonnage">
+                                            <input class="form-control" type="text" name="machine_spec" value="${data.fetchmachine.machine_spec || ''}" placeholder="Spec/Tonnage">
                                         </div>
                                     </div>
                                 </div>
@@ -511,7 +514,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_made" value="${data.fetchmachine.machine_made}" placeholder="Buatan">
+                                            <input class="form-control" type="text" name="machine_made" value="${data.fetchmachine.machine_made || ''}" placeholder="Buatan">
                                         </div>
                                     </div>
                                 </div>
@@ -521,7 +524,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
                                         <div>
-                                            <input class="form-control" type="text" name="mfg_number" value="${data.fetchmachine.mfg_number}" placeholder="MFG Number">
+                                            <input class="form-control" type="text" name="mfg_number" value="${data.fetchmachine.mfg_number || ''}" placeholder="MFG Number">
                                         </div>
                                     </div>
                                 </div>
@@ -529,7 +532,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
                                         <div>
-                                            <input class="form-control" type="text" name="install_date" value="${data.fetchmachine.install_date}" placeholder="Install Date">
+                                            <input class="form-control" type="text" name="install_date" value="${data.fetchmachine.install_date || ''}" placeholder="Install Date">
                                         </div>
                                     </div>
                                 </div>
@@ -537,7 +540,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_number" value="${data.fetchmachine.machine_number}" placeholder="Nomor Mesin">
+                                            <input class="form-control" type="text" name="machine_number" value="${data.fetchmachine.machine_number || ''}" placeholder="Nomor Mesin">
                                         </div>
                                     </div>
                                 </div>
@@ -667,25 +670,25 @@
                                         <th>No. Invent Mesin :</th>
                                         <td>${machine.invent_number}</td>
                                         <th>Spec/Tonage :</th>
-                                        <td>${machine.machine_spec}</td>
+                                        <td>${machine.machine_spec ?? '-'}</td>
                                     </tr>
                                     <tr>
                                         <th>Nama Mesin :</th>
                                         <td>${machine.machine_name}</td>
                                         <th>Buatan :</th>
-                                        <td>${machine.machine_made}</td>
+                                        <td>${machine.machine_made ?? '-'}</td>
                                     </tr>
                                     <tr>
                                         <th>Brand/Merk :</th>
-                                        <td>${machine.machine_brand}</td>
+                                        <td>${machine.machine_brand ?? '-'}</td>
                                         <th>Mfg.NO :</th>
-                                        <td>${machine.mfg_number}</td>
+                                        <td>${machine.mfg_number ?? '-'}</td>
                                     </tr>
                                     <tr>
                                         <th>Model/Type :</th>
-                                        <td>${machine.machine_type}</td>
+                                        <td>${machine.machine_type ?? '-'}</td>
                                         <th>Install Date :</th>
-                                        <td>${machine.install_date}</td>
+                                        <td>${machine.install_date ?? '-'}</td>
                                     </tr>
                                 </table>
                                 <h5>Standart Mesin</h5>
@@ -789,8 +792,8 @@
 
                 for (let i = 1; i < rows.length; i++) {
                     const numberCell = rows[i].getElementsByTagName('td')[0];
-                    const nameCell = rows[i].getElementsByTagName('td')[1];
-                    const propertyCell = rows[i].getElementsByTagName('td')[4];
+                    const nameCell = rows[i].getElementsByTagName('td')[2];
+                    const propertyCell = rows[i].getElementsByTagName('td')[5];
 
                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';

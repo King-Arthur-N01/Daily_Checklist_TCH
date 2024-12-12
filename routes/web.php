@@ -66,7 +66,9 @@ Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleControlle
 Route::get ('/schedule/view/{id}', 'ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewscheduleyear');
 Route::get ('/schedule/view/events/{id}', 'ScheduleData\YearlyScheduleController@eventcalendar');
 Route::get ('/schedule/view/resources/{id}', 'ScheduleData\YearlyScheduleController@resourcecalendar');
-Route::get ('/schedule/print/{id}','ScheduleData\YearlyScheduleController@printdataschedule')->name('printschedule');
+Route::get ('/schedule/print/{id}','ScheduleData\YearlyScheduleController@printScheduleAnnual')->name('print_year');
+Route::get ('/schedule/print/quarter1/{id}','ScheduleData\YearlyScheduleController@printScheduleQuarter1')->name('print_quarter1');
+Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleController@printScheduleQuarter2')->name('print_quarter2');
 // schedule year route end
 
 // schedule month route

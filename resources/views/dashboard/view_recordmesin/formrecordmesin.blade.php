@@ -50,7 +50,7 @@
                             <div class="header-input">
                                 <div class="col-6">
                                     <a>NO.MESIN :</a>
-                                    <input class="form-control" type="int" id="machine_number" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
+                                    <input class="form-control" type="int" value="{{ $joinmachine[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
                                 </div>
                                 <div class="col-6">
                                     <a>WAKTU PREVENTIVE :</a>

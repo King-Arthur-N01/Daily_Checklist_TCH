@@ -231,13 +231,21 @@
                             `;
                             let currentTime = new Date();
                             data.refreshdetailrecord.forEach(recordmachine => {
+                                let scheduleDate = new Date(recordmachine.schedule_date);
                                 let scheduleEnd = new Date(recordmachine.schedule_end);
-                                let isPast = scheduleEnd && scheduleEnd < currentTime;
-                                let check_status = recordmachine.machine_schedule_status;
-                                let rowClass = isPast ? 'elapsed-time' : '';
+                                let checkStatus = recordmachine.machine_schedule_status;
+                                
+                                let rowClass = '';
 
-                                if (check_status === 1) {
-                                    rowClass += 'status-clear'; // Add the special class to the row dynamically
+                                if (checkStatus === true) {
+                                    rowClass += 'status-clear';
+                                } else {
+                                    if (currentTime > scheduleDate && currentTime < scheduleEnd) {
+                                        rowClass += 'urgent-time';
+                                    }
+                                    if (currentTime > scheduleDate && currentTime > scheduleEnd) {
+                                        rowClass += 'elapsed-time';
+                                    }
                                 }
                                 detailTable += `
                                     <tr class="${rowClass}">
@@ -246,7 +254,7 @@
                                         <td>${recordmachine.machine_name}</td>
                                         <td>${recordmachine.machine_brand}</td>
                                         <td>${recordmachine.machine_type}</td>
-                                        <td>${(scheduleEnd ? scheduleEnd.toLocaleString('en-ID', {
+                                        <td>${(scheduleDate ? scheduleDate.toLocaleString('en-ID', {
                                             year: 'numeric',
                                             month: 'long',
                                             day: '2-digit',
@@ -260,8 +268,8 @@
                                 `;
                             });
                             detailTable += `
-                                    </tbody>
-                                </table>
+                                </tbody>
+                            </table>
                             `;
 
                             row.child(detailTable).show();
