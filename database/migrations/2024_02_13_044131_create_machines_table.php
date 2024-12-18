@@ -18,10 +18,13 @@ class CreateMachinesTable extends Migration
             $table->string('machine_brand')->nullable();
             $table->string('machine_type')->nullable();
             $table->string('machine_spec')->nullable();
+            $table->string('machine_power')->nullable();
             $table->string('machine_made')->nullable();
             $table->boolean('machine_status')->default(true);
+            $table->string('machine_info')->nullable();
             $table->string('mfg_number')->index()->nullable();
             $table->string('install_date')->nullable();
+            $table->string('production_date')->nullable();
             $table->unsignedBigInteger('id_property')->nullable();
             $table->timestamps();
         });

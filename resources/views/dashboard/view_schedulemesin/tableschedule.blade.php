@@ -399,6 +399,11 @@
 
                     // Display machines in the first modal (selection menu)
                     function renderFirstMenu() {
+                        if (!data || !Array.isArray(data.refreshmachine)) {
+                            console.error("Data mesin tidak tersedia atau invalid");
+                            return;
+                        }
+
                         let tableRows1 = `
                             <div class="row" align-items="center">
                                 <div class="col-xl-12">
@@ -418,11 +423,28 @@
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
+                                            <th>TERAKHIR PM</th>
                                             <th>ADD</th>
                                         </thead>
                                         <tbody>
                                     `;
                                         data.refreshmachine.forEach((machine, index) => {
+                                            let next_preventive = 'Belum ada data preventive';
+                                            if (Array.isArray(data.refreshschedule)) {
+                                                const schedule = data.refreshschedule.find(
+                                                    (fetchschedule) => fetchschedule.machine_id === machine.id
+                                                );
+
+                                                $.each(data.refreshschedule, function(index, fetchschedule) {
+                                                    const isSelected = fetchschedule.id == data.fetchmachine.id_property ? 'selected' : '';
+                                                    options += `<option value="${fetchschedule.id}" ${isSelected}>${fetchschedule.name_property}</option>`;
+                                                });
+                                                if (schedule) {
+                                                    next_preventive = schedule.schedule_next || 'Belum ada data preventive';
+                                                }
+                                            }
+
+                                            // Tambahkan baris tabel
                                             tableRows1 += `
                                                 <tr>
                                                     <td>${index + 1}</td>
@@ -431,6 +453,7 @@
                                                     <td>${machine.machine_name}</td>
                                                     <td>${machine.machine_type || '-'}</td>
                                                     <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${next_preventive}</td>
                                                     <td><input type="checkbox" name="machineinput" value="${machine.id}"></td>
                                                 </tr>
                                             `;
@@ -458,7 +481,6 @@
                         let checkboxes = document.getElementsByName("machineinput");
                         checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateSelectedMachines));
 
-                        // Add event listener for the "Check All" checkbox
                         const checkAll = document.getElementById("checkAll");
                         checkAll.addEventListener('change', function() {
                             checkboxes.forEach(checkbox => {
@@ -1412,7 +1434,7 @@
                                                                 <i class="bi bi-hourglass-split"></i>
                                                             </div>
                                                         </div>
-                                                        <input name="schedule_duration" type="number" class="form-control" value="${machine.schedule_duration}" placeholder="Dihitung Perjam" required>
+                                                        <input name="schedule_duration_edit" type="number" class="form-control" value="${machine.schedule_duration}" placeholder="Dihitung Perjam" required>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -1422,8 +1444,8 @@
                                                                 <i class="bi bi-calendar3"></i>
                                                             </div>
                                                         </div>
-                                                        <input name="schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.id}">
-                                                        <input type="hidden" name="machine_schedule_id" value="${machine.getmachinescheduleid}">
+                                                        <input name="schedule_date_edit" type="text" class="form-control datepicker" id="datepicker-${machine.id}">
+                                                        <input type="hidden" name="machine_schedule_id_edit" value="${machine.getmachinescheduleid}">
                                                         <input type="hidden" name="machine_id_month2" value="${machine.id}">
                                                     </div>
                                                 </td>
@@ -1505,16 +1527,16 @@
             let idMachines = [];
             let idMachineSchedule = [];
 
-            $('input[name="schedule_duration"]').each(function() {
+            $('input[name="schedule_duration_edit"]').each(function() {
                 scheduleDuration.push($(this).val());
             });
-            $('input[name="schedule_date"]').each(function() {
+            $('input[name="schedule_date_edit"]').each(function() {
                 scheduleDate.push($(this).val());
             });
             $('input[name="machine_id_month2"]').each(function() {
                 idMachines.push($(this).val());
             });
-            $('input[name="machine_schedule_id"]').each(function() {
+            $('input[name="machine_schedule_id_edit"]').each(function() {
                 idMachineSchedule.push($(this).val());
             });
             $.ajax({

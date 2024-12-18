@@ -13,10 +13,13 @@ class Machine extends Model
         'machine_brand',
         'machine_type',
         'machine_spec',
+        'machine_power',
         'machine_made',
         'machine_status',
+        'machine_info',
         'mfg_number',
         'install_date',
+        'production_date',
         'id_property',
     ];
     public function getchildernproperty()

@@ -65,7 +65,7 @@
         <thead>
             <tr>
                 <th colspan="2" rowspan="5"><img src="../public/assets/icons/trmitra_logo.png" height="70"></th>
-                <th colspan="4"> INFORMASI PREV.MTC.MACHINE</th>
+                <th colspan="4">INFORMASI PREV.MTC.MACHINE</th>
                 <td>DI SETUJUI</td>
                 <td colspan="2">DI KETAHUI</td>
                 <td>DI BUAT</td>

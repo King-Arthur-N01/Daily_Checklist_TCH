@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MachineData;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Importdata;
 use App\Machine;
@@ -22,8 +23,6 @@ class ImportdataController extends Controller
             ->select('machines.*', 'machineproperties.*')
             ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
             ->get();
-        // $machines = Machine::get();
-        // $property = Machineproperty::get();
         return view('dashboard.view_importdata.tableimportdata', [
             'fetchmachines' => $fetchmachines
         ]);
@@ -45,7 +44,7 @@ class ImportdataController extends Controller
     }
 
     // fungsi ajax untuk melihat property mesin
-    public function detailproperty($id)
+    public function detailmachinedata($id)
     {
         try {
             $fetchmachines = DB::table('machines')
@@ -91,6 +90,8 @@ class ImportdataController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    // fungsi untuk print out kosongan data mesin beserta kategory checksheet nya
     public function printdatamachine($id)
     {
         try {
@@ -120,6 +121,58 @@ class ImportdataController extends Controller
         } catch (\Exception $e) {
             Log::error('DOM PDF failed: '.$e->getMessage());
             return response()->json(['error' => 'Error getting data']);
+        }
+    }
+
+
+    public function exportexcel()
+    {
+        try {
+            $machinedata = Machine::all();
+
+            $csvHeader = ['NO.INVENTARIS MESIN', 'NAMA MESIN', 'BRAND/MERK', 'MODEL/TYPE', 'SPEC/TONAGE', 'NO.MFG', 'INSTALL DATE', 'NO.MESIN/LOKASI'];
+            $output = fopen('php://output', 'w');
+            ob_start();
+
+            fputcsv($output, $csvHeader, ';');
+            foreach ($machinedata as $row) {
+                fputcsv($output, [
+                    $row->invent_number,
+                    $row->machine_name,
+                    $row->machine_brand,
+                    $row->machine_type,
+                    $row->machine_spec,
+                    $row->mfg_number,
+                    $row->install_date,
+                    $row->machine_number
+                ], ';');
+            }
+
+            $csvContent = ob_get_clean();
+            fclose($output);
+
+            return Response::make($csvContent, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="data.csv"',
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+    }
+
+    public function exportpdf()
+    {
+        try {
+            $machinedata = Machine::all();
+
+            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata'));
+            $pdf->setPaper('A4', 'landscape');
+
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
         }
     }
 

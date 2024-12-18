@@ -22,7 +22,6 @@ class YearlyScheduleController extends Controller
     public function refreshtableschedule()
     {
         try {
-            // $refreshmachine = Machine::all();
             $refreshschedule= YearlySchedule::all();
             return response()->json([
                 'refreshschedule' => $refreshschedule,
@@ -58,12 +57,15 @@ class YearlyScheduleController extends Controller
     {
         try {
             $refreshmachine = Machine::all()->filter(function ($machine) {
-                return $machine->machine_status == true; // Atau bisa juga menggunakan $machine->machine_status === 1
+                return $machine->machine_status == true;
             });
+            $refreshschedule = MachineSchedule::all();
             return response()->json([
-                'refreshmachine' => $refreshmachine->values() // values() untuk mengatur ulang kunci array
+                'refreshmachine' => $refreshmachine->values(),
+                'refershschedule' => $refreshschedule
             ]);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
@@ -142,17 +144,17 @@ class YearlyScheduleController extends Controller
         return response()->json($events);
     }
 
-    public function printScheduleAnnual($id)
+    public function printscheduleannual($id)
     {
         return $this->generatePDF('dashboard.view_schedulemesin.printscheduleyear', $id);
     }
 
-    public function printScheduleQuarter1($id)
+    public function printschedulequarter1($id)
     {
         return $this->generatePDF('dashboard.view_schedulemesin.printschedulequarter1', $id);
     }
 
-    public function printScheduleQuarter2($id)
+    public function printschedulequarter2($id)
     {
         return $this->generatePDF('dashboard.view_schedulemesin.printschedulequarter2', $id);
     }

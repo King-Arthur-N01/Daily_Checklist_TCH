@@ -23,9 +23,12 @@ class MachineController extends Controller
                 'machine_brand' => 'nullable',
                 'machine_type' => 'nullable',
                 'machine_spec' => 'nullable',
+                'machine_power' => 'nullable',
                 'machine_made' => 'nullable',
+                'machine_info' => 'nullable',
                 'mfg_number' => 'nullable',
-                'install_date' => 'nullable'
+                'install_date' => 'nullable',
+                'production_date' => 'nullable'
             ]);
 
             $invent_number = $request->input('invent_number');
@@ -57,10 +60,13 @@ class MachineController extends Controller
                 'machine_brand' => 'nullable',
                 'machine_type' => 'nullable',
                 'machine_spec' => 'nullable',
+                'machine_power' => 'nullable',
                 'machine_made' => 'nullable',
                 'machine_status' => 'required',
+                'machine_info' => 'nullable',
                 'mfg_number' => 'nullable',
                 'install_date' => 'nullable',
+                'production_date' => 'nullable',
                 'id_property' => 'nullable'
             ]);
 

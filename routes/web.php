@@ -37,9 +37,11 @@ Route::post('/machinedata/create','MachineData\MachineController@createmachine')
 Route::put ('/machinedata/update/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::delete('/machinedata/delete/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
 Route::post('/machinedata/import','MachineData\ImportdataController@importdata')->name('uploadfile');
-Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
-Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailproperty')->name('detailproperty');
+Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailmachinedata')->name('detailmachine');
 Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachine')->name('findmachineid');
+Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
+Route::get ('/machinedata/export/csv','MachineData\ImportdataController@exportexcel')->name('exportexcel');
+Route::get ('/machinedata/export/pdf','MachineData\ImportdataController@exportpdf')->name('exportpdf');
 // machine import route end
 
 // machine property route
@@ -66,9 +68,9 @@ Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleControlle
 Route::get ('/schedule/view/{id}', 'ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewscheduleyear');
 Route::get ('/schedule/view/events/{id}', 'ScheduleData\YearlyScheduleController@eventcalendar');
 Route::get ('/schedule/view/resources/{id}', 'ScheduleData\YearlyScheduleController@resourcecalendar');
-Route::get ('/schedule/print/{id}','ScheduleData\YearlyScheduleController@printScheduleAnnual')->name('print_year');
-Route::get ('/schedule/print/quarter1/{id}','ScheduleData\YearlyScheduleController@printScheduleQuarter1')->name('print_quarter1');
-Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleController@printScheduleQuarter2')->name('print_quarter2');
+Route::get ('/schedule/print/{id}','ScheduleData\YearlyScheduleController@printscheduleannual')->name('print_year');
+Route::get ('/schedule/print/quarter1/{id}','ScheduleData\YearlyScheduleController@printschedulequarter1')->name('print_quarter1');
+Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleController@printschedulequarter2')->name('print_quarter2');
 // schedule year route end
 
 // schedule month route

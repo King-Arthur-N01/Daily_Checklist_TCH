@@ -28,14 +28,17 @@ class Importdata implements ToModel
 
             return new Machine([
                 'invent_number'  => $row[1],
-                'machine_number' => $row[2],
-                'machine_name'   => $row[3],
-                'machine_brand'  => $row[4],
-                'machine_type'   => $row[5],
-                'machine_spec'   => $row[6],
-                'machine_made'   => $row[7],
-                'mfg_number'     => $row[8],
-                'install_date'   => $row[9]
+                'machine_name'   => $row[2],
+                'machine_brand'  => $row[3],
+                'machine_type'   => $row[4],
+                'machine_spec'   => $row[5],
+                'mfg_number'     => $row[6],
+                'production_date'=> $row[7],
+                'machine_power'  => $row[8],
+                'machine_made'   => $row[9],
+                'install_date'   => $row[10],
+                'machine_info'   => $row[11],
+                'machine_number' => $row[12]
             ]);
         } catch (\Exception $e) {
             Log::error('Error importing row: ' . $e->getMessage());

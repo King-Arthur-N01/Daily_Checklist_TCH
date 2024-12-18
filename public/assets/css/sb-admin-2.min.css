@@ -5663,6 +5663,14 @@ input:checked + .slider:before {
     }
 }
 
+.custom-btn-table{
+    margin: 10px 0px;
+}
+
+.capslock{
+    text-transform: uppercase;
+}
+
 .table-accordion{
     cursor: pointer;
 }
@@ -5760,7 +5768,7 @@ input:checked + .slider:before {
     display: flex;
     padding-left: 0;
     list-style: none;
-    border-radius: .35rem
+    border-radius: .35rem;
 }
 
 .page-link {

@@ -44,15 +44,26 @@
                         </div>
                     </div>
                     <div class="table-responsive">
+                        <div class="custom-btn-table dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                EXPORT
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" id="export_excel"><i class="bi bi-file-earmark-spreadsheet"></i>&nbsp;CSV</a>
+                                <a class="dropdown-item" id="export_pdf"><i class="bi bi-file-earmark-pdf"></i>&nbsp;PDF</a>
+                            </div>
+                        </div>
                         <table class="table table-bordered" id="importTables" width="100%">
                             <thead>
+                                <th>NO.</th>
                                 <th>NO.INVENT</th>
-                                <th>NO.MESIN/AREA</th>
                                 <th>NAMA MESIN</th>
                                 <th>MODEL/TYPE</th>
                                 <th>BRAND/MERK</th>
+                                <th>NO.MESIN/AREA</th>
+                                <th>KETERANGAN</th>
                                 <th>KATEGORI CHECKSHEET</th>
-                                <th>STATUS MESIN</th>
+                                <th>STATUS</th>
                                 <th>ACTION</th>
                             </thead>
                         </table>
@@ -64,7 +75,7 @@
 
     <!-- Upload Modal -->
     <div class="modal fade" id="uploadModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Upload File</h5>
@@ -74,7 +85,7 @@
                     <form id="formData">
                         @csrf
                         <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
-                        <p class="text-upload-header">No.<mark>|</mark>No.Invent Mesin<mark>|</mark>No.Mesin<mark>|</mark>Nama Mesin<mark>|</mark>Brand/Merk<mark>|</mark>Model/Type<mark>|</mark>Spec/Tonnage<mark>|</mark>Buatan<mark>|</mark>MFG No.<mark>|</mark>Install Date</p>
+                        <p class="text-upload-header">No.<mark>|</mark>No.Invent Mesin<mark>|</mark>Nama Mesin<mark>|</mark>Brand/Merk<mark>|</mark>Model/Type<mark>|</mark>Spec/Output<mark>|</mark>No.MFG<mark>|</mark>Tahun Pembuatan<mark>|</mark>Input Daya<mark>|</mark>Buatan<mark>|</mark>Install Date<mark>|</mark>No.MFG<mark>|</mark>Keterangan<mark>|</mark>No.Mesin</p>
                         <label for="importExcel" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
                         <input type="file" name="fileupload" id="importExcel" hidden>
                     </form>
@@ -169,6 +180,8 @@
 
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}"> --}}
+    {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/datatables/css/jquery.dataTables.min.css') }}"> --}}
 @endpush
 
 @push('script')
@@ -176,6 +189,19 @@
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
+
+    {{-- <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/datatables/js/dataTables.buttons.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script> --}}
+
+    {{-- <script src="{{asset('assets/vendor/datatables/js/buttons.html5.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/datatables/js/buttons.print.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/datatables/js/buttons.colVis.min.js')}}"></script> --}}
+
+
+    {{-- <script src="{{asset('assets/vendor/datatables/ajax/buttons.print.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/datatables/ajax/pdfmake.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/datatables/ajax/vfs_fonts.js')}}"></script> --}}
     <script>
         $(document).ready(function() {
             $('.select2').select2({
@@ -206,16 +232,18 @@
                 ajax: {
                     url: '{{ route("refreshmachinedata") }}',
                     dataSrc: function(data) {
-                        return data.refreshmachine.map(function(refreshmachine) {
+                        return data.refreshmachine.map(function(refreshmachine, index) {
                             let refreshproperty = data.refreshproperty.find(function(property) {
                                 return property.id === refreshmachine.id_property;
                             });
                             return {
+                                number: index + 1,
                                 invent_number: refreshmachine.invent_number,
-                                machine_number: refreshmachine.machine_number ?? '-',
                                 machine_name: refreshmachine.machine_name,
                                 machine_type: refreshmachine.machine_type ?? '-',
                                 machine_brand: refreshmachine.machine_brand ?? '-',
+                                machine_number: refreshmachine.machine_number ?? '-',
+                                machine_info: refreshmachine.machine_info ?? '-',
                                 name_property: refreshproperty ? refreshproperty.name_property : 'Belum ada kategori',
                                 machine_status: refreshmachine.machine_status,
                                 actions: `
@@ -233,11 +261,13 @@
                     }
                 },
                 columns: [
+                    { data: 'number' },
                     { data: 'invent_number' },
-                    { data: 'machine_number' },
                     { data: 'machine_name' },
                     { data: 'machine_type' },
                     { data: 'machine_brand' },
+                    { data: 'machine_number' },
+                    { data: 'machine_info' },
                     { data: 'name_property' },
                     { data: 'machine_status', render: function(data, type, row) {
                         if (data === 0) {
@@ -303,7 +333,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
                                     <div>
-                                        <input style="text-transform: uppercase;" class="form-control" type="text" name="invent_number" placeholder="_-__-__-____">
+                                        <input class="form-control capslock" type="text" name="invent_number" placeholder="_-__-__-____">
                                     </div>
                                 </div>
                             </div>
@@ -311,7 +341,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_name" placeholder="Nama Mesin">
+                                        <input class="form-control" type="text" name="machine_name">
                                     </div>
                                 </div>
                             </div>
@@ -319,7 +349,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_brand" placeholder="Brand/Merk Mesin">
+                                        <input class="form-control" type="text" name="machine_brand">
                                     </div>
                                 </div>
                             </div>
@@ -329,7 +359,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Model/Type Mesin</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_type" placeholder="Model/Type Mesin">
+                                        <input class="form-control" type="text" name="machine_type">
                                     </div>
                                 </div>
                             </div>
@@ -337,7 +367,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_spec" placeholder="Spec/Tonnage">
+                                        <input class="form-control" type="text" name="machine_spec">
                                     </div>
                                 </div>
                             </div>
@@ -345,7 +375,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
                                     <div>
-                                        <input class="form-control" type="text" name="machine_made" placeholder="Buatan">
+                                        <input class="form-control" type="text" name="machine_made">
                                     </div>
                                 </div>
                             </div>
@@ -355,7 +385,7 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
                                     <div>
-                                        <input class="form-control" type="text" name="mfg_number" placeholder="MFG Number">
+                                        <input class="form-control" type="text" name="mfg_number">
                                     </div>
                                 </div>
                             </div>
@@ -363,15 +393,47 @@
                                 <div class="form-group">
                                     <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
                                     <div>
-                                        <input class="form-control" type="text" name="install_date" placeholder="Install Date">
+                                        <input class="form-control" type="text" name="install_date">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-4">
                                 <div class="form-group">
-                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Mesin</label>
                                     <div>
-                                        <input style="text-transform: uppercase;" class="form-control" type="text" name="machine_number">
+                                        <input class="form-control capslock" type="text" name="machine_number">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Tahun Pembuatan</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="production_date">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Input Daya</label>
+                                    <div>
+                                        <input class="form-control" type="text" name="machine_power" placeholder="/kw">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                                    <div>
+                                        <select class="form-control" name="machine_info" id="machine_info">
+                                            <option label="SELECT :" disabled selected></option>
+                                            <option value="custom">Lain nya</option>
+                                            <option value="produksi">Produksi</option>
+                                            <option value="engginering">Engginering</option>
+                                        </select>
+                                        <input class="custom-input-option" type="text" id="custom_input" placeholder="Enter your own result">
                                     </div>
                                 </div>
                             </div>
@@ -382,22 +444,48 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" id="addButtton">Save changes</button>
                 `;
+
                 $('#modal_title_add').html(header_modal);
                 $('#modal_data_add').html(data_modal);
                 $('#modal_button_add').html(button_modal);
 
+                document.getElementById('machine_info').addEventListener("change", function () {
+                    const customInput = document.getElementById('custom_input');
+                    if (this.value === 'custom') {
+                        customInput.style.display = 'block';
+                        customInput.required = true;
+                        customInput.value = '';
+                    } else {
+                        customInput.style.display = 'none';
+                        customInput.required = false;
+                    }
+                });
+
+                document.getElementById('custom_input').addEventListener("change", function () {
+                    const select = document.getElementById('machine_info');
+                    const newOption = document.createElement("option");
+                    newOption.text = this.value;
+                    newOption.value = this.value;
+                    select.add(newOption);
+                    select.value = this.value;
+                });
+
                 // Add event listener to save button
                 $('#addButtton').on('click', function() {
                     let formData = {
-                        inventNumber: $('input[name="invent_number"]').val(),
+                        inventNumber: $('input[name="invent_number"]').val().toUpperCase(),
+                        machineName: $('input[name="machine_name"]').val().toUpperCase(),
+                        machineBrand: $('input[name="machine_brand"]').val().toUpperCase(),
+                        machineType: $('input[name="machine_type"]').val().toUpperCase(),
                         machineSpec: $('input[name="machine_spec"]').val(),
-                        machineName: $('input[name="machine_name"]').val(),
-                        machineMade: $('input[name="machine_made"]').val(),
-                        machineBrand: $('input[name="machine_brand"]').val(),
-                        mfgNumber: $('input[name="mfg_number"]').val(),
-                        machineType: $('input[name="machine_type"]').val(),
-                        installDate: $('input[name="install_date"]').val(),
-                        machineNumber: $('input[name="machine_number"]').val()
+                        machineMade: $('input[name="machine_made"]').val().toUpperCase(),
+                        mfgNumber: $('input[name="mfg_number"]').val().toUpperCase(),
+                        installDate: $('input[name="install_date"]').val().toUpperCase(),
+                        machineNumber: $('input[name="machine_number"]').val().toUpperCase(),
+                        productionDate: $('input[name="production_date"]').val().toUpperCase(),
+                        machinePower: $('input[name="machine_power"]').val(),
+                        machineInfo: $('select[name="machine_info"]').val().toUpperCase() === 'CUSTOM' ? $('#custom_input')
+                            .val().toUpperCase() : $('select[name="machine_info"]').val().toUpperCase() // Ambil nilai dari select dan jika custom, ambil dari input kustom
                     };
                     $.ajax({
                         type: 'POST',
@@ -405,14 +493,17 @@
                         data: {
                             '_token': '{{ csrf_token() }}',
                             'invent_number': formData.inventNumber,
-                            'machine_spec': formData.machineSpec,
                             'machine_name': formData.machineName,
-                            'machine_made': formData.machineMade,
                             'machine_brand': formData.machineBrand,
-                            'mfg_number': formData.mfgNumber,
                             'machine_type': formData.machineType,
+                            'machine_spec': formData.machineSpec,
+                            'machine_made': formData.machineMade,
+                            'mfg_number': formData.mfgNumber,
                             'install_date': formData.installDate,
                             'machine_number': formData.machineNumber,
+                            'production_date': formData.productionDate,
+                            'machine_power': formData.machinePower,
+                            'machine_info': formData.machineInfo,
                         },
                         success: function(response) {
                             if (response.success) {
@@ -452,11 +543,11 @@
                     type: 'GET',
                     url: '{{ route("findmachineid", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
-                        let options = '';
+                        let options_status = '';
                         if (Array.isArray(data.fetchproperty)) {
                             $.each(data.fetchproperty, function(index, fetchtable) {
                                 const isSelected = fetchtable.id == data.fetchmachine.id_property ? 'selected' : '';
-                                options += `<option value="${fetchtable.id}" ${isSelected}>${fetchtable.name_property}</option>`;
+                                options_status += `<option value="${fetchtable.id}" ${isSelected}>${fetchtable.name_property}</option>`;
                             });
                         } else {
                             console.error('fetchproperty is not an array:', data.fetchproperty);
@@ -472,7 +563,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor Invent</label>
                                         <div>
-                                            <input style="text-transform: uppercase;" class="form-control" id="inventNumber" type="text" name="invent_number" value="${data.fetchmachine.invent_number || ''}" placeholder="_-__-__-____">
+                                            <input class="form-control capslock" id="inventNumber" type="text" name="invent_number" value="${data.fetchmachine.invent_number || ''}" placeholder="_-__-__-____">
                                         </div>
                                     </div>
                                 </div>
@@ -480,7 +571,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_name" value="${data.fetchmachine.machine_name || ''}" placeholder="Nama Mesin">
+                                            <input class="form-control" type="text" name="machine_name" value="${data.fetchmachine.machine_name || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -488,7 +579,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Brand/Merk Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_brand" value="${data.fetchmachine.machine_brand || ''}" placeholder="Brand/Merk Mesin">
+                                            <input class="form-control" type="text" name="machine_brand" value="${data.fetchmachine.machine_brand || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -498,7 +589,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Model/Type Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_type" value="${data.fetchmachine.machine_type || ''}" placeholder="Model/Type Mesin">
+                                            <input class="form-control" type="text" name="machine_type" value="${data.fetchmachine.machine_type || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -506,7 +597,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Spec/Tonnage</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_spec" value="${data.fetchmachine.machine_spec || ''}" placeholder="Spec/Tonnage">
+                                            <input class="form-control" type="text" name="machine_spec" value="${data.fetchmachine.machine_spec || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -514,7 +605,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Buatan</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_made" value="${data.fetchmachine.machine_made || ''}" placeholder="Buatan">
+                                            <input class="form-control" type="text" name="machine_made" value="${data.fetchmachine.machine_made || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -524,7 +615,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nomor MFG</label>
                                         <div>
-                                            <input class="form-control" type="text" name="mfg_number" value="${data.fetchmachine.mfg_number || ''}" placeholder="MFG Number">
+                                            <input class="form-control" type="text" name="mfg_number" value="${data.fetchmachine.mfg_number || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -532,7 +623,7 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">Install Date</label>
                                         <div>
-                                            <input class="form-control" type="text" name="install_date" value="${data.fetchmachine.install_date || ''}" placeholder="Install Date">
+                                            <input class="form-control" type="text" name="install_date" value="${data.fetchmachine.install_date || ''}">
                                         </div>
                                     </div>
                                 </div>
@@ -540,7 +631,39 @@
                                     <div class="form-group">
                                         <label class="col-form-label text-sm-right" style="margin-left: 4px;">No Mesin</label>
                                         <div>
-                                            <input class="form-control" type="text" name="machine_number" value="${data.fetchmachine.machine_number || ''}" placeholder="Nomor Mesin">
+                                            <input class="form-control capslock" type="text" name="machine_number" value="${data.fetchmachine.machine_number || ''}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" align-items="center">
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Tahun Pembuatan</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="production_date" value="${data.fetchmachine.production_date || ''}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Input Daya</label>
+                                        <div>
+                                            <input class="form-control" type="text" name="machine_power" placeholder="/kw" value="${data.fetchmachine.machine_power || ''}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4">
+                                    <div class="form-group">
+                                        <label class="col-form-label text-sm-right" style="margin-left: 4px;">Keterangan</label>
+                                        <div>
+                                            <select class="form-control" name="machine_info" id="machine_info">
+                                                <option label="SELECT :" disabled selected></option>
+                                                <option value="custom">Lain nya</option>
+                                                <option value="produksi" ${data.fetchmachine.machine_status === 'PRODUKSI' ? 'selected' : ''}>Produksi</option>
+                                                <option value="engginering" ${data.fetchmachine.machine_status === 'ENGGINERING' ? 'selected' : ''}>Engginering</option>
+                                            </select>
+                                            <input class="custom-input-option capslock" type="text" id="custom_input" placeholder="Enter your own result">
                                         </div>
                                     </div>
                                 </div>
@@ -557,7 +680,7 @@
                                         <td>
                                             <select class="form-control" id="getproperty">
                                                 <option value="">Tidak ada</option>
-                                                ${options}
+                                                ${options_status}
                                             </select>
                                         </td>
                                         <td>
@@ -578,21 +701,56 @@
                         $('#modal_data_edit').html(data_modal);
                         $('#modal_button_edit').html(button_modal);
 
+                        document.getElementById('machine_info').addEventListener("change", function () {
+                            const customInput = document.getElementById('custom_input');
+                            if (this.value === 'custom') {
+                                customInput.style.display = 'block';
+                                customInput.required = true;
+                                customInput.value = '';
+                            } else {
+                                customInput.style.display = 'none';
+                                customInput.required = false;
+                            }
+                        });
+
+                        document.getElementById('custom_input').addEventListener("change", function () {
+                            const select = document.getElementById('machine_info');
+                            const newOption = document.createElement("option");
+                            newOption.text = this.value;
+                            newOption.value = this.value;
+                            select.add(newOption);
+                            select.value = this.value;
+                        });
+
+                        if (data.fetchmachine && data.fetchmachine.machine_info) {
+                            const select = document.getElementById('machine_info');
+                            const newOption = document.createElement("option");
+                            newOption.text = data.fetchmachine.machine_info;
+                            newOption.value = data.fetchmachine.machine_info;
+                            select.add(newOption);
+                            select.value = data.fetchmachine.machine_info;
+                        }
+
                         // Save button
                         $('#editButton').on('click', function() {
                             // let idProperty = $('#getproperty').val();
                             let formData = {
-                                inventNumber: $('input[name="invent_number"]').val(),
+                                inventNumber: $('input[name="invent_number"]').val().toUpperCase(),
+                                machineName: $('input[name="machine_name"]').val().toUpperCase(),
+                                machineBrand: $('input[name="machine_brand"]').val().toUpperCase(),
+                                machineType: $('input[name="machine_type"]').val().toUpperCase(),
                                 machineSpec: $('input[name="machine_spec"]').val(),
-                                machineName: $('input[name="machine_name"]').val(),
-                                machineMade: $('input[name="machine_made"]').val(),
-                                machineBrand: $('input[name="machine_brand"]').val(),
-                                mfgNumber: $('input[name="mfg_number"]').val(),
-                                machineType: $('input[name="machine_type"]').val(),
-                                installDate: $('input[name="install_date"]').val(),
-                                machineNumber: $('input[name="machine_number"]').val(),
+                                machineMade: $('input[name="machine_made"]').val().toUpperCase(),
+                                mfgNumber: $('input[name="mfg_number"]').val().toUpperCase(),
+                                installDate: $('input[name="install_date"]').val().toUpperCase(),
+                                machineNumber: $('input[name="machine_number"]').val().toUpperCase(),
+                                productionDate: $('input[name="production_date"]').val().toUpperCase(),
+                                machinePower: $('input[name="machine_power"]').val(),
                                 idProperty : $('#getproperty').val(),
-                                machineStatus : $('#getstatus').val()
+                                machineStatus : $('#getstatus').val(),
+                                machineInfo: $('select[name="machine_info"]').val().toUpperCase() === 'CUSTOM' ? $('#custom_input')
+                                    .val().toUpperCase() : $('select[name="machine_info"]').val().toUpperCase() // Ambil nilai dari select dan jika custom, ambil dari input kustom
+
                             };
                             $.ajax({
                                 type: 'PUT',
@@ -600,14 +758,17 @@
                                 data: {
                                     '_token': '{{ csrf_token() }}', // Include the CSRF token
                                     'invent_number': formData.inventNumber,
-                                    'machine_spec': formData.machineSpec,
                                     'machine_name': formData.machineName,
-                                    'machine_made': formData.machineMade,
                                     'machine_brand': formData.machineBrand,
-                                    'mfg_number': formData.mfgNumber,
                                     'machine_type': formData.machineType,
+                                    'machine_spec': formData.machineSpec,
+                                    'machine_made': formData.machineMade,
+                                    'mfg_number': formData.mfgNumber,
                                     'install_date': formData.installDate,
                                     'machine_number': formData.machineNumber,
+                                    'production_date': formData.productionDate,
+                                    'machine_power': formData.machinePower,
+                                    'machine_info': formData.machineInfo,
                                     'id_property': formData.idProperty,
                                     'machine_status': formData.machineStatus
                                 },
@@ -652,7 +813,7 @@
                 // var no_mesin = $("#viewButton")$(this).attr("data-id");
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("detailproperty", ':id') }}'.replace(':id', machineId),
+                    url: '{{ route("detailmachine", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
                         if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
                             $('#modal_data_view').html(
@@ -767,6 +928,17 @@
                 } else {
                     // User cancelled the deletion, do nothing
                 }
+            });
+
+            $('#export_excel').on('click', function() {
+                new_excel = '{{ route("exportexcel") }}';
+                window.open(new_excel, '_blank');
+                return;
+            });
+            $('#export_pdf').on('click', function() {
+                new_pdf = '{{ route("exportpdf") }}';
+                window.open(new_pdf, '_blank');
+                return;
             });
 
             //fungsi filter button
