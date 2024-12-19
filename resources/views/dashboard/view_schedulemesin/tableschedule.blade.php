@@ -423,27 +423,21 @@
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
-                                            <th>TERAKHIR PM</th>
+                                            <th>KETERANGAN</th>
+                                            <th>PM SELANJUTNYA</th>
                                             <th>ADD</th>
                                         </thead>
                                         <tbody>
                                     `;
                                         data.refreshmachine.forEach((machine, index) => {
                                             let next_preventive = 'Belum ada data preventive';
-                                            if (Array.isArray(data.refreshschedule)) {
-                                                const schedule = data.refreshschedule.find(
-                                                    (fetchschedule) => fetchschedule.machine_id === machine.id
-                                                );
-
-                                                $.each(data.refreshschedule, function(index, fetchschedule) {
-                                                    const isSelected = fetchschedule.id == data.fetchmachine.id_property ? 'selected' : '';
-                                                    options += `<option value="${fetchschedule.id}" ${isSelected}>${fetchschedule.name_property}</option>`;
-                                                });
-                                                if (schedule) {
-                                                    next_preventive = schedule.schedule_next || 'Belum ada data preventive';
-                                                }
+                                            const schedule = data.latestSchedules.find(
+                                                (fetchschedule) => fetchschedule.machine_id === machine.id
+                                            );
+                                            console.log(schedule);
+                                            if (schedule) {
+                                                next_preventive = schedule.schedule_next || 'Belum ada data preventive';
                                             }
-
                                             // Tambahkan baris tabel
                                             tableRows1 += `
                                                 <tr>
@@ -453,6 +447,7 @@
                                                     <td>${machine.machine_name}</td>
                                                     <td>${machine.machine_type || '-'}</td>
                                                     <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${machine.machine_info || '-'}</td>
                                                     <td>${next_preventive}</td>
                                                     <td><input type="checkbox" name="machineinput" value="${machine.id}"></td>
                                                 </tr>
@@ -590,9 +585,13 @@
         // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
         function addYearlySchedule() {
             event.preventDefault();
-            let scheduleName = $('input[name="name_schedule_year"]').val();
-            let scheduleTimes = [];
-            let idMachines = [];
+            let scheduleName = null;
+            let scheduleTimes = null;
+            let idMachines = null;
+
+            scheduleName = $('input[name="name_schedule_year"]').val();
+            scheduleTimes = [];
+            idMachines = [];
 
             $('input[name="schedule_time"]').each(function() {
                 scheduleTimes.push($(this).val());
@@ -715,12 +714,22 @@
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
+                                            <th>KETERANGAN</th>
+                                            <th>PM SELANJUTNYA</th>
                                             <th>ADD</th>
                                         </thead>
                                         <tbody>
                                     `;
                                         let machineIds = JSON.parse(data.refreshschedule.machine_collection);
                                         data.refreshmachine.forEach((machine, index) => {
+                                            let next_preventive = 'Belum ada data preventive';
+                                            const schedule = data.latestSchedules.find(
+                                                (fetchschedule) => fetchschedule.machine_id === machine.id
+                                            );
+                                            console.log(schedule);
+                                            if (schedule) {
+                                                next_preventive = schedule.schedule_next || 'Belum ada data preventive';
+                                            }
                                             tableRows1 += `
                                                 <tr>
                                                     <td>${index + 1}</td>
@@ -729,6 +738,8 @@
                                                     <td>${machine.machine_name}</td>
                                                     <td>${machine.machine_type || '-'}</td>
                                                     <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${machine.machine_info || '-'}</td>
+                                                    <td>${next_preventive}</td>
                                                     <td>
                                                         <input type="checkbox" name="machineinput" value="${machine.id}" ${machineIds.map(String).includes(String(machine.id)) ? 'checked' : ''}>
                                                     </td>
@@ -881,10 +892,14 @@
         // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
         function editYearlySchedule(scheduleId) {
             event.preventDefault();
-            let scheduleName = $('input[name="name_schedule_year_edit"]').val();
-            let scheduleTimes = [];
-            let idMachines = [];
-            let idMachineSchedule = [];
+            let scheduleName = null;
+            let scheduleTimes = null;
+            let idMachines = null;
+
+            scheduleName = $('input[name="name_schedule_year_edit"]').val();
+            scheduleTimes = [];
+            idMachines = [];
+            idMachineSchedule = [];
 
             $('input[name="schedule_time"]').each(function() {
                 scheduleTimes.push($(this).val());
@@ -1024,6 +1039,7 @@
                             minDate: minDate,
                             maxDate: maxDate,
                             locale: {
+                                firstDay: 1,
                                 format: 'DD-MM-YYYY'
                             }
                         });
@@ -1325,6 +1341,7 @@
                             minDate: minDate,
                             maxDate: maxDate,
                             locale: {
+                                firstDay: 1,
                                 format: 'DD-MM-YYYY'
                             }
                         });

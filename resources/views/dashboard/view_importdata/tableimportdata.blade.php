@@ -44,14 +44,47 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <div class="custom-btn-table dropdown">
+                        {{-- <div class="custom-btn-table dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 EXPORT
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" id="export_excel"><i class="bi bi-file-earmark-spreadsheet"></i>&nbsp;CSV</a>
                                 <a class="dropdown-item" id="export_pdf"><i class="bi bi-file-earmark-pdf"></i>&nbsp;PDF</a>
+                                <a class="dropdown-item" id="export_pdf_produksi"><i class="bi bi-file-earmark-pdf"></i>&nbsp;PDF PRODUKSI</a>
+                                <a class="dropdown-item" id="export_pdf_engineering"><i class="bi bi-file-earmark-pdf"></i>&nbsp;PDF ENGINEERING</a>
                             </div>
+                        </div> --}}
+                        <div class="custom-btn-table dropdown">
+                            <a class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                EXPORT
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" id="dropdownSubMenu1" data-toggle="dropdown"><i class="bi bi-file-earmark-spreadsheet"></i>&nbsp;CSV</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownSubMenu1">
+                                        <a class="dropdown-item export_excel" data-value="">SEMUA.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="PRODUKSI">PRODUKSI.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="ENGINEERING">ENGINEERING.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="KONTRUKSI">KONTRUKSI.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="CIREBON">CIREBON.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="CIKARANG">CIKARANG.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="AKTIF">AKTIF.csv</a>
+                                        <a class="dropdown-item export_excel" data-value="NONAKTIF">NONAKTIF.csv</a>
+                                    </ul>
+                                    <a class="dropdown-item dropdown-toggle" id="dropdownSubMenu2" data-toggle="dropdown"><i class="bi bi-file-earmark-pdf"></i>&nbsp;PDF</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownSubMenu2">
+                                        <a class="dropdown-item export_pdf" data-value="">SEMUA.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="PRODUKSI">PRODUKSI.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="ENGINEERING">ENGINEERING.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="KONTRUKSI">KONTRUKSI.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="CIREBON">CIREBON.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="CIKARANG">CIKARANG.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="AKTIF">AKTIF.pdf</a>
+                                        <a class="dropdown-item export_pdf" data-value="NONAKTIF">NONAKTIF.pdf</a>
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
                         <table class="table table-bordered" id="importTables" width="100%">
                             <thead>
@@ -180,7 +213,7 @@
 
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
-    {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}"> --}}
+    {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap-submenu/dist/css/bootstrap-submenu.css') }}"> --}}
     {{-- <link rel="stylesheet" href="{{ asset('assets/vendor/datatables/css/jquery.dataTables.min.css') }}"> --}}
 @endpush
 
@@ -190,7 +223,7 @@
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
 
-    {{-- <script src="{{asset('assets/vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script> --}}
+    {{-- <script src="{{asset('assets/vendor/bootstrap-submenu/dist/js/bootstrap-submenu.js')}}"></script> --}}
     {{-- <script src="{{asset('assets/vendor/datatables/js/dataTables.buttons.min.js')}}"></script> --}}
     {{-- <script src="{{asset('assets/vendor/datatables/js/buttons.bootstrap4.min.js')}}"></script> --}}
 
@@ -930,15 +963,50 @@
                 }
             });
 
-            $('#export_excel').on('click', function() {
-                new_excel = '{{ route("exportexcel") }}';
-                window.open(new_excel, '_blank');
-                return;
+            $('.dropdown-menu a.export_pdf').on('click', function() {
+                const buttonValue = $(this).data('value');
+                const routes = {
+                    'PRODUKSI': '{{ route("exportpdfvalue", ":value") }}',
+                    'ENGINEERING': '{{ route("exportpdfvalue", ":value") }}',
+                    'KONTRUKSI': '{{ route("exportpdfvalue", ":value") }}',
+                    'CIREBON': '{{ route("exportpdfvalue", ":value") }}',
+                    'CIKARANG': '{{ route("exportpdfvalue", ":value") }}',
+                    'AKTIF': '{{ route("exportpdfvalue", ":value") }}',
+                    'NONAKTIF': '{{ route("exportpdfvalue", ":value") }}'
+                };
+
+                // Jika nilai tombol ada di rute
+                if (routes[buttonValue]) {
+                    const newViewPrint = routes[buttonValue].replace(':value', buttonValue);
+                    window.open(newViewPrint, '_blank');
+                } else {
+                    // Default jika tidak ada nilai tombol
+                    const defaultRoute = '{{ route("exportpdf") }}';
+                    window.open(defaultRoute, '_blank');
+                }
             });
-            $('#export_pdf').on('click', function() {
-                new_pdf = '{{ route("exportpdf") }}';
-                window.open(new_pdf, '_blank');
-                return;
+
+            $('.dropdown-menu a.export_excel').on('click', function() {
+                const buttonValue = $(this).data('value');
+                const routes = {
+                    'PRODUKSI': '{{ route("exportexcelvalue", ":value") }}',
+                    'ENGINEERING': '{{ route("exportexcelvalue", ":value") }}',
+                    'KONTRUKSI': '{{ route("exportexcelvalue", ":value") }}',
+                    'CIREBON': '{{ route("exportexcelvalue", ":value") }}',
+                    'CIKARANG': '{{ route("exportexcelvalue", ":value") }}',
+                    'AKTIF': '{{ route("exportexcelvalue", ":value") }}',
+                    'NONAKTIF': '{{ route("exportexcelvalue", ":value") }}'
+                };
+
+                // Jika nilai tombol ada di rute
+                if (routes[buttonValue]) {
+                    const newViewPrint = routes[buttonValue].replace(':value', buttonValue);
+                    window.open(newViewPrint, '_blank');
+                } else {
+                    // Default jika tidak ada nilai tombol
+                    const defaultRoute = '{{ route("exportexcel") }}';
+                    window.open(defaultRoute, '_blank');
+                }
             });
 
             //fungsi filter button
@@ -986,6 +1054,19 @@
             filterByName.addEventListener('input', filterTable);
             filterByNumber.addEventListener('input', filterTable);
             filterByProperty.addEventListener('change', filterTable);
+        });
+    </script>
+    <script>
+        $('.dropdown-submenu > a').on("click", function(e) {
+            var submenu = $(this);
+            $('.dropdown-submenu .dropdown-menu').removeClass('show');
+            submenu.next('.dropdown-menu').addClass('show');
+            e.stopPropagation();
+        });
+
+        $('.dropdown').on("hidden.bs.dropdown", function() {
+            // hide any open menus when parent closes
+            $('.dropdown-menu.show').removeClass('show');
         });
     </script>
 @endpush

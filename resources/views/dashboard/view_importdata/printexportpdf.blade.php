@@ -70,7 +70,12 @@
         <tbody>
             <tr>
                 <th colspan="2" rowspan="5"><img src="../public/assets/icons/trmitra_logo.png" height="60"></th>
-                <th colspan="5">DAFTAR MESIN</th>
+                @if ($value == !null)
+                    <th colspan="5">DAFTAR MESIN {{$value}}</th>
+                @else
+                    <th colspan="5">DAFTAR SEMUA MESIN</th>
+                @endif
+
                 <th colspan="3">REVISI DAFTAR MESIN</th>
                 <th>DI SETUJUI</th>
                 <th>DI KETAHUI</th>
@@ -81,9 +86,9 @@
                 <th>TAHUN</th>
                 <th>KETERANGAN</th>
                 <th>PIC</th>
-                <th rowspan="3"><p class="shadow-text">MNG. MGR</p></th>
-                <th rowspan="3"><p class="shadow-text">AST. MGR</p></th>
-                <th rowspan="3"><p class="shadow-text">SPV. MTN<p></th>
+                <th rowspan="3"></th>
+                <th rowspan="3"></th>
+                <th rowspan="3"></th>
             </tr>
             <tr>
                 <th></th>

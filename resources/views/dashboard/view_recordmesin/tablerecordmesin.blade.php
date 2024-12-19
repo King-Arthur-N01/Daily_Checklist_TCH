@@ -100,8 +100,8 @@
                 setTimeout(function() {
                     $('#successModal').modal('hide');
                 }, 2000);
-            @elseif (session('failed'))
-                $('#warningText').text("{{ session('failed') }}");
+            @elseif (session('error'))
+                $('#warningText').text("{{ session('error') }}");
                 $('#warningModal').modal('show');
                 setTimeout(function() {
                     $('#warningModal').modal('hide');
@@ -234,7 +234,7 @@
                                 let scheduleDate = new Date(recordmachine.schedule_date);
                                 let scheduleEnd = new Date(recordmachine.schedule_end);
                                 let checkStatus = recordmachine.machine_schedule_status;
-                                
+
                                 let rowClass = '';
 
                                 if (checkStatus === true) {

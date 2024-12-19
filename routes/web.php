@@ -40,8 +40,11 @@ Route::post('/machinedata/import','MachineData\ImportdataController@importdata')
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailmachinedata')->name('detailmachine');
 Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachine')->name('findmachineid');
 Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
+// export data route
 Route::get ('/machinedata/export/csv','MachineData\ImportdataController@exportexcel')->name('exportexcel');
+Route::get ('/machinedata/export/csv/{value}','MachineData\ImportdataController@exportexcelwithcondition')->name('exportexcelvalue');
 Route::get ('/machinedata/export/pdf','MachineData\ImportdataController@exportpdf')->name('exportpdf');
+Route::get ('/machinedata/export/pdf/{value}','MachineData\ImportdataController@exportpdfwithcondition')->name('exportpdfvalue');
 // machine import route end
 
 // machine property route

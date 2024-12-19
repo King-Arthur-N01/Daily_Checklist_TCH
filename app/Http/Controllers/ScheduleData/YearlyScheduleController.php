@@ -56,13 +56,21 @@ class YearlyScheduleController extends Controller
     public function readmachinedata()
     {
         try {
-            $refreshmachine = Machine::all()->filter(function ($machine) {
-                return $machine->machine_status == true;
-            });
-            $refreshschedule = MachineSchedule::all();
+            $refreshmachine = Machine::where('machine_status', true)->get();
+            $latestSchedules = MachineSchedule::select('machine_id', DB::raw('MAX(created_at) as latest'))
+                ->groupBy('machine_id')
+                ->get();
+
+            $latestScheduleDetails = [];
+            foreach ($latestSchedules as $schedule) {
+                $latestScheduleDetails[] = MachineSchedule::where('machine_id', $schedule->machine_id)
+                    ->where('created_at', $schedule->latest)
+                    ->first();
+            }
+
             return response()->json([
-                'refreshmachine' => $refreshmachine->values(),
-                'refershschedule' => $refreshschedule
+                'refreshmachine' => $refreshmachine,
+                'latestSchedules' => $latestScheduleDetails
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -74,7 +82,17 @@ class YearlyScheduleController extends Controller
     {
         try {
             $refreshschedule = YearlySchedule::find($id);
-            $refreshmachine = Machine::all();
+            $refreshmachine = Machine::where('machine_status', true)->get();
+            $latestSchedules = MachineSchedule::select('machine_id', DB::raw('MAX(created_at) as latest'))
+                ->groupBy('machine_id')
+                ->get();
+
+            $latestScheduleDetails = [];
+            foreach ($latestSchedules as $schedule) {
+                $latestScheduleDetails[] = MachineSchedule::where('machine_id', $schedule->machine_id)
+                    ->where('created_at', $schedule->latest)
+                    ->first();
+            }
 
             $refreshmachineschedule = DB::table('yearly_schedules')
             ->select('yearly_schedules.id', 'machine_schedules.*', 'machine_schedules.id as getmachinescheduleid')
@@ -86,6 +104,7 @@ class YearlyScheduleController extends Controller
                 'refreshschedule' => $refreshschedule,
                 'refreshmachine' => $refreshmachine,
                 'refreshmachineschedule' => $refreshmachineschedule,
+                'latestSchedules' => $latestScheduleDetails
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);

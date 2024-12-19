@@ -124,27 +124,31 @@ class ImportdataController extends Controller
         }
     }
 
-
     public function exportexcel()
     {
         try {
             $machinedata = Machine::all();
 
-            $csvHeader = ['NO.INVENTARIS MESIN', 'NAMA MESIN', 'BRAND/MERK', 'MODEL/TYPE', 'SPEC/TONAGE', 'NO.MFG', 'INSTALL DATE', 'NO.MESIN/LOKASI'];
+            $csvHeader = ['NO.', 'NO.INVENTARIS MESIN', 'NAMA MESIN', 'BRAND/MERK', 'MODEL/TYPE', 'SPEC/OUTPUT', 'NO.MFG/SERIAL NUMBER', 'TAHUN PEMBUATAN', 'INPUT DAYA/KW', 'BUATAN/EX', 'DATANG MC/INSTALL DATE', 'KETERANGAN', 'NO.MESIN/LOKASI'];
             $output = fopen('php://output', 'w');
             ob_start();
 
             fputcsv($output, $csvHeader, ';');
-            foreach ($machinedata as $row) {
+            foreach ($machinedata as $index => $machine) {
                 fputcsv($output, [
-                    $row->invent_number,
-                    $row->machine_name,
-                    $row->machine_brand,
-                    $row->machine_type,
-                    $row->machine_spec,
-                    $row->mfg_number,
-                    $row->install_date,
-                    $row->machine_number
+                    $index + 1,
+                    $machine->invent_number,
+                    $machine->machine_name,
+                    $machine->machine_brand,
+                    $machine->machine_type,
+                    $machine->machine_spec,
+                    $machine->mfg_number,
+                    $machine->production_date,
+                    $machine->machine_power,
+                    $machine->machine_made,
+                    $machine->install_date,
+                    $machine->machine_info,
+                    $machine->machine_number
                 ], ';');
             }
 
@@ -153,7 +157,48 @@ class ImportdataController extends Controller
 
             return Response::make($csvContent, 200, [
                 'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="data.csv"',
+                'Content-Disposition' => 'attachment; filename="DAFTAR SEMUA MESIN.csv"',
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+    }
+
+    public function exportexcelwithcondition($value)
+    {
+        try {
+            $machinedata = Machine::where('machine_info', $value)->get();
+
+            $csvHeader = ['NO.', 'NO.INVENTARIS MESIN', 'NAMA MESIN', 'BRAND/MERK', 'MODEL/TYPE', 'SPEC/OUTPUT', 'NO.MFG/SERIAL NUMBER', 'TAHUN PEMBUATAN', 'INPUT DAYA/KW', 'BUATAN/EX', 'DATANG MC/INSTALL DATE', 'KETERANGAN', 'NO.MESIN/LOKASI'];
+            $output = fopen('php://output', 'w');
+            ob_start();
+
+            fputcsv($output, $csvHeader, ';');
+            foreach ($machinedata as $index => $machine) {
+                fputcsv($output, [
+                    $index + 1,
+                    $machine->invent_number,
+                    $machine->machine_name,
+                    $machine->machine_brand,
+                    $machine->machine_type,
+                    $machine->machine_spec,
+                    $machine->mfg_number,
+                    $machine->production_date,
+                    $machine->machine_power,
+                    $machine->machine_made,
+                    $machine->install_date,
+                    $machine->machine_info,
+                    $machine->machine_number
+                ], ';');
+            }
+
+            $csvContent = ob_get_clean();
+            fclose($output);
+
+            return Response::make($csvContent, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="DAFTAR MESIN ' . $value . '.csv"',
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -165,8 +210,23 @@ class ImportdataController extends Controller
     {
         try {
             $machinedata = Machine::all();
+            $value = null;
 
-            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata'));
+            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','value'));
+            $pdf->setPaper('A4', 'landscape');
+
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+    }
+    public function exportpdfwithcondition($value)
+    {
+        try {
+            $machinedata = Machine::where('machine_info', $value)->get();
+
+            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','value'));
             $pdf->setPaper('A4', 'landscape');
 
             return $pdf->stream();

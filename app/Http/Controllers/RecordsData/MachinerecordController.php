@@ -256,6 +256,13 @@ class MachinerecordController extends Controller
             $record_date = Carbon::parse($request->input('record_date'));
             $currenttime = Carbon::now('Asia/Jakarta');
 
+            $checkmachineschedule = Machineschedule::find($schedule_id);
+            $isExists = $checkmachineschedule->machine_schedule_status;
+
+            if ($isExists == 1) {
+                return redirect()->route("indexmachinerecord")->withErrors('Error!!!! Checklist failed to add.');
+            }
+
             $getshifttime = Carbon::now()->format('H:i');
             if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
                 $shifttime = 'Shift 1';
