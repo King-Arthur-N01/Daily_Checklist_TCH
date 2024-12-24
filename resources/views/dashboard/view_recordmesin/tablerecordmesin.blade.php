@@ -139,7 +139,7 @@
                                     monthly_id: month,
                                     schedule_id: record.schedule_id,
                                     name_schedule: record.name_schedule_month,
-                                    array_machine: JSON.parse(record.machine_collection2),
+                                    array_schedule: JSON.parse(record.schedule_collection),
                                     completed: 0,
                                     uncompleted: 0,
                                     schedule_status: record.schedule_status
@@ -158,7 +158,7 @@
                             number: index + 1,
                             id: record.schedule_id,
                             name_schedule: record.name_schedule,
-                            total_machine: record.array_machine.length,
+                            total_machine: record.array_schedule.length,
                             completed: record.completed,
                             uncompleted: record.uncompleted,
                             schedule_status: record.schedule_status
@@ -231,13 +231,24 @@
                             `;
                             let currentTime = new Date();
                             data.refreshdetailrecord.forEach(recordmachine => {
-                                let scheduleDate = new Date(recordmachine.schedule_date);
+                                let schedule_pm = null;
+
+                                if (recordmachine.reschedule_date_3) {
+                                    schedule_pm = recordmachine.reschedule_date_3;
+                                } else if (recordmachine.reschedule_date_2) {
+                                    schedule_pm = recordmachine.reschedule_date_2;
+                                } else if (recordmachine.reschedule_date_1) {
+                                    schedule_pm = recordmachine.reschedule_date_1;
+                                } else {
+                                    schedule_pm = recordmachine.schedule_date;
+                                }
+                                let scheduleDate = new Date(schedule_pm);
                                 let scheduleEnd = new Date(recordmachine.schedule_end);
                                 let checkStatus = recordmachine.machine_schedule_status;
 
                                 let rowClass = '';
 
-                                if (checkStatus === true) {
+                                if (checkStatus == 1) {
                                     rowClass += 'status-clear';
                                 } else {
                                     if (currentTime > scheduleDate && currentTime < scheduleEnd) {

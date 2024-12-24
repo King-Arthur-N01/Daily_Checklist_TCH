@@ -63,6 +63,7 @@ class MachinerecordController extends Controller
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
             ->where('monthly_schedules.id', '=', $id)
+            ->where('monthly_schedules.schedule_agreed', '=', !null)
             ->get();
             return response()->json([
                 'refreshdetailrecord' => $refreshdetailrecord,
@@ -256,12 +257,13 @@ class MachinerecordController extends Controller
             $record_date = Carbon::parse($request->input('record_date'));
             $currenttime = Carbon::now('Asia/Jakarta');
 
-            $checkmachineschedule = Machineschedule::find($schedule_id);
-            $isExists = $checkmachineschedule->machine_schedule_status;
+            // NON AKTIFKAN PROTEKSI PERMINTAAN DARI MTN
+            // $checkmachineschedule = Machineschedule::find($schedule_id);
+            // $isExists = $checkmachineschedule->machine_schedule_status;
 
-            if ($isExists == 1) {
-                return redirect()->route("indexmachinerecord")->withErrors('Error!!!! Checklist failed to add.');
-            }
+            // if ($isExists == 1) {
+            //     return redirect()->route("indexmachinerecord")->withErrors('Error!!!! Checklist failed to add.');
+            // }
 
             $getshifttime = Carbon::now()->format('H:i');
             if ($getshifttime >= '07:00' && $getshifttime < '15:59') {
@@ -285,7 +287,6 @@ class MachinerecordController extends Controller
             }
 
             $StoreRecords = new Machinerecord();
-            // $StoreRecords->machine_number2 = $request->input('machine_number');
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
             $StoreRecords->id_machine_schedule = $schedule_id;
@@ -311,7 +312,7 @@ class MachinerecordController extends Controller
             $schedule_date = Carbon::parse($StoreSchedule->schedule_date);
             $schedulenext = $schedule_date->copy()->addMonths(6);
             $StoreSchedule->schedule_next = $schedulenext;
-            $StoreSchedule->machine_schedule_status = true;
+            $StoreSchedule->machine_schedule_status = 1;
             if ($record_date->between($schedule_start, $schedule_end)) {
                 $StoreSchedule->schedule_time_status = true;
             } else {
@@ -339,7 +340,7 @@ class MachinerecordController extends Controller
         ->select('monthly_schedules.*', 'machine_schedules.*')
         ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
         ->where('monthly_schedules.id', '=', $monthly_id)
-        ->where('machine_schedules.machine_schedule_status', '=', true)
+        ->where('machine_schedules.machine_schedule_status', '=', 1)
         ->count();
 
         if ($machinecount == $recordscount) {
@@ -356,7 +357,7 @@ class MachinerecordController extends Controller
         ->select('yearly_schedules.*', 'machine_schedules.*')
         ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
         ->where('yearly_schedules.id', '=', $yearly_id)
-        ->where('machine_schedules.machine_schedule_status', '=', true)
+        ->where('machine_schedules.machine_schedule_status', '=', 1)
         ->count();
 
         if ($machinecount == $recordscount) {
@@ -455,32 +456,37 @@ class MachinerecordController extends Controller
     // fungsi untuk mengkoreksi dan meregister hasil preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
     public function registercorrection(Request $request, $id)
     {
-        $request->validate([
-            'correct_by' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'correct_by' => 'required'
+            ]);
 
-        $currenttime = Carbon::now('Asia/Jakarta');
-        $clear_abnormal = $request->input('clear_abnormals');
+            $currenttime = Carbon::now('Asia/Jakarta');
+            $clear_abnormal = $request->input('clear_abnormals');
 
-        $StoreRecords = Machinerecord::find($id);
+            $StoreRecords = Machinerecord::find($id);
 
-        if (!$StoreRecords) {
-            return response()->json(['error' => 'Record not found !!!!'], 404);
-        } else if ($StoreRecords->correct_by) {
-            return response()->json(['error' => 'Pembaruan data gagal. Data sudah dikoreksi oleh orang lain.'], 422);
-        } else {
-            $updateData = [
-                'correct_by' => $request->input('correct_by'),
-                'note' => $request->input('note'),
-                'finish_preventive' => $currenttime,
-            ];
-            if ($clear_abnormal == 1) {
-                $updateData['machinerecord_status'] = true;
+            if (!$StoreRecords) {
+                return response()->json(['error' => 'Record not found !!!!'], 404);
+            } else if ($StoreRecords->correct_by) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data sudah dikoreksi oleh orang lain.'], 422);
+            } else {
+                $updateData = [
+                    'correct_by' => $request->input('correct_by'),
+                    'note' => $request->input('note'),
+                    'finish_preventive' => $currenttime,
+                ];
+                if ($clear_abnormal == 1) {
+                    $updateData['machinerecord_status'] = true;
+                }
+                $StoreRecords->update($updateData);
             }
-            $StoreRecords->update($updateData);
-        }
 
-        return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
+            return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
+        } catch (\Exception $e) {
+            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data'], 500);
+        }
     }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
@@ -592,43 +598,44 @@ class MachinerecordController extends Controller
     // fungsi untuk mensetujui dan meregister hasil preventive mesin [supervisor + ass.manager + manager only]
     public function registerapproval(Request $request, $id)
     {
-        $request->validate([
-            'approve_by' => 'required'
-        ]);
-        $machinerecord = Machinerecord::find($id);
-        if (!$machinerecord) {
-            return response()->json(['error' => 'Data record not found !!!!'], 404);
-        }
-        else if (!$machinerecord->correct_by) {
-            return response()->json(['error' => 'Pembaruan data gagal. Data belum dikoreksi oleh orang lain.'], 422);
-        }
-        else if ($machinerecord->approve_by) {
-            return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
-        }
-        else {
-            $machinerecord->update([
-                'approve_by' => $request->input('approve_by'),
-                'note' => $request->input('note')
+        try{
+            $request->validate([
+                'approve_by' => 'required'
             ]);
+            $machinerecord = Machinerecord::find($id);
+            if (!$machinerecord) {
+                return response()->json(['error' => 'Data record not found !!!!'], 404);
+            }
+            else if (!$machinerecord->correct_by) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data belum dikoreksi oleh orang lain.'], 422);
+            }
+            else if ($machinerecord->approve_by) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
+            }
+            else {
+                $machinerecord->update([
+                    'approve_by' => $request->input('approve_by'),
+                    'note' => $request->input('note')
+                ]);
+            }
+            return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
+        } catch (\Exception $e) {
+            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data'], 500);
         }
-        return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
     }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
     public function deleteapproval($id) {
-        $deleterecords = Machinerecord::where('id', $id)->delete();
-
-        if ($deleterecords > 0) {
+        try {
+            $DeleteRecords = Machinerecord::find($id);
+            $DeleteRecords->delete();
             return response()->json(['success' => 'Record deleted successfully!']);
-        } else {
-            return response()->json(['error' => 'Failed to delete record.'], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete record.'], 500);
         }
     }
     // <<<============================================================================================>>>
     // <<<===============================batas approval machine records===============================>>>
     // <<<============================================================================================>>>
-    public function destroy(Machinerecord $machinerecord)
-    {
-        //
-    }
 }

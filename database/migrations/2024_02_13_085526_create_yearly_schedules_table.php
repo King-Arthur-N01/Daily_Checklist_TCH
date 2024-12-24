@@ -18,6 +18,9 @@ class CreateYearlySchedulesTable extends Migration
             $table->string('name_schedule_year');
             $table->json('machine_collection');
             $table->boolean('schedule_status')->default(false);
+            $table->unsignedBigInteger('schedule_create')->nullable();
+            $table->unsignedBigInteger('schedule_recognize')->nullable();
+            $table->unsignedBigInteger('schedule_agreed')->nullable();
             $table->timestamps();
         });
     }

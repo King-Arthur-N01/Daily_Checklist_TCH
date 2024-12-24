@@ -71,27 +71,20 @@
                 <td>DI BUAT</td>
             </tr>
             <tr>
-                {{-- <th></th> --}}
-                <th colspan="4" rowspan="4"><h2>{{ $scheduledata[0]->name_schedule_month}}</h2></th>
+                <th colspan="4" rowspan="4"><h2>{{ $scheduledata[0]->name_schedule_month }}</h2></th>
                 <th rowspan="2"></th>
                 <th rowspan="2" colspan="2"></th>
                 <th rowspan="2"></th>
             </tr>
+            <tr></tr>
             <tr>
-
-            </tr>
-            <tr>
-                {{-- <th colspan="2"></th> --}}
-                {{-- <th colspan="4"></th> --}}
                 <th></th>
                 <th colspan="2"></th>
                 <th></th>
             </tr>
             <tr>
-                {{-- <th colspan="2"></th> --}}
-                {{-- <th colspan="4"></th> --}}
                 <td>MNG. MTN</td>
-                <td colspan="2"> AST. MGR</td>
+                <td colspan="2">AST. MGR</td>
                 <td>SPV. MTN</td>
             </tr>
             <tr>
@@ -106,12 +99,6 @@
                 <th>PARAF/OKE</th>
             </tr>
             <tr>
-                {{-- <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th> --}}
                 <th>TGL</th>
                 <th>TGL</th>
                 <th>JAM</th>
@@ -120,20 +107,35 @@
         </thead>
         <tbody>
             @foreach ($scheduledata as $key => $printdata)
-            @for ($number=0; $number<=$key; $number ++)
-            @endfor
+                @php
+                    $schedule_pm = null;
+
+                    // Mengambil tanggal reschedule yang valid
+                    if ($printdata->reschedule_date_3) {
+                        $schedule_pm = $printdata->reschedule_date_3;
+                    } elseif ($printdata->reschedule_date_2) {
+                        $schedule_pm = $printdata->reschedule_date_2;
+                    } elseif ($printdata->reschedule_date_1) {
+                        $schedule_pm = $printdata->reschedule_date_1;
+                    }
+                @endphp
                 <tr>
-                    <td width="2%">{{ $number }}</td>
+                    <td width="2%">{{ $key + 1 }}</td> <!-- Menggunakan $key + 1 untuk nomor urut -->
                     <td width="25%">{{ $printdata->machine_name }}</td>
                     <td width="15%">{{ $printdata->invent_number }}</td>
                     <td width="15%">{{ $printdata->machine_spec }}</td>
                     <td width="15%">{{ $printdata->machine_number }}</td>
-                    <td width="15%">{{ $printdata->schedule_duration }}</td>
+                    <td width="15%">{{ $printdata->schedule_duration }} Jam</td>
                     <td width="20%">
                         @php $format_date = Carbon\Carbon::parse($printdata->schedule_date)->format('d-F-Y'); @endphp
-                        {{$format_date}}
+                        {{ $format_date }}
                     </td>
-                    <td width="10%"></td>
+                    <td width="10%">
+                        @php
+                            $reschedule_date = $schedule_pm ? Carbon\Carbon::parse($schedule_pm)->format('d-F-Y') : '-';
+                        @endphp
+                        {{ $reschedule_date }}
+                    </td>
                     <td width="10%"></td>
                     <td width="20%"></td>
                 </tr>

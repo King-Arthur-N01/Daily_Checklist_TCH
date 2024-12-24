@@ -47,6 +47,24 @@ class CreateRelationTable extends Migration
         Schema::table('machine_schedules', function (Blueprint $table){
             $table->foreign('machine_id')->identity('1,1')->references('id')->on('machines')->onDelete('cascade')->unique();
         });
+        Schema::table('yearly_schedules', function (Blueprint $table){
+            $table->foreign('schedule_create')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        });
+        Schema::table('yearly_schedules', function (Blueprint $table){
+            $table->foreign('schedule_recognize')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        });
+        Schema::table('yearly_schedules', function (Blueprint $table){
+            $table->foreign('schedule_agreed')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        });
+        Schema::table('monthly_schedules', function (Blueprint $table){
+            $table->foreign('schedule_create')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        });
+        Schema::table('monthly_schedules', function (Blueprint $table){
+            $table->foreign('schedule_recognize')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        });
+        Schema::table('monthly_schedules', function (Blueprint $table){
+            $table->foreign('schedule_agreed')->identity('1,1')->references('id')->on('users')->onDelete('cascade');
+        });
     }
 
     /**

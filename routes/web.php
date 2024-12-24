@@ -42,9 +42,9 @@ Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachi
 Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
 // export data route
 Route::get ('/machinedata/export/csv','MachineData\ImportdataController@exportexcel')->name('exportexcel');
-Route::get ('/machinedata/export/csv/{value}','MachineData\ImportdataController@exportexcelwithcondition')->name('exportexcelvalue');
+Route::get ('/machinedata/export/csv/{id}','MachineData\ImportdataController@exportexcelwithcondition')->name('exportexcelvalue');
 Route::get ('/machinedata/export/pdf','MachineData\ImportdataController@exportpdf')->name('exportpdf');
-Route::get ('/machinedata/export/pdf/{value}','MachineData\ImportdataController@exportpdfwithcondition')->name('exportpdfvalue');
+Route::get ('/machinedata/export/pdf/{id}','MachineData\ImportdataController@exportpdfwithcondition')->name('exportpdfvalue');
 // machine import route end
 
 // machine property route
@@ -57,36 +57,62 @@ Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyControl
 // machine property route end
 
 // schedule year route
-Route::get ('/schedule','ScheduleData\YearlyScheduleController@indexschedule')->name('indexschedule');
-Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createschedule')->name('addschedule');
-Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('editschedule');
-Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeschedule');
-// Route::get ('/schedule/view/{id}','ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewscheduleyear');
-// Route::get ('/schedule/view/data','ScheduleData\YearlyScheduleController@datacalendar')->name('datacalendar');
+Route::get ('/schedule','ScheduleData\YearlyScheduleController@indexschedule')->name('indexyear');
+Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createschedule')->name('addyear');
+Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('edityear');
+Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeyear');
 Route::get ('/schedule/read','ScheduleData\YearlyScheduleController@readmachinedata')->name('readmachinedata');
 Route::get ('/schedule/find/{id}','ScheduleData\YearlyScheduleController@findschedule')->name('findscheduleid');
-Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshschedule');
-Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleController@refreshdetailtableschedule')->name('refreshdetailschedule');
-// Route::get ('/schedule/calendar/resource','ScheduleData\YearlyScheduleController@resourcecalendar');
-Route::get ('/schedule/view/{id}', 'ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewscheduleyear');
+Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshyear'); // juga buat numpang tabel known & agreed year
+Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleController@refreshdetailtableschedule')->name('refreshdetailyear');
+Route::get ('/schedule/view/{id}', 'ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewyear');
+// khusus view fullcalendar
 Route::get ('/schedule/view/events/{id}', 'ScheduleData\YearlyScheduleController@eventcalendar');
 Route::get ('/schedule/view/resources/{id}', 'ScheduleData\YearlyScheduleController@resourcecalendar');
-Route::get ('/schedule/print/{id}','ScheduleData\YearlyScheduleController@printscheduleannual')->name('print_year');
+// khusus untuk print schedule
+Route::get ('/schedule/print/{id}','ScheduleData\YearlyScheduleController@printscheduleannual')->name('printyear');
 Route::get ('/schedule/print/quarter1/{id}','ScheduleData\YearlyScheduleController@printschedulequarter1')->name('print_quarter1');
 Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleController@printschedulequarter2')->name('print_quarter2');
 // schedule year route end
 
+// schedule year recognize
+Route::get ('/schedule/recognize','ScheduleData\YearlyScheduleController@indexschedulerecognize')->name('indexyear-recognize');
+Route::get ('/schedule/recognize/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-recognize');
+Route::put ('/schedule/recognize/update/{id}','ScheduleData\YearlyScheduleController@registerrecognize')->name('edityear-recognize');
+// schedule year recognize end
+
+// schedule year agreed
+Route::get ('/schedule/agreed','ScheduleData\YearlyScheduleController@indexscheduleagreed')->name('indexyear-agreed');
+Route::get ('/schedule/agreed/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-agreed');
+Route::put ('/schedule/agreed/update/{id}','ScheduleData\YearlyScheduleController@registeragreed')->name('edityear-agreed');
+// schedule year agreed end
+
+
+
+
 // schedule month route
-Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@readscheduleyeardata')->name('readscheduleyear');
-Route::get ('/schedule/month/find/{id}','ScheduleData\MonthlyScheduleController@findschedulemonth')->name('findschedulemonthid');
-Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addschedulemonth');
-Route::put('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editschedulemonth');
-Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewschedulemonth');
-Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController@printdataschedulemonth')->name('printschedulemonth');
-Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removeschedulemonth');
+Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@readscheduleyeardata')->name('readyear');
+Route::get ('/schedule/month/find/{id}','ScheduleData\MonthlyScheduleController@findschedulemonth')->name('findmonthid');
+Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addmonth');
+Route::put('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editmonth');
+Route::get ('/schedule/month/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refreshmonth');
+Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewmonth');
+Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController@printdataschedulemonth')->name('printmonth');
+Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
 // schedule month route
 
+// schedule month recognize
+Route::get ('/schedule/month/recognize','ScheduleData\MonthlyScheduleController@indexschedulemonthrecognize')->name('indexmonth-recognize');
+Route::get ('/schedule/month/recognize/read/{id}','ScheduleData\MonthlyScheduleController@readscheduledata')->name('readmonth-recognize');
+Route::put ('/schedule/month/recognize/update/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
+// schedule month recognize end
+
+// schedule month agreed
+Route::get ('/schedule/month/agreed','ScheduleData\MonthlyScheduleController@indexschedulemonthagreed')->name('indexmonth-agreed');
+Route::get ('/schedule/month/agreed/read/{id}','ScheduleData\MonthlyScheduleController@readscheduledata')->name('readmonth-agreed');
+Route::put ('/schedule/month/agreed/update/{id}','ScheduleData\MonthlyScheduleController@registermonthagreed')->name('editmonth-agreed');
+// schedule month agreed end
 
 // machine record
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');

@@ -9,8 +9,11 @@ class MonthlySchedule extends Model
 {
     protected $fillable = [
         'name_schedule_month',
-        'machine_collection2',
+        'schedule_collection',
         'schedule_status',
+        'schedule_create',
+        'schedule_recognize,',
+        'schedule_agreed',
         'id_schedule_year'
     ];
 

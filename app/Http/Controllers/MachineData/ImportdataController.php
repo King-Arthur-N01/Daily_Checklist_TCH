@@ -19,12 +19,9 @@ class ImportdataController extends Controller
     // fungsi index upload data mesin
     public function indeximport()
     {
-        $fetchmachines = DB::table('machines')
-            ->select('machines.*', 'machineproperties.*')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->get();
+        $fetchproperties = Machineproperty::all();
         return view('dashboard.view_importdata.tableimportdata', [
-            'fetchmachines' => $fetchmachines
+            'fetchproperties' => $fetchproperties
         ]);
     }
 
@@ -165,10 +162,10 @@ class ImportdataController extends Controller
         }
     }
 
-    public function exportexcelwithcondition($value)
+    public function exportexcelwithcondition($id)
     {
         try {
-            $machinedata = Machine::where('machine_info', $value)->get();
+            $machinedata = Machine::where('id_property', $id)->get();
 
             $csvHeader = ['NO.', 'NO.INVENTARIS MESIN', 'NAMA MESIN', 'BRAND/MERK', 'MODEL/TYPE', 'SPEC/OUTPUT', 'NO.MFG/SERIAL NUMBER', 'TAHUN PEMBUATAN', 'INPUT DAYA/KW', 'BUATAN/EX', 'DATANG MC/INSTALL DATE', 'KETERANGAN', 'NO.MESIN/LOKASI'];
             $output = fopen('php://output', 'w');
@@ -198,7 +195,7 @@ class ImportdataController extends Controller
 
             return Response::make($csvContent, 200, [
                 'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="DAFTAR MESIN ' . $value . '.csv"',
+                'Content-Disposition' => 'attachment; filename="DAFTAR MESIN ' . $id . '.csv"',
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -210,9 +207,9 @@ class ImportdataController extends Controller
     {
         try {
             $machinedata = Machine::all();
-            $value = null;
+            $id = null;
 
-            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','value'));
+            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','id'));
             $pdf->setPaper('A4', 'landscape');
 
             return $pdf->stream();
@@ -221,12 +218,17 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Error getting data'], 500);
         }
     }
-    public function exportpdfwithcondition($value)
+    public function exportpdfwithcondition($id)
     {
         try {
-            $machinedata = Machine::where('machine_info', $value)->get();
+            // $machinedata = Machine::where('id_property', $id)->get();
+            $machinedata = DB::table('machines')
+            ->select('machines.*', 'machineproperties.*')
+            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->where('machines.id_property', '=', $id)
+            ->get();
 
-            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','value'));
+            $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','id'));
             $pdf->setPaper('A4', 'landscape');
 
             return $pdf->stream();

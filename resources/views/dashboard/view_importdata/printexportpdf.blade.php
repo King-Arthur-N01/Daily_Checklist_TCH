@@ -70,8 +70,8 @@
         <tbody>
             <tr>
                 <th colspan="2" rowspan="5"><img src="../public/assets/icons/trmitra_logo.png" height="60"></th>
-                @if ($value == !null)
-                    <th colspan="5">DAFTAR MESIN {{$value}}</th>
+                @if ($id == !null)
+                    <th colspan="5">DAFTAR MESIN {{$id}}</th>
                 @else
                     <th colspan="5">DAFTAR SEMUA MESIN</th>
                 @endif

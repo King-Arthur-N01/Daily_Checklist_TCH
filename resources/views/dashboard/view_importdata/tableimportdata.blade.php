@@ -24,9 +24,7 @@
                             <p class="mg-b-10">Standarisasi Mesin</p>
                             <select class="form-control" id="filterByProperty">
                                 <option selected="selected">Select :</option>
-                                @foreach ($fetchmachines as $getmachine)
-                                    <option value="{{$getmachine->name_property}}">{{$getmachine->name_property}}</option>
-                                @endforeach
+
                             </select>
                         </div>
                     </div>
@@ -64,24 +62,16 @@
                                     <a class="dropdown-item dropdown-toggle" id="dropdownSubMenu1" data-toggle="dropdown"><i class="bi bi-file-earmark-spreadsheet"></i>&nbsp;CSV</a>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownSubMenu1">
                                         <a class="dropdown-item export_excel" data-value="">SEMUA.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="PRODUKSI">PRODUKSI.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="ENGINEERING">ENGINEERING.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="KONTRUKSI">KONTRUKSI.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="CIREBON">CIREBON.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="CIKARANG">CIKARANG.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="AKTIF">AKTIF.csv</a>
-                                        <a class="dropdown-item export_excel" data-value="NONAKTIF">NONAKTIF.csv</a>
+                                        @foreach ($fetchproperties as $getproperty)
+                                            <a class="dropdown-item export_excel" data-value="{{$getproperty->id}}">{{$getproperty->name_property}}.csv</a>
+                                        @endforeach
                                     </ul>
                                     <a class="dropdown-item dropdown-toggle" id="dropdownSubMenu2" data-toggle="dropdown"><i class="bi bi-file-earmark-pdf"></i>&nbsp;PDF</a>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownSubMenu2">
                                         <a class="dropdown-item export_pdf" data-value="">SEMUA.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="PRODUKSI">PRODUKSI.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="ENGINEERING">ENGINEERING.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="KONTRUKSI">KONTRUKSI.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="CIREBON">CIREBON.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="CIKARANG">CIKARANG.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="AKTIF">AKTIF.pdf</a>
-                                        <a class="dropdown-item export_pdf" data-value="NONAKTIF">NONAKTIF.pdf</a>
+                                        @foreach ($fetchproperties as $getproperty)
+                                            <a class="dropdown-item export_pdf" data-value="{{$getproperty->id}}">{{$getproperty->name_property}}.pdf</a>
+                                        @endforeach
                                     </ul>
                                 </li>
                             </ul>
@@ -964,20 +954,11 @@
             });
 
             $('.dropdown-menu a.export_pdf').on('click', function() {
-                const buttonValue = $(this).data('value');
-                const routes = {
-                    'PRODUKSI': '{{ route("exportpdfvalue", ":value") }}',
-                    'ENGINEERING': '{{ route("exportpdfvalue", ":value") }}',
-                    'KONTRUKSI': '{{ route("exportpdfvalue", ":value") }}',
-                    'CIREBON': '{{ route("exportpdfvalue", ":value") }}',
-                    'CIKARANG': '{{ route("exportpdfvalue", ":value") }}',
-                    'AKTIF': '{{ route("exportpdfvalue", ":value") }}',
-                    'NONAKTIF': '{{ route("exportpdfvalue", ":value") }}'
-                };
+                let buttonValue = $(this).data('value') || '';
 
                 // Jika nilai tombol ada di rute
-                if (routes[buttonValue]) {
-                    const newViewPrint = routes[buttonValue].replace(':value', buttonValue);
+                if (buttonValue) {
+                    const newViewPrint = '{{ route("exportpdfvalue", ":id") }}'.replace(':id', buttonValue);
                     window.open(newViewPrint, '_blank');
                 } else {
                     // Default jika tidak ada nilai tombol
@@ -987,20 +968,11 @@
             });
 
             $('.dropdown-menu a.export_excel').on('click', function() {
-                const buttonValue = $(this).data('value');
-                const routes = {
-                    'PRODUKSI': '{{ route("exportexcelvalue", ":value") }}',
-                    'ENGINEERING': '{{ route("exportexcelvalue", ":value") }}',
-                    'KONTRUKSI': '{{ route("exportexcelvalue", ":value") }}',
-                    'CIREBON': '{{ route("exportexcelvalue", ":value") }}',
-                    'CIKARANG': '{{ route("exportexcelvalue", ":value") }}',
-                    'AKTIF': '{{ route("exportexcelvalue", ":value") }}',
-                    'NONAKTIF': '{{ route("exportexcelvalue", ":value") }}'
-                };
+                let buttonValue = $(this).data('value') || '';
 
                 // Jika nilai tombol ada di rute
-                if (routes[buttonValue]) {
-                    const newViewPrint = routes[buttonValue].replace(':value', buttonValue);
+                if (buttonValue) {
+                    const newViewPrint = '{{ route("exportexcelvalue", ":id") }}'.replace(':id', buttonValue);
                     window.open(newViewPrint, '_blank');
                 } else {
                     // Default jika tidak ada nilai tombol

@@ -15,11 +15,24 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class MonthlyScheduleController extends Controller
 {
+    public function refreshtableschedulemonth()
+    {
+        try {
+            $refreshschedule = MonthlySchedule::get();
+            return response()->json([
+                'refreshschedule' => $refreshschedule
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     public function readscheduleyeardata($id)
     {
         try {
             $getmachines = DB::table('yearly_schedules')
-                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as getmachinescheduleid')
+                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('yearly_schedules.id', '=', $id)
@@ -59,25 +72,43 @@ class MonthlyScheduleController extends Controller
     public function createschedulemonth(Request $request)
     {
         try {
+            $request->validate([
+                'name_schedule' => 'required',
+                'schedule_date' => 'required|array',
+            ]);
+            // dd($request->all());
             $name_schedule = $request->input('name_schedule');
             $id_schedule = $request->input('id_schedule_year');
+            $create_by = $request->input('schedule_create');
             $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
             $schedule_key = $request->input('machine_schedule_id', []);
-            $machine_key = $request->input('machine_id', []);
 
             // Validasi jumlah elemen pada kedua array
-            if (count($machine_key) !== count($schedule_key)) {
+            if (count($schedule_date) !== count($schedule_key)) {
                 return response()->json(['error' => 'Mismatch between machines and schedule ids'], 400);
+            }
+
+            $check_monthly_status = MonthlySchedule::where('id_schedule_year', $id_schedule)->latest('id')->first();
+
+            if (!$check_monthly_status) {
+                // No previous planner status found
+            } else {
+                if ($check_monthly_status->schedule_recognize == null) {
+                    return response()->json(['error' => 'Schedule sebelum nya belum dicek oleh PLANNER!!!.'], 422);
+                } else if ($check_monthly_status->schedule_aggred == null) {
+                    return response()->json(['error' => 'Schedule sebelum nya belum disetujui oleh ATASAN!!!.'], 422);
+                }
             }
 
             $StoreSchedule = new MonthlySchedule();
             $StoreSchedule->name_schedule_month = $name_schedule;
-            $StoreSchedule->machine_collection2 = json_encode($machine_key);
+            $StoreSchedule->schedule_create = $create_by;
+            $StoreSchedule->schedule_collection = json_encode($schedule_key);
             $StoreSchedule->id_schedule_year = $id_schedule;
             $StoreSchedule->save();
 
-            $getmonthlyid = MonthlySchedule::latest('id')->first()->id;
+            $getmonthlyid = $StoreSchedule->id;
 
             foreach ($schedule_key as $index => $key) {
                 $StoreMachineSchedule = MachineSchedule::find($key);
@@ -155,7 +186,7 @@ class MonthlyScheduleController extends Controller
     {
         try {
             $getschedulemonth = DB::table('monthly_schedules')
-            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*')
+            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->where('monthly_schedules.id', '=', $id)
@@ -200,59 +231,121 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    // <<<============================================================================================>>>
+    // <<<==================================batas ketahui schedule====================================>>>
+    // <<<============================================================================================>>>
+
+    public function indexschedulemonthrecognize()
     {
-        //
+        return view('dashboard.view_schedulemesin.tablerecognizemonth');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\MonthlySchedule  $monthlySchedule
-     * @return \Illuminate\Http\Response
-     */
-    public function show(MonthlySchedule $monthlySchedule)
+    public function readscheduledata($id)
     {
-        //
+        try{
+            $scheduledata = DB::table('machine_schedules')
+            ->select('machine_schedules.*', 'machines.*', 'machines.id as machine_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('machine_schedules.monthly_id', '=', $id)
+            ->get();
+
+            return response()->json([
+                'scheduledata' => $scheduledata
+            ]);
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\MonthlySchedule  $monthlySchedule
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(MonthlySchedule $monthlySchedule)
+    public function registerrecognize(Request $request, $id)
     {
-        //
+        try {
+            $request->validate([
+                'recognize_by' => 'required'
+            ]);
+
+            $StoreSchedule = MonthlySchedule::find($id);
+            if (!$StoreSchedule) {
+                return response()->json(['error' => 'Schedule not found !!!!'], 404);
+            } else {
+                $StoreSchedule->schedule_recognize = $request->input('recognize_by');
+                $StoreSchedule->save();
+            }
+
+            $machine_reschedule = $request->input('machine_reschedule');
+            if ($machine_reschedule) {
+                foreach ($machine_reschedule as $reschedule) {
+                    $StoreMachineSchedule = MachineSchedule::find($reschedule['schedule_id']);
+                    if ($StoreMachineSchedule) {
+                        $reschedule_date = Carbon::createFromFormat('d-m-Y', $reschedule['reschedule_value'])->format('Y-m-d');
+                        if ($StoreMachineSchedule->reschedule_date_1 == null) {
+                            $StoreMachineSchedule->reschedule_date_1 = $reschedule_date;
+                        } else if ($StoreMachineSchedule->reschedule_date_2 == null) {
+                            $StoreMachineSchedule->reschedule_date_2 = $reschedule_date;
+                        } else if ($StoreMachineSchedule->reschedule_date_3 == null) {
+                            $StoreMachineSchedule->reschedule_date_3 = $reschedule_date;
+                        } else {
+                            return response()->json(['error' => 'Tidak bisa lebih dari 3x melakukan RESCHEDULE!!! '], 422);
+                        }
+                        $StoreMachineSchedule->reschedule_note = $reschedule['reschedule_note'];
+                        $StoreMachineSchedule->save();
+                    } else {
+                        return response()->json(['error' => 'Machine schedule not found for ID: ' . $reschedule['schedule_id']], 404);
+                    }
+                }
+            } else {
+                return response()->json(['error' => 'No reschedule data provided'], 400);
+            }
+            return response()->json(['success' => 'Schedule mesin berhasil di TERIMA!']);
+        } catch (\Exception $e) {
+            Log::error('update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data'], 500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\MonthlySchedule  $monthlySchedule
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, MonthlySchedule $monthlySchedule)
+
+    // <<<============================================================================================>>>
+    // <<<================================batas ketahui schedule end==================================>>>
+    // <<<============================================================================================>>>
+
+
+
+    // <<<============================================================================================>>>
+    // <<<==================================batas setujui schedule====================================>>>
+    // <<<============================================================================================>>>
+    public function indexschedulemonthagreed()
     {
-        //
+        return view('dashboard.view_schedulemesin.tableagreedmonth');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\MonthlySchedule  $monthlySchedule
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(MonthlySchedule $monthlySchedule)
+    public function registermonthagreed(Request $request, $id)
     {
-        //
+        try {
+            $request->validate([
+                'agreed_by' => 'required'
+            ]);
+
+            $StoreSchedule = MonthlySchedule::find($id);
+
+            if (!$StoreSchedule) {
+                return response()->json(['error' => 'Schedule not found !!!!'], 404);
+            } else if (!$StoreSchedule->schedule_recognize) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data belum diketahui oleh orang lain.'], 422);
+            } else if ($StoreSchedule->schedule_agreed) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
+            } else {
+                $StoreSchedule->schedule_agreed = $request->input('agreed_by');
+                $StoreSchedule->save();
+            }
+            return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
+        } catch (\Exception $e) {
+            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data'], 500);
+        }
     }
+
+    // <<<============================================================================================>>>
+    // <<<================================batas setujui schedule end==================================>>>
+    // <<<============================================================================================>>>
 }

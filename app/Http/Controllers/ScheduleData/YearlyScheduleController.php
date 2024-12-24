@@ -186,6 +186,7 @@ class YearlyScheduleController extends Controller
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('yearly_schedules.id', '=', $id)
+                ->groupBy('machine_schedules.id')
                 ->get();
 
             $recorddata = DB::table('yearly_schedules')
@@ -209,36 +210,53 @@ class YearlyScheduleController extends Controller
         try {
             $request->validate([
                 'name_schedule' => 'required',
+                'preventive_cycle' => 'required|array',
             ]);
 
             $machine_key = $request->input('machine_id');
             $schedule_times = $request->input('schedule_time');
+            $preventive_cycles = $request->input('preventive_cycle');
 
-            // Validasi jumlah elemen pada kedua array
-            if (count($machine_key) !== count($schedule_times)) {
-                return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
+            // Validasi jumlah elemen pada semua array
+            if (count($machine_key) !== count($schedule_times) || count($machine_key) !== count($preventive_cycles)) {
+                return response()->json(['error' => 'Mismatch between machines, schedule times, and preventive cycles'], 400);
             }
 
             $StoreSchedule = new YearlySchedule();
             $StoreSchedule->name_schedule_year = $request->input('name_schedule');
+            $StoreSchedule->schedule_create = $request->input('schedule_create');
             $StoreSchedule->machine_collection = json_encode($machine_key);
             $StoreSchedule->save();
 
-            $schedule_id = YearlySchedule::latest('id')->first()->id;
+            $schedule_id = $StoreSchedule->id;
+            $months_in_year = 12;
 
             foreach ($machine_key as $index => $key) {
-                $ScheduleTimeRange = $request->input('schedule_time')[$index];
+                $ScheduleTimeRange = $schedule_times[$index];
+                $ScheduleCycle = $preventive_cycles[$index];
                 list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
+
+                $result_in_year = $months_in_year / $ScheduleCycle;
 
                 $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                $StoreMachineSchedule = new MachineSchedule();
-                $StoreMachineSchedule->schedule_start = $ScheduleStartCarbon;
-                $StoreMachineSchedule->schedule_end = $ScheduleEndCarbon;
-                $StoreMachineSchedule->machine_id = $key;
-                $StoreMachineSchedule->yearly_id = $schedule_id;
-                $StoreMachineSchedule->save();
+                for ($i = 0; $i < $result_in_year; $i++) {
+                    $new_schedule_start = $ScheduleStartCarbon->copy()->addMonths(($ScheduleCycle * $i));
+                    $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
+
+                    if ($new_schedule_start->year > $request->input('limit_schedule')) {
+                        break; // H entikan loop jika tahun mencapai limit_schedule
+                    }
+
+                    $StoreMachineSchedule = new MachineSchedule();
+                    $StoreMachineSchedule->schedule_start = $new_schedule_start;
+                    $StoreMachineSchedule->schedule_end = $new_schedule_end;
+                    $StoreMachineSchedule->preventive_cycle = $ScheduleCycle;
+                    $StoreMachineSchedule->machine_id = $key;
+                    $StoreMachineSchedule->yearly_id = $schedule_id;
+                    $StoreMachineSchedule->save();
+                }
             }
 
             return response()->json(['success' => 'Schedule mesin berhasil di TAMBAHKAN!']);
@@ -325,4 +343,103 @@ class YearlyScheduleController extends Controller
             return response()->json(['error' => 'Error delete data'], 500);
         }
     }
+
+
+    // <<<============================================================================================>>>
+    // <<<==================================batas ketahui schedule====================================>>>
+    // <<<============================================================================================>>>
+
+    public function indexschedulerecognize()
+    {
+        return view('dashboard.view_schedulemesin.tablerecognizeyear');
+    }
+
+    public function readscheduledata($id)
+    {
+        try{
+            $scheduledata = DB::table('machine_schedules')
+            ->select('machine_schedules.*', 'machines.*', 'machines.id as machine_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('machine_schedules.yearly_id', '=', $id)
+            ->get();
+
+            return response()->json([
+                'scheduledata' => $scheduledata
+            ]);
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    public function registerrecognize(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'recognize_by' => 'required'
+            ]);
+
+            $StoreSchedule = YearlySchedule::find($id);
+
+            if (!$StoreSchedule) {
+                return response()->json(['error' => 'Schedule not found !!!!'], 404);
+            } else if ($StoreSchedule->schedule_recognize) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data sudah diketahui oleh orang lain.'], 422);
+            } else {
+                $StoreSchedule->schedule_recognize = $request->input('recognize_by');
+                $StoreSchedule->save();
+            }
+            return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
+        } catch (\Exception $e) {
+            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data'], 500);
+        }
+    }
+
+
+    // <<<============================================================================================>>>
+    // <<<================================batas ketahui schedule end==================================>>>
+    // <<<============================================================================================>>>
+
+
+
+
+    // <<<============================================================================================>>>
+    // <<<==================================batas setujui schedule====================================>>>
+    // <<<============================================================================================>>>
+
+    public function indexscheduleagreed()
+    {
+        return view('dashboard.view_schedulemesin.tableagreedyear');
+    }
+
+    public function registeragreed(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'agreed_by' => 'required'
+            ]);
+
+            $StoreSchedule = YearlySchedule::find($id);
+
+            if (!$StoreSchedule) {
+                return response()->json(['error' => 'Schedule not found !!!!'], 404);
+            } else if (!$StoreSchedule->schedule_recognize) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data belum diketahui oleh orang lain.'], 422);
+            } else if ($StoreSchedule->schedule_agreed) {
+                return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
+            } else {
+                $StoreSchedule->schedule_agreed = $request->input('agreed_by');
+                $StoreSchedule->save();
+            }
+            return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
+        } catch (\Exception $e) {
+            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data'], 500);
+        }
+    }
+
+    // <<<============================================================================================>>>
+    // <<<================================batas setujui schedule end==================================>>>
+    // <<<============================================================================================>>>
 }

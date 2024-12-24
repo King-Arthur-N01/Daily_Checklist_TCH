@@ -62,7 +62,7 @@
 
 <body>
     <table class="table">
-        <thead>
+        <tbody>
             <tr>
                 <th colspan="2" rowspan="4"><img src="../public/assets/icons/trmitra_logo.png" height="70"></th>
                 <th colspan="11"><h1>SCHEDULE PREVENTIVE MAINTENANCE MESIN</h1></th>
@@ -87,6 +87,10 @@
                 <td colspan="2">SPV. MTN</td>
                 <td colspan="2">SPV. PROD</td>
             </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
             <tr>
                 <th rowspan="2" width="1%">NO.</th>
                 <th rowspan="2" width="10%">NO.INVENTARIS</th>
