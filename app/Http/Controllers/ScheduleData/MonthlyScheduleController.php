@@ -15,10 +15,23 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class MonthlyScheduleController extends Controller
 {
-    public function refreshtableschedulemonth()
+    public function refreshtablescheduleagreed()
     {
         try {
             $refreshschedule = MonthlySchedule::get();
+            return response()->json([
+                'refreshschedule' => $refreshschedule
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    public function refreshtablescheduleplanner()
+    {
+        try {
+            $refreshschedule = MonthlySchedule::whereNotNull('schedule_agreed')->get();
             return response()->json([
                 'refreshschedule' => $refreshschedule
             ]);
@@ -40,7 +53,6 @@ class MonthlyScheduleController extends Controller
 
             return response()->json([
                 'getmachines' => $getmachines,
-                'getscheduleid',
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -90,14 +102,12 @@ class MonthlyScheduleController extends Controller
             }
 
             $check_monthly_status = MonthlySchedule::where('id_schedule_year', $id_schedule)->latest('id')->first();
-
+            // dd($check_monthly_status);
             if (!$check_monthly_status) {
                 // No previous planner status found
             } else {
-                if ($check_monthly_status->schedule_recognize == null) {
+                if ($check_monthly_status->schedule_recognize === null) {
                     return response()->json(['error' => 'Schedule sebelum nya belum dicek oleh PLANNER!!!.'], 422);
-                } else if ($check_monthly_status->schedule_aggred == null) {
-                    return response()->json(['error' => 'Schedule sebelum nya belum disetujui oleh ATASAN!!!.'], 422);
                 }
             }
 
@@ -240,13 +250,14 @@ class MonthlyScheduleController extends Controller
         return view('dashboard.view_schedulemesin.tablerecognizemonth');
     }
 
-    public function readscheduledata($id)
+    public function findscheduledata($id)
     {
         try{
-            $scheduledata = DB::table('machine_schedules')
-            ->select('machine_schedules.*', 'machines.*', 'machines.id as machine_id')
+            $scheduledata = DB::table('monthly_schedules')
+            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->where('machine_schedules.monthly_id', '=', $id)
+            ->where('monthly_schedules.id', '=', $id)
             ->get();
 
             return response()->json([
@@ -264,7 +275,7 @@ class MonthlyScheduleController extends Controller
             $request->validate([
                 'recognize_by' => 'required'
             ]);
-
+            // dd($request->all());
             $StoreSchedule = MonthlySchedule::find($id);
             if (!$StoreSchedule) {
                 return response()->json(['error' => 'Schedule not found !!!!'], 404);
@@ -330,8 +341,6 @@ class MonthlyScheduleController extends Controller
 
             if (!$StoreSchedule) {
                 return response()->json(['error' => 'Schedule not found !!!!'], 404);
-            } else if (!$StoreSchedule->schedule_recognize) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data belum diketahui oleh orang lain.'], 422);
             } else if ($StoreSchedule->schedule_agreed) {
                 return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
             } else {

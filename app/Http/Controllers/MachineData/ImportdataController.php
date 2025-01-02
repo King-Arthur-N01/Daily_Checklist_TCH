@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Importdata;
 use App\Machine;
 use App\Machineproperty;
-use App\Schedule;
+use Yajra\DataTables\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
@@ -39,6 +39,35 @@ class ImportdataController extends Controller
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
+    // Endpoint data untuk DataTable (EXPERIMENTAL)
+    // public function data(Request $request)
+    // {
+    //     $refreshmachine = Machine::query();
+    //     $refreshproperty = Machineproperty::query();
+
+    //     return DataTables::of($refreshmachine)
+    //         ->addColumn('action', function ($user) {
+    //             return '
+    //                 <div class="dynamic-button-group">
+    //                     <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
+    //                     <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+    //                         <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
+    //                         <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+    //                         <a class="dropdown-item-custom-delete" data-id="${refreshmachine.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
+    //                     </div>
+    //                 </div>
+    //             ';
+    //         })
+    //         ->filter(function ($query) use ($request) {
+    //             if ($request->has('search') && $request->search['value']) {
+    //                 $search = $request->search['value'];
+    //                 $query->where('name', 'like', "%{$search}%")
+    //                         ->orWhere('email', 'like', "%{$search}%");
+    //             }
+    //         })
+    //         ->make(true);
+    // }
 
     // fungsi ajax untuk melihat property mesin
     public function detailmachinedata($id)

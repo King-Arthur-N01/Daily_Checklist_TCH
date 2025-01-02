@@ -78,13 +78,13 @@ Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleControll
 // schedule year recognize
 Route::get ('/schedule/recognize','ScheduleData\YearlyScheduleController@indexschedulerecognize')->name('indexyear-recognize');
 Route::get ('/schedule/recognize/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-recognize');
-Route::put ('/schedule/recognize/update/{id}','ScheduleData\YearlyScheduleController@registerrecognize')->name('edityear-recognize');
+Route::put ('/schedule/recognize/register/{id}','ScheduleData\YearlyScheduleController@registerrecognize')->name('edityear-recognize');
 // schedule year recognize end
 
 // schedule year agreed
 Route::get ('/schedule/agreed','ScheduleData\YearlyScheduleController@indexscheduleagreed')->name('indexyear-agreed');
 Route::get ('/schedule/agreed/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-agreed');
-Route::put ('/schedule/agreed/update/{id}','ScheduleData\YearlyScheduleController@registeragreed')->name('edityear-agreed');
+Route::put ('/schedule/agreed/register/{id}','ScheduleData\YearlyScheduleController@registeragreed')->name('edityear-agreed');
 // schedule year agreed end
 
 
@@ -95,7 +95,7 @@ Route::get ('/schedule/month/read/{id}','ScheduleData\MonthlyScheduleController@
 Route::get ('/schedule/month/find/{id}','ScheduleData\MonthlyScheduleController@findschedulemonth')->name('findmonthid');
 Route::post('/schedule/month/create','ScheduleData\MonthlyScheduleController@createschedulemonth')->name('addmonth');
 Route::put('/schedule/month/update/{id}','ScheduleData\MonthlyScheduleController@updatechedulemonth')->name('editmonth');
-Route::get ('/schedule/month/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refreshmonth');
+// Route::get ('/schedule/month/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refreshmonth');
 Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@viewdataschedule')->name('viewmonth');
 Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController@printdataschedulemonth')->name('printmonth');
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removemonth');
@@ -104,14 +104,16 @@ Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleControl
 
 // schedule month recognize
 Route::get ('/schedule/month/recognize','ScheduleData\MonthlyScheduleController@indexschedulemonthrecognize')->name('indexmonth-recognize');
-Route::get ('/schedule/month/recognize/read/{id}','ScheduleData\MonthlyScheduleController@readscheduledata')->name('readmonth-recognize');
-Route::put ('/schedule/month/recognize/update/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
+Route::get ('/schedule/month/recognize/find/{id}','ScheduleData\MonthlyScheduleController@findscheduledata')->name('findmonth-recognize');
+Route::put ('/schedule/month/recognize/register/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
+Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtablescheduleplanner')->name('refresh-recognize');
 // schedule month recognize end
 
 // schedule month agreed
 Route::get ('/schedule/month/agreed','ScheduleData\MonthlyScheduleController@indexschedulemonthagreed')->name('indexmonth-agreed');
 Route::get ('/schedule/month/agreed/read/{id}','ScheduleData\MonthlyScheduleController@readscheduledata')->name('readmonth-agreed');
-Route::put ('/schedule/month/agreed/update/{id}','ScheduleData\MonthlyScheduleController@registermonthagreed')->name('editmonth-agreed');
+Route::put ('/schedule/month/agreed/register/{id}','ScheduleData\MonthlyScheduleController@registermonthagreed')->name('editmonth-agreed');
+Route::get ('/schedule/month/agreed/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtablescheduleagreed')->name('refresh-agreed');
 // schedule month agreed end
 
 // machine record

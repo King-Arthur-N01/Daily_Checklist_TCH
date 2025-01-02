@@ -189,13 +189,13 @@
                     { data: 'shift' },
                     {
                         data: 'getcreatedate',
-                        render: function(data, type, row) {
-                            // Cek status dan ubah warna latar belakang jika perlu
-                            if (row.schedule_status == false) {
-                                return `<span style="color: red;">${formatDate(data)}</span>`;
-                            }
-                            return formatDate(data);
-                        }
+                        // render: function(data, type, row) {
+                        //     // Cek status dan ubah warna latar belakang jika perlu
+                        //     if (row.schedule_status == false) {
+                        //         return `<span style="color: red;">${formatDate(data)}</span>`;
+                        //     }
+                        //     return formatDate(data);
+                        // }
                     },
                     { data: 'actions', orderable: false, searchable: false }
                 ]

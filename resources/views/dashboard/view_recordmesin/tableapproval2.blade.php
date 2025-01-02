@@ -131,10 +131,13 @@
 
 @push('style')
     <link rel="stylesheet" href="{{ asset('assets/vendor/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/daterange-picker/daterangepicker.css') }}">
 @endpush
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
+    <script src="{{ asset('assets/vendor/daterange-picker/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/daterange-picker/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/formatdate.js') }}"></script>
     {{-- <script src="{{ asset('assets/vendor/custom-js/filtertable1.js') }}"></script> --}}
     <script>
@@ -189,13 +192,13 @@
                     { data: 'shift' },
                     {
                         data: 'getcreatedate',
-                        render: function(data, type, row) {
-                            // Cek status dan ubah warna latar belakang jika perlu
-                            if (row.schedule_status == false) {
-                                return `<span style="color: red;">${formatDate(data)}</span>`;
-                            }
-                            return formatDate(data);
-                        }
+                        // render: function(data, type, row) {
+                        //     // Cek status dan ubah warna latar belakang jika perlu
+                        //     if (row.schedule_status == false) {
+                        //         return `<span style="color: red;">${formatDate(data)}</span>`;
+                        //     }
+                        //     return formatDate(data);
+                        // }
                     },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
@@ -297,6 +300,14 @@
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                     <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note || '-'}</textarea>
                                 </div>
+                                ${data.usersdata[0].machinerecord_status === 0 ? `
+                                    <div class="form-custom">
+                                        <a>Reschedule ulang perbaikan abnormality mesin</a>
+                                        <input class="form-control datepicker" id="abnormal_date" required>
+                                        <input type="hidden" id="year_id" value="${data.machinedata[0].year_id}">
+                                        <input type="hidden" id="machine_id" value="${data.machinedata[0].machine_id}">
+                                    </div>
+                                ` : ''}
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
                                         <thead>
@@ -331,10 +342,58 @@
                         $('#modal_button_approve').html(button_modal);
                         mergeCells();
 
+                        $('.datepicker').daterangepicker({
+                            parentEl: '#approveModal',
+                            singleDatePicker: true,
+                            showDropdowns: true,
+                            minDate: moment().startOf('day'), // Mengatur tanggal minimum ke hari ini
+                            locale: {
+                                firstDay: 1,
+                                format: 'DD-MM-YYYY'
+                            }
+                        });
+
+                        // Validasi form sebelum disubmit
+                        const isAbnormalExist = data.usersdata[0].machinerecord_status;
+                        if (isAbnormalExist === 0) {
+                            function alertRequired() {
+                                const abnormalInput = document.getElementById("abnormal_date");
+                                const errorMessagesDiv = document.getElementById("warningModal");
+                                const errorMessage = document.getElementById("warningText");
+
+                                // Clear previous error messages
+                                errorMessage.textContent = '';
+
+                                // Check if the abnormalInput is empty
+                                if (abnormalInput.value.trim() === "") {
+                                    const fieldName = "Abnormal Date"; // Ganti dengan nama field yang sesuai
+                                    errorMessage.textContent = `${fieldName} is required.`;
+                                    errorMessagesDiv.style.display = 'block'; // Tampilkan modal kesalahan
+                                    return false; // Menghentikan proses jika ada kesalahan
+                                }
+
+                                // Jika tidak ada kesalahan, kembalikan true
+                                return true;
+                            }
+                        } else {
+                            function alertRequired() {
+                                return true;
+                            }
+                        }
+
                         // Save button
-                        $('#saveButton').on('click', function() {
+                        $('#saveButton').on('click', function(event) {
+                            event.preventDefault();
+                            if (!alertRequired()) {
+                                return;
+                            }
+
                             let note = $('#input_note').val();
+                            let abnormalDate = $('#abnormal_date').val();
+                            let yearId = $('#year_id').val();
+                            let machineId = $('#machine_id').val();
                             let approvedBy = '{{ Auth::user()->id }}';
+
                             if (confirm("Apakah yakin mengapprove preventive ini?")) {
                                 $.ajax({
                                     type: 'PUT',
@@ -342,7 +401,10 @@
                                     data: {
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                                         'approve_by': approvedBy,
-                                        'note': note
+                                        'note': note,
+                                        'abnormal_date': abnormalDate,
+                                        'year_id': yearId,
+                                        'machine_id': machineId
                                     },
                                     success: function(response) {
                                         if (response.success) {

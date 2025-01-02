@@ -34,6 +34,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'manage_user']);
         Permission::create(['name' => 'permit']);
         Permission::create(['name' => 'restric']);
+        Permission::create(['name' => 'modify_data']);
 
         //create roles and assign existing permissions
         $operatorRole = Role::create(['name' => 'operator']);
@@ -85,10 +86,11 @@ class PermissionSeeder extends Seeder
         $adminRole->givePermissionTo('manage_user');
         $adminRole->givePermissionTo('permit');
         $adminRole->givePermissionTo('restric');
+        $adminRole->givePermissionTo('modify_data');
 
         // create demo users
         $admin = User::create([
-            'name' => 'Admin',
+            'name' => 'System-Admin',
             'nik' => '11379',
             'department' => 'IT',
             'password' => bcrypt('admin123'),

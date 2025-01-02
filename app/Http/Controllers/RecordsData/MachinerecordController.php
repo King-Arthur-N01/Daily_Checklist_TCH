@@ -11,6 +11,7 @@ use App\MonthlySchedule;
 use App\Machinerecord;
 use App\Machineschedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -34,7 +35,7 @@ class MachinerecordController extends Controller
         return view('dashboard.view_history.tablehistory');
     }
 
-    // fungsi menampilkan tabel dan merefresh tabel preventice
+    // fungsi menampilkan tabel dan merefresh tabel preventive
     public function refreshtablerecord()
     {
         try {
@@ -311,11 +312,30 @@ class MachinerecordController extends Controller
             $schedule_end = Carbon::parse($StoreSchedule->schedule_end);
             $schedule_date = Carbon::parse($StoreSchedule->schedule_date);
             $schedulenext = $schedule_date->copy()->addMonths(6);
+
+            $reschedule_pm = null;
+
+            if ($StoreSchedule->reschedule_date_3) {
+                $reschedule_pm = $StoreSchedule->reschedule_date_3;
+            } else if ($StoreSchedule->reschedule_date_2) {
+                $reschedule_pm = $StoreSchedule->reschedule_date_2;
+            } else if ($StoreSchedule->reschedule_date_1) {
+                $reschedule_pm = $StoreSchedule->reschedule_date_1;
+            }
+
             $StoreSchedule->schedule_next = $schedulenext;
             $StoreSchedule->machine_schedule_status = 1;
             if ($record_date->between($schedule_start, $schedule_end)) {
                 $StoreSchedule->schedule_time_status = true;
             } else {
+                if ($reschedule_pm) {
+                    $record_planner = Carbon::parse($reschedule_pm);
+                    if ($record_planner->eq($record_date)) {
+                        $StoreSchedule->schedule_time_status = true;
+                    } else {
+                        $StoreSchedule->schedule_time_status = false;
+                    }
+                }
                 $StoreSchedule->schedule_time_status = false;
             }
             $StoreSchedule->save();
@@ -328,13 +348,14 @@ class MachinerecordController extends Controller
 
             return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['Error!!!! Checklist failed to add.' => $e->getMessage()]);
+            Log::error($e->getMessage());
+            return redirect()->back()->withErrors(['message' => 'Error!!!! Checklist failed to add. ' . $e->getMessage()]);
         }
     }
 
     private function checkstatusmonth($monthly_id) {
         $CheckSchedule = MonthlySchedule::find($monthly_id);
-        $machinecount =  count(json_decode($CheckSchedule->machine_collection2));
+        $schedulecount =  count(json_decode($CheckSchedule->schedule_collection));
 
         $recordscount = DB::table('monthly_schedules')
         ->select('monthly_schedules.*', 'machine_schedules.*')
@@ -343,7 +364,7 @@ class MachinerecordController extends Controller
         ->where('machine_schedules.machine_schedule_status', '=', 1)
         ->count();
 
-        if ($machinecount == $recordscount) {
+        if ($schedulecount == $recordscount) {
             $CheckSchedule->schedule_status = true;
             $CheckSchedule->save();
         }
@@ -542,7 +563,7 @@ class MachinerecordController extends Controller
     {
         try{
             $machinedata = DB::table('machinerecords')
-                ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+                ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'machine_schedules.yearly_id as year_id')
                 ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
                 ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
@@ -602,6 +623,10 @@ class MachinerecordController extends Controller
             $request->validate([
                 'approve_by' => 'required'
             ]);
+            $IsAbnormalDateExist = $request->input('abnormal_date');
+            $yearly_id = $request->input('year_id');
+            $machine_id = $request->input('machine_id');
+
             $machinerecord = Machinerecord::find($id);
             if (!$machinerecord) {
                 return response()->json(['error' => 'Data record not found !!!!'], 404);
@@ -612,7 +637,15 @@ class MachinerecordController extends Controller
             else if ($machinerecord->approve_by) {
                 return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
             }
-            else {
+            else if ($IsAbnormalDateExist) {
+                $this->createabnormalschedule($IsAbnormalDateExist, $yearly_id, $machine_id);
+
+                $machinerecord->update([
+                    'approve_by' => $request->input('approve_by'),
+                    'note' => $request->input('note'),
+                    'machinerecord_status' => true,
+                ]);
+            } else {
                 $machinerecord->update([
                     'approve_by' => $request->input('approve_by'),
                     'note' => $request->input('note')
@@ -623,6 +656,27 @@ class MachinerecordController extends Controller
             Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error sending data'], 500);
         }
+    }
+
+    private function createabnormalschedule($IsAbnormalDateExist, $yearly_id, $machine_id)
+    {
+        $abnormal_date = Carbon::parse($IsAbnormalDateExist)->format('Y-m-d');
+        $StoreSchedule = new MonthlySchedule();
+        $StoreSchedule->name_schedule_month = 'Schedule perbaikan abnormality mesin';
+        $StoreSchedule->schedule_create = Auth::user()->id;
+        $StoreSchedule->schedule_recognize = 1;
+        $StoreSchedule->schedule_agreed = 1;
+        $StoreSchedule->save();
+
+        $StoreMachineSchedule = new MachineSchedule;
+        $StoreMachineSchedule->schedule_date = $abnormal_date;
+        $StoreMachineSchedule->machine_id = $machine_id;
+        $StoreMachineSchedule->yearly_id = $yearly_id;
+        $StoreMachineSchedule->monthly_id = $StoreSchedule->id;
+        $StoreMachineSchedule->save();
+
+        $StoreSchedule->schedule_collection = json_encode([$StoreMachineSchedule->id]);
+        $StoreSchedule->save();
     }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]

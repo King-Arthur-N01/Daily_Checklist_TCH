@@ -261,10 +261,10 @@
                                 detailTable += `
                                     <tr class="${rowClass}">
                                         <td>${recordmachine.invent_number}</td>
-                                        <td>${recordmachine.machine_number}</td>
+                                        <td>${recordmachine.machine_number || '-'}</td>
                                         <td>${recordmachine.machine_name}</td>
-                                        <td>${recordmachine.machine_brand}</td>
-                                        <td>${recordmachine.machine_type}</td>
+                                        <td>${recordmachine.machine_brand || '-'}</td>
+                                        <td>${recordmachine.machine_type || '-'}</td>
                                         <td>${(scheduleDate ? scheduleDate.toLocaleString('en-ID', {
                                             year: 'numeric',
                                             month: 'long',

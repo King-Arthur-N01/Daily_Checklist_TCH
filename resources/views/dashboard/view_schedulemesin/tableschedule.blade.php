@@ -357,10 +357,6 @@
             let db = document.getElementById("dataTables");
             let dbRows = db.rows;
             let lastValue1 = "";
-            let lastValue2 = "";
-            let lastValue3 = "";
-            let lastValue4 = "";
-            let lastValue5 = "";
             let lastCounter = 1;
             let lastRow = 0;
             for (let i = 0; i < dbRows.length; i++) {
@@ -389,45 +385,6 @@
                     lastRow = i;
                 }
             }
-            // for (let i = 0; i < dbRows.length; i++) {
-            //     let thisValue3 = dbRows[i].cells[2].innerHTML;
-            //     if (thisValue3 == lastValue3) {
-            //         lastCounter++;
-            //         dbRows[lastRow].cells[2].rowSpan = lastCounter;
-            //         dbRows[i].cells[2].style.display = "none"; // Hide cells in the second column too
-            //     } else {
-            //         dbRows[i].cells[2].style.display = "table-cell"; // Show cells in the second column
-            //         lastValue3 = thisValue3;
-            //         lastCounter = 1;
-            //         lastRow = i;
-            //     }
-            // }
-            // for (let i = 0; i < dbRows.length; i++) {
-            //     let thisValue4 = dbRows[i].cells[3].innerHTML;
-            //     if (thisValue4 == lastValue4) {
-            //         lastCounter++;
-            //         dbRows[lastRow].cells[3].rowSpan = lastCounter;
-            //         dbRows[i].cells[3].style.display = "none"; // Hide cells in the second column too
-            //     } else {
-            //         dbRows[i].cells[3].style.display = "table-cell"; // Show cells in the second column
-            //         lastValue4 = thisValue4;
-            //         lastCounter = 1;
-            //         lastRow = i;
-            //     }
-            // }
-            // for (let i = 0; i < dbRows.length; i++) {
-            //     let thisValue5 = dbRows[i].cells[4].innerHTML;
-            //     if (thisValue5 == lastValue5) {
-            //         lastCounter++;
-            //         dbRows[lastRow].cells[4].rowSpan = lastCounter;
-            //         dbRows[i].cells[4].style.display = "none"; // Hide cells in the second column too
-            //     } else {
-            //         dbRows[i].cells[4].style.display = "table-cell"; // Show cells in the second column
-            //         lastValue5 = thisValue5;
-            //         lastCounter = 1;
-            //         lastRow = i;
-            //     }
-            // }
         }
 
 
@@ -518,7 +475,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="machineTables1" width="100%">
+                                    <table class="table table-bordered" id="addYearlyTable" width="100%">
                                         <thead>
                                             <th>NO.</th>
                                             <th>NO.INVENT</th>
@@ -1129,6 +1086,7 @@
         // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD MONTHLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
+        // BUAT FUNGSI FILTER UNTUK MEMISAHKAN DATA MESIN BEDASARKAN BULAN
         // FUNGSI TAMBAH MESIN BEDASARKAN DATA DARI SCHEDULE PERTAHUN & PENENTUAN WAKTU FIX PREVENTIVE
         $('#addScheduleMonth').on('shown.bs.modal', function(event) {
             const button = $(event.relatedTarget);
@@ -1175,27 +1133,44 @@
                         });
                     }
 
-                    function mergeCells() {
-                        let db = document.getElementById("machineTables1");
-                        let dbRows = db.rows;
-                        let lastValue1 = "";
-                        let lastCounter = 1;
-                        let lastRow = 0;
-                        for (let i = 0; i < dbRows.length; i++) {
-                            let thisValue2 = dbRows[i].cells[2].innerHTML;
-                            if (thisValue2 == lastValue1) {
-                                lastCounter++;
-                                dbRows[lastRow].cells[1].rowSpan = lastCounter;
-                                dbRows[i].cells[1].style.display = "none"; // Hide cells in the second column too
-                            } else {
-                                dbRows[i].cells[1].style.display = "table-cell"; // Show cells in the second column
-                                lastValue1 = thisValue2;
-                                lastCounter = 1;
-                                lastRow = i;
+                    function filterTable() {
+                        const filterByNumber = document.getElementById('get_by_number');
+                        const filterByName = document.getElementById('get_by_name');
+                        const filterByMonth = document.getElementById('get_by_month');
+                        const table = document.getElementById('monthlyTables');
+                        const rows = table.getElementsByTagName('tr');
+
+                        // Function to filter table
+                        function filterTable() {
+                            const numberValue = filterByNumber.value.toLowerCase();
+                            const nameValue = filterByName.value.toLowerCase();
+                            const monthValue = filterByMonth.value.toLowerCase();
+
+                            for (let i = 1; i < rows.length; i++) {
+                                const numberCell = rows[i].getElementsByTagName('td')[1];
+                                const nameCell = rows[i].getElementsByTagName('td')[3];
+                                const monthCell = rows[i].getElementsByTagName('td')[6];
+
+                                const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
+                                const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                                const monthText = monthCell ? monthCell.textContent.toLowerCase() : '';
+
+                                // Check if row matches the filter criteria
+                                if (nameText.includes(nameValue) &&
+                                    numberText.includes(numberValue) &&
+                                    (monthValue === "select :" || monthText.includes(monthValue))) {
+                                    rows[i].style.display = '';  // Show the row
+                                } else {
+                                    rows[i].style.display = 'none';  // Hide the row
+                                }
                             }
                         }
-                    }
 
+                        // Attach event listeners
+                        filterByName.addEventListener('input', filterTable);
+                        filterByNumber.addEventListener('input', filterTable);
+                        filterByMonth.addEventListener('change', filterTable);
+                    };
 
                     // Display machines in the first modal (selection menu)
                     function renderFirstMenu() {
@@ -1210,8 +1185,40 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p class="mg-b-10">Nomor Invent </p>
+                                        <input class="form-control" id="get_by_number">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p class="mg-b-10">Nama Mesin</p>
+                                        <input class="form-control" id="get_by_name">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p class="mg-b-10">Waktu Preventive</p>
+                                        <select class="form-control" id="get_by_month">
+                                            <option value="">Pilih bulan...</option>
+                                            <option value="January">Januari</option>
+                                            <option value="February">Februari</option>
+                                            <option value="March">Maret</option>
+                                            <option value="April">April</option>
+                                            <option value="May">Mei</option>
+                                            <option value="June">Juni</option>
+                                            <option value="July">Juli</option>
+                                            <option value="August">Agustus</option>
+                                            <option value="September">September</option>
+                                            <option value="October">Oktober</option>
+                                            <option value="November">November</option>
+                                            <option value="December">Desember</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="machineTables1" width="100%">
+                                    <table class="table table-bordered" id="monthlyTables" width="100%">
                                         <thead>
                                             <th>NO.</th>
                                             <th>NO.INVENT</th>
@@ -1219,7 +1226,8 @@
                                             <th>NAMA MESIN</th>
                                             <th>MODEL/TYPE</th>
                                             <th>BRAND/MERK</th>
-                                            <th colspan="2">RENTANG WAKTU PREVENTIVE</th>
+                                            <th>RENTANG WAKTU PREVENTIVE</th>
+                                            <th>RENTANG WAKTU PREVENTIVE</th>
                                             <th>ADD</th>
                                         </thead>
                                         <tbody>
@@ -1247,6 +1255,18 @@
                         `;
 
                         document.getElementById("modal_data_month_add").innerHTML = tableRows1;
+
+                        // $(document).ready(function () {
+                        //     $('#monthlyTables').DataTable({
+                        //         processing: true,
+                        //         searching: true,
+                        //         ordering: true,
+                        //         responsive: true,
+                        //         columnDefs: [
+                        //             { orderable: false, targets: [7, 8] }
+                        //         ],
+                        //     });
+                        // });
 
                         let inputSchedule = document.getElementById("name_schedule_month");
                         inputSchedule.addEventListener('input', function() {
@@ -1347,7 +1367,7 @@
                             renderFirstMenu();
                             document.getElementById("modal_button_month_add").innerHTML = button_modal1;
                             document.getElementById("previousButton").disabled = true;
-                            mergeCells();
+                            filterTable()
                         } else if (step === 2) {
                             renderSecondMenu();
                             document.getElementById("modal_button_month_add").innerHTML = button_modal2;
@@ -1792,11 +1812,17 @@
                             </thead>
                             <tbody>
                                 ${data.getschedulemonth.map((schedule, index) => {
-                                    let scheduleStart = new Date(schedule.schedule_start);
-                                    let scheduleEnd = new Date(schedule.schedule_end);
-                                    let scheduleDate = new Date(schedule.schedule_date);
-                                    let isNotCorrect = !(scheduleDate >= scheduleStart && scheduleDate <= scheduleEnd);
-                                    let displayDate = isNotCorrect ? 'Data Perlu Diperbaiki' : formatDate(schedule.schedule_date);
+                                    let reschedule_pm = null;
+
+                                    if (schedule.reschedule_date_3) {
+                                        reschedule_pm = formatDate(schedule.reschedule_date_3) + ' (Reschedule ke 3)';
+                                    } else if (schedule.reschedule_date_2) {
+                                        reschedule_pm = formatDate(schedule.reschedule_date_2) + ' (Reschedule ke 2)';
+                                    } else if (schedule.reschedule_date_1) {
+                                        reschedule_pm = formatDate(schedule.reschedule_date_1) + ' (Reschedule)';
+                                    } else {
+                                        reschedule_pm = formatDate(schedule.schedule_date);
+                                    }
                                     return `
                                         <tr>
                                             <td>${index + 1}</td>
@@ -1805,7 +1831,7 @@
                                             <td>${schedule.machine_type || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
                                             <td>${schedule.schedule_duration}</td>
-                                            <td>${displayDate}</td>
+                                            <td>${reschedule_pm}</td>
                                         </tr>
                                     `;
                                 }).join('')}

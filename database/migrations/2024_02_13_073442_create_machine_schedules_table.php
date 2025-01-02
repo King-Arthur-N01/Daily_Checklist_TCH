@@ -15,8 +15,8 @@ class CreateMachineSchedulesTable extends Migration
     {
         Schema::create('machine_schedules', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('schedule_start');
-            $table->timestamp('schedule_end');
+            $table->timestamp('schedule_start')->nullable();
+            $table->timestamp('schedule_end')->nullable();
             $table->timestamp('schedule_next')->nullable();
             $table->integer('schedule_duration')->nullable();
             $table->integer('preventive_cycle')->nullable();

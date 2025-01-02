@@ -166,14 +166,14 @@
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
             ajax: {
-                url: '{{ route("refreshmonth") }}',
+                url: '{{ route("refresh-agreed") }}',
                 dataSrc: function(data) {
                     return data.refreshschedule.map((refreshschedule, index) => {
                         return {
                             number: index + 1,
                             name_schedule: refreshschedule.name_schedule_month,
                             total_schedule: JSON.parse(refreshschedule.schedule_collection.split(',').length),
-                            schedule_status: refreshschedule.schedule_agreed  ? (refreshschedule.schedule_agreed  > 0 ? 'Sudah Diketahui' : 'Belum Diketahui') : 'Belum Diketahui',
+                            schedule_status: refreshschedule.schedule_agreed,
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
                                 month: 'long',
@@ -190,7 +190,9 @@
                 { data: 'number' },
                 { data: 'name_schedule' },
                 { data: 'total_schedule' },
-                { data: 'schedule_status' },
+                { data: 'schedule_status', render: function(data, type, row) {
+                    return data === null ? '<span class="badge badge-danger">Belum Diketahui</span>' : '<span class="badge badge-success">Sudah Diketahui</span>';
+                }},
                 { data: 'created_at' },
                 { data: 'actions', orderable: false, searchable: false }
             ]
@@ -227,31 +229,20 @@
                         <table class="table table-bordered" id="dataTables">
                             <thead>
                                 <tr>
+                                    <th>NO.</th>
                                     <th>NO.INVENT</th>
                                     <th>NAMA MESIN</th>
                                     <th>MODEL/TYPE</th>
                                     <th>BRAND/MERK</th>
                                     <th>NO.MESIN/AREA</th>
-                                    <th>KETERANGAN</th>
                                     <th>DURASI</th>
                                     <th>SCHEDULE PM</th>
-                                    <th>SCHEDULE PLANNER</th>
-                                    <th>ALASAN</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${data.getschedulemonth.map((schedule, index) => {
                                     let schedule_pm = schedule.schedule_date;
 
-                                    if (schedule.reschedule_date_3) {
-                                        reschedule_pm = schedule.reschedule_date_3;
-                                    } else if (schedule.reschedule_date_2) {
-                                        reschedule_pm = schedule.reschedule_date_2;
-                                    } else if (schedule.reschedule_date_1) {
-                                        reschedule_pm = schedule.reschedule_date_1;
-                                    } else {
-                                        reschedule_pm = schedule.schedule_date;
-                                    }
                                     return `
                                         <tr>
                                             <td>${index + 1}</td>
@@ -262,10 +253,6 @@
                                             <td>${schedule.machine_number || '-'}</td>
                                             <td>${schedule.schedule_duration}</td>
                                             <td>${formatDate(schedule_pm)}</td>
-                                            <td>${formatDate(reschedule_pm)}</td>
-                                            <td>
-                                                <input type="text" class="form-control" value="${schedule.reschedule_note || '-'}" readonly>
-                                            </td>
                                         </tr>
                                     `;
                                 }).join('')}
