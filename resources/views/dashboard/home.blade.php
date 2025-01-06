@@ -105,82 +105,91 @@
                 </div>
             </div>
         @endcan
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body-custom">
-                    <div class="col-7">
-                        <h5 class="card-title-head">Input Schedule Preventive</h5>
-                    </div>
-                    <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{ asset('assets/icons/add_schedule_home.png') }}">
-                    </div>
-                    <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{ route('indexyear') }}">Tambah atau Lihat Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body-custom">
-                    <div class="col-7">
-                        <h5 class="card-title-head">Cek Schedule Preventive (TAHUN)</h5>
-                    </div>
-                    <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{ asset('assets/icons/check_year_home.png') }}">
-                    </div>
-                    <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{ route('indexyear-recognize') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+        @can('create_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Input Schedule Preventive</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/add_schedule_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexyear') }}">Tambah atau Lihat Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body-custom">
-                    <div class="col-7">
-                        <h5 class="card-title-head">Setujui Schedule Preventive (TAHUN)</h5>
-                    </div>
-                    <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{ asset('assets/icons/approve_year_home.png') }}">
-                    </div>
-                    <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{ route('indexyear-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body-custom">
-                    <div class="col-7">
-                        <h5 class="card-title-head">Cek Schedule Preventive (PLANNER)</h5>
-                    </div>
-                    <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{ asset('assets/icons/check_month_home.png') }}">
-                    </div>
-                    <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{ route('indexmonth-recognize') }}">Lihat Jadwal Preventive Maintenance &nbsp; <i class="fas fa-calendar-alt"></i></a>
+        @endcan
+        @can('recognize_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Cek Schedule Preventive (TAHUN)</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/check_year_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexyear-recognize') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xl-4 col-md-4 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body-custom">
-                    <div class="col-7">
-                        <h5 class="card-title-head">Setujui Schedule Preventive (BULAN)</h5>
-                    </div>
-                    <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{ asset('assets/icons/approve_year_home.png') }}">
-                    </div>
-                    <div class="card-footer-item-custom col-12">
-                        <a class="card-title" href="{{ route('indexmonth-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+        @endcan
+        @can('agreed_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Setujui Schedule Preventive (TAHUN)</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/approve_year_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexyear-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endcan
+        @can('reschedule_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Cek Schedule Preventive (PLANNER)</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/check_month_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexmonth-recognize') }}">Lihat Jadwal Preventive Maintenance &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endcan
+        @can('agreed_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Setujui Schedule Preventive (BULAN)</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/approve_year_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexmonth-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endcan
     </div>
 @endsection
 

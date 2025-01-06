@@ -30,6 +30,14 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'delete_records']);
         Permission::create(['name' => 'corrected_records']);
         Permission::create(['name' => 'approval_records']);
+
+        Permission::create(['name' => 'create_schedule']);
+        Permission::create(['name' => 'edit_schedule']);
+        Permission::create(['name' => 'recognize_schedule']);
+        Permission::create(['name' => 'agreed_schedule']);
+        Permission::create(['name' => 'reschedule_schedule']);
+        Permission::create(['name' => 'view_schedule']);
+
         Permission::create(['name' => 'manage_machine']);
         Permission::create(['name' => 'manage_user']);
         Permission::create(['name' => 'permit']);
@@ -37,15 +45,27 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'modify_data']);
 
         //create roles and assign existing permissions
+        $plannerRole = Role::create(['name' => 'planner']);
+        $plannerRole->givePermissionTo('create_schedule');
+        $plannerRole->givePermissionTo('reschedule_schedule');
+        $plannerRole->givePermissionTo('view_schedule');
+
         $operatorRole = Role::create(['name' => 'operator']);
         $operatorRole->givePermissionTo('create_records');
         $operatorRole->givePermissionTo('view_records');
+        $operatorRole->givePermissionTo('create_schedule');
+        $operatorRole->givePermissionTo('edit_schedule');
+        $operatorRole->givePermissionTo('view_schedule');
 
         $leaderRole = Role::create(['name' => 'leader']);
         $leaderRole->givePermissionTo('create_records');
         $leaderRole->givePermissionTo('edit_records');
         $leaderRole->givePermissionTo('view_records');
         $leaderRole->givePermissionTo('corrected_records');
+        $leaderRole->givePermissionTo('create_schedule');
+        $leaderRole->givePermissionTo('edit_schedule');
+        $leaderRole->givePermissionTo('view_schedule');
+        $leaderRole->givePermissionTo('agreed_schedule');
         $leaderRole->givePermissionTo('manage_machine');
 
         $foremanRole = Role::create(['name' => 'foreman']);
@@ -53,6 +73,10 @@ class PermissionSeeder extends Seeder
         $foremanRole->givePermissionTo('edit_records');
         $foremanRole->givePermissionTo('view_records');
         $foremanRole->givePermissionTo('corrected_records');
+        $foremanRole->givePermissionTo('create_schedule');
+        $foremanRole->givePermissionTo('edit_schedule');
+        $foremanRole->givePermissionTo('view_schedule');
+        $foremanRole->givePermissionTo('agreed_schedule');
         $foremanRole->givePermissionTo('manage_machine');
         $foremanRole->givePermissionTo('manage_user');
 
@@ -62,6 +86,11 @@ class PermissionSeeder extends Seeder
         $supervisorRole->givePermissionTo('view_records');
         $supervisorRole->givePermissionTo('corrected_records');
         $supervisorRole->givePermissionTo('approval_records');
+        $supervisorRole->givePermissionTo('create_schedule');
+        $supervisorRole->givePermissionTo('edit_schedule');
+        $supervisorRole->givePermissionTo('view_schedule');
+        $supervisorRole->givePermissionTo('agreed_schedule');
+        $supervisorRole->givePermissionTo('recognize_schedule');
         $supervisorRole->givePermissionTo('manage_machine');
         $supervisorRole->givePermissionTo('manage_user');
 
@@ -72,6 +101,11 @@ class PermissionSeeder extends Seeder
         $managerRole->givePermissionTo('view_records');
         $managerRole->givePermissionTo('corrected_records');
         $managerRole->givePermissionTo('approval_records');
+        $managerRole->givePermissionTo('create_schedule');
+        $managerRole->givePermissionTo('edit_schedule');
+        $managerRole->givePermissionTo('view_schedule');
+        $managerRole->givePermissionTo('agreed_schedule');
+        $managerRole->givePermissionTo('recognize_schedule');
         $managerRole->givePermissionTo('manage_machine');
         $managerRole->givePermissionTo('manage_user');
 
@@ -82,6 +116,13 @@ class PermissionSeeder extends Seeder
         $adminRole->givePermissionTo('delete_records');
         $adminRole->givePermissionTo('corrected_records');
         $adminRole->givePermissionTo('approval_records');
+        $adminRole->givePermissionTo('create_schedule');
+        $adminRole->givePermissionTo('edit_schedule');
+        $adminRole->givePermissionTo('view_schedule');
+        $adminRole->givePermissionTo('agreed_schedule');
+        $adminRole->givePermissionTo('recognize_schedule');
+        $adminRole->givePermissionTo('reschedule_schedule');
+        $adminRole->givePermissionTo('view_schedule');
         $adminRole->givePermissionTo('manage_machine');
         $adminRole->givePermissionTo('manage_user');
         $adminRole->givePermissionTo('permit');
@@ -162,5 +203,14 @@ class PermissionSeeder extends Seeder
             'password' => bcrypt('user123'),
         ]);
         $operator->assignRole('operator');
+
+        $planner = User::create([
+            'name' => 'EVAN',
+            'nik' => '00000',
+            'status' => '1',
+            'department' => 'Planner',
+            'password' => bcrypt('user123'),
+        ]);
+        $planner->assignRole('operator');
     }
 }

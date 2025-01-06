@@ -28,6 +28,19 @@ class MonthlyScheduleController extends Controller
         }
     }
 
+    public function findmachineabnormaldata()
+    {
+        try {
+            $getmachines = Machine::where('machine_abnormal', true)->get();
+            return response()->json([
+                'getmachines' => $getmachines
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
     public function refreshtablescheduleplanner()
     {
         try {
@@ -66,7 +79,7 @@ class MonthlyScheduleController extends Controller
             $refreshschedule = MonthlySchedule::find($id);
 
             $getmachines = DB::table('yearly_schedules')
-                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as getmachinescheduleid')
+                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->orderBy('yearly_schedules.id', 'desc')
@@ -141,27 +154,27 @@ class MonthlyScheduleController extends Controller
             $request->validate([
                 'name_schedule' => 'required',
             ]);
-
+            // dd($request->all());
             $name_schedule = $request->input('name_schedule');
+            $create_by = $request->input('schedule_create');
             $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
-            $update_machine_ids = $request->input('machine_schedule_id', []);
-            $machine_key = $request->input('machine_id', []);
+            $schedule_key = $request->input('machine_schedule_id', []);
 
             // Validasi jumlah elemen pada kedua array
-            if (count($machine_key) !== count($schedule_date)) {
+            if (count($schedule_key) !== count($schedule_date)) {
                 return response()->json(['error' => 'Mismatch between machines and schedule ids'], 400);
             }
 
             // Ambil data ID MachineSchedule berdasarkan monthly_id yang ada
-            $previous_machine_ids = DB::table('monthly_schedules')
+            $previous_schedule_ids = DB::table('monthly_schedules')
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
                 ->where('monthly_schedules.id', '=', $id)
                 ->pluck('machine_schedules.id')
                 ->toArray();
 
             // Tentukan ID yang perlu dihapus
-            $delete_unused_ids = array_diff($previous_machine_ids, $update_machine_ids);
+            $delete_unused_ids = array_diff($previous_schedule_ids, $schedule_key);
 
             // Hapus semua value MachineSchedule->monthy_id yang tidak memiliki hubungan dengan monthly_schedules di request terbaru
             foreach ($delete_unused_ids as $delete_id) {
@@ -172,12 +185,13 @@ class MonthlyScheduleController extends Controller
 
             $UpdateSchedule = MonthlySchedule::find($id);
             $UpdateSchedule->name_schedule_month = $name_schedule;
-            $UpdateSchedule->machine_collection2 = json_encode($machine_key);
+            $UpdateSchedule->schedule_create = $create_by;
+            $UpdateSchedule->schedule_collection = json_encode($schedule_key);
             $UpdateSchedule->save();
 
             $schedule_id = $UpdateSchedule->id;
 
-            foreach ($update_machine_ids as $index => $key) {
+            foreach ($schedule_key as $index => $key) {
                 $UpdateMachineSchedule = MachineSchedule::find($key) ?? new MachineSchedule();
                 $UpdateMachineSchedule->schedule_duration = $schedule_duration[$index];
                 $UpdateMachineSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
@@ -219,8 +233,24 @@ class MonthlyScheduleController extends Controller
             ->where('monthly_schedules.id', '=', $id)
             ->get();
 
+            // Ambil data schedule
+            $firstSchedule = $scheduledata->first();
+            $schedule_create = $firstSchedule ? $firstSchedule->schedule_create : null;
+            $schedule_recognize = $firstSchedule ? $firstSchedule->schedule_recognize : null;
+            $schedule_agreed = $firstSchedule ? $firstSchedule->schedule_agreed : null;
+
+            // Ambil nama pengguna dengan pemeriksaan
+            $user_create = DB::table('users')->select('name')->where('id', $schedule_create)->first();
+            $user_recognize = DB::table('users')->select('name')->where('id', $schedule_recognize)->first();
+            $user_agreed = DB::table('users')->select('name')->where('id', $schedule_agreed)->first();
+
+            // Gunakan null coalescing untuk menghindari error
+            $user_create_name = $user_create->name ?? 'Belum Ada';
+            $user_recognize_name = $user_recognize->name ?? 'Belum Ada';
+            $user_agreed_name = $user_agreed->name ?? 'Belum Ada';
+
             // Render PDF
-            $pdf = PDF::loadView('dashboard.view_schedulemesin.printschedulemonth', compact('scheduledata'));
+            $pdf = PDF::loadView('dashboard.view_schedulemesin.printschedulemonth', compact('scheduledata', 'user_create_name', 'user_recognize_name', 'user_agreed_name'));
             $pdf->setPaper('A4', 'portrait');
             return $pdf->stream();
         } catch (\Exception $e) {

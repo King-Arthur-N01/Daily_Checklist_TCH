@@ -83,9 +83,9 @@
             <tr>
                 {{-- <th colspan="2"></th> --}}
                 {{-- <th colspan="4"></th> --}}
-                <td colspan="2" >MNG. MTN</td>
-                <td colspan="2">SPV. MTN</td>
-                <td colspan="2">SPV. PROD</td>
+                <td colspan="2"></td>
+                <td colspan="2"></td>
+                <td colspan="2"></td>
             </tr>
         </tbody>
     </table>

@@ -64,28 +64,23 @@
     <table class="table">
         <thead>
             <tr>
-                <th colspan="2" rowspan="5"><img src="../public/assets/icons/trmitra_logo.png" height="70"></th>
+                <th colspan="2" rowspan="4"><img src="../public/assets/icons/trmitra_logo.png" height="70"></th>
                 <th colspan="4">INFORMASI PREV.MTC.MACHINE</th>
                 <td>DI SETUJUI</td>
                 <td colspan="2">DI KETAHUI</td>
                 <td>DI BUAT</td>
             </tr>
             <tr>
-                <th colspan="4" rowspan="4"><h2>{{ $scheduledata[0]->name_schedule_month }}</h2></th>
+                <th colspan="4" rowspan="3"><h2>{{ $scheduledata[0]->name_schedule_month }}</h2></th>
                 <th rowspan="2"></th>
                 <th rowspan="2" colspan="2"></th>
                 <th rowspan="2"></th>
             </tr>
             <tr></tr>
             <tr>
-                <th></th>
-                <th colspan="2"></th>
-                <th></th>
-            </tr>
-            <tr>
-                <td>MNG. MTN</td>
-                <td colspan="2">AST. MGR</td>
-                <td>SPV. MTN</td>
+                <td></td>
+                <td colspan="2"></td>
+                <td></td>
             </tr>
             <tr>
                 <th rowspan="2">NO.</th>
@@ -137,7 +132,7 @@
                         {{ $reschedule_date }}
                     </td>
                     <td width="10%"></td>
-                    <td width="20%"></td>
+                    <td width="20%">{{$printdata->reschedule_note}}</td>
                 </tr>
             @endforeach
         </tbody>

@@ -22,7 +22,8 @@ class YearlyScheduleController extends Controller
     public function refreshtableschedule()
     {
         try {
-            $refreshschedule= YearlySchedule::all();
+            $refreshschedule = YearlySchedule::all();
+            // $refreshmachine = Machine::get('machine_abnormal');
             return response()->json([
                 'refreshschedule' => $refreshschedule,
             ]);
@@ -48,7 +49,7 @@ class YearlyScheduleController extends Controller
                 'machine_count' => $refreshscheduledetail->pluck('machine_count')
             ]);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error($e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
@@ -56,24 +57,26 @@ class YearlyScheduleController extends Controller
     public function readmachinedata()
     {
         try {
+            // Ambil mesin yang aktif
             $refreshmachine = Machine::where('machine_status', true)->get();
-            $latestSchedules = MachineSchedule::select('machine_id', DB::raw('MAX(created_at) as latest'))
-                ->groupBy('machine_id')
-                ->get();
 
-            $latestScheduleDetails = [];
-            foreach ($latestSchedules as $schedule) {
-                $latestScheduleDetails[] = MachineSchedule::where('machine_id', $schedule->machine_id)
-                    ->where('created_at', $schedule->latest)
-                    ->first();
-            }
+            // Ambil jadwal terbaru untuk setiap mesin
+            $latestSchedules = DB::table('machine_schedules')
+                ->select('machine_schedules.*', 'machinerecords.*', 'machine_schedules.machine_id')
+                ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
+                ->whereIn('machine_schedules.id', function($query) {
+                    $query->select(DB::raw('MAX(id)'))
+                          ->from('machine_schedules')
+                          ->groupBy('machine_id');
+                })
+                ->get();
 
             return response()->json([
                 'refreshmachine' => $refreshmachine,
-                'latestSchedules' => $latestScheduleDetails
+                'latestSchedules' => $latestSchedules
             ]);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Error fetching machine data: ' . $e->getMessage());
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
@@ -196,7 +199,23 @@ class YearlyScheduleController extends Controller
                 ->where('yearly_schedules.id', '=', $id)
                 ->get();
 
-            $pdf = PDF::loadView($view, compact(['scheduledata', 'recorddata']));
+                // Ambil data schedule
+                $firstSchedule = $scheduledata->first();
+                $schedule_create = $firstSchedule ? $firstSchedule->schedule_create : null;
+                $schedule_recognize = $firstSchedule ? $firstSchedule->schedule_recognize : null;
+                $schedule_agreed = $firstSchedule ? $firstSchedule->schedule_agreed : null;
+
+                // Ambil nama pengguna dengan pemeriksaan
+                $user_create = DB::table('users')->select('name')->where('id', $schedule_create)->first();
+                $user_recognize = DB::table('users')->select('name')->where('id', $schedule_recognize)->first();
+                $user_agreed = DB::table('users')->select('name')->where('id', $schedule_agreed)->first();
+
+                // Gunakan null coalescing untuk menghindari error
+                $user_create_name = $user_create->name ?? 'Belum Ada';
+                $user_recognize_name = $user_recognize->name ?? 'Belum Ada';
+                $user_agreed_name = $user_agreed->name ?? 'Belum Ada';
+
+            $pdf = PDF::loadView($view, compact(['scheduledata', 'recorddata', 'user_create_name', 'user_recognize_name', 'user_agreed_name']));
             $pdf->setPaper('A3', 'landscape');
             return $pdf->stream();
         } catch (\Exception $e) {
@@ -246,7 +265,7 @@ class YearlyScheduleController extends Controller
                     $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
 
                     if ($new_schedule_start->year > $request->input('limit_schedule')) {
-                        break; // H entikan loop jika tahun mencapai limit_schedule
+                        break; // Hentikan loop jika tahun mencapai limit_schedule
                     }
 
                     $StoreMachineSchedule = new MachineSchedule();
@@ -272,56 +291,68 @@ class YearlyScheduleController extends Controller
         try {
             $request->validate([
                 'name_schedule_edit' => 'required',
+                'preventive_cycle' => 'required|array',
             ]);
 
-            $machine_array = $request->input('machine_id');
-            $update_machine_ids = $request->input('machine_schedule_id');
+            $machine_key = $request->input('machine_id');
             $schedule_times = $request->input('schedule_time');
+            $preventive_cycles = $request->input('preventive_cycle');
 
-            // Validasi jumlah elemen pada kedua array
-            if (count($machine_array) !== count($schedule_times)) {
-                return response()->json(['error' => 'Mismatch between machines and schedule times'], 400);
+
+            // Validasi jumlah elemen pada semua array
+            if (count($machine_key) !== count($schedule_times) || count($machine_key) !== count($preventive_cycles)) {
+                return response()->json(['error' => 'Mismatch between machines, schedule times, and preventive cycles'], 400);
             }
 
-            // Ambil data ID MachineSchedule berdasarkan yearly_id yang ada
-            $previous_machine_ids = DB::table('yearly_schedules')
-                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
-                ->where('yearly_schedules.id', '=', $id)
-                ->pluck('machine_schedules.id')
-                ->toArray();
+            $yearly_schedule = YearlySchedule::find($id);
 
-            // Tentukan ID yang perlu dihapus
-            $delete_unused_ids = array_diff($previous_machine_ids, $update_machine_ids);
+            if ($yearly_schedule->schedule_recognize !== null) {
+                return response()->json(['error' => 'Tidak bisa update schedule. Schedule sudah dikoreksi dan disetujui.!!'], 422);
+            }
+            // Ambil data ID MachineSchedule berdasarkan machine_id yang ada
+            $previous_machine = json_decode($yearly_schedule->machine_collection);
 
             // Hapus semua MachineSchedule yang tidak ada di request terbaru
-            foreach ($delete_unused_ids as $delete_id) {
-                $DeleteMachineSchedule = MachineSchedule::find($delete_id);
+            foreach ($previous_machine as $delete_machine) {
+                $DeleteMachineSchedule = MachineSchedule::where('machine_id', $delete_machine)->where('yearly_id', $id);
                 $DeleteMachineSchedule->delete();
             }
 
             // Update YearlySchedule
             $UpdateSchedule = YearlySchedule::find($id);
             $UpdateSchedule->name_schedule_year = $request->input('name_schedule_edit');
-            $UpdateSchedule->machine_collection = json_encode($machine_array);
+            $UpdateSchedule->machine_collection = json_encode($machine_key);
             $UpdateSchedule->save();
 
             $schedule_id = $UpdateSchedule->id;
+            $months_in_year = 12;
 
-            // Update atau buat MachineSchedule baru
-            foreach ($update_machine_ids as $index => $key) {
+            foreach ($machine_key as $index => $key) {
                 $ScheduleTimeRange = $schedule_times[$index];
+                $ScheduleCycle = $preventive_cycles[$index];
                 list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
+
+                $result_in_year = $months_in_year / $ScheduleCycle;
 
                 $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
                 $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                // Temukan atau buat entri baru di MachineSchedule
-                $UpdateMachineSchedule = MachineSchedule::find($key) ?? new MachineSchedule();
-                $UpdateMachineSchedule->schedule_start = $ScheduleStartCarbon;
-                $UpdateMachineSchedule->schedule_end = $ScheduleEndCarbon;
-                $UpdateMachineSchedule->machine_id = $machine_array[$index]; // Use $index to get the correct machine_id
-                $UpdateMachineSchedule->yearly_id = $schedule_id;
-                $UpdateMachineSchedule->save();
+                for ($i = 0; $i < $result_in_year; $i++) {
+                    $new_schedule_start = $ScheduleStartCarbon->copy()->addMonths(($ScheduleCycle * $i));
+                    $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
+
+                    if ($new_schedule_start->year > $request->input('limit_schedule')) {
+                        break; // Hentikan loop jika tahun mencapai limit_schedule
+                    }
+
+                    $StoreMachineSchedule = new MachineSchedule();
+                    $StoreMachineSchedule->schedule_start = $new_schedule_start;
+                    $StoreMachineSchedule->schedule_end = $new_schedule_end;
+                    $StoreMachineSchedule->preventive_cycle = $ScheduleCycle;
+                    $StoreMachineSchedule->machine_id = $key;
+                    $StoreMachineSchedule->yearly_id = $schedule_id;
+                    $StoreMachineSchedule->save();
+                }
             }
 
             return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
@@ -336,6 +367,9 @@ class YearlyScheduleController extends Controller
     {
         try {
             $DeleteSchedule = YearlySchedule::find($id);
+            if ($DeleteSchedule->schedule_recognize !== null) {
+                return response()->json(['error' => 'Tidak bisa hapus schedule. Schedule sudah dikoreksi dan disetujui.!!'], 422);
+            }
             $DeleteSchedule->delete();
             return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
         } catch (\Exception $e) {

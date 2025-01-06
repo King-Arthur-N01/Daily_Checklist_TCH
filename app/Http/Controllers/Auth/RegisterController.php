@@ -18,7 +18,7 @@ class RegisterController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
     public function __construct()
     {
-        $this->middleware('permission:manageuser', ['only' => ['indexusertable','authenticatecreate','authenticateedit','deleteuser']]);
+        $this->middleware('permission:manageuser', ['only' => ['manage_user']]);
     }
     public function indexusertable()
     {

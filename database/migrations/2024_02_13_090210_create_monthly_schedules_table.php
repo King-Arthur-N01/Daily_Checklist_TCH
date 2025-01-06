@@ -18,6 +18,7 @@ class CreateMonthlySchedulesTable extends Migration
             $table->string('name_schedule_month');
             $table->json('schedule_collection')->nullable();
             $table->boolean('schedule_status')->default(false);
+            $table->boolean('schedule_repair')->default(false);
             $table->unsignedBigInteger('schedule_create')->nullable();
             $table->unsignedBigInteger('schedule_recognize')->nullable();
             $table->unsignedBigInteger('schedule_agreed')->nullable();

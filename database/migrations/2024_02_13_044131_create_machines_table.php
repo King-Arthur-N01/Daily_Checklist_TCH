@@ -21,6 +21,7 @@ class CreateMachinesTable extends Migration
             $table->string('machine_power')->nullable();
             $table->string('machine_made')->nullable();
             $table->boolean('machine_status')->default(true);
+            $table->boolean('machine_abnormal')->default(false);
             $table->string('machine_info')->nullable();
             $table->string('mfg_number')->index()->nullable();
             $table->string('install_date')->nullable();

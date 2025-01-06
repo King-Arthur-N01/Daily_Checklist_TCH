@@ -623,8 +623,6 @@ class MachinerecordController extends Controller
             $request->validate([
                 'approve_by' => 'required'
             ]);
-            $IsAbnormalDateExist = $request->input('abnormal_date');
-            $yearly_id = $request->input('year_id');
             $machine_id = $request->input('machine_id');
 
             $machinerecord = Machinerecord::find($id);
@@ -637,8 +635,8 @@ class MachinerecordController extends Controller
             else if ($machinerecord->approve_by) {
                 return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
             }
-            else if ($IsAbnormalDateExist) {
-                $this->createabnormalschedule($IsAbnormalDateExist, $yearly_id, $machine_id);
+            else if ($machine_id) {
+                $this->createabnormalmachine($machine_id);
 
                 $machinerecord->update([
                     'approve_by' => $request->input('approve_by'),
@@ -658,25 +656,11 @@ class MachinerecordController extends Controller
         }
     }
 
-    private function createabnormalschedule($IsAbnormalDateExist, $yearly_id, $machine_id)
+    private function createabnormalmachine($machine_id)
     {
-        $abnormal_date = Carbon::parse($IsAbnormalDateExist)->format('Y-m-d');
-        $StoreSchedule = new MonthlySchedule();
-        $StoreSchedule->name_schedule_month = 'Schedule perbaikan abnormality mesin';
-        $StoreSchedule->schedule_create = Auth::user()->id;
-        $StoreSchedule->schedule_recognize = 1;
-        $StoreSchedule->schedule_agreed = 1;
-        $StoreSchedule->save();
-
-        $StoreMachineSchedule = new MachineSchedule;
-        $StoreMachineSchedule->schedule_date = $abnormal_date;
-        $StoreMachineSchedule->machine_id = $machine_id;
-        $StoreMachineSchedule->yearly_id = $yearly_id;
-        $StoreMachineSchedule->monthly_id = $StoreSchedule->id;
-        $StoreMachineSchedule->save();
-
-        $StoreSchedule->schedule_collection = json_encode([$StoreMachineSchedule->id]);
-        $StoreSchedule->save();
+        $UpdateMachine = Machine::find($machine_id);
+        $UpdateMachine->machine_abnormal = true;
+        $UpdateMachine->save();
     }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]

@@ -163,7 +163,7 @@
                                 invent_number: refreshrecord.invent_number,
                                 machine_spec: refreshrecord.machine_spec ?? '-',
                                 machine_number: refreshrecord.machine_number ?? '-',
-                                status: refreshrecord.approve_by ? (refreshrecord.approve_by > 0 ? 'Sudah Sudah Disetujui' : 'Belum Disetujui') : 'Belum Disetujui',
+                                status: refreshrecord.approve_by ? (refreshrecord.approve_by > 0 ? 'Sudah Disetujui' : 'Belum Disetujui') : 'Belum Disetujui',
                                 record_status: refreshrecord.machinerecord_status,
                                 shift: refreshrecord.shift,
                                 getcreatedate: refreshrecord.preventive_date,
@@ -301,12 +301,7 @@
                                     <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note || '-'}</textarea>
                                 </div>
                                 ${data.usersdata[0].machinerecord_status === 0 ? `
-                                    <div class="form-custom">
-                                        <a>Reschedule ulang perbaikan abnormality mesin</a>
-                                        <input class="form-control datepicker" id="abnormal_date" required>
-                                        <input type="hidden" id="year_id" value="${data.machinedata[0].year_id}">
                                         <input type="hidden" id="machine_id" value="${data.machinedata[0].machine_id}">
-                                    </div>
                                 ` : ''}
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
@@ -353,44 +348,12 @@
                             }
                         });
 
-                        // Validasi form sebelum disubmit
-                        const isAbnormalExist = data.usersdata[0].machinerecord_status;
-                        if (isAbnormalExist === 0) {
-                            function alertRequired() {
-                                const abnormalInput = document.getElementById("abnormal_date");
-                                const errorMessagesDiv = document.getElementById("warningModal");
-                                const errorMessage = document.getElementById("warningText");
-
-                                // Clear previous error messages
-                                errorMessage.textContent = '';
-
-                                // Check if the abnormalInput is empty
-                                if (abnormalInput.value.trim() === "") {
-                                    const fieldName = "Abnormal Date"; // Ganti dengan nama field yang sesuai
-                                    errorMessage.textContent = `${fieldName} is required.`;
-                                    errorMessagesDiv.style.display = 'block'; // Tampilkan modal kesalahan
-                                    return false; // Menghentikan proses jika ada kesalahan
-                                }
-
-                                // Jika tidak ada kesalahan, kembalikan true
-                                return true;
-                            }
-                        } else {
-                            function alertRequired() {
-                                return true;
-                            }
-                        }
 
                         // Save button
                         $('#saveButton').on('click', function(event) {
                             event.preventDefault();
-                            if (!alertRequired()) {
-                                return;
-                            }
 
                             let note = $('#input_note').val();
-                            let abnormalDate = $('#abnormal_date').val();
-                            let yearId = $('#year_id').val();
                             let machineId = $('#machine_id').val();
                             let approvedBy = '{{ Auth::user()->id }}';
 
@@ -402,8 +365,6 @@
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
                                         'approve_by': approvedBy,
                                         'note': note,
-                                        'abnormal_date': abnormalDate,
-                                        'year_id': yearId,
                                         'machine_id': machineId
                                     },
                                     success: function(response) {

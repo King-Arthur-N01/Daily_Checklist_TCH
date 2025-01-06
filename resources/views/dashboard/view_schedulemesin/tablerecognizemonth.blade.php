@@ -236,7 +236,7 @@
 
 
                     const header_modal = `
-                        <h5 class="modal-title">Koreksi Schedule Mesin</h5>
+                        <h5 class="modal-title">Koreksi Schedule Perbaikan Mesin</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 

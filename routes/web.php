@@ -100,6 +100,8 @@ Route::get ('/schedule/month/view/{id}','ScheduleData\MonthlyScheduleController@
 Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController@printdataschedulemonth')->name('printmonth');
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
+
+Route::get ('/schedule/repair/read/abnormal','ScheduleData\MonthlyScheduleController@findmachineabnormaldata')->name('readmachine-abnormal');
 // schedule month route
 
 // schedule month recognize
