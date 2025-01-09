@@ -21,12 +21,15 @@ class CreateMachinesTable extends Migration
             $table->string('machine_power')->nullable();
             $table->string('machine_made')->nullable();
             $table->boolean('machine_status')->default(true);
-            $table->boolean('machine_abnormal')->default(false);
             $table->string('machine_info')->nullable();
             $table->string('mfg_number')->index()->nullable();
             $table->string('install_date')->nullable();
             $table->string('production_date')->nullable();
+            $table->boolean('machine_abnormal_status')->default(false);
+            $table->string('machine_problem')->nullable();
+            $table->string('machine_action')->default(false);
             $table->unsignedBigInteger('id_property')->nullable();
+            $table->unsignedBigInteger('id_standart')->nullable();
             $table->timestamps();
         });
     }

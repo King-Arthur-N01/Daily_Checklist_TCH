@@ -117,7 +117,6 @@
                                 <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
                                 <input type="hidden" name="id_schedule" value="{{ $machine_id }}">
                                 <input type="hidden" name="combined_create_by[]" id="combined_create_by">
-                                <input type="hidden" name="combined_abnormal[]" id="combined_abnormal_value">
                             </div>
                             <div class="form-custom">
                                 <label>Opsi jika terdapat abnormal terhadap preventive</label>
@@ -130,11 +129,35 @@
                                         <label for="no" class="no-label">Tidak</label>
                                     </div>
                                 </div>
-                                <select class="form-control select2" id="abnormality" multiple="multiple" disabled>
-                                    @foreach ($getcomponen as $listcomponen)
-                                        <option value="{{ $listcomponen->id }}">{{ $listcomponen->name_componencheck }}</option>
-                                    @endforeach
-                                </select>
+                                <table class="table table-bordered" id="abnormalityTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Problem :</th>
+                                            <th>Analisis :</th>
+                                            <th>Tindakan :</th>
+                                            <th>Status :</th>
+                                            <th>Target :</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                            </td>
+                                            <td>
+                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                            </td>
+                                            <td>
+                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                            </td>
+                                            <td>
+                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                            </td>
+                                            <td>
+                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                            </td>
+                                        </tr>
+                                </table>
                             </div>
                             <div class="form-custom">
                                 <table class="table table-bordered" id="userTables">
@@ -205,19 +228,6 @@
     <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            $('.select2').select2({
-                placeholder: 'Select :',
-                searchInputPlaceholder: 'Search'
-            });
-
-            // Initialize Select2 for abnormality selection
-            $('#abnormality').select2();
-
-            // Event listener for abnormality select changes
-            $('#abnormality').on('change', function() {
-                var selectedValues = $(this).val();
-                $('#combined_abnormal_value').val(selectedValues);
-            });
 
             document.querySelectorAll('select[name^="result"]').forEach(select => {
                 select.addEventListener("change", function () {
@@ -256,10 +266,9 @@
             // Enable/Disable abnormality select based on the switch
             $('input[name="option"]').on('change', function() {
                 if ($(this).attr('id') === 'yes') {
-                    $('#abnormality').prop('disabled', false);
+                    $('.abnormal-input').prop('disabled', false);
                 } else {
-                    $('#abnormality').prop('disabled', true).val(null).trigger('change');
-                    $('#combined_abnormal_value').val('');
+                    $('.abnormal-input').prop('disabled', true);
                 }
             });
             combineCreateByUsers();

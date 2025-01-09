@@ -3,9 +3,6 @@
 
 @section('content')
     <div class="row">
-        <!-- ============================================================== -->
-        <!-- data table  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Table Schedule</h1>
@@ -31,9 +28,6 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- end data table  -->
-        <!-- ============================================================== -->
     </div>
 
     <!-- recognize Schedule Year -->
@@ -50,21 +44,6 @@
         </div>
     </div>
     <!-- End recognize Schedule Year -->
-
-    <!-- View Schedule Month -->
-    <div class="modal fade" id="viewScheduleMonth" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header" id="modal_title_month_view">
-                </div>
-                <div class="modal-body" id="modal_data_month_view">
-                </div>
-                <div class="modal-footer" id="modal_button_month_view">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End View Schedule Month-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">

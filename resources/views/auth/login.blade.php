@@ -93,6 +93,9 @@
         $(document).ready(function() {
             @if(session('error'))
                 $('#warningModal').modal('show');
+                setTimeout(function() {
+                    $('#warningModal').modal('hide');
+                }, 2000);
             @endif
         });
     </script>

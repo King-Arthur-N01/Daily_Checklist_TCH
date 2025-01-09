@@ -18,7 +18,7 @@ class CreateMachineSchedulesTable extends Migration
             $table->timestamp('schedule_start')->nullable();
             $table->timestamp('schedule_end')->nullable();
             // $table->timestamp('schedule_next')->nullable();
-            $table->integer('schedule_duration')->nullable();
+            // $table->integer('schedule_duration')->nullable();
             $table->integer('preventive_cycle')->nullable();
             $table->timestamp('schedule_date')->nullable();
             $table->timestamp('reschedule_date_1')->nullable();
@@ -31,6 +31,7 @@ class CreateMachineSchedulesTable extends Migration
             $table->unsignedBigInteger('machine_id');
             $table->unsignedBigInteger('yearly_id');
             $table->unsignedBigInteger('monthly_id')->nullable();
+            $table->unsignedBigInteger('record_repair_id')->nullable();
             $table->timestamps();
         });
     }

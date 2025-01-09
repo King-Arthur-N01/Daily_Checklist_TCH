@@ -132,7 +132,7 @@ class YearlyScheduleController extends Controller
         $events = $schedule_data->map(function ($schedule) {
             return [
                 'resourceId' => $schedule->machine_id,
-                'title' => $schedule->machine_number,
+                'title' => $schedule->invent_number,
                 'start' => Carbon::parse($schedule->schedule_start)->format('Y-m-d'),
                 'end' => Carbon::parse($schedule->schedule_end)->format('Y-m-d'),
             ];
@@ -229,6 +229,10 @@ class YearlyScheduleController extends Controller
         try {
             $request->validate([
                 'name_schedule' => 'required',
+                'limit_schedule' => 'required|integer',
+                'schedule_create' => 'required|integer',
+                'schedule_time' => 'required|array',
+                'machine_id' => 'required|array',
                 'preventive_cycle' => 'required|array',
             ]);
 

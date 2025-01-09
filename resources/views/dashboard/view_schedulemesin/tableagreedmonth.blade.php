@@ -77,21 +77,6 @@
     </div>
     <!-- End Agreed Schedule Month -->
 
-    <!-- View Schedule Month -->
-    <div class="modal fade" id="viewScheduleMonth" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header" id="modal_title_month_view">
-                </div>
-                <div class="modal-body" id="modal_data_month_view">
-                </div>
-                <div class="modal-footer" id="modal_button_month_view">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End View Schedule Month-->
-
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog">
@@ -191,7 +176,7 @@
                 { data: 'name_schedule' },
                 { data: 'total_schedule' },
                 { data: 'schedule_status', render: function(data, type, row) {
-                    return data === null ? '<span class="badge badge-danger">Belum Diketahui</span>' : '<span class="badge badge-success">Sudah Diketahui</span>';
+                    return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
                 }},
                 { data: 'created_at' },
                 { data: 'actions', orderable: false, searchable: false }
@@ -209,7 +194,7 @@
             const scheduleId = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route("viewmonth", ':id') }}'.replace(':id', scheduleId),
+                url: '{{ route("readmonth-agreed", ':id') }}'.replace(':id', scheduleId),
                 success: function(data) {
 
                     const header_modal = `
@@ -222,7 +207,7 @@
                             <div class="form-group">
                                 <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                 <div>
-                                    <input class="form-control" type="text" value="${data.getschedulemonth[0].name_schedule_month}" readonly>
+                                    <input class="form-control" type="text" value="${data.scheduledata[0].name_schedule_month}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -240,7 +225,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${data.getschedulemonth.map((schedule, index) => {
+                                ${data.scheduledata.map((schedule, index) => {
                                     let schedule_pm = schedule.schedule_date;
 
                                     return `
@@ -251,7 +236,7 @@
                                             <td>${schedule.machine_type || '-'}</td>
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
-                                            <td>${schedule.schedule_duration}</td>
+                                            <td>${schedule.schedule_duration}</td> ==> PERLU PENANGANAN LEBIH LANJUT
                                             <td>${formatDate(schedule_pm)}</td>
                                         </tr>
                                     `;

@@ -22,6 +22,7 @@ class CreateMonthlySchedulesTable extends Migration
             $table->unsignedBigInteger('schedule_create')->nullable();
             $table->unsignedBigInteger('schedule_recognize')->nullable();
             $table->unsignedBigInteger('schedule_agreed')->nullable();
+            $table->unsignedBigInteger('schedule_planner')->nullable();
             $table->unsignedBigInteger('id_schedule_year')->nullable();
             $table->timestamps();
         });

@@ -211,14 +211,6 @@ class MachinerecordController extends Controller
         $users = User::get();
         $timenow = Carbon::now();
 
-        $getcomponen = DB::table('machine_schedules')
-        ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*')
-        ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-        ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-        ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
-        ->where('machine_schedules.id', '=', $id)
-        ->get();
-
         $joinmachine = DB::table('machine_schedules')
         ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
         ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
@@ -235,7 +227,6 @@ class MachinerecordController extends Controller
         }
         return view('dashboard.view_recordmesin.formrecordmesin', [
             'joinmachine' => $joinmachine,
-            'getcomponen' => $getcomponen,
             'machine_id' => $id,
             'timenow' => $timenow,
             'users' => $users,
@@ -514,7 +505,7 @@ class MachinerecordController extends Controller
     public function deletecorrection($id) {
         try {
             $DeleteRecords = Machinerecord::find($id);
-            $DeleteRecords->delete();
+            $DeleteRecords->correct_by = null;
             return response()->json(['success' => 'Record deleted successfully!']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete record.'], 500);
@@ -667,7 +658,7 @@ class MachinerecordController extends Controller
     public function deleteapproval($id) {
         try {
             $DeleteRecords = Machinerecord::find($id);
-            $DeleteRecords->delete();
+            $DeleteRecords->approve_by = null;
             return response()->json(['success' => 'Record deleted successfully!']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete record.'], 500);

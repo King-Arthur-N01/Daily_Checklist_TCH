@@ -54,6 +54,23 @@
                 </div>
             </div>
         @endcan
+        @can('manage_machine', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Standarisasi Jam PM Mesin</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/working_hour_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexworkinghour') }}">Tambah Jam Preventive Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endcan
         @can('corrected_records', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
@@ -156,18 +173,18 @@
                 </div>
             </div>
         @endcan
-        @can('reschedule_schedule', Permission::class)
+        @can('recognize_schedule', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body-custom">
                         <div class="col-7">
-                            <h5 class="card-title-head">Cek Schedule Preventive (PLANNER)</h5>
+                            <h5 class="card-title-head">Cek Schedule Preventive (BULAN)</h5>
                         </div>
                         <div class="col-5" style="text-align: right">
-                            <img class="image-card-home" src="{{ asset('assets/icons/check_month_home.png') }}">
+                            <img class="image-card-home" src="{{ asset('assets/icons/check_year_home.png') }}">
                         </div>
                         <div class="card-footer-item-custom col-12">
-                            <a class="card-title" href="{{ route('indexmonth-recognize') }}">Lihat Jadwal Preventive Maintenance &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                            <a class="card-title" href="{{ route('indexmonth-recognize') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
                         </div>
                     </div>
                 </div>
@@ -185,6 +202,23 @@
                         </div>
                         <div class="card-footer-item-custom col-12">
                             <a class="card-title" href="{{ route('indexmonth-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endcan
+        @can('reschedule_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Cek Schedule Preventive (PLANNER)</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/check_month_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title" href="{{ route('indexmonth-planner') }}">Lihat Jadwal Preventive Maintenance &nbsp; <i class="fas fa-calendar-alt"></i></a>
                         </div>
                     </div>
                 </div>

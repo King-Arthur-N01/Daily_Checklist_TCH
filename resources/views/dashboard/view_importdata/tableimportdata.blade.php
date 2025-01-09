@@ -683,8 +683,8 @@
                                             <select class="form-control" name="machine_info" id="machine_info">
                                                 <option label="SELECT :" disabled selected></option>
                                                 <option value="custom">Lain nya</option>
-                                                <option value="produksi" ${data.fetchmachine.machine_status === 'PRODUKSI' ? 'selected' : ''}>Produksi</option>
-                                                <option value="engginering" ${data.fetchmachine.machine_status === 'ENGGINERING' ? 'selected' : ''}>Engginering</option>
+                                                <option value="PRODUKSI" ${data.fetchmachine.machine_status == 'PRODUKSI' ? 'selected' : ''}>Produksi</option>
+                                                <option value="ENGGINERING" ${data.fetchmachine.machine_status == 'ENGGINERING' ? 'selected' : ''}>Engginering</option>
                                             </select>
                                             <input class="custom-input-option capslock" type="text" id="custom_input" placeholder="Enter your own result">
                                         </div>
@@ -1003,9 +1003,9 @@
                 const propertyValue = filterByProperty.value.toLowerCase();
 
                 for (let i = 1; i < rows.length; i++) {
-                    const numberCell = rows[i].getElementsByTagName('td')[0];
+                    const numberCell = rows[i].getElementsByTagName('td')[1];
                     const nameCell = rows[i].getElementsByTagName('td')[2];
-                    const propertyCell = rows[i].getElementsByTagName('td')[5];
+                    const propertyCell = rows[i].getElementsByTagName('td')[7];
 
                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';

@@ -10,16 +10,16 @@
         <div class="container-fluid">
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Bordered Table</h1>
-            <div class="col-sm-12 col-md-12">
-                <div class="dt-buttons">
-                    <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#RegisterModal" tabindex="0">+ Tambah User</a>
-                </div>
-            </div>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
+                    <div class="div-tables">
+                        <div class="col-sm-12 col-md-12">
+                            <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#registerModal" tabindex="0">+ Tambah User</a>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="userTable" width="100%">
                             <thead>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Register Modal -->
-    <div class="modal fade" id="RegisterModal" tabindex="-1">
+    <div class="modal fade" id="registerModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_register">
@@ -59,7 +59,7 @@
     <!-- End Register Modal-->
 
     <!-- Edit Modal -->
-    <div class="modal fade" id="EditModal" tabindex="-1">
+    <div class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" id="modal_title_edit">
@@ -143,7 +143,7 @@
                                     hour12: false
                                 }),
                                 actions: `
-                                    <button class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshusers.id}" data-target="#EditModal">Edit</button>
+                                    <button class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshusers.id}" data-target="#editModal">Edit</button>
                                     <button class="btn btn-danger btn-sm deleteButton" style="color:white" data-id="${refreshusers.id}">Delete</button>
                                 `
                             };
@@ -170,7 +170,7 @@
             });
 
             // kode $ajax untuk menampilkan menu register
-            $('#RegisterModal').on('shown.bs.modal', function(event) {
+            $('#registerModal').on('shown.bs.modal', function(event) {
                 const header_modal = `
                     <h5 class="modal-title">Register User</h5>
                     <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -281,7 +281,7 @@
                                 }
                                 setTimeout(function() {
                                         $('#successModal').modal('hide');
-                                        $('#RegisterModal').modal('hide');
+                                        $('#registerModal').modal('hide');
                                         overlay.removeClass('is-active');
                                 }, 2000);
                             },
@@ -293,7 +293,7 @@
                                 }
                                 setTimeout(function() {
                                     $('#failedModal').modal('hide');
-                                    $('#RegisterModal').modal('hide');
+                                    $('#registerModal').modal('hide');
                                 }, 2000);
                             }
                         }).always(function() {
@@ -306,7 +306,7 @@
             });
 
             // kode $ajax untuk menampilkan menu edit
-            $('#EditModal').on('shown.bs.modal', function(event) {
+            $('#editModal').on('shown.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 var userId = button.data('id');
                 $.ajax({
@@ -391,7 +391,7 @@
                                     }
                                     setTimeout(function() {
                                             $('#successModal').modal('hide');
-                                            $('#EditModal').modal('hide');
+                                            $('#editModal').modal('hide');
                                             overlay.removeClass('is-active');
                                     }, 2000);
                                 },
@@ -403,7 +403,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#failedModal').modal('hide');
-                                        $('#EditModal').modal('hide');
+                                        $('#editModal').modal('hide');
                                     }, 2000);
                                 }
                             }).always(function() {
@@ -438,7 +438,7 @@
                         $('#ExtralargeModal').modal('hide');
                     }).fail(function(xhr, status, error) {
                         alert('This USER has been deleted by someone!'); // Alert error message
-                        $('#EditModal').modal('hide'); // Hide modal on error
+                        $('#editModal').modal('hide'); // Hide modal on error
                     }).always(function() {
                         setTimeout(function() {
                             location.reload();

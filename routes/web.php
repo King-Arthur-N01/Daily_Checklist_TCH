@@ -56,12 +56,23 @@ Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyControl
 Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // machine property route end
 
+// machine working route
+Route::get ('/workinghour','MachineData\WorkingHourController@indexworkinghour')->name('indexworkinghour');
+Route::get('/workinghour/read','MachineData\WorkingHourController@readmachinedata')->name('readmachinewo');
+Route::post('/workinghour/create','MachineData\WorkingHourController@createworkinghour')->name('addworkinghour');
+Route::get('/machineproperty/find/{id}','MachineData\WorkingHourController@findworkinghour')->name('findworkinghour');
+Route::put ('/workinghour/update/{id}','MachineData\WorkingHourController@updateworkinghour')->name('editworkinghour');
+Route::get ('/workinghour/view/{id}','MachineData\WorkingHourController@viewworkinghour')->name('viewworkinghour');
+Route::get ('/workinghour/table/refresh','MachineData\WorkingHourController@refreshtableworkinghour')->name('refreshworkinghour');
+Route::delete('/workinghour/delete/{id}','MachineData\WorkingHourController@deleteproperty')->name('removeworkinghour');
+// machine working route end
+
 // schedule year route
 Route::get ('/schedule','ScheduleData\YearlyScheduleController@indexschedule')->name('indexyear');
 Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createschedule')->name('addyear');
 Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('edityear');
 Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeyear');
-Route::get ('/schedule/read','ScheduleData\YearlyScheduleController@readmachinedata')->name('readmachinedata');
+Route::get ('/schedule/read','ScheduleData\YearlyScheduleController@readmachinedata')->name('readmachineyear');
 Route::get ('/schedule/find/{id}','ScheduleData\YearlyScheduleController@findschedule')->name('findscheduleid');
 Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshyear'); // juga buat numpang tabel known & agreed year
 Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleController@refreshdetailtableschedule')->name('refreshdetailyear');
@@ -106,17 +117,25 @@ Route::get ('/schedule/repair/read/abnormal','ScheduleData\MonthlyScheduleContro
 
 // schedule month recognize
 Route::get ('/schedule/month/recognize','ScheduleData\MonthlyScheduleController@indexschedulemonthrecognize')->name('indexmonth-recognize');
-Route::get ('/schedule/month/recognize/find/{id}','ScheduleData\MonthlyScheduleController@findscheduledata')->name('findmonth-recognize');
+Route::get ('/schedule/month/recognize/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-recognize');
 Route::put ('/schedule/month/recognize/register/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
-Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtablescheduleplanner')->name('refresh-recognize');
+Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-recognize');
 // schedule month recognize end
 
 // schedule month agreed
 Route::get ('/schedule/month/agreed','ScheduleData\MonthlyScheduleController@indexschedulemonthagreed')->name('indexmonth-agreed');
-Route::get ('/schedule/month/agreed/read/{id}','ScheduleData\MonthlyScheduleController@readscheduledata')->name('readmonth-agreed');
+Route::get ('/schedule/month/agreed/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-agreed');
 Route::put ('/schedule/month/agreed/register/{id}','ScheduleData\MonthlyScheduleController@registermonthagreed')->name('editmonth-agreed');
-Route::get ('/schedule/month/agreed/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtablescheduleagreed')->name('refresh-agreed');
+Route::get ('/schedule/month/agreed/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-agreed');
 // schedule month agreed end
+
+// schedule month planner
+Route::get ('/schedule/month/planner','ScheduleData\MonthlyScheduleController@indexschedulemonthplanner')->name('indexmonth-planner');
+Route::get ('/schedule/month/planner/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-planner');
+Route::get ('/schedule/month/planner/find/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('findmonth-planner');
+Route::put ('/schedule/month/planner/register/{id}','ScheduleData\MonthlyScheduleController@registerplanner')->name('editmonth-planner');
+Route::get ('/schedule/month/planner/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtablescheduleplanner')->name('refresh-planner');
+// schedule month planner end
 
 // machine record
 Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');

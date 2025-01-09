@@ -20,7 +20,11 @@ class Machine extends Model
         'mfg_number',
         'install_date',
         'production_date',
+        'machine_abnormal_status',
+        'machine_problem',
+        'machine_action',
         'id_property',
+        'id_working',
     ];
     public function getchildernproperty()
     {

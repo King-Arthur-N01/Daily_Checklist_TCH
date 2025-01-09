@@ -184,9 +184,9 @@
                     { data: 'status' },
                     { data: 'record_status', render: function(data) {
                         if (data === 0) {
-                            return '<span class="badge badge-danger">ABNORMAL</span>';
+                            return '<span class="badge badge-danger">OPEN</span>';
                         } else if (data === 1) {
-                            return '<span class="badge badge-success">NORMAL</span>';
+                            return '<span class="badge badge-success">CLOSE</span>';
                         }
                     }},
                     { data: 'shift' },

@@ -14,6 +14,32 @@
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
                 </div>
                 <div class="card-body">
+                    {{-- <div class="col-sm-12 col-md-12">
+                        <div class="table-filter">
+                            <div class="col-4">
+                                <p class="mg-b-10">Nama Mesin</p>
+                                <select class="form-control select2" name="" id="category-input-machinename">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Input Nomor Mesin </p>
+                                <select class="form-control select2" name="" id="category-input-machinecode">
+                                    <option selected="selected" value="">Select :</option>
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <p class="mg-b-10">Status Mesin</p>
+                                <select class="form-control" name="sample" id="statusMachine">
+                                    <option selected="selected">Select :</option>
+                                    <option>Sudah Dipreventive</option>
+                                    <option>Belum Dipreventive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> --}}
                     <div class="table-responsive">
                         <table class="table table-bordered" id="scheduleTables" width="100%">
                             <thead>
@@ -50,21 +76,6 @@
         </div>
     </div>
     <!-- End Recognize Schedule Month -->
-
-    <!-- View Schedule Month -->
-    <div class="modal fade" id="recognizeModalEdit" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header" id="modal_title_recognize_edit">
-                </div>
-                <div class="modal-body" id="modal_data_recognize_edit">
-                </div>
-                <div class="modal-footer" id="modal_button_recognize_edit">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End View Schedule Month-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -124,7 +135,6 @@
     <script src="{{ asset('assets/vendor/daterange-picker/moment.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/daterange-picker/daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/formatdate.js') }}"></script>
-    {{-- <script src="{{ asset('assets/vendor/custom-js/select-checkbox.js') }}"></script> --}}
     {{-- <script src="{{ asset('assets/vendor/jquery-maskedinput/jquery.maskedinput.js') }}"></script> --}}
     {{-- <script src="{{ mix('js/app.js') }}" defer></script> --}}
 <script>
@@ -137,10 +147,6 @@
                 overlay.removeClass('is-active');
             });
         }, 60000); // 60000 milidetik = 60 second
-
-        let nameScheduleYear = "";
-        let nameScheduleMonth = "";
-        let combinedMachineId = [];
 
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
@@ -159,11 +165,8 @@
                                 day: '2-digit'
                             }),
                             actions: `
-                                ${refreshschedule.schedule_recognize === null ?
-                                    `<button type="button" class="btn btn-primary btn-sm btn-Id" data-id="${refreshschedule.id}" data-toggle="modal" data-target="#recognizeModal"><i class="bi bi-calendar-check-fill"></i></button>` :
-                                    `<button type="button" class="btn btn-primary btn-sm btn-Id" data-id="${refreshschedule.id}" data-toggle="modal" data-target="#recognizeModalEdit"><i class="bi bi-pencil-square"></i></button>`
-                                }
-                            `
+                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#recognizeModal"><i class="bi bi-pencil-square"></i></button>
+                                `
                         };
                     });
                 }
@@ -173,7 +176,7 @@
                 { data: 'name_schedule' },
                 { data: 'total_schedule' },
                 { data: 'schedule_status', render: function(data, type, row) {
-                    return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
+                    return data === null ? '<span class="badge badge-danger">Belum Diketahui</span>' : '<span class="badge badge-success">Sudah Diketahui</span>';
                 }},
                 { data: 'created_at' },
                 { data: 'actions', orderable: false, searchable: false }
@@ -182,7 +185,7 @@
 
 
         // <===========================================================================================>
-        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<KOREKSI SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD MONTHLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
         // FUNGSI TAMBAH MESIN PERBULAN & PERKIRAAN WAKTU PREVENTIVE
@@ -191,277 +194,11 @@
             const scheduleId = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route("viewmonth", ':id') }}'.replace(':id', scheduleId),
+                url: '{{ route("readmonth-planner", ':id') }}'.replace(':id', scheduleId),
                 success: function(data) {
 
-                    function selectCheckbox() {
-                        const table = document.getElementById("dataTables");
-                        const rows = table.querySelectorAll("tbody tr");
-
-                        rows.forEach((row) => {
-                            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
-                            const machineRescheduleInput = row.querySelector('input[name="machine_reschedule"]');
-                            const rescheduleNoteInput = row.querySelector('input[name="reschedule_note"]');
-
-                            checkboxes.forEach((checkbox) => {
-                                checkbox.addEventListener("change", () => {
-                                    if (checkbox.checked) {
-                                        checkboxes.forEach((otherCheckbox) => {
-                                            if (otherCheckbox !== checkbox) {
-                                                otherCheckbox.checked = false; // Hanya satu yang dapat dipilih
-                                            }
-                                        });
-
-                                        if (checkbox.value === "tidak") {
-                                            machineRescheduleInput.removeAttribute('readonly');
-                                            rescheduleNoteInput.removeAttribute('readonly');
-                                        } else if (checkbox.value === "iya") {
-                                            machineRescheduleInput.setAttribute('readonly', true);
-                                            rescheduleNoteInput.setAttribute('readonly', true);
-                                        }
-
-                                        // Update daterangepicker based on readonly state
-                                        const datepickerId = machineRescheduleInput.getAttribute('id');
-                                        if (machineRescheduleInput.hasAttribute('readonly')) {
-                                            $(`#${datepickerId}`).data('daterangepicker').disable();
-                                        } else {
-                                            $(`#${datepickerId}`).data('daterangepicker').enable();
-                                        }
-                                    }
-                                });
-                            });
-
-                        });
-                    }
-
-
                     const header_modal = `
-                        <h5 class="modal-title">Koreksi Schedule Perbaikan Mesin</h5>
-                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
-                    `;
-
-                    const data_modal = `
-                        <div class="col-xl-12">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
-                                <div>
-                                    <input class="form-control" type="text" value="${data.getschedulemonth[0].name_schedule_month}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <table class="table table-bordered" id="dataTables">
-                            <thead>
-                                <tr><th>NO.</th>
-                                    <th>NO.INVENT</th>
-                                    <th>NAMA MESIN</th>
-                                    <th>MODEL/TYPE</th>
-                                    <th>BRAND/MERK</th>
-                                    <th>NO.MESIN/AREA</th>
-                                    <th>DURASI</th>
-                                    <th>SCHEDULE PM</th>
-                                    <th colspan="2">ACTION</th>
-                                    <th>KETERSEDIAAN</th>
-                                    <th>ALASAN</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.getschedulemonth.map((schedule, index) => {
-                                    return `
-                                        <tr>
-                                            <td>${index + 1}</td>
-                                            <td>${schedule.invent_number}</td>
-                                            <td>${schedule.machine_name}</td>
-                                            <td>${schedule.machine_type || '-'}</td>
-                                            <td>${schedule.machine_brand || '-'}</td>
-                                            <td>${schedule.machine_number || '-'}</td>
-                                            <td>${schedule.schedule_duration} Jam</td>
-                                            <td>${formatDate(schedule.schedule_date)}</td>
-                                            <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition" value="iya" checked>SESUAI
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition" value="tidak">TIDAK SESUAI
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control datepicker" name="machine_reschedule" id="datepicker-${schedule.schedule_id}" data-schedule-date="${schedule.schedule_date}" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="reschedule_note" placeholder="Opsional" readonly>
-                                            </td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                    const button_modal =`
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
-                    `;
-                    $('#modal_title_recognize').html(header_modal);
-                    $('#modal_data_recognize').html(data_modal);
-                    $('#modal_button_recognize').html(button_modal);
-                    selectCheckbox()
-
-                    $('.datepicker').each(function() {
-                        const scheduleDate = $(this).data('schedule-date'); // Ambil tanggal dari data attribute
-                        $(this).daterangepicker({
-                            parentEl: '#modal_data_recognize',
-                            singleDatePicker: true,
-                            showDropdowns: true,
-                            startDate: moment(scheduleDate), // Gunakan scheduleDate yang diambil dari data attribute
-                            locale: {
-                                firstDay: 1,
-                                format: 'DD-MM-YYYY'
-                            }
-                        });
-
-                        // Tambahkan properti enable/disable manual
-                        const daterangepickerInstance = $(this).data('daterangepicker');
-                        daterangepickerInstance.enable = function() {
-                            this.element.prop('disabled', false);
-                        };
-                        daterangepickerInstance.disable = function() {
-                            this.element.prop('disabled', true);
-                        };
-
-                        // Set initial state based on readonly attribute
-                        if ($(this).prop('readonly')) {
-                            daterangepickerInstance.disable();
-                        }
-                    });
-
-
-                    $('#saveButton').on('click', function() {
-                        let machineReschedule = [];
-                        let recognizeBy = '{{ Auth::user()->id }}';
-                        const selectedCheckboxes = $('input[type="checkbox"][value="tidak"]:checked');
-
-                        selectedCheckboxes.each(function() {
-                            const row = $(this).closest('tr');
-                            const scheduleId = row.find('input[name="machine_reschedule"]').attr('id').replace('datepicker-', '');
-                            const rescheduleValue = row.find('input[name="machine_reschedule"]').val();
-                            const rescheduleNote = row.find('input[name="reschedule_note"]').val();
-                            machineReschedule.push({ schedule_id: scheduleId, reschedule_value: rescheduleValue, reschedule_note: rescheduleNote });
-                        });
-
-                        if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
-                            $.ajax({
-                                type: 'PUT',
-                                url: '{{ route("editmonth-recognize", ':id') }}'.replace(':id', scheduleId),
-                                data: {
-                                    '_token': '{{ csrf_token() }}',
-                                    'recognize_by': recognizeBy,
-                                    'machine_reschedule': machineReschedule
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        const successMessage = response.success;
-                                        $('#successText').text(successMessage);
-                                        $('#successModal').modal('show');
-                                    }
-                                    setTimeout(function() {
-                                        $('#successModal').modal('hide');
-                                        $('#recognizeModal').modal('hide');
-                                    }, 2000);
-                                },
-                                error: function(xhr, status, error) {
-                                    if (xhr.responseText) {
-                                        const warningMessage = JSON.parse(xhr.responseText).error;
-                                        $('#warningText').text(warningMessage);
-                                        $('#warningModal').modal('show');
-                                    }
-                                    setTimeout(function() {
-                                        $('#warningModal').modal('hide');
-                                        $('#recognizeModal').modal('hide');
-                                    }, 2000);
-                                }
-                            }).always(function() {
-                                table.ajax.reload(null, false);
-                            });
-                        } else {
-                            // User cancelled the deletion, do nothing
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching data:', error);
-                }
-            });
-        });
-
-
-        $('#recognizeModalEdit').on('shown.bs.modal', function(event) {
-            const button = $(event.relatedTarget);
-            const scheduleId = button.data('id');
-            $.ajax({
-                type: 'GET',
-                url: '{{ route("findmonth-recognize", ':id') }}'.replace(':id', scheduleId),
-                success: function(data) {
-
-                    function selectCheckbox() {
-                        const table = document.getElementById("dataTables");
-                        const rows = table.querySelectorAll("tbody tr");
-
-                        rows.forEach((row) => {
-                            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
-                            const machineRescheduleInput = row.querySelector('input[name="machine_reschedule"]');
-                            const rescheduleNoteInput = row.querySelector('input[name="reschedule_note"]');
-
-                            checkboxes.forEach((checkbox) => {
-                                checkbox.addEventListener("change", () => {
-                                    if (checkbox.checked) {
-                                        checkboxes.forEach((otherCheckbox) => {
-                                            if (otherCheckbox !== checkbox) {
-                                                otherCheckbox.checked = false; // Hanya satu yang dapat dipilih
-                                            }
-                                        });
-
-                                        if (checkbox.value === "tidak") {
-                                            machineRescheduleInput.removeAttribute('readonly');
-                                            rescheduleNoteInput.removeAttribute('readonly');
-                                        } else if (checkbox.value === "iya") {
-                                            machineRescheduleInput.setAttribute('readonly', true);
-                                            rescheduleNoteInput.setAttribute('readonly', true);
-                                        }
-
-                                        // Update daterangepicker based on readonly state
-                                        const datepickerId = machineRescheduleInput.getAttribute('id');
-                                        if (machineRescheduleInput.hasAttribute('readonly')) {
-                                            $(`#${datepickerId}`).data('daterangepicker').disable();
-                                        } else {
-                                            $(`#${datepickerId}`).data('daterangepicker').enable();
-                                        }
-                                    }
-                                });
-                            });
-
-                        });
-                    }
-
-                    function updateReadonlyState() {
-                        const rows = document.querySelectorAll("#dataTables tbody tr");
-                        rows.forEach((row) => {
-                            const checkboxTidak = row.querySelector('input[type="checkbox"][value="tidak"]');
-                            const machineRescheduleInput = row.querySelector('input[name="machine_reschedule"]');
-                            const rescheduleNoteInput = row.querySelector('input[name="reschedule_note"]');
-
-                            if (checkboxTidak && checkboxTidak.checked) {
-                                machineRescheduleInput.removeAttribute('readonly');
-                                rescheduleNoteInput.removeAttribute('readonly');
-                            } else {
-                                machineRescheduleInput.setAttribute('readonly', true);
-                                rescheduleNoteInput.setAttribute('readonly', true);
-                            }
-                        });
-                    }
-
-                    const header_modal = `
-                        <h5 class="modal-title">Koreksi Reschedule Mesin</h5>
+                        <h5 class="modal-title">Koreksi Schedule Mesin</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
@@ -477,35 +214,19 @@
                         <table class="table table-bordered" id="dataTables">
                             <thead>
                                 <tr>
+                                    <th>NO.</th>
                                     <th>NO.INVENT</th>
                                     <th>NAMA MESIN</th>
                                     <th>MODEL/TYPE</th>
                                     <th>BRAND/MERK</th>
                                     <th>NO.MESIN/AREA</th>
-                                    <th>KETERANGAN</th>
                                     <th>DURASI</th>
                                     <th>SCHEDULE PM</th>
-                                    <th colspan="2">ACTION</th>
-                                    <th>KETERSEDIAAN</th>
-                                    <th>ALASAN</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${data.scheduledata.map((schedule, index) => {
-                                    let reschedule_pm = null;
-
-                                    if (schedule.reschedule_date_3) {
-                                        reschedule_pm = schedule.reschedule_date_3;
-                                    } else if (schedule.reschedule_date_2) {
-                                        reschedule_pm = schedule.reschedule_date_2;
-                                    } else if (schedule.reschedule_date_1) {
-                                        reschedule_pm = schedule.reschedule_date_1;
-                                    } else {
-                                        reschedule_pm = schedule.schedule_date;
-                                    }
-
-                                    // Tentukan apakah salah satu reschedule_date tidak null
-                                    const isNotNull = schedule.reschedule_date_1 || schedule.reschedule_date_2 || schedule.reschedule_date_3;
+                                    let schedule_pm = schedule.schedule_date;
 
                                     return `
                                         <tr>
@@ -515,24 +236,8 @@
                                             <td>${schedule.machine_type || '-'}</td>
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
-                                            <td>${schedule.schedule_duration} Jam</td>
-                                            <td>${formatDate(schedule.schedule_date)}</td>
-                                            <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition_${schedule.schedule_id}" value="iya" ${!isNotNull ? 'checked' : ''}>SESUAI
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition_${schedule.schedule_id}" value="tidak" ${isNotNull ? 'checked' : ''}>TIDAK SESUAI
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control datepicker" name="machine_reschedule" id="datepicker-${schedule.schedule_id}" data-schedule-date="${reschedule_pm}" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="reschedule_note" placeholder="Opsional" readonly value="${schedule.reschedule_note || '-'}">
-                                            </td>
+                                            <td>${schedule.schedule_duration}</td> ==> PERLU PENANGANAN LEBIH LANJUT
+                                            <td>${formatDate(schedule_pm)}</td>
                                         </tr>
                                     `;
                                 }).join('')}
@@ -543,54 +248,12 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                     `;
-                    $('#modal_title_recognize_edit').html(header_modal);
-                    $('#modal_data_recognize_edit').html(data_modal);
-                    $('#modal_button_recognize_edit').html(button_modal);
-                    updateReadonlyState();
-                    selectCheckbox()
-
-                    $('.datepicker').each(function() {
-                        const scheduleDate = $(this).data('schedule-date'); // Ambil tanggal dari data attribute
-                        $(this).daterangepicker({
-                            parentEl: '#modal_data_recognize_edit',
-                            singleDatePicker: true,
-                            showDropdowns: true,
-                            startDate: moment(scheduleDate), // Gunakan scheduleDate yang diambil dari data attribute
-                            locale: {
-                                firstDay: 1,
-                                format: 'DD-MM-YYYY'
-                            }
-                        });
-
-                        // Tambahkan properti enable/disable manual
-                        const daterangepickerInstance = $(this).data('daterangepicker');
-                        daterangepickerInstance.enable = function() {
-                            this.element.prop('disabled', false);
-                        };
-                        daterangepickerInstance.disable = function() {
-                            this.element.prop('disabled', true);
-                        };
-
-                        // Set initial state based on readonly attribute
-                        if ($(this).prop('readonly')) {
-                            daterangepickerInstance.disable();
-                        }
-                    });
-
+                    $('#modal_title_recognize').html(header_modal);
+                    $('#modal_data_recognize').html(data_modal);
+                    $('#modal_button_recognize').html(button_modal);
 
                     $('#saveButton').on('click', function() {
-                        let machineReschedule = [];
                         let recognizeBy = '{{ Auth::user()->id }}';
-                        const selectedCheckboxes = $('input[type="checkbox"][value="tidak"]:checked');
-
-                        selectedCheckboxes.each(function() {
-                            const row = $(this).closest('tr');
-                            const scheduleId = row.find('input[name="machine_reschedule"]').attr('id').replace('datepicker-', '');
-                            const rescheduleValue = row.find('input[name="machine_reschedule"]').val();
-                            const rescheduleNote = row.find('input[name="reschedule_note"]').val();
-                            machineReschedule.push({ schedule_id: scheduleId, reschedule_value: rescheduleValue, reschedule_note: rescheduleNote });
-                        });
-
                         if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
                             $.ajax({
                                 type: 'PUT',
@@ -598,7 +261,6 @@
                                 data: {
                                     '_token': '{{ csrf_token() }}',
                                     'recognize_by': recognizeBy,
-                                    'machine_reschedule': machineReschedule
                                 },
                                 success: function(response) {
                                     if (response.success) {
@@ -608,7 +270,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#successModal').modal('hide');
-                                        $('#recognizeModalEdit').modal('hide');
+                                        $('#recognizeModal').modal('hide');
                                     }, 2000);
                                 },
                                 error: function(xhr, status, error) {
@@ -619,7 +281,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#warningModal').modal('hide');
-                                        $('#recognizeModalEdit').modal('hide');
+                                        $('#recognizeModal').modal('hide');
                                     }, 2000);
                                 }
                             }).always(function() {
