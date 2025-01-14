@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Machineproperty extends Model
 {
     protected $fillable = [
-        'name_property'
+        'name_property',
+        'standart_checksheet'
     ];
 
     public function getparentmachine()

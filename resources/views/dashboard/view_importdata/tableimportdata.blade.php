@@ -257,7 +257,7 @@
                     dataSrc: function(data) {
                         return data.refreshmachine.map(function(refreshmachine, index) {
                             let refreshproperty = data.refreshproperty.find(function(property) {
-                                return property.id === refreshmachine.id_property;
+                                return property.id === refreshmachine.property_id;
                             });
                             return {
                                 number: index + 1,
@@ -568,9 +568,19 @@
                     success: function(data) {
                         let options_status = '';
                         if (Array.isArray(data.fetchproperty)) {
-                            $.each(data.fetchproperty, function(index, fetchtable) {
-                                const isSelected = fetchtable.id == data.fetchmachine.id_property ? 'selected' : '';
-                                options_status += `<option value="${fetchtable.id}" ${isSelected}>${fetchtable.name_property}</option>`;
+                            $.each(data.fetchproperty, function(index, propertytable) {
+                                const isSelected = propertytable.id == data.fetchmachine.property_id ? 'selected' : '';
+                                options_status += `<option value="${propertytable.id}" ${isSelected}>${propertytable.name_property}</option>`;
+                            });
+                        } else {
+                            console.error('fetchproperty is not an array:', data.fetchproperty);
+                        }
+
+                        let options_standart = '';
+                        if (Array.isArray(data.fetchworkinghour)) {
+                            $.each(data.fetchworkinghour, function(index, standarttable) {
+                                const isSelected = standarttable.id == data.fetchmachine.standart_id ? 'selected' : '';
+                                options_standart += `<option value="${standarttable.id}" ${isSelected}>${standarttable.standart_name}</option>`;
                             });
                         } else {
                             console.error('fetchproperty is not an array:', data.fetchproperty);
@@ -695,6 +705,7 @@
                                 <thead>
                                     <tr>
                                         <th>Kategori Mesin</th>
+                                        <th>Kategori Jam PM Mesin</th>
                                         <th>Status Mesin</th>
                                     </tr>
                                 </thead>
@@ -704,6 +715,12 @@
                                             <select class="form-control" id="getproperty">
                                                 <option value="">Tidak ada</option>
                                                 ${options_status}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="getstandart">
+                                                <option value="">Tidak ada</option>
+                                                ${options_standart}
                                             </select>
                                         </td>
                                         <td>
@@ -770,6 +787,7 @@
                                 productionDate: $('input[name="production_date"]').val().toUpperCase(),
                                 machinePower: $('input[name="machine_power"]').val(),
                                 idProperty : $('#getproperty').val(),
+                                idStandart : $('#getstandart').val(),
                                 machineStatus : $('#getstatus').val(),
                                 machineInfo: $('select[name="machine_info"]').val().toUpperCase() === 'CUSTOM' ? $('#custom_input')
                                     .val().toUpperCase() : $('select[name="machine_info"]').val().toUpperCase() // Ambil nilai dari select dan jika custom, ambil dari input kustom
@@ -792,7 +810,8 @@
                                     'production_date': formData.productionDate,
                                     'machine_power': formData.machinePower,
                                     'machine_info': formData.machineInfo,
-                                    'id_property': formData.idProperty,
+                                    'property_id': formData.idProperty,
+                                    'standart_id': formData.idStandart,
                                     'machine_status': formData.machineStatus
                                 },
                                 success: function(response) {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Componencheck extends Model
 {
     protected $fillable = [
-        'id_property2',
+        'id_property',
         'name_componencheck'
     ];
     public function getparentproperty()

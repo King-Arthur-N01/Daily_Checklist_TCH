@@ -97,7 +97,6 @@ class PermissionSeeder extends Seeder
         $managerRole = Role::create(['name' => 'manager']);
         $managerRole->givePermissionTo('create_records');
         $managerRole->givePermissionTo('edit_records');
-        $managerRole->givePermissionTo('edit_records');
         $managerRole->givePermissionTo('view_records');
         $managerRole->givePermissionTo('corrected_records');
         $managerRole->givePermissionTo('approval_records');

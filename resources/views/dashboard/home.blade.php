@@ -139,7 +139,7 @@
                 </div>
             </div>
         @endcan
-        @can('recognize_schedule', Permission::class)
+        {{-- @can('recognize_schedule', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body-custom">
@@ -155,8 +155,8 @@
                     </div>
                 </div>
             </div>
-        @endcan
-        @can('agreed_schedule', Permission::class)
+        @endcan --}}
+        @canany(['agreed_schedule', 'recognize_schedule'], Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body-custom">
@@ -167,13 +167,13 @@
                             <img class="image-card-home" src="{{ asset('assets/icons/approve_year_home.png') }}">
                         </div>
                         <div class="card-footer-item-custom col-12">
-                            <a class="card-title" href="{{ route('indexyear-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                            <a class="card-title" href="{{ route('indexyear-accept') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
-        @endcan
-        @can('recognize_schedule', Permission::class)
+        @endcanany
+        {{-- @can('recognize_schedule', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body-custom">
@@ -189,8 +189,8 @@
                     </div>
                 </div>
             </div>
-        @endcan
-        @can('agreed_schedule', Permission::class)
+        @endcan --}}
+        @canany(['agreed_schedule', 'recognize_schedule'], Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body-custom">
@@ -201,12 +201,12 @@
                             <img class="image-card-home" src="{{ asset('assets/icons/approve_year_home.png') }}">
                         </div>
                         <div class="card-footer-item-custom col-12">
-                            <a class="card-title" href="{{ route('indexmonth-agreed') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                            <a class="card-title" href="{{ route('indexmonth-accept') }}">Lihat Pending Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
-        @endcan
+        @endcanany
         @can('reschedule_schedule', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">

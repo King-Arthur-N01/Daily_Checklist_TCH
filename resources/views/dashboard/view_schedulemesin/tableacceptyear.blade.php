@@ -45,9 +45,10 @@
                             <thead>
                                 <tr>
                                     <th>NO.</th>
-                                    <th>SCHEDULE PERBULAN</th>
-                                    <th>JUMLAH SCHEDULE</th>
-                                    <th>STATUS SCHEDULE</th>
+                                    <th>SCHEDULE PERTAHUN</th>
+                                    <th>JUMLAH MESIN</th>
+                                    <th>STATUS DIKETAHUI</th>
+                                    <th>STATUS DISETUJUI</th>
                                     <th>TANGGAL PEMBUATAN</th>
                                     <th>ACTION</th>
                                 </tr>
@@ -62,20 +63,35 @@
         <!-- ============================================================== -->
     </div>
 
-    <!-- Agreed Schedule Month -->
-    <div class="modal fade show" id="agreedModal" tabindex="-1">
+    <!-- accept Schedule Year -->
+    <div class="modal fade show" id="acceptModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                <div class="modal-header" id="modal_title_agreed">
+                <div class="modal-header" id="modal_title_accept">
                 </div>
-                <div class="modal-body" id="modal_data_agreed">
+                <div class="modal-body" id="modal_data_accept">
                 </div>
-                <div class="modal-footer" id="modal_button_agreed">
+                <div class="modal-footer" id="modal_button_accept">
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Agreed Schedule Month -->
+    <!-- End accept Schedule Year -->
+
+    <!-- View Schedule Year -->
+    <div class="modal fade" id="viewScheduleYear" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_year_view">
+                </div>
+                <div class="modal-body" id="modal_data_year_view">
+                </div>
+                <div class="modal-footer" id="modal_button_year_view">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End View Schedule Year-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -151,21 +167,22 @@
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
             ajax: {
-                url: '{{ route("refresh-agreed") }}',
+                url: '{{ route("refreshyear") }}',
                 dataSrc: function(data) {
                     return data.refreshschedule.map((refreshschedule, index) => {
                         return {
                             number: index + 1,
-                            name_schedule: refreshschedule.name_schedule_month,
-                            total_schedule: JSON.parse(refreshschedule.schedule_collection.split(',').length),
-                            schedule_status: refreshschedule.schedule_agreed,
+                            name_schedule_year: refreshschedule.name_schedule_year,
+                            id_machine: refreshschedule.machine_schedules_count,
+                            recognize_status: refreshschedule.schedule_recognize,
+                            agreed_status: refreshschedule.schedule_agreed,
                             created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: '2-digit'
                             }),
                             actions: `
-                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#agreedModal"><i class="bi bi-pencil-square"></i></button>
+                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>
                                 `
                         };
                     });
@@ -173,9 +190,12 @@
             },
             columns: [
                 { data: 'number' },
-                { data: 'name_schedule' },
-                { data: 'total_schedule' },
-                { data: 'schedule_status', render: function(data, type, row) {
+                { data: 'name_schedule_year' },
+                { data: 'id_machine' },
+                { data: 'recognize_status', render: function(data, type, row) {
+                    return data === null ? '<span class="badge badge-danger">Belum Diketahui</span>' : '<span class="badge badge-success">Sudah Diketahui</span>';
+                }},
+                { data: 'agreed_status', render: function(data, type, row) {
                     return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
                 }},
                 { data: 'created_at' },
@@ -185,82 +205,71 @@
 
 
         // <===========================================================================================>
-        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD MONTHLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
-        // FUNGSI TAMBAH MESIN PERBULAN & PERKIRAAN WAKTU PREVENTIVE
-        $('#agreedModal').on('shown.bs.modal', function(event) {
+        // FUNGSI TAMBAH MESIN PERTAHUN & PERKIRAAN WAKTU PREVENTIVE
+        $('#acceptModal').on('shown.bs.modal', function(event) {
             const button = $(event.relatedTarget);
             const scheduleId = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route("readmonth-agreed", ':id') }}'.replace(':id', scheduleId),
+                url: '{{ route("readyear-accept", ':id') }}'.replace(':id', scheduleId),
                 success: function(data) {
 
                     const header_modal = `
-                        <h5 class="modal-title">Koreksi Schedule Mesin</h5>
+                        <h5 class="modal-title">Setujui Schedule Mesin</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                     `;
 
                     const data_modal = `
-                        <div class="col-xl-12">
-                            <div class="form-group">
-                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
-                                <div>
-                                    <input class="form-control" type="text" value="${data.scheduledata[0].name_schedule_month}" readonly>
-                                </div>
+                        <div class="row align-items-center">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="machineTables1" width="100%">
+                                    <thead>
+                                        <th>NO.</th>
+                                        <th>NO.INVENT</th>
+                                        <th>NO.MESIN/LOKASI</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>MODEL/TYPE</th>
+                                        <th>BRAND/MERK</th>
+                                        <th colspan="2">RENTANG WAKTU PREVENTIVE</th>
+                                    </thead>
+                                        <tbody>
+                                            ${data.scheduledata.map((machine, index) => `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${machine.invent_number}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
+                                                    <td>${machine.machine_name}</td>
+                                                    <td>${machine.machine_type || '-'}</td>
+                                                    <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${formatDate(machine.schedule_start)}</td>
+                                                    <td>${formatDate(machine.schedule_end)}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <table class="table table-bordered" id="dataTables">
-                            <thead>
-                                <tr>
-                                    <th>NO.</th>
-                                    <th>NO.INVENT</th>
-                                    <th>NAMA MESIN</th>
-                                    <th>MODEL/TYPE</th>
-                                    <th>BRAND/MERK</th>
-                                    <th>NO.MESIN/AREA</th>
-                                    <th>DURASI</th>
-                                    <th>SCHEDULE PM</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.scheduledata.map((schedule, index) => {
-                                    let schedule_pm = schedule.schedule_date;
-
-                                    return `
-                                        <tr>
-                                            <td>${index + 1}</td>
-                                            <td>${schedule.invent_number}</td>
-                                            <td>${schedule.machine_name}</td>
-                                            <td>${schedule.machine_type || '-'}</td>
-                                            <td>${schedule.machine_brand || '-'}</td>
-                                            <td>${schedule.machine_number || '-'}</td>
-                                            <td>${schedule.schedule_duration}</td> ==> PERLU PENANGANAN LEBIH LANJUT
-                                            <td>${formatDate(schedule_pm)}</td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
+                        </div>;
                     `;
                     const button_modal =`
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                     `;
-                    $('#modal_title_agreed').html(header_modal);
-                    $('#modal_data_agreed').html(data_modal);
-                    $('#modal_button_agreed').html(button_modal);
+                    $('#modal_title_accept').html(header_modal);
+                    $('#modal_data_accept').html(data_modal);
+                    $('#modal_button_accept').html(button_modal);
 
                     $('#saveButton').on('click', function() {
-                        let agreedBy = '{{ Auth::user()->id }}';
+                        let acceptBy = '{{ Auth::user()->id }}';
                         if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
                             $.ajax({
                                 type: 'PUT',
-                                url: '{{ route("editmonth-agreed", ':id') }}'.replace(':id', scheduleId),
+                                url: '{{ route("edityear-accept", ':id') }}'.replace(':id', scheduleId),
                                 data: {
                                     '_token': '{{ csrf_token() }}',
-                                    'agreed_by': agreedBy,
+                                    'accept_by': acceptBy,
                                 },
                                 success: function(response) {
                                     if (response.success) {
@@ -270,7 +279,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#successModal').modal('hide');
-                                        $('#agreedModal').modal('hide');
+                                        $('#acceptModal').modal('hide');
                                     }, 2000);
                                 },
                                 error: function(xhr, status, error) {
@@ -281,7 +290,7 @@
                                     }
                                     setTimeout(function() {
                                         $('#warningModal').modal('hide');
-                                        $('#agreedModal').modal('hide');
+                                        $('#acceptModal').modal('hide');
                                     }, 2000);
                                 }
                             }).always(function() {

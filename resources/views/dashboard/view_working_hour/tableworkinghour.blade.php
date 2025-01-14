@@ -165,7 +165,7 @@
                                 number: index + 1,
                                 standart_name: refreshwo.standart_name,
                                 priority: refreshwo.priority,
-                                machine_total: refreshwo.machine_total.split(',').length,
+                                machine_total: refreshwo.machines_count,
                                 preventive_hour: refreshwo.preventive_hour,
                                 man_power: refreshwo.man_power,
                                 actions: `
@@ -193,7 +193,35 @@
                 ]
             });
 
+            function filterTable(inputByName, inputByBrand, inputBySpec, tableName) {
+                const filterByName = inputByName;
+                const filterByBrand = inputByBrand;
+                const filterBySpec = inputBySpec; // Perbaiki dari inputByBrand menjadi inputBySpec
+                const rows = tableName.getElementsByTagName('tr');
 
+                const nameValue = filterByName.value.toLowerCase();
+                const brandValue = filterByBrand.value.toLowerCase();
+                const specValue = filterBySpec.value.toLowerCase();
+
+                for (let i = 1; i < rows.length; i++) {
+                    const nameCell = rows[i].getElementsByTagName('td')[2];
+                    const brandCell = rows[i].getElementsByTagName('td')[4];
+                    const specCell = rows[i].getElementsByTagName('td')[5];
+
+                    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                    const brandText = brandCell ? brandCell.textContent.toLowerCase() : '';
+                    const specText = specCell ? specCell.textContent.toLowerCase() : '';
+
+                    // Check if row matches the filter criteria
+                    if (nameText.includes(nameValue) &&
+                        brandText.includes(brandValue) &&
+                        specText.includes(specValue)) {
+                        rows[i].style.display = '';  // Show the row
+                    } else {
+                        rows[i].style.display = 'none';  // Hide the row
+                    }
+                }
+            }
 
             // <===========================================================================================>
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD WORKING HOUR>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -206,37 +234,6 @@
                     url: '{{ route("readmachinewo") }}',
                     success: function(data) {
                         let tableRows = '';
-
-                        function filterTable() {
-                            const filterByName = document.getElementById('filter_by_name');
-                            const filterByBrand = document.getElementById('filter_by_brand');
-                            const filterBySpec = document.getElementById('filter_by_spec');
-                            const table = document.getElementById('addWorkingHour');
-                            const rows = table.getElementsByTagName('tr');
-
-                            const nameValue = filterByName.value.toLowerCase();
-                            const brandValue = filterByBrand.value.toLowerCase();
-                            const specValue = filterBySpec.value.toLowerCase();
-
-                            for (let i = 1; i < rows.length; i++) {
-                                const nameCell = rows[i].getElementsByTagName('td')[2];
-                                const brandCell = rows[i].getElementsByTagName('td')[4];
-                                const specCell = rows[i].getElementsByTagName('td')[5];
-
-                                const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                                const brandText = brandCell ? brandCell.textContent.toLowerCase() : '';
-                                const specText = specCell ? specCell.textContent.toLowerCase() : '';
-
-                                // Check if row matches the filter criteria
-                                if (nameText.includes(nameValue) &&
-                                    brandText.includes(brandValue) &&
-                                    specText.includes(specValue)) {
-                                    rows[i].style.display = '';  // Show the row
-                                } else {
-                                    rows[i].style.display = 'none';  // Hide the row
-                                }
-                            }
-                        }
 
                         data.refreshmachine.forEach((machine, index) => {
                             tableRows += `
@@ -349,10 +346,12 @@
                         const filterByName = document.getElementById('filter_by_name');
                         const filterByBrand = document.getElementById('filter_by_brand');
                         const filterBySpec = document.getElementById('filter_by_spec');
+                        const tableName = document.getElementById('addWorkingHour');
 
-                        filterByName.addEventListener('input', filterTable);
-                        filterByBrand.addEventListener('input', filterTable);
-                        filterBySpec.addEventListener('input', filterTable);
+                        // Add event listeners for filtering
+                        filterByName.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
+                        filterByBrand.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
+                        filterBySpec.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
 
                         // Add event listener to save button
                         $('#addButton').on('click', function() {
@@ -435,37 +434,6 @@
                     success: function(data) {
                         let tableRows = '';
 
-                        function filterTable() {
-                            const filterByName = document.getElementById('filter_by_name');
-                            const filterByBrand = document.getElementById('filter_by_brand');
-                            const filterBySpec = document.getElementById('filter_by_spec');
-                            const table = document.getElementById('addWorkingHour');
-                            const rows = table.getElementsByTagName('tr');
-
-                            const nameValue = filterByName.value.toLowerCase();
-                            const brandValue = filterByBrand.value.toLowerCase();
-                            const specValue = filterBySpec.value.toLowerCase();
-
-                            for (let i = 1; i < rows.length; i++) {
-                                const nameCell = rows[i].getElementsByTagName('td')[2];
-                                const brandCell = rows[i].getElementsByTagName('td')[4];
-                                const specCell = rows[i].getElementsByTagName('td')[5];
-
-                                const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                                const brandText = brandCell ? brandCell.textContent.toLowerCase() : '';
-                                const specText = specCell ? specCell.textContent.toLowerCase() : '';
-
-                                // Check if row matches the filter criteria
-                                if (nameText.includes(nameValue) &&
-                                    brandText.includes(brandValue) &&
-                                    specText.includes(specValue)) {
-                                    rows[i].style.display = '';  // Show the row
-                                } else {
-                                    rows[i].style.display = 'none';  // Hide the row
-                                }
-                            }
-                        }
-
                         let machineCollection = JSON.parse(data.refreshworkinghours.machine_total);
                         data.refreshmachine.forEach((machine, index) => {
                             tableRows += `
@@ -546,7 +514,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="addWorkingHour" width="100%">
+                                    <table class="table table-bordered" id="editWorkingHour" width="100%">
                                         <thead>
                                             <th>NO.</th>
                                             <th>NO.INVENT</th>
@@ -578,10 +546,12 @@
                         const filterByName = document.getElementById('filter_by_name');
                         const filterByBrand = document.getElementById('filter_by_brand');
                         const filterBySpec = document.getElementById('filter_by_spec');
+                        const tableName = document.getElementById('editWorkingHour');
 
-                        filterByName.addEventListener('input', filterTable);
-                        filterByBrand.addEventListener('input', filterTable);
-                        filterBySpec.addEventListener('input', filterTable);
+                        // Add event listeners for filtering
+                        filterByName.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
+                        filterByBrand.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
+                        filterBySpec.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
 
                         // Add event listener to save button
                         $('#editButton').on('click', function() {

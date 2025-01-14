@@ -24,11 +24,18 @@ class WorkingHourController extends Controller
     public function refreshtableworkinghour()
     {
         try {
-            $refreshworkinghours = WorkingHour::get();
+            // $refreshworkinghours = WorkingHour::get();
+            $refreshworkinghours = DB::table('working_hours')
+            ->select('working_hours.*', DB::raw('COUNT(DISTINCT machines.id) as machines_count'))
+            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
+            ->groupBy('working_hours.id')
+            ->get();
+
             return response()->json([
                 'refreshworkinghours' => $refreshworkinghours
             ]);
         } catch (\Exception $e) {
+            Log::error('Error fetching machine data: ' . $e->getMessage());
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
@@ -74,12 +81,10 @@ class WorkingHourController extends Controller
             ]);
 
             $machine_array = $request->input('machine_input');
-            $machine_json = json_encode($machine_array);
 
             $StoreWorkinghour = new WorkingHour();
             $StoreWorkinghour->standart_name = $request->standart_name;
             $StoreWorkinghour->priority = $request->priority;
-            $StoreWorkinghour->machine_total = $machine_json;
             $StoreWorkinghour->preventive_hour = $request->preventive_hour;
             $StoreWorkinghour->man_power = $request->man_power;
             $StoreWorkinghour->save();
@@ -88,7 +93,7 @@ class WorkingHourController extends Controller
 
             foreach ($machine_array as $machine) {
                 $UpdateMachine = Machine::find($machine);
-                $UpdateMachine->id_standart  = $working_hour_id ;
+                $UpdateMachine->standart_id  = $working_hour_id ;
                 $UpdateMachine->save();
             }
 
@@ -116,17 +121,33 @@ class WorkingHourController extends Controller
             $machine_array = $request->input('machine_input', []);
 
 
-            $working_hour = WorkingHour::find($id);
-            $previous_machine_id = json_decode($working_hour->machine_total);
+            $previous_working_hour = DB::table('working_hours')
+            ->select('working_hours.*', 'machines.*')
+            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
+            ->where('working_hours.id')
+            ->groupBy('standart_id')
+            ->get();
+
+            // Ambil data working hour sebelumnya berdasarkan ID
+            $previous_working_hour = DB::table('working_hours')
+                ->select('working_hours.id', 'machines.id as machine_id')
+                ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
+                ->where('working_hours.id', $id) // Tambahkan kondisi where yang benar
+                ->get();
+
+            // Ambil ID mesin yang sudah ada
+            $previous_machine_ids = $previous_working_hour->pluck('machine_id')->toArray();
 
             // Tentukan ID yang perlu dihapus
-            $delete_unused_id = array_diff($previous_machine_id, $machine_array);
+            $delete_unused_id = array_diff($previous_machine_ids, $machine_array);
 
             // Hapus semua value MachineSchedule->monthy_id yang tidak memiliki hubungan dengan monthly_schedules di request terbaru
             foreach ($delete_unused_id as $delete_id) {
                 $DeleteMachine = Machine::find($delete_id);
-                $DeleteMachine->id_standart = null;
-                $DeleteMachine->save();
+                if ($DeleteMachine) { // Pastikan objek ditemukan
+                    $DeleteMachine->standart_id = null;
+                    $DeleteMachine->save();
+                }
             }
 
             $UpdateWorkinghour = WorkingHour::find($id);
@@ -134,14 +155,13 @@ class WorkingHourController extends Controller
             $UpdateWorkinghour->priority = $priority;
             $UpdateWorkinghour->preventive_hour = $preventive_hour;
             $UpdateWorkinghour->man_power = $man_power;
-            $UpdateWorkinghour->machine_total = json_encode($machine_array);
             $UpdateWorkinghour->save();
 
             $working_hour_id = $UpdateWorkinghour->id;
 
             foreach ($machine_array as $machine) {
                 $UpdateMachine = Machine::find($machine);
-                $UpdateMachine->id_standart  = $working_hour_id ;
+                $UpdateMachine->standart_id  = $working_hour_id ;
                 $UpdateMachine->save();
             }
 
@@ -157,7 +177,7 @@ class WorkingHourController extends Controller
         try {
             $getworkinghour = DB::table('working_hours')
             ->select('working_hours.*', 'machines.*')
-            ->join('machines', 'working_hours.id', '=', 'machines.id_standart')
+            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
             ->where('working_hours.id', '=', $id)
             ->get();
 

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Importdata;
 use App\Machine;
 use App\Machineproperty;
+use App\WorkingHour;
 use Yajra\DataTables\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -75,8 +76,8 @@ class ImportdataController extends Controller
         try {
             $fetchmachines = DB::table('machines')
                 ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-                ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-                ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+                ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
                 ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
                 ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machines.id', '=', $id)
@@ -93,9 +94,12 @@ class ImportdataController extends Controller
         try {
             $fetchmachine = Machine::find($id);
             $fetchproperty = Machineproperty::get();
+            $fetchworkinghour = WorkingHour::get();
             return response()->json([
                 'fetchmachine' => $fetchmachine,
-                'fetchproperty' => $fetchproperty
+                'fetchproperty' => $fetchproperty,
+                'fetchworkinghour' => $fetchworkinghour,
+
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -123,8 +127,8 @@ class ImportdataController extends Controller
         try {
             $machinedata = DB::table('machines')
             ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
+            ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+            ->join('componenchecks', 'componenchecks.id_property', '=', 'machineproperties.id')
             ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
             ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
             ->where('machines.id', '=', $id)
@@ -194,7 +198,7 @@ class ImportdataController extends Controller
     public function exportexcelwithcondition($id)
     {
         try {
-            $machinedata = Machine::where('id_property', $id)->get();
+            $machinedata = Machine::where('property_id', $id)->get();
 
             $csvHeader = ['NO.', 'NO.INVENTARIS MESIN', 'NAMA MESIN', 'BRAND/MERK', 'MODEL/TYPE', 'SPEC/OUTPUT', 'NO.MFG/SERIAL NUMBER', 'TAHUN PEMBUATAN', 'INPUT DAYA/KW', 'BUATAN/EX', 'DATANG MC/INSTALL DATE', 'KETERANGAN', 'NO.MESIN/LOKASI'];
             $output = fopen('php://output', 'w');
@@ -250,11 +254,11 @@ class ImportdataController extends Controller
     public function exportpdfwithcondition($id)
     {
         try {
-            // $machinedata = Machine::where('id_property', $id)->get();
+            // $machinedata = Machine::where('property_id', $id)->get();
             $machinedata = DB::table('machines')
             ->select('machines.*', 'machineproperties.*')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-            ->where('machines.id_property', '=', $id)
+            ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+            ->where('machines.property_id', '=', $id)
             ->get();
 
             $pdf = PDF::loadView('dashboard.view_importdata.printexportpdf', compact('machinedata','id'));

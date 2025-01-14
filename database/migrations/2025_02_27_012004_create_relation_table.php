@@ -15,7 +15,7 @@ class CreateRelationTable extends Migration
     public function up()
     {
         Schema::table('componenchecks', function (Blueprint $table){
-            $table->foreignId('id_property2')->identity('1,1')->references('id')->on('machineproperties')->onDelete('cascade')->unique();
+            $table->foreignId('id_property')->identity('1,1')->references('id')->on('machineproperties')->onDelete('cascade')->unique();
         });
         Schema::table( 'parameters',function(Blueprint $table){
             $table->foreignId('id_componencheck')->Identity('1,1')->references('id')->on('componenchecks')->onDelete('cascade')->unique();
@@ -24,15 +24,15 @@ class CreateRelationTable extends Migration
             $table->foreignId('id_parameter')->identity('1,1')->references('id')->on('parameters')->onDelete('cascade')->unique();
         });
         Schema::table('machines', function (Blueprint $table){
-            $table->foreign('id_property')->identity('1,1')->references('id')->on('machineproperties')->onDelete('cascade');
+            $table->foreign('property_id')->identity('1,1')->references('id')->on('machineproperties')->onDelete('cascade');
         });
         Schema::table('machines', function (Blueprint $table){
-            $table->foreign('id_standart')->identity('1,1')->references('id')->on('working_hours')->onDelete('cascade');
+            $table->foreign('standart_id')->identity('1,1')->references('id')->on('working_hours')->onDelete('cascade');
         });
 
 
         Schema::table('machinerecords', function (Blueprint $table){
-            $table->foreign('id_machine_schedule')->identity('1,1')->references('id')->on('machine_schedules')->onDelete('cascade');
+            $table->foreign('machine_id')->identity('1,1')->references('id')->on('machines')->onDelete('cascade');
         });
         Schema::table('machinerecords', function (Blueprint $table){
             $table->foreign('correct_by')->identity('1,1')->references('id')->on('users')->onDelete('cascade');

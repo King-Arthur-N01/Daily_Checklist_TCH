@@ -28,8 +28,8 @@ class CreateMachinesTable extends Migration
             $table->boolean('machine_abnormal_status')->default(false);
             $table->string('machine_problem')->nullable();
             $table->string('machine_action')->default(false);
-            $table->unsignedBigInteger('id_property')->nullable();
-            $table->unsignedBigInteger('id_standart')->nullable();
+            $table->unsignedBigInteger('property_id')->nullable();
+            $table->unsignedBigInteger('standart_id')->nullable();
             $table->timestamps();
         });
     }

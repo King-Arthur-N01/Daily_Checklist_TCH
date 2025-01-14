@@ -9,7 +9,6 @@ class WorkingHour extends Model
     protected $fillable = [
         'standart_name',
         'priority',
-        'machine_total',
         'preventive_hour',
         'man_power'
     ];

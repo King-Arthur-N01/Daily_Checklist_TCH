@@ -17,8 +17,6 @@ class CreateMachineSchedulesTable extends Migration
             $table->id();
             $table->timestamp('schedule_start')->nullable();
             $table->timestamp('schedule_end')->nullable();
-            // $table->timestamp('schedule_next')->nullable();
-            // $table->integer('schedule_duration')->nullable();
             $table->integer('preventive_cycle')->nullable();
             $table->timestamp('schedule_date')->nullable();
             $table->timestamp('reschedule_date_1')->nullable();

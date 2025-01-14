@@ -62,7 +62,7 @@ class MachinerecordController extends Controller
             ->select('monthly_schedules.id', 'machines.*', 'machine_schedules.*', 'machine_schedules.id as schedule_id')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
+            ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
             ->where('monthly_schedules.id', '=', $id)
             ->where('monthly_schedules.schedule_agreed', '=', !null)
             ->get();
@@ -98,8 +98,8 @@ class MachinerecordController extends Controller
                 ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
                 ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
                 ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
                 ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
                 ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machinerecords.id', '=', $id)
@@ -157,8 +157,8 @@ class MachinerecordController extends Controller
                 ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
                 ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
                 ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
                 ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
                 ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machinerecords.id', '=', $id)
@@ -214,8 +214,8 @@ class MachinerecordController extends Controller
         $joinmachine = DB::table('machine_schedules')
         ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
         ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-        ->join('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-        ->join('componenchecks', 'componenchecks.id_property2', '=', 'machineproperties.id')
+        ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+        ->join('componenchecks', 'componenchecks.id_property', '=', 'machineproperties.id')
         ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
         ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
         ->where('machine_schedules.id', '=', $id)
@@ -344,39 +344,39 @@ class MachinerecordController extends Controller
         }
     }
 
-    private function checkstatusmonth($monthly_id) {
-        $CheckSchedule = MonthlySchedule::find($monthly_id);
-        $schedulecount =  count(json_decode($CheckSchedule->schedule_collection));
+    // private function checkstatusmonth($monthly_id) {
+    //     $CheckSchedule = MonthlySchedule::find($monthly_id);
+    //     $schedulecount =  count(json_decode($CheckSchedule->schedule_collection));
 
-        $recordscount = DB::table('monthly_schedules')
-        ->select('monthly_schedules.*', 'machine_schedules.*')
-        ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-        ->where('monthly_schedules.id', '=', $monthly_id)
-        ->where('machine_schedules.machine_schedule_status', '=', 1)
-        ->count();
+    //     $recordscount = DB::table('monthly_schedules')
+    //     ->select('monthly_schedules.*', 'machine_schedules.*')
+    //     ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+    //     ->where('monthly_schedules.id', '=', $monthly_id)
+    //     ->where('machine_schedules.machine_schedule_status', '=', 1)
+    //     ->count();
 
-        if ($schedulecount == $recordscount) {
-            $CheckSchedule->schedule_status = true;
-            $CheckSchedule->save();
-        }
-    }
+    //     if ($schedulecount == $recordscount) {
+    //         $CheckSchedule->schedule_status = true;
+    //         $CheckSchedule->save();
+    //     }
+    // }
 
-    private function checkstatusyear($yearly_id) {
-        $CheckSchedule = YearlySchedule::find($yearly_id);
-        $machinecount =  count(json_decode($CheckSchedule->machine_collection));
+    // private function checkstatusyear($yearly_id) {
+    //     $CheckSchedule = YearlySchedule::find($yearly_id);
+    //     $machinecount =  count(json_decode($CheckSchedule->machine_collection));
 
-        $recordscount = DB::table('yearly_schedules')
-        ->select('yearly_schedules.*', 'machine_schedules.*')
-        ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
-        ->where('yearly_schedules.id', '=', $yearly_id)
-        ->where('machine_schedules.machine_schedule_status', '=', 1)
-        ->count();
+    //     $recordscount = DB::table('yearly_schedules')
+    //     ->select('yearly_schedules.*', 'machine_schedules.*')
+    //     ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+    //     ->where('yearly_schedules.id', '=', $yearly_id)
+    //     ->where('machine_schedules.machine_schedule_status', '=', 1)
+    //     ->count();
 
-        if ($machinecount == $recordscount) {
-            $CheckSchedule->schedule_status = true;
-            $CheckSchedule->save();
-        }
-    }
+    //     if ($machinecount == $recordscount) {
+    //         $CheckSchedule->schedule_status = true;
+    //         $CheckSchedule->save();
+    //     }
+    // }
 
 
     // <<<============================================================================================>>>
@@ -415,8 +415,8 @@ class MachinerecordController extends Controller
                 ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
                 ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
                 ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
                 ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
                 ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machinerecords.id', '=', $id)
@@ -557,8 +557,8 @@ class MachinerecordController extends Controller
                 ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'machine_schedules.yearly_id as year_id')
                 ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
                 ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->leftJoin('machineproperties', 'machines.id_property', '=', 'machineproperties.id')
-                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
                 ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
                 ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machinerecords.id', '=', $id)

@@ -51,7 +51,7 @@
                                     <th>ACTION</th>
                                     <th>NO.</th>
                                     <th>SCHEDULE PERTAHUN</th>
-                                    <th>JUMLAH MESIN</th>
+                                    <th>JUMLAH SCHEDULE MESIN</th>
                                     <th>STATUS</th>
                                     <th>STATUS</th>
                                     <th>TANGGAL PEMBUATAN</th>
@@ -96,14 +96,14 @@
     <!-- End Edit Modal Year-->
 
     <!-- Add Modal Repair -->
-    <div class="modal fade show" id="addScheduleRepair" tabindex="-1">
+    <div class="modal fade show" id="addScheduleSpecial" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                <div class="modal-header" id="modal_title_repair">
+                <div class="modal-header" id="modal_title_special">
                 </div>
-                <div class="modal-body" id="modal_data_repair">
+                <div class="modal-body" id="modal_data_special">
                 </div>
-                <div class="modal-footer" id="modal_button_repair">
+                <div class="modal-footer" id="modal_button_special">
                 </div>
             </div>
         </div>
@@ -225,7 +225,7 @@
                                 number: index + 1,
                                 id: refreshschedule.id,
                                 name_schedule: refreshschedule.name_schedule_year,
-                                id_machine: refreshschedule.machine_collection.split(',').length, // Menghitung jumlah mesin
+                                id_machine: refreshschedule.machine_schedules_count,
                                 status_1: refreshschedule.schedule_recognize,
                                 status_2: refreshschedule.schedule_agreed,
                                 created_at: new Date(refreshschedule.created_at).toLocaleString('en-ID', {
@@ -239,7 +239,7 @@
                                             `<button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>`
                                             : ''
                                         }
-                                        <button class="btn btn-warning btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleRepair"><i class="bi bi-plus-circle-fill"></i></button>
+                                        <button class="btn btn-warning btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleSpecial"><i class="bi bi-plus-circle-fill"></i></button>
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                             <button class="dropdown-item-custom-more-edit print_quarter2" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print Quarter 2</button>
@@ -520,6 +520,8 @@
                                             <select class="form-control" id="year_dropdown"></select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row" align-items="center">
                                     <div class="col-4">
                                         <div class="form-group">
                                             <p class="mg-b-10">Filter Nomor Invent </p>
@@ -558,7 +560,6 @@
                                                 const schedule = data.latestSchedules.find(
                                                     (fetchschedule) => fetchschedule.machine_id === machine.id
                                                 );
-                                                console.log(schedule);
                                                 if (schedule) {
                                                     next_preventive = schedule.schedule_date || 'Belum ada data';
                                                 }
@@ -636,6 +637,7 @@
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
                                                 <th>RENCANA PREVENTIVE</th>
+                                                <th>DURASI PM</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -657,6 +659,7 @@
                                                         <select class="form-control" name="preventive_cycle">
                                                             <option value="3">3/Bulanan</option>
                                                             <option value="6">6/Bulanan</option>
+                                                            <option value="12">12/Bulanan</option>
                                                         </select>
                                                     </td>
                                                 </tr>
@@ -725,25 +728,25 @@
             // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
             function addYearlySchedule() {
                 event.preventDefault();
-                let scheduleName = null;
-                let scheduleLimit = null;
-                let scheduleCreateBy = null;
-                let scheduleTimes = null;
-                let preventiveCycle = null;
+                let scheduleNameYear = null;
+                let scheduleLimitYear = null;
+                let scheduleCreateByYear = null;
+                let scheduleTimesYear = null;
+                let preventiveCycleYear = null;
                 let idMachines = null;
 
-                scheduleName = $('input[name="name_schedule_year"]').val();
-                scheduleLimit = $('input[name="limit_schedule_year"]').val();
-                scheduleCreateBy = '{{ Auth::user()->id }}';
-                scheduleTimes = [];
-                preventiveCycle = [];
+                scheduleNameYear = $('input[name="name_schedule_year"]').val();
+                scheduleLimitYear = $('input[name="limit_schedule_year"]').val();
+                scheduleCreateByYear = '{{ Auth::user()->id }}';
+                scheduleTimesYear = [];
+                preventiveCycleYear = [];
                 idMachines = [];
 
                 $('input[name="schedule_time"]').each(function() {
-                    scheduleTimes.push($(this).val());
+                    scheduleTimesYear.push($(this).val());
                 });
                 $('select[name="preventive_cycle"]').each(function() {
-                    preventiveCycle.push($(this).val());
+                    preventiveCycleYear.push($(this).val());
                 });
                 $('input[name="machine_id_year"]').each(function() {
                     idMachines.push($(this).val());
@@ -753,11 +756,11 @@
                     url: '{{ route("addyear") }}',
                     data: {
                         '_token': '{{ csrf_token() }}',
-                        'name_schedule' : scheduleName,
-                        'limit_schedule' : scheduleLimit,
-                        'schedule_create' : scheduleCreateBy,
-                        'schedule_time[]': scheduleTimes,
-                        'preventive_cycle': preventiveCycle,
+                        'name_schedule' : scheduleNameYear,
+                        'limit_schedule' : scheduleLimitYear,
+                        'schedule_create' : scheduleCreateByYear,
+                        'schedule_time[]': scheduleTimesYear,
+                        'preventive_cycle': preventiveCycleYear,
                         'machine_id[]': idMachines,
                     },
                     success: function(response) {
@@ -811,9 +814,9 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
 
-                        combinedMachineId = [];
-                        nameScheduleYear = "";
-                        limitScheduleYear = "";
+                        let combinedMachineId = [];
+                        let nameScheduleYear = "";
+                        let limitScheduleYear = "";
 
                         // Check if previous selections exist in sessionStorage
                         let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
@@ -838,6 +841,7 @@
                                 endDate: endDate,
                                 showDropdowns: true,
                                 locale: {
+                                    firstDay: 1,
                                     format: 'DD-MM-YYYY'
                                 },
                                 maxSpan: {
@@ -849,7 +853,6 @@
                         function dropdownYear() {
                             const yearDropdown = document.getElementById('year_dropdown');
                             const currentYear = new Date().getFullYear();
-
                             const startYear = currentYear - 5;
                             const endYear = currentYear + 5;
 
@@ -857,9 +860,15 @@
                                 const option = document.createElement('option');
                                 option.value = year;
                                 option.textContent = year;
+                                if (year == data.refreshschedule[0].schedule_year) {
+                                    option.selected = true; // Tetapkan tahun default
+                                }
                                 yearDropdown.appendChild(option);
                             }
+                            // Tetapkan nilai awal ke limitScheduleYear
+                            limitScheduleYear = yearDropdown.value;
                         }
+
 
                         function filterTable() {
                             const filterByNumber = document.getElementById('get_by_number');
@@ -905,7 +914,7 @@
                                         <div class="form-group">
                                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
                                             <div>
-                                                <input class="form-control" id="name_schedule_year_edit" type="text" placeholder="Nama Jadwal" value="${data.refreshschedule.name_schedule_year}">
+                                                <input class="form-control" id="name_schedule_year_edit" type="text" placeholder="Nama Jadwal" value="${data.refreshschedule[0].name_schedule_year}">
                                             </div>
                                         </div>
                                     </div>
@@ -915,6 +924,8 @@
                                             <select class="form-control" id="year_dropdown"></select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row" align-items="center">
                                     <div class="col-4">
                                         <div class="form-group">
                                             <p class="mg-b-10">Filter Nomor Invent </p>
@@ -948,13 +959,13 @@
                                             </thead>
                                             <tbody>
                                         `;
-                                            let machineIds = JSON.parse(data.refreshschedule.machine_collection);
+                                            // Ambil semua machine_id dari refreshschedule
+                                            const selectedMachineIds = data.refreshschedule.map(schedule => schedule.machine_id);
                                             data.refreshmachine.forEach((machine, index) => {
                                                 let last_preventive = 'Belum ada data';
                                                 const schedule = data.latestSchedules.find(
                                                     (fetchschedule) => fetchschedule.machine_id === machine.id
                                                 );
-                                                console.log(schedule);
                                                 if (schedule) {
                                                     last_preventive = schedule.record_date || 'Belum ada data';
                                                 }
@@ -969,7 +980,7 @@
                                                         <td>${machine.machine_info || '-'}</td>
                                                         <td>${last_preventive}</td>
                                                         <td>
-                                                            <input type="checkbox" name="machineinput" value="${machine.id}" ${machineIds.map(String).includes(String(machine.id)) ? 'checked' : ''}>
+                                                            <input type="checkbox" name="machineinput" value="${machine.id}" ${selectedMachineIds.includes(machine.id) ? 'checked' : ''}>
                                                         </td>
                                                     </tr>
                                                 `;
@@ -977,13 +988,15 @@
                             tableRows1 += `
                                             </tbody>
                                         </table>
-                                        <div class="form-check-custom">3                                        <input class="form-check-input" type="checkbox" id="checkAll">
+                                        <div class="form-check-custom">
+                                            <input class="form-check-input" type="checkbox" id="checkAll">
                                             <label class="form-check-label" style="margin-right: 20px;" for="gridCheck1">
                                                 Check All
                                             </label>
                                         </div>
                                     </div>
-                                </div>`;
+                                </div>
+                            `;
 
                             document.getElementById("modal_data_edit").innerHTML = tableRows1;
 
@@ -1006,7 +1019,6 @@
                                     combinedMachineId.push(checkbox.value);
                                 }
                                 $('#modal_data_edit').off('change', "input[name='machineinput']").on('change', "input[name='machineinput']", updateSelectedMachines);
-                                // checkbox.addEventListener('change', updateSelectedMachines);
                             });
                             // Add event listener for the "Check All" checkbox
                             const checkAll = document.getElementById("checkAll");
@@ -1041,15 +1053,19 @@
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
                                                 <th>RENCANA PREVENTIVE</th>
+                                                <th>DURASI PM</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                    `;
+                            `;
                                         selectedMachines.forEach((machine, index) => {
-                                            let machineSchedule = data.refreshmachineschedule.find(schedule => schedule.machine_id === machine.id);
-                                            let ScheduleIds = machineSchedule ? machineSchedule.id : ''; // Assign schedule ID if available
+                                            const machineSchedule = data.refreshschedule.find(
+                                                (schedule) => schedule.machine_id === machine.id
+                                            );
                                             let startDate = machineSchedule ? moment(machineSchedule.schedule_start).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY');
                                             let endDate = machineSchedule ? moment(machineSchedule.schedule_end).format('DD-MM-YYYY') : moment().add(6, 'days').format('DD-MM-YYYY');
+                                            let preventiveCycleValue = machineSchedule && machineSchedule.preventive_cycle !== undefined ? machineSchedule.preventive_cycle : '';
+
                                             tableRows2 += `
                                                 <tr>
                                                     <td>${index + 1}</td>
@@ -1064,18 +1080,18 @@
                                                     </td>
                                                     <td>
                                                         <select class="form-control" name="preventive_cycle">
-                                                            <option value="3" ${machineSchedule && machineSchedule.preventive_cycle === 3 ? 'selected' : ''}>3/Bulanan</option>
-                                                            <option value="6" ${machineSchedule && machineSchedule.preventive_cycle === 6 ? 'selected' : ''}>6/Bulanan</option>
+                                                            <option value="3" ${preventiveCycleValue == 3 ? 'selected' : ''}>3/Bulanan</option>
+                                                            <option value="6" ${preventiveCycleValue == 6 ? 'selected' : ''}>6/Bulanan</option>
+                                                            <option value="12" ${preventiveCycleValue == 12 ? 'selected' : ''}>12/Bulanan</option>
                                                         </select>
                                                     </td>
                                                 </tr>
                                             `;
-
                                             setTimeout(() => {
                                                 selectDateRange(`#schedule_time_${machine.id}`, startDate, endDate);
                                             }, 0);
                                         });
-                        tableRows2 += `
+                                        tableRows2 += `
                                         </tbody>
                                     </table>
                                 </form>`;
@@ -1133,37 +1149,32 @@
             // FUNGSI UNTUK SAVE BUTTON YEARLY SCHEDULE DAN MENGIRIM REQUEST AJAX
             function editYearlySchedule(scheduleId) {
                 event.preventDefault();
-                let scheduleName = null;
-                let scheduleLimit = null;
-                let scheduleTimes = null;
-                let preventiveCycle = null;
-                let idMachines = null;
+                let scheduleNameEdit = null;
+                let scheduleLimitEdit = null;
+                let combinedScheduleEdit = [];
 
-                scheduleName = $('input[name="name_schedule_year_edit"]').val();
-                scheduleLimit = $('input[name="limit_schedule_year_edit"]').val();
-                scheduleTimes = [];
-                preventiveCycle = [];
-                idMachines = [];
+                scheduleNameEdit = $('input[name="name_schedule_year_edit"]').val();
+                scheduleLimitEdit = $('input[name="limit_schedule_year_edit"]').val();
 
-                $('input[name="schedule_time"]').each(function() {
-                    scheduleTimes.push($(this).val());
+                // Mengumpulkan data untuk combined_schedule
+                $('input[name="machine_id_year_edit"]').each(function(index) {
+                    let machineId = $(this).val();
+                    let preventiveCycle = $('select[name="preventive_cycle"]').eq(index).val();
+                    let scheduleTime = $('input[name="schedule_time"]').eq(index).val();
+
+                    // Menggabungkan data menjadi format yang diinginkan
+                    combinedScheduleEdit.push(`${machineId},${preventiveCycle},${scheduleTime}`);
                 });
-                $('select[name="preventive_cycle"]').each(function() {
-                    preventiveCycle.push($(this).val());
-                });
-                $('input[name="machine_id_year_edit"]').each(function() {
-                    idMachines.push($(this).val());
-                });
+
                 $.ajax({
                     type: 'PUT',
                     url: '{{ route("edityear", ':id') }}'.replace(':id', scheduleId),
                     data: {
                         '_token': '{{ csrf_token() }}',
-                        'name_schedule_edit' : scheduleName,
-                        'limit_schedule' : scheduleLimit,
-                        'schedule_time[]': scheduleTimes,
-                        'preventive_cycle': preventiveCycle,
-                        'machine_id[]': idMachines,
+                        'name_schedule': scheduleNameEdit,
+                        'limit_schedule': scheduleLimitEdit,
+                        'schedule_create': "1",
+                        'combined_schedule': combinedScheduleEdit,
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1241,10 +1252,10 @@
 
 
             // <===========================================================================================>
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD REPAIR SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD SPECIAL SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             // <===========================================================================================>
             // MASIH BUTUH PERBAIKAN DATA TERKAIT ABNORMALITY
-            $('#addScheduleRepair').on('shown.bs.modal', function(event) {
+            $('#addScheduleSpecial').on('shown.bs.modal', function(event) {
                 const button = $(event.relatedTarget);
                 const scheduleId = button.data('id');
                 $.ajax({
@@ -1277,7 +1288,7 @@
 
                         function selectSingleDate(inputElement) {
                             $(inputElement).daterangepicker({
-                                parentEl: '#modal_data_repair',
+                                parentEl: '#modal_data_special',
                                 singleDatePicker: true,
                                 showDropdowns: true,
                                 locale: {
@@ -1343,7 +1354,7 @@
                             `;
 
 
-                            document.getElementById("modal_data_repair").innerHTML = tableRows1;
+                            document.getElementById("modal_data_special").innerHTML = tableRows1;
 
                             // $(document).ready(function () {
                             //     $('#monthlyTables').DataTable({
@@ -1430,7 +1441,7 @@
                                 </form>
                             `;
 
-                            document.getElementById("modal_data_repair").innerHTML = tableRows2;
+                            document.getElementById("modal_data_special").innerHTML = tableRows2;
 
                             selectedMachines.forEach((machine, index) => {
                                 const datepickerInput = `#datepicker-${machine.id}`;
@@ -1450,27 +1461,27 @@
                             `;
                             if (step === 1) {
                                 renderFirstMenu();
-                                document.getElementById("modal_button_repair").innerHTML = button_modal1;
+                                document.getElementById("modal_button_special").innerHTML = button_modal1;
                                 document.getElementById("previousButton").disabled = true;
                             } else if (step === 2) {
                                 renderSecondMenu();
-                                document.getElementById("modal_button_repair").innerHTML = button_modal2;
+                                document.getElementById("modal_button_special").innerHTML = button_modal2;
                                 document.getElementById("addMonthlyButton").addEventListener('click', function() {
                                     addMonthlySchedule();
                                 });
                             }
                         }
 
-                        $('#modal_title_repair').html(header_modal);
+                        $('#modal_title_special').html(header_modal);
                         changeMenu(1);
 
-                        document.getElementById("modal_button_repair").addEventListener('click', function(event) {
+                        document.getElementById("modal_button_special").addEventListener('click', function(event) {
                             if (event.target.id === "previousButton") {
                                 changeMenu(1);
                             }
                         });
 
-                        document.getElementById("modal_button_repair").addEventListener('click', function(event) {
+                        document.getElementById("modal_button_special").addEventListener('click', function(event) {
                             if (event.target.id === "nextButton") {
                                 if (nameScheduleMonth === "") {
                                     alert("Harap masukan nama untuk jadwal.!!!");
@@ -1490,7 +1501,7 @@
 
 
             // <===========================================================================================>
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD REPAIR SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD SPECIAL SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             // <===========================================================================================>
 
 
@@ -1727,15 +1738,6 @@
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <div class="input-group-text">
-                                                                    <i class="bi bi-hourglass-split"></i>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <div class="input-group-text">
                                                                     <i class="bi bi-calendar3"></i>
                                                                 </div>
                                                             </div>
@@ -1817,29 +1819,28 @@
             // FUNGSI UNTUK SAVE BUTTON MONTHLY SCHEDULE DAN MENGIRIM REQUEST AJAX
             function addMonthlySchedule() {
                 event.preventDefault();
-                let scheduleName = $('input[name="name_schedule_month"]').val();
+                let scheduleName_MonthAdd = $('input[name="name_schedule_month"]').val();
                 let scheduleYearId = $('input[name="id_schedule_year"]').val();
                 let scheduleCreateBy = $('input[name="user_schedule_create"]').val();
-                let scheduleDuration = [];
-                let scheduleDate = [];
-                let idMachineSchedule = [];
+                let scheduleDate_MonthAdd = [];
+                let idMachineSchedule_MonthAdd = [];
 
                 $('input[name="schedule_date"]').each(function() {
-                    scheduleDate.push($(this).val());
+                    scheduleDate_MonthAdd.push($(this).val());
                 });
                 $('input[name="machine_schedule_id"]').each(function() {
-                    idMachineSchedule.push($(this).val());
+                    idMachineSchedule_MonthAdd.push($(this).val());
                 });
                 $.ajax({
                     type: 'POST',
                     url: '{{ route("addmonth") }}',
                     data: {
                         '_token': '{{ csrf_token() }}',
-                        'name_schedule' : scheduleName,
+                        'name_schedule' : scheduleName_MonthAdd,
                         'id_schedule_year' : scheduleYearId,
                         'schedule_create' : scheduleCreateBy,
-                        'schedule_date[]': scheduleDate,
-                        'machine_schedule_id[]': idMachineSchedule,
+                        'schedule_date[]': scheduleDate_MonthAdd,
+                        'machine_schedule_id[]': idMachineSchedule_MonthAdd,
                     },
                     success: function(response) {
                         if (response.success) {
@@ -2094,21 +2095,11 @@
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
                                                                 <div class="input-group-text">
-                                                                    <i class="bi bi-hourglass-split"></i>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <div class="input-group-text">
                                                                     <i class="bi bi-calendar3"></i>
                                                                 </div>
                                                             </div>
                                                             <input name="schedule_date_edit" type="text" class="form-control datepicker" id="datepicker-${machine.machinescheduleid}">
                                                             <input type="hidden" name="machine_schedule_id_edit" value="${machine.machinescheduleid}">
-                                                            <input type="hidden" name="user_schedule_create" value="{{ Auth::user()->id }}">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -2184,28 +2175,24 @@
             // FUNGSI UNTUK SAVE BUTTON MONTHLY SCHEDULE DAN MENGIRIM REQUEST AJAX
             function editMonthlySchedule(scheduleId) {
                 event.preventDefault();
-                let scheduleName = $('input[name="name_schedule_month_edit"]').val();
-                let scheduleCreateBy = $('input[name="user_schedule_create"]').val();
-                let scheduleDuration = [];
-                let scheduleDate = [];
-                let idMachines = [];
-                let idMachineSchedule = [];
+                let scheduleName_MonthEdit = $('input[name="name_schedule_month_edit"]').val();
+                let scheduleDate_MonthEdit = [];
+                let idMachineSchedule_MonthEdit = [];
 
                 $('input[name="schedule_date_edit"]').each(function() {
-                    scheduleDate.push($(this).val());
+                    scheduleDate_MonthEdit.push($(this).val());
                 });
                 $('input[name="machine_schedule_id_edit"]').each(function() {
-                    idMachineSchedule.push($(this).val());
+                    idMachineSchedule_MonthEdit.push($(this).val());
                 });
                 $.ajax({
                     type: 'PUT',
                     url: '{{ route("editmonth", ':id') }}'.replace(':id', scheduleId),
                     data: {
                         '_token': '{{ csrf_token() }}',
-                        'name_schedule' : scheduleName,
-                        'schedule_create' : scheduleCreateBy,
-                        'schedule_date[]': scheduleDate,
-                        'machine_schedule_id[]': idMachineSchedule,
+                        'name_schedule' : scheduleName_MonthEdit,
+                        'schedule_date[]': scheduleDate_MonthEdit,
+                        'machine_schedule_id[]': idMachineSchedule_MonthEdit,
                     },
                     success: function(response) {
                         if (response.success) {

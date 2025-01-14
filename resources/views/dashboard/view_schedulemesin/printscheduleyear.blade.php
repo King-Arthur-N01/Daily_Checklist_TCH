@@ -83,9 +83,9 @@
             <tr>
                 {{-- <th colspan="2"></th> --}}
                 {{-- <th colspan="4"></th> --}}
-                <td colspan="2"></td>
-                <td colspan="2"></td>
-                <td colspan="2"></td>
+                <td colspan="2">{{ $user_create_name}}</td>
+                <td colspan="2">{{ $user_recognize_name}}</td>
+                <td colspan="2">{{ $user_agreed_name}}</td>
             </tr>
         </tbody>
     </table>
@@ -119,7 +119,7 @@
         <tbody>
             @foreach ($scheduledata as $key => $printdata1)
                 @php
-                    $printdata2 = $recorddata->firstWhere('id_machine_schedule', $printdata1->schedule_id);
+                    $printdata2 = $recorddata->firstWhere('machine_id', $printdata1->schedule_id);
                     $schedule_start = Carbon\Carbon::parse($printdata1->schedule_start);
                     $schedule_end = Carbon\Carbon::parse($printdata1->schedule_end);
                     $month = $schedule_start->month;

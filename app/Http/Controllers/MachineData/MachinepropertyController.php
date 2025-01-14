@@ -24,7 +24,7 @@ class MachinepropertyController extends Controller
         try {
             $getproperty = DB::table('machineproperties')
             ->select('machineproperties.*', DB::raw('COUNT(DISTINCT componenchecks.id) as componencheck_count'), DB::raw('COUNT(DISTINCT parameters.id) as parameter_count'), DB::raw('COUNT(DISTINCT metodechecks.id) as metodecheck_count'))
-            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+            ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
             ->groupBy('machineproperties.id')
@@ -66,7 +66,7 @@ class MachinepropertyController extends Controller
     public function createproperty(Request $request)
     {
         try {
-            dd($request);
+            // dd($request);
             $StoreProperty = new Machineproperty();
             $StoreProperty->name_property = $request->input('name_property');
             $StoreProperty->save();

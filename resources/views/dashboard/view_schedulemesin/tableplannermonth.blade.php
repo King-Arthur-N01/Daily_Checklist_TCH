@@ -251,7 +251,8 @@
                         </div>
                         <table class="table table-bordered" id="dataTables">
                             <thead>
-                                <tr><th>NO.</th>
+                                <tr>
+                                    <th>NO.</th>
                                     <th>NO.INVENT</th>
                                     <th>NAMA MESIN</th>
                                     <th>MODEL/TYPE</th>
@@ -266,6 +267,11 @@
                             </thead>
                             <tbody>
                                 ${data.scheduledata.map((schedule, index) => {
+                                    let machineHour = 0; // Deklarasikan di sini
+                                    const duration = schedule.standart_id == data.workinghourdata[0].id; // Pastikan untuk mengakses array dengan benar
+                                    if (duration) {
+                                        machineHour = data.workinghourdata[0].preventive_hour; // Ambil nilai preventive_hour
+                                    }
                                     return `
                                         <tr>
                                             <td>${index + 1}</td>
@@ -274,7 +280,7 @@
                                             <td>${schedule.machine_type || '-'}</td>
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
-                                            <td>${schedule.schedule_duration} Jam</td> ==> PERLU PENANGANAN LEBIH LANJUT
+                                            <td>${machineHour} Jam</td>
                                             <td>${formatDate(schedule.schedule_date)}</td>
                                             <td>
                                                 <div id="option_${schedule.schedule_id}">
@@ -477,12 +483,12 @@
                         <table class="table table-bordered" id="dataTables">
                             <thead>
                                 <tr>
+                                    <th>NO.</th>
                                     <th>NO.INVENT</th>
                                     <th>NAMA MESIN</th>
                                     <th>MODEL/TYPE</th>
                                     <th>BRAND/MERK</th>
                                     <th>NO.MESIN/AREA</th>
-                                    <th>KETERANGAN</th>
                                     <th>DURASI</th>
                                     <th>SCHEDULE PM</th>
                                     <th colspan="2">ACTION</th>
@@ -493,6 +499,11 @@
                             <tbody>
                                 ${data.scheduledata.map((schedule, index) => {
                                     let reschedule_pm = null;
+                                    let machineHour = 0; // Deklarasikan di sini
+                                    const duration = schedule.standart_id == data.workinghourdata[0].id; // Pastikan untuk mengakses array dengan benar
+                                    if (duration) {
+                                        machineHour = data.workinghourdata[0].preventive_hour; // Ambil nilai preventive_hour
+                                    }
 
                                     if (schedule.reschedule_date_3) {
                                         reschedule_pm = schedule.reschedule_date_3;
@@ -515,7 +526,7 @@
                                             <td>${schedule.machine_type || '-'}</td>
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
-                                            <td>${schedule.schedule_duration} Jam</td> ==> PERLU PENANGANAN LEBIH LANJUT
+                                            <td>${machineHour} Jam</td>
                                             <td>${formatDate(schedule.schedule_date)}</td>
                                             <td>
                                                 <div id="option_${schedule.schedule_id}">

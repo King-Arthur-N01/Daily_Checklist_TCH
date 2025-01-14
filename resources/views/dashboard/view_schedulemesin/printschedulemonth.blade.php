@@ -120,7 +120,7 @@
                     <td width="15%">{{ $printdata->invent_number }}</td>
                     <td width="15%">{{ $printdata->machine_spec }}</td>
                     <td width="15%">{{ $printdata->machine_number }}</td>
-                    <td width="15%">{{ $printdata->schedule_duration }} Jam</td>
+                    <td width="15%">{{ $printdata->preventive_hour }} Jam</td>
                     <td width="20%">
                         @php $format_date = Carbon\Carbon::parse($printdata->schedule_date)->format('d-F-Y'); @endphp
                         {{ $format_date }}

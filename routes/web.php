@@ -87,16 +87,16 @@ Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleControll
 // schedule year route end
 
 // schedule year recognize
-Route::get ('/schedule/recognize','ScheduleData\YearlyScheduleController@indexschedulerecognize')->name('indexyear-recognize');
-Route::get ('/schedule/recognize/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-recognize');
-Route::put ('/schedule/recognize/register/{id}','ScheduleData\YearlyScheduleController@registerrecognize')->name('edityear-recognize');
+// Route::get ('/schedule/recognize','ScheduleData\YearlyScheduleController@indexschedulerecognize')->name('indexyear-recognize');
+// Route::get ('/schedule/recognize/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-recognize');
+// Route::put ('/schedule/recognize/register/{id}','ScheduleData\YearlyScheduleController@registerrecognize')->name('edityear-recognize');
 // schedule year recognize end
 
-// schedule year agreed
-Route::get ('/schedule/agreed','ScheduleData\YearlyScheduleController@indexscheduleagreed')->name('indexyear-agreed');
-Route::get ('/schedule/agreed/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-agreed');
-Route::put ('/schedule/agreed/register/{id}','ScheduleData\YearlyScheduleController@registeragreed')->name('edityear-agreed');
-// schedule year agreed end
+// schedule year accept
+Route::get ('/schedule/accept','ScheduleData\YearlyScheduleController@indexscheduleaccept')->name('indexyear-accept');
+Route::get ('/schedule/accept/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-accept');
+Route::put ('/schedule/accept/register/{id}','ScheduleData\YearlyScheduleController@registeraccept')->name('edityear-accept');
+// schedule year accept end
 
 
 
@@ -116,17 +116,17 @@ Route::get ('/schedule/repair/read/abnormal','ScheduleData\MonthlyScheduleContro
 // schedule month route
 
 // schedule month recognize
-Route::get ('/schedule/month/recognize','ScheduleData\MonthlyScheduleController@indexschedulemonthrecognize')->name('indexmonth-recognize');
-Route::get ('/schedule/month/recognize/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-recognize');
-Route::put ('/schedule/month/recognize/register/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
-Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-recognize');
+// Route::get ('/schedule/month/recognize','ScheduleData\MonthlyScheduleController@indexschedulemonthrecognize')->name('indexmonth-recognize');
+// Route::get ('/schedule/month/recognize/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-recognize');
+// Route::put ('/schedule/month/recognize/register/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
+// Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-recognize');
 // schedule month recognize end
 
 // schedule month agreed
-Route::get ('/schedule/month/agreed','ScheduleData\MonthlyScheduleController@indexschedulemonthagreed')->name('indexmonth-agreed');
-Route::get ('/schedule/month/agreed/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-agreed');
-Route::put ('/schedule/month/agreed/register/{id}','ScheduleData\MonthlyScheduleController@registermonthagreed')->name('editmonth-agreed');
-Route::get ('/schedule/month/agreed/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-agreed');
+Route::get ('/schedule/month/accept','ScheduleData\MonthlyScheduleController@indexschedulemonthaccept')->name('indexmonth-accept');
+Route::get ('/schedule/month/accept/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-accept');
+Route::put ('/schedule/month/accept/register/{id}','ScheduleData\MonthlyScheduleController@registermonthaccept')->name('editmonth-accept');
+Route::get ('/schedule/month/accept/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-accept');
 // schedule month agreed end
 
 // schedule month planner

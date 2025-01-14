@@ -8,7 +8,8 @@ class YearlySchedule extends Model
 {
     protected $fillable = [
         'name_schedule',
-        'machine_collection',
+        // 'machine_collection',
+        'preventive_cycle',
         'schedule_status',
         'schedule_create',
         'schedule_recognize,',

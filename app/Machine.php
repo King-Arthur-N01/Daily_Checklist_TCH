@@ -23,8 +23,8 @@ class Machine extends Model
         'machine_abnormal_status',
         'machine_problem',
         'machine_action',
-        'id_property',
-        'id_working',
+        'property_id',
+        ' ',
     ];
     public function getchildernproperty()
     {

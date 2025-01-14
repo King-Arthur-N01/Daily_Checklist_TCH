@@ -17,7 +17,6 @@ class CreateWorkingHoursTable extends Migration
             $table->id();
             $table->string('standart_name')->nullable();
             $table->integer('priority')->nullable();
-            $table->json('machine_total')->nullable();
             $table->integer('preventive_hour')->nullable();
             $table->integer('man_power')->nullable();
             $table->timestamps();

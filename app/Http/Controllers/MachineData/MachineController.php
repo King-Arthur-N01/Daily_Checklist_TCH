@@ -53,6 +53,7 @@ class MachineController extends Controller
     public function updatemachine(Request $request, $id)
     {
         try {
+            // dd($request->all());
             $request->validate([
                 'invent_number' => 'required',
                 'machine_number'=> 'nullable',
@@ -67,7 +68,8 @@ class MachineController extends Controller
                 'mfg_number' => 'nullable',
                 'install_date' => 'nullable',
                 'production_date' => 'nullable',
-                'id_property' => 'nullable'
+                'property_id' => 'nullable',
+                'standart_id' => 'nullable',
             ]);
 
             $invent_number = $request->input('invent_number');

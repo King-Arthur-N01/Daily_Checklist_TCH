@@ -23,7 +23,7 @@ class MachinesSeeder extends Seeder
             'machine_made'  => 'JAPAN',
             'mfg_number'    => 'P10327YDZ158301001',
             'install_date'  => '2009',
-            'id_property'   => '1'
+            'property_id'   => '1'
         ]);
         Machine::create([
             // 'machine_code'  => '2',
@@ -36,7 +36,7 @@ class MachinesSeeder extends Seeder
             'machine_made'  => 'JAPAN',
             'mfg_number'    => 'D 0650',
             'install_date'  => '2009',
-            'id_property'   => '1'
+            'property_id'   => '1'
         ]);
         Machine::create([
             // 'machine_code'  => '7',
@@ -49,7 +49,7 @@ class MachinesSeeder extends Seeder
             'machine_made'  => 'IND',
             'mfg_number'    => '200505',
             'install_date'  => '2012-02-20',
-            'id_property'   => '3'
+            'property_id'   => '3'
         ]);
     }
 }

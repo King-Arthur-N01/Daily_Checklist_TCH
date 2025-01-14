@@ -8,13 +8,16 @@ use App\MonthlySchedule;
 use App\YearlySchedule;
 use App\Machine;
 use App\MachineSchedule;
+use App\WorkingHour;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Spatie\Permission\Traits\HasPermissions;
 
 class MonthlyScheduleController extends Controller
 {
+    use HasPermissions;
 
     public function viewdataschedule($id)
     {
@@ -177,7 +180,7 @@ class MonthlyScheduleController extends Controller
 
             $UpdateSchedule = MonthlySchedule::find($id);
             $UpdateSchedule->name_schedule_month = $name_schedule;
-            $UpdateSchedule->schedule_create = $create_by;
+            // $UpdateSchedule->schedule_create = $create_by;
             $UpdateSchedule->schedule_collection = json_encode($schedule_key);
             $UpdateSchedule->save();
 
@@ -202,9 +205,10 @@ class MonthlyScheduleController extends Controller
     {
         try {
             $scheduledata = DB::table('monthly_schedules')
-            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*')
+            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'working_hours.preventive_hour')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->join('working_hours', 'machines.standart_id', '=', 'working_hours.id')
             ->where('monthly_schedules.id', '=', $id)
             ->get();
 
@@ -256,9 +260,11 @@ class MonthlyScheduleController extends Controller
             ->where('monthly_schedules.id', '=', $id)
             ->get();
 
+            $workinghourdata = WorkingHour::get();
 
             return response()->json([
-                'scheduledata' => $scheduledata
+                'scheduledata' => $scheduledata,
+                'workinghourdata' => $workinghourdata
             ]);
         } catch (\Exception $e) {
             Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
@@ -279,52 +285,14 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    // <<<============================================================================================>>>
-    // <<<==================================batas ketahui schedule====================================>>>
-    // <<<============================================================================================>>>
-
-    public function indexschedulemonthrecognize()
-    {
-        return view('dashboard.view_schedulemesin.tablerecognizemonth');
-    }
-
-    public function registerrecognize(Request $request, $id)
-    {
-        try {
-            $request->validate([
-                'recognize_by' => 'required'
-            ]);
-
-            $StoreSchedule = MonthlySchedule::find($id);
-
-            if (!$StoreSchedule) {
-                return response()->json(['error' => 'Schedule not found !!!!'], 404);
-            } else if ($StoreSchedule->schedule_recognize) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
-            } else {
-                $StoreSchedule->schedule_recognize = $request->input('recognize_by');
-                $StoreSchedule->save();
-            }
-            return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
-        } catch (\Exception $e) {
-            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'Error sending data'], 500);
-        }
-    }
-
-
-    // <<<============================================================================================>>>
-    // <<<================================batas ketahui schedule end==================================>>>
-    // <<<============================================================================================>>>
-
 
 
     // <<<============================================================================================>>>
     // <<<==================================batas setujui schedule====================================>>>
     // <<<============================================================================================>>>
-    public function indexschedulemonthagreed()
+    public function indexschedulemonthaccept()
     {
-        return view('dashboard.view_schedulemesin.tableagreedmonth');
+        return view('dashboard.view_schedulemesin.tableacceptmonth');
     }
 
     public function refreshtablescheduleagreed()
@@ -340,25 +308,37 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    public function registermonthagreed(Request $request, $id)
+    public function registermonthaccept(Request $request, $id)
     {
         try {
+            // Validasi input
             $request->validate([
-                'agreed_by' => 'required'
+                'accept_by' => 'required'
             ]);
 
+            $accept_by = $request->input('accept_by');
+
+            // Temukan jadwal berdasarkan ID
             $StoreSchedule = MonthlySchedule::find($id);
 
             if (!$StoreSchedule) {
                 return response()->json(['error' => 'Schedule not found !!!!'], 404);
-            } else if (!$StoreSchedule->schedule_recognize) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data belum diketahui oleh orang lain.'], 422);
-            } else if ($StoreSchedule->schedule_agreed) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
-            } else {
-                $StoreSchedule->schedule_agreed = $request->input('agreed_by');
+            }
+
+            // Cek izin pengguna
+            $user = auth()->user(); // Ambil pengguna yang sedang login
+
+            if ($user->hasPermissionTo('agreed_schedule')) {
+                $StoreSchedule->schedule_agreed = $accept_by;
                 $StoreSchedule->save();
             }
+
+            if ($user->hasPermissionTo('agreed_schedule') && $user->hasPermissionTo('recognize_schedule')) {
+                $StoreSchedule->schedule_agreed = $accept_by;
+                $StoreSchedule->schedule_recognize = $accept_by;
+                $StoreSchedule->save();
+            }
+
             return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
         } catch (\Exception $e) {
             Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
@@ -430,8 +410,6 @@ class MonthlyScheduleController extends Controller
                         return response()->json(['error' => 'Machine schedule not found for ID: ' . $reschedule['schedule_id']], 404);
                     }
                 }
-            } else {
-                return response()->json(['error' => 'No reschedule data provided'], 400);
             }
             return response()->json(['success' => 'Schedule mesin berhasil di TERIMA!']);
         } catch (\Exception $e) {
