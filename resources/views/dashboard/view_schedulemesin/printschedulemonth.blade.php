@@ -78,9 +78,9 @@
             </tr>
             <tr></tr>
             <tr>
-                <td></td>
-                <td colspan="2"></td>
-                <td></td>
+                <td>{{ $user_create_name}}</td>
+                <td colspan="2">{{ $user_recognize_name}}</td>
+                <td>{{ $user_agreed_name}}</td>
             </tr>
             <tr>
                 <th rowspan="2">NO.</th>

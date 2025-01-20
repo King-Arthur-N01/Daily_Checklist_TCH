@@ -58,13 +58,13 @@ Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyControl
 
 // machine working route
 Route::get ('/workinghour','MachineData\WorkingHourController@indexworkinghour')->name('indexworkinghour');
-Route::get('/workinghour/read','MachineData\WorkingHourController@readmachinedata')->name('readmachinewo');
+Route::get ('/workinghour/read','MachineData\WorkingHourController@readmachinedata')->name('readmachinewo');
 Route::post('/workinghour/create','MachineData\WorkingHourController@createworkinghour')->name('addworkinghour');
-Route::get('/machineproperty/find/{id}','MachineData\WorkingHourController@findworkinghour')->name('findworkinghour');
+Route::get ('/workinghour/find/{id}','MachineData\WorkingHourController@findworkinghour')->name('findworkinghour');
 Route::put ('/workinghour/update/{id}','MachineData\WorkingHourController@updateworkinghour')->name('editworkinghour');
 Route::get ('/workinghour/view/{id}','MachineData\WorkingHourController@viewworkinghour')->name('viewworkinghour');
 Route::get ('/workinghour/table/refresh','MachineData\WorkingHourController@refreshtableworkinghour')->name('refreshworkinghour');
-Route::delete('/workinghour/delete/{id}','MachineData\WorkingHourController@deleteproperty')->name('removeworkinghour');
+Route::delete('/workinghour/delete/{id}','MachineData\WorkingHourController@deleteworkinghour')->name('removeworkinghour');
 // machine working route end
 
 // schedule year route
@@ -112,7 +112,8 @@ Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
 
-Route::get ('/schedule/repair/read/abnormal','ScheduleData\MonthlyScheduleController@findmachineabnormaldata')->name('readmachine-abnormal');
+Route::get ('/schedule/special/read/special','ScheduleData\MonthlyScheduleController@readspecialscheduledata')->name('readyear-special');
+Route::get ('/schedule/special/read/machine','ScheduleData\MonthlyScheduleController@readmachinespecialdata')->name('readmachine-special');
 // schedule month route
 
 // schedule month recognize
@@ -122,12 +123,12 @@ Route::get ('/schedule/repair/read/abnormal','ScheduleData\MonthlyScheduleContro
 // Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-recognize');
 // schedule month recognize end
 
-// schedule month agreed
+// schedule month accept
 Route::get ('/schedule/month/accept','ScheduleData\MonthlyScheduleController@indexschedulemonthaccept')->name('indexmonth-accept');
 Route::get ('/schedule/month/accept/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-accept');
 Route::put ('/schedule/month/accept/register/{id}','ScheduleData\MonthlyScheduleController@registermonthaccept')->name('editmonth-accept');
 Route::get ('/schedule/month/accept/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-accept');
-// schedule month agreed end
+// schedule month accept end
 
 // schedule month planner
 Route::get ('/schedule/month/planner','ScheduleData\MonthlyScheduleController@indexschedulemonthplanner')->name('indexmonth-planner');
@@ -137,13 +138,17 @@ Route::put ('/schedule/month/planner/register/{id}','ScheduleData\MonthlySchedul
 Route::get ('/schedule/month/planner/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtablescheduleplanner')->name('refresh-planner');
 // schedule month planner end
 
-// machine record
-Route::get ('/machinerecord','RecordsData\MachinerecordController@indexmachinerecord')->name('indexmachinerecord');
-Route::get ('/machinerecord/schedule/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
-Route::post('/machinerecord/create','RecordsData\MachinerecordController@createmachinerecord')->name('addrecord');
-Route::get ('/machinerecord/table/refresh','RecordsData\MachinerecordController@refreshtablerecord')->name('refreshrecord');
-Route::get ('/machinerecord/table/refresh/{id}','RecordsData\MachinerecordController@refreshdetailtablerecord')->name('refreshdetailrecord');
-// machine record end
+// preventive
+Route::get ('/preventive','RecordsData\MachinerecordController@indexpreventive')->name('indexpreventive');
+Route::get ('/preventive/read/onschedule/{id}','RecordsData\MachinerecordController@readonscheduledata')->name('readpreventive-onschedule');
+Route::get ('/preventive/read/offschedule/{id}','RecordsData\MachinerecordController@readoffscheduledata')->name('readpreventive-offschedule');
+// Route::get ('/preventive/read/special','RecordsData\MachinerecordController@readspecialscheduledata')->name('readpreventive-special');
+// Route::get ('/preventive/read/machine','RecordsData\MachinerecordController@readmachinedata')->name('readmachinepreventive');
+Route::get ('/preventive/schedule/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
+Route::post('/preventive/create','RecordsData\MachinerecordController@createmachinerecord')->name('addrecord');
+Route::get ('/preventive/table/refresh','RecordsData\MachinerecordController@refreshtablepreventive')->name('refreshpreventive');
+Route::get ('/preventive/table/refresh/{id}','RecordsData\MachinerecordController@refreshdetailtablepreventive')->name('refreshdetailpreventive');
+// preventive end
 
 // machine records correction
 Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('indexcorrection');

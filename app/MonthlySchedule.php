@@ -11,7 +11,7 @@ class MonthlySchedule extends Model
         'name_schedule_month',
         'schedule_collection',
         'schedule_status',
-        'schedule_repair',
+        'schedule_special',
         'schedule_create',
         'schedule_recognize,',
         'schedule_agreed',

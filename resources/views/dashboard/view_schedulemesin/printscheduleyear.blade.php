@@ -83,9 +83,9 @@
             <tr>
                 {{-- <th colspan="2"></th> --}}
                 {{-- <th colspan="4"></th> --}}
-                <td colspan="2">{{ $user_create_name}}</td>
+                <td colspan="2">{{ $user_agreed_name }}</td>
                 <td colspan="2">{{ $user_recognize_name}}</td>
-                <td colspan="2">{{ $user_agreed_name}}</td>
+                <td colspan="2">{{ $user_create_name}}</td>
             </tr>
         </tbody>
     </table>

@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Bordered Table</h1>
+            <h1 class="h3 mb-2 text-gray-800">Standarisasi Checksheet Mesin</h1>
             <div class="card shadow">
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>

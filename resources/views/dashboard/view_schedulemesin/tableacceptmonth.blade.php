@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Table Schedule</h1>
+            <h1 class="h3 mb-2 text-gray-800">Approval Schedule Perbulan</h1>
             <div class="card shadow">
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
@@ -231,11 +231,8 @@
                             </thead>
                             <tbody>
                                 ${data.scheduledata.map((schedule, index) => {
-                                    let machineHour = 0; // Deklarasikan di sini
-                                    const duration = schedule.standart_id == data.workinghourdata[0].id; // Pastikan untuk mengakses array dengan benar
-                                    if (duration) {
-                                        machineHour = data.workinghourdata[0].preventive_hour; // Ambil nilai preventive_hour
-                                    }
+                                    let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === schedule.standart_id);
+                                    let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
                                     let schedule_pm = schedule.schedule_date;
                                     return `
                                         <tr>
@@ -245,7 +242,7 @@
                                             <td>${schedule.machine_type || '-'}</td>
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
-                                            <td>${machineHour} Jam</td>
+                                            <td>${machineHour} /Jam</td>
                                             <td>${formatDate(schedule_pm)}</td>
                                         </tr>
                                     `;

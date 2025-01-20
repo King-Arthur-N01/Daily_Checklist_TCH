@@ -66,7 +66,7 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        
+
                         </li>
                         <div class="topbar-divider d-none d-sm-block"></div>
                         <!-- Nav Item - User Information -->
@@ -122,13 +122,13 @@
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span>×</span>
                     </button>
                 </div>
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
@@ -160,6 +160,23 @@
 <script>
     let overlay = $('.loading-overlay');
     overlay.appendTo('body');
+
+    // kode untuk mebuat multiple modals overlay menggunakan bootstrap 4
+    // Pastikan backdrop tidak menutup modal di belakang
+    $(document).on('show.bs.modal', '.modal', function () {
+        const zIndex = 1040 + (10 * $('.modal:visible').length);
+        $(this).css('z-index', zIndex);
+        setTimeout(function () {
+        $('.modal-backdrop').not('.modal-stack').first().css('z-index', zIndex - 1).addClass('modal-stack');
+        }, 0);
+    });
+
+    // Kembalikan fokus ke modal sebelumnya saat modal ditutup
+    $(document).on('hidden.bs.modal', '.modal', function () {
+        if ($('.modal:visible').length) {
+        $('body').addClass('modal-open');
+        }
+    });
 </script>
 {{-- <=======================BATAS HARDCODED JAVASCRIPT END!!!!=======================> --}}
 </body>

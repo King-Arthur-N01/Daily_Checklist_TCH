@@ -43,10 +43,12 @@ class WorkingHourController extends Controller
     public function readmachinedata()
     {
         try {
-            $refreshmachine = Machine::all();
+            $machinedata = Machine::get();
+            $workinghourdata = WorkingHour::get();
 
             return response()->json([
-                'refreshmachine' => $refreshmachine
+                'machinedata' => $machinedata,
+                'workinghourdata' => $workinghourdata
             ]);
         } catch (\Exception $e) {
             Log::error('Error fetching machine data: ' . $e->getMessage());
@@ -57,12 +59,18 @@ class WorkingHourController extends Controller
     public function findworkinghour($id)
     {
         try {
-            $refreshmachine = Machine::all();
-            $refreshworkinghours = WorkingHour::find($id);
+            $machinedata = Machine::get();
+            $workinghourdata = WorkingHour::get();
+            $selectedworkinghourdata = DB::table('working_hours')
+            ->select('working_hours.*', 'machines.id', 'machines.id as machine_id')
+            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
+            ->where('working_hours.id', '=', $id)
+            ->get();
 
             return response()->json([
-                'refreshmachine' => $refreshmachine,
-                'refreshworkinghours' => $refreshworkinghours
+                'machinedata' => $machinedata,
+                'workinghourdata' => $workinghourdata,
+                'selectedworkinghourdata' => $selectedworkinghourdata
             ]);
         } catch (\Exception $e) {
             Log::error('Error fetching machine data: ' . $e->getMessage());
@@ -121,12 +129,12 @@ class WorkingHourController extends Controller
             $machine_array = $request->input('machine_input', []);
 
 
-            $previous_working_hour = DB::table('working_hours')
-            ->select('working_hours.*', 'machines.*')
-            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
-            ->where('working_hours.id')
-            ->groupBy('standart_id')
-            ->get();
+            // $previous_working_hour = DB::table('working_hours')
+            // ->select('working_hours.*', 'machines.*')
+            // ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
+            // ->where('working_hours.id')
+            // ->groupBy('standart_id')
+            // ->get();
 
             // Ambil data working hour sebelumnya berdasarkan ID
             $previous_working_hour = DB::table('working_hours')
@@ -141,7 +149,6 @@ class WorkingHourController extends Controller
             // Tentukan ID yang perlu dihapus
             $delete_unused_id = array_diff($previous_machine_ids, $machine_array);
 
-            // Hapus semua value MachineSchedule->monthy_id yang tidak memiliki hubungan dengan monthly_schedules di request terbaru
             foreach ($delete_unused_id as $delete_id) {
                 $DeleteMachine = Machine::find($delete_id);
                 if ($DeleteMachine) { // Pastikan objek ditemukan
@@ -165,7 +172,7 @@ class WorkingHourController extends Controller
                 $UpdateMachine->save();
             }
 
-            return response()->json(['success' => 'Standarisasi jam pm mesin berhasil di BUAT!']);
+            return response()->json(['success' => 'Standarisasi jam pm mesin berhasil di UBAH!']);
         } catch (\Exception $e) {
             Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
             return response()->json(['error' => 'Error machine property failed to add!!!!'], 500);
@@ -188,14 +195,15 @@ class WorkingHourController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\WorkingHour  $workingHour
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(WorkingHour $workingHour)
+    public function deleteworkinghour($id)
     {
-        //
+        try {
+            $DeleteWorkingHour = WorkingHour::find($id);
+            $DeleteWorkingHour->delete();
+            return response()->json(['success' => 'Schedule mesin berhasil di HAPUS!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error delete data'], 500);
+        }
     }
 }

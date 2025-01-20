@@ -5,7 +5,7 @@
     <div class="row">
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Tambah Data Mesin</h1>
+            <h1 class="h3 mb-2 text-gray-800">Database Mesin</h1>
             <div class="card shadow">
                 <div class="card card-filter collapse" id="filterCard">
                     <div class="card-header">
@@ -273,9 +273,9 @@
                                     <div class="dynamic-button-group">
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
-                                            <a class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
-                                            <a class="dropdown-item-custom-delete" data-id="${refreshmachine.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
+                                            <a class="dropdown-item-custom-success" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i>&nbsp;Detail</a>
+                                            <a class="dropdown-item-custom-primary" data-toggle="modal" data-id="${refreshmachine.id}" data-target="#editModal"><i class="bi bi-pencil-square"></i>&nbsp;Edit</a>
+                                            <a class="dropdown-item-custom-danger" data-id="${refreshmachine.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</a>
                                         </div>
                                     </div>
                                 `

@@ -29,7 +29,7 @@ class CreateMachineSchedulesTable extends Migration
             $table->unsignedBigInteger('machine_id');
             $table->unsignedBigInteger('yearly_id');
             $table->unsignedBigInteger('monthly_id')->nullable();
-            $table->unsignedBigInteger('record_repair_id')->nullable();
+            $table->unsignedBigInteger('special_id')->nullable();
             $table->timestamps();
         });
     }

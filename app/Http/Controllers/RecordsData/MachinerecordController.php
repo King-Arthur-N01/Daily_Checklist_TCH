@@ -10,21 +10,23 @@ use App\YearlySchedule;
 use App\MonthlySchedule;
 use App\Machinerecord;
 use App\Machineschedule;
+use App\WorkingHour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Yajra\DataTables\Facades\DataTables;
 
 class MachinerecordController extends Controller
 {
     // fungsi untuk permission
-    public function __construct(){
-        $this->middleware('permission:#namapermission#', ['only' => ['#namafunction#']]);
-    }
+    // public function __construct(){
+    //     $this->middleware('permission:#namapermission#', ['only' => ['#namafunction#']]);
+    // }
 
     // fungsi untuk melihat table preventive mesin
-    public function indexmachinerecord()
+    public function indexpreventive()
     {
         return view('dashboard.view_recordmesin.tablerecordmesin');
     }
@@ -36,17 +38,37 @@ class MachinerecordController extends Controller
     }
 
     // fungsi menampilkan tabel dan merefresh tabel preventive
-    public function refreshtablerecord()
+    // public function refreshtablerecord()
+    // {
+    //     try {
+    //         $refreshmachine = DB::table('machinerecords')
+    //         ->select('machines.*')
+    //         ->join('machines', 'machinerecords.machine_id', '=', 'machines.id')
+    //         ->orderBy('machinerecords.id', 'desc')
+    //         ->get();
+
+    //         return response()->json([
+    //             'refreshmachine' => $refreshmachine
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error('fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
+
+    // fungsi menampilkan tabel dan merefresh tabel preventive
+    public function refreshtablepreventive()
     {
         try {
-            $refreshrecords = DB::table('monthly_schedules')
-                ->select('monthly_schedules.*', 'machine_schedules.*', 'monthly_schedules.id as schedule_id')
-                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-                ->orderBy('monthly_schedules.id', 'desc')
-                ->get();
+            $refreshpreventive = DB::table('yearly_schedules')
+            ->select('yearly_schedules.*', DB::raw('COUNT(DISTINCT machine_schedules.id) as machine_schedules_count'))
+            ->leftJoin('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+            ->groupBy('yearly_schedules.id')
+            ->get();
 
             return response()->json([
-                'refreshrecords' => $refreshrecords,
+                'refreshpreventive' => $refreshpreventive,
+                'machine_schedules_count' => $refreshpreventive->pluck('machine_schedules_count'),
             ]);
         } catch (\Exception $e) {
             Log::error('fetch data error: ' . $e->getMessage(), ['exception' => $e]);
@@ -54,27 +76,106 @@ class MachinerecordController extends Controller
         }
     }
 
-
-    public function refreshdetailtablerecord($id)
+    public function refreshdetailtablepreventive($id)
     {
         try {
-            $refreshdetailrecord = DB::table('monthly_schedules')
-            ->select('monthly_schedules.id', 'machines.*', 'machine_schedules.*', 'machine_schedules.id as schedule_id')
+            $refreshdetailpreventive = DB::table('yearly_schedules')
+            ->select('monthly_schedules.*', 'yearly_schedules.id', 'monthly_schedules.id as getmonthid')
+            ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule_year')
             ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
-            ->where('monthly_schedules.id', '=', $id)
+            ->groupBy('monthly_schedules.id')
+            ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
+            ->where('yearly_schedules.id', '=', $id)
             ->where('monthly_schedules.schedule_agreed', '=', !null)
             ->get();
+
             return response()->json([
-                'refreshdetailrecord' => $refreshdetailrecord,
-                'schedule_id' => $refreshdetailrecord->pluck('schedule_id')
+                'refreshdetailpreventive' => $refreshdetailpreventive,
+                'getmonthid' => $refreshdetailpreventive->pluck('getmonthid'),
+                'machine_count' => $refreshdetailpreventive->pluck('machine_count')
             ]);
         } catch (\Exception $e) {
-            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'An unexpected error occurred'], 500);
+            Log::error('fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
+
+    public function readonscheduledata($id)
+    {
+        try {
+            $baseonscheduledata = DB::table('monthly_schedules')
+            ->select('monthly_schedules.name_schedule_month', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('monthly_schedules.id', '=', $id)
+            ->get();
+            // dd($baseonscheduledata);
+
+            $workinghourdata = WorkingHour::get();
+
+            return response()->json([
+                'baseonscheduledata' => $baseonscheduledata,
+                'workinghourdata' => $workinghourdata
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+    }
+
+
+    public function readoffscheduledata($id)
+    {
+        try {
+            $offscheduledata = DB::table('yearly_schedules')
+                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('yearly_schedules.id', '=', $id)
+                ->get();
+
+            $workinghourdata = WorkingHour::get();
+
+            return response()->json([
+                'offscheduledata' => $offscheduledata,
+                'workinghourdata' => $workinghourdata
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error getting data'], 500);
+        }
+    }
+
+    // public function readspecialscheduledata()
+    // {
+    //     try {
+    //         $userdata = DB::table('users')
+    //         ->where('users.status','=', true)
+    //         ->orderBy('users.id', 'desc')
+    //         ->get();
+
+    //         return response()->json([
+    //             'userdata' => $userdata
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => 'An unexpected error occurred'], 500);
+    //     }
+    // }
+
+    // public function readmachinedata()
+    // {
+    //     try {
+    //         // $machinedata = Machine::get();
+    //         $machinedata = DB::table('machines')
+    //         ->select('id','invent_number','machine_number','machine_name','machine_brand','machine_type','machine_spec','machine_info');
+
+    //         return DataTables::of($machinedata)->make(true);
+    //     } catch (\Exception $e) {
+    //         Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => 'An unexpected error occurred'], 500);
+    //     }
+    // }
 
     // fungsi menampilkan tabel dan merefresh tabel history preventice
     public function refreshtablehistory()

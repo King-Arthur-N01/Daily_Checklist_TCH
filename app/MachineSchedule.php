@@ -18,7 +18,7 @@ class MachineSchedule extends Model
         'machine_schedule_status',
         'yearly_id',
         'monthly_id',
-        'record_repair_id',
+        'special_id',
     ];
 
     public function getparentschedule()

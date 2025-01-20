@@ -14,7 +14,7 @@
                             <img class="image-card-home" src="{{ asset('assets/icons/clipboard_home.png') }}">
                         </div>
                         <div class="card-footer-item-custom col-12">
-                            <a class="card-title" href="{{ route('indexmachinerecord') }}">Input Preventive Checksheet &nbsp; <i class="fas fa-tasks"></i></a>
+                            <a class="card-title" href="{{ route('indexpreventive') }}">Input Preventive Checksheet &nbsp; <i class="fas fa-tasks"></i></a>
                         </div>
                     </div>
                 </div>

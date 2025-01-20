@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Table Schedule</h1>
+            <h1 class="h3 mb-2 text-gray-800">Approval Schedule Pertahun</h1>
             <div class="card shadow">
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
@@ -205,7 +205,7 @@
 
 
         // <===========================================================================================>
-        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ADD YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<ACCEPT YEARLY SCHEDULE>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         // <===========================================================================================>
 
         // FUNGSI TAMBAH MESIN PERTAHUN & PERKIRAAN WAKTU PREVENTIVE
@@ -225,7 +225,7 @@
                     const data_modal = `
                         <div class="row align-items-center">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="machineTables1" width="100%">
+                                <table class="table table-bordered" id="scheduleTables" width="100%">
                                     <thead>
                                         <th>NO.</th>
                                         <th>NO.INVENT</th>
@@ -263,7 +263,7 @@
 
                     $('#saveButton').on('click', function() {
                         let acceptBy = '{{ Auth::user()->id }}';
-                        if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
+                        if (confirm("Apakah yakin sudah mengetahui schedule preventive ini?")) {
                             $.ajax({
                                 type: 'PUT',
                                 url: '{{ route("edityear-accept", ':id') }}'.replace(':id', scheduleId),

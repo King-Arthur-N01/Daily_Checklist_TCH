@@ -3798,7 +3798,7 @@ input[type=submit].btn-block {
     margin: 0px;
 }
 
-.dropdown-item-custom-detail {
+.dropdown-item-custom-success {
     display: block;
     width: 100%;
     padding: .25rem 1.5rem;
@@ -3811,7 +3811,20 @@ input[type=submit].btn-block {
     border: 0
 }
 
-.dropdown-item-custom-edit {
+.dropdown-item-custom-warning {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #f8da2c;
+    border: 0
+}
+
+.dropdown-item-custom-primary {
     display: block;
     width: 100%;
     padding: .25rem 1.5rem;
@@ -3824,7 +3837,7 @@ input[type=submit].btn-block {
     border: 0
 }
 
-.dropdown-item-custom-more-edit {
+.dropdown-item-custom-primary-more {
     display: block;
     width: 100%;
     padding: .25rem 1.5rem;
@@ -3837,7 +3850,7 @@ input[type=submit].btn-block {
     border: 0
 }
 
-.dropdown-item-custom-delete {
+.dropdown-item-custom-danger {
     display: block;
     width: 100%;
     padding: .25rem 1.5rem;

@@ -5,7 +5,7 @@
     <div class="row">
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Table Schedule</h1>
+            <h1 class="h3 mb-2 text-gray-800">Standarisasi Working Hour Mesin</h1>
             <div class="card shadow">
                 <div class="card card-filter collapse" id="filterCard">
                     <div class="card-header">
@@ -172,9 +172,9 @@
                                     <div class="dynamic-button-group">
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                            <button class="dropdown-item-custom-detail" data-toggle="modal" data-id="${refreshwo.id}" data-target="#viewWorkingHour"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
-                                            <button class="dropdown-item-custom-edit" data-toggle="modal" data-id="${refreshwo.id}" data-target="#editWorkingHour"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
-                                            <button class="dropdown-item-custom-delete delete_schedule_year" data-id="${refreshwo.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
+                                            <button class="dropdown-item-custom-success" data-toggle="modal" data-id="${refreshwo.id}" data-target="#viewWorkingHour"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
+                                            <button class="dropdown-item-custom-primary" data-toggle="modal" data-id="${refreshwo.id}" data-target="#editWorkingHour"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
+                                            <button class="dropdown-item-custom-danger btn-delete" data-id="${refreshwo.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
                                         </div>
                                     </div>
                                 `
@@ -235,7 +235,12 @@
                     success: function(data) {
                         let tableRows = '';
 
-                        data.refreshmachine.forEach((machine, index) => {
+                        data.machinedata.forEach((machine, index) => {
+                            let machineStandart = 'Belum Ada'; // Deklarasikan di sini
+                            const workingHour = data.workinghourdata.find(wo => wo.id === machine.standart_id);
+                            if (workingHour) {
+                                machineStandart = workingHour.standart_name; // Ambil nilai preventive_hour
+                            }
                             tableRows += `
                                 <tr>
                                     <td>${index + 1}</td>
@@ -246,6 +251,7 @@
                                     <td>${machine.machine_spec || '-'}</td>
                                     <td>${machine.machine_info || '-'}</td>
                                     <td>${machine.machine_number || '-'}</td>
+                                    <td>${machineStandart}</td>
                                     <td>
                                         <input type="checkbox" name="machine_input" value="${machine.id}"}>
                                     </td>
@@ -324,6 +330,7 @@
                                             <th>SPEC/TONNAGE</th>
                                             <th>KETERANGAN</th>
                                             <th>NO.MESIN/LOKASI</th>
+                                            <th>STANDARISASI</th>
                                             <th>ADD</th>
                                         </thead>
                                         <tbody>
@@ -433,9 +440,13 @@
                     url: '{{ route("findworkinghour", ':id') }}'.replace(':id', workingHourId),
                     success: function(data) {
                         let tableRows = '';
-
-                        let machineCollection = JSON.parse(data.refreshworkinghours.machine_total);
-                        data.refreshmachine.forEach((machine, index) => {
+                        const selectedMachineIds = data.selectedworkinghourdata.map(selectWorkingHour => selectWorkingHour.machine_id);
+                        data.machinedata.forEach((machine, index) => {
+                            let machineStandart = 'Belum Ada';
+                            const workingHour = data.workinghourdata.find(wo => wo.id === machine.standart_id);
+                            if (workingHour) {
+                                machineStandart = workingHour.standart_name; // Ambil nilai preventive_hour
+                            }
                             tableRows += `
                                 <tr>
                                     <td>${index + 1}</td>
@@ -446,8 +457,10 @@
                                     <td>${machine.machine_spec || '-'}</td>
                                     <td>${machine.machine_info || '-'}</td>
                                     <td>${machine.machine_number || '-'}</td>
+                                    <td>${machineStandart}</td>
                                     <td>
-                                        <input type="checkbox" name="machine_input_edit" value="${machine.id}" ${machineCollection.map(String).includes(String(machine.id)) ? 'checked' : ''}>
+                                        <input type="checkbox" name="machine_input_edit" value="${machine.id}" ${selectedMachineIds.includes(machine.id) ? 'checked' : ''}>
+
                                     </td>
                                 </tr>
                             `;
@@ -464,7 +477,7 @@
                                         <div class="form-group">
                                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Standarisasi Mesin</label>
                                             <div>
-                                                <input class="form-control" type="text" name="standart_name_edit" placeholder="Name" value="${data.refreshworkinghours.standart_name}">
+                                                <input class="form-control" type="text" name="standart_name_edit" placeholder="Name" value="${data.selectedworkinghourdata[0].standart_name}">
                                             </div>
                                         </div>
                                     </div>
@@ -472,7 +485,7 @@
                                         <div class="form-group">
                                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Prioritas</label>
                                             <div>
-                                                <input class="form-control" type="text" name="priority_edit" placeholder="priority" value="${data.refreshworkinghours.priority}">
+                                                <input class="form-control" type="text" name="priority_edit" placeholder="priority" value="${data.selectedworkinghourdata[0].priority}">
                                             </div>
                                         </div>
                                     </div>
@@ -480,7 +493,7 @@
                                         <div class="form-group">
                                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Durasi PM</label>
                                             <div>
-                                                <input class="form-control" type="number" name="preventive_hour_edit" placeholder="Dihitung Perjam" value="${data.refreshworkinghours.preventive_hour}">
+                                                <input class="form-control" type="number" name="preventive_hour_edit" placeholder="Dihitung Perjam" value="${data.selectedworkinghourdata[0].preventive_hour}">
                                             </div>
                                         </div>
                                     </div>
@@ -488,7 +501,7 @@
                                         <div class="form-group">
                                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Man Power</label>
                                             <div>
-                                                <input class="form-control" type="number" name="man_power_edit" placeholder="Jumlah Operator Dilibatkan" value="${data.refreshworkinghours.man_power}">
+                                                <input class="form-control" type="number" name="man_power_edit" placeholder="Jumlah Operator Dilibatkan" value="${data.selectedworkinghourdata[0].man_power}">
                                             </div>
                                         </div>
                                     </div>
@@ -524,6 +537,7 @@
                                             <th>SPEC/TONNAGE</th>
                                             <th>KETERANGAN</th>
                                             <th>NO.MESIN/LOKASI</th>
+                                            <th>STANDARISASI</th>
                                             <th>ADD</th>
                                         </thead>
                                         <tbody>
@@ -690,6 +704,42 @@
             // <===========================================================================================>
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW WORKING HOUR>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             // <===========================================================================================>
+
+
+            // fungsi delete button untuk hapus standarisasi
+            $('#workingHourTables tbody').on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+                const button = $(this);
+                const workingHourId = button.data('id');
+                if (confirm("Apakah yakin menghapus standarisasi ini?")) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{ route("removeworkinghour", ':id') }}'.replace(':id', workingHourId),
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        }
+                    }).done(function(response) {
+                        if (response.success.trim()) {
+                            const successMessage = response.success.trim();
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
+                        }
+                        setTimeout(function() {
+                                $('#successModal').modal('hide'); // Hide success modal
+                        }, 2000);
+                    }).fail(function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        const warningMessage = JSON.parse(xhr.responseText).error;
+                        $('#failedText').text(warningMessage);
+                        $('#failedModal').modal('show');
+                    }).always(function() {
+                        table.ajax.reload(null, false);
+                    });
+                } else {
+                    // User cancelled the deletion, do nothing
+                }
+            });
+
 
             //fungsi filter button
             $('#filterButton').on('click', function() {

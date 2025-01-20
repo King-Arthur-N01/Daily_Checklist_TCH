@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Yajra\DataTables\Facades\DataTables;
 use Spatie\Permission\Traits\HasPermissions;
 
 class MonthlyScheduleController extends Controller
@@ -59,8 +60,11 @@ class MonthlyScheduleController extends Controller
                 ->where('yearly_schedules.id', '=', $id)
                 ->get();
 
+            $workinghourdata = WorkingHour::get();
+
             return response()->json([
                 'getmachines' => $getmachines,
+                'workinghourdata' => $workinghourdata
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -71,8 +75,8 @@ class MonthlyScheduleController extends Controller
     public function findschedulemonth($id)
     {
         try {
-            $refreshschedule = MonthlySchedule::find($id);
-
+            $monthlyscheduledata = MonthlySchedule::find($id);
+            $workinghourdata = WorkingHour::get();
             $getmachines = DB::table('yearly_schedules')
                 ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
@@ -81,7 +85,8 @@ class MonthlyScheduleController extends Controller
                 ->get();
 
             return response()->json([
-                'refreshschedule' => $refreshschedule,
+                'monthlyscheduledata' => $monthlyscheduledata,
+                'workinghourdata' => $workinghourdata,
                 'getmachines' => $getmachines
             ]);
         } catch (\Exception $e) {
@@ -288,25 +293,26 @@ class MonthlyScheduleController extends Controller
 
 
     // <<<============================================================================================>>>
-    // <<<==================================batas setujui schedule====================================>>>
+    // <<<==================================batas accept schedule=====================================>>>
     // <<<============================================================================================>>>
+
     public function indexschedulemonthaccept()
     {
         return view('dashboard.view_schedulemesin.tableacceptmonth');
     }
 
-    public function refreshtablescheduleagreed()
-    {
-        try {
-            $refreshschedule = MonthlySchedule::get();
-            return response()->json([
-                'refreshschedule' => $refreshschedule
-            ]);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json(['error' => 'Error fetching data'], 500);
-        }
-    }
+    // public function refreshtablescheduleagreed()
+    // {
+    //     try {
+    //         $refreshschedule = MonthlySchedule::get();
+    //         return response()->json([
+    //             'refreshschedule' => $refreshschedule
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error($e->getMessage());
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
 
     public function registermonthaccept(Request $request, $id)
     {
@@ -347,7 +353,7 @@ class MonthlyScheduleController extends Controller
     }
 
     // <<<============================================================================================>>>
-    // <<<================================batas setujui schedule end==================================>>>
+    // <<<================================batas accept schedule end===================================>>>
     // <<<============================================================================================>>>
 
 
@@ -418,8 +424,48 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-
     // <<<============================================================================================>>>
     // <<<================================batas schedule planner end==================================>>>
+    // <<<============================================================================================>>>
+
+
+
+    // <<<============================================================================================>>>
+    // <<<==================================batas special schedule====================================>>>
+    // <<<============================================================================================>>>
+
+    public function readspecialscheduledata()
+    {
+        try {
+            $userdata = DB::table('users')
+            ->where('users.status','=', true)
+            ->orderBy('users.id', 'desc')
+            ->get();
+
+            return response()->json([
+                'userdata' => $userdata
+            ]);
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'An unexpected error occurred'], 500);
+        }
+    }
+
+    public function readmachinespecialdata()
+    {
+        try {
+            // $machinedata = Machine::get();
+            $machinedata = DB::table('machines')
+            ->select('id','invent_number','machine_number','machine_name','machine_brand','machine_type','machine_spec','machine_info');
+            
+            return DataTables::of($machinedata)->make(true);
+        } catch (\Exception $e) {
+            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'An unexpected error occurred'], 500);
+        }
+    }
+
+    // <<<============================================================================================>>>
+    // <<<================================batas special schedule end==================================>>>
     // <<<============================================================================================>>>
 }

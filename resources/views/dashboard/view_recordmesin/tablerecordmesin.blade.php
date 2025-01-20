@@ -8,39 +8,31 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Table Input Checklist Mesin</h1>
+            <h1 class="h3 mb-2 text-gray-800">Info Preventive Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
                 </div>
                 <div class="card-body">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="table-filter">
-                            <div class="col-6">
-                                <p class="mg-b-10">Nama Schedule</p>
-                                <input class="form-control" id="filterByName">
-                            </div>
-                            <div class="col-6">
-                                <p class="mg-b-10">Status Schedule</p>
-                                <select class="form-control" name="sample" id="filterByStatus">
-                                    <option selected="selected">Select :</option>
-                                    <option value="1">COMPLETED</option>
-                                    <option value="0">UNFINISHED</option>
-                                </select>
-                            </div>
+                    {{-- <div class="div-tables">
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#addMachinePreventive" tabindex="0"><i class="bi bi-calendar2-plus-fill"></i>&nbsp; Input PM Diluar Schedule</button>
                         </div>
-                    </div>
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
+                        </div>
+                    </div> --}}
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="recordTables" width="100%">
+                        <table class="table table-bordered" id="preventiveTables" width="100%">
                             <thead>
                                 <tr>
                                     <th>ACTION</th>
                                     <th>NO.</th>
                                     <th>NAMA SCHEDULE</th>
-                                    <th>JUMLAH MESIN</th>
-                                    <th>SUDAH DIKERJAKAN</th>
-                                    <th>BELUM DIKERJAKAN</th>
-                                    <th>STATUS</th>
+                                    <th>JUMLAH SCHEDULE PREVENTIVE</th>
+                                    <th>TANGGAL PEMBUATAN</th>
+                                    <th>SCHEDULE STATUS</th>
+                                    <th>LAIN NYA</th>
                                 </tr>
                             </thead>
                         </table>
@@ -52,6 +44,39 @@
         <!-- end data table  -->
         <!-- ============================================================== -->
     </div>
+
+    <!-- Modal Add Base on Preventive -->
+    <div class="modal fade" id="baseOnSchedule" tabindex="-1" role="dialog" aria-labelledby="baseOnScheduleLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_onschedule"></div>
+                <div class="modal-body" id="modal_data_onschedule"></div>
+                <div class="modal-footer" id="modal_button_onschedule"></div>
+            </div>
+        </div>
+    </div>
+
+    {{-- <div class="dynamic-button-group">
+        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
+        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+            <button class="dropdown-item-custom-success base_on_schedule" data-toggle="modal" data-id="${infopreventive.id}" data-target="#baseOnSchedule"><i class="bi bi-pencil-square"></i>&nbsp;Base On Schedule</button>
+            <button class="dropdown-item-custom-danger pending_schedule" data-toggle="modal" data-id="${infopreventive.id}" data-target="#pendingSchedule"><i class="bi bi-alarm-fill"></i>&nbsp;Pending Schedule</button>
+            <button class="dropdown-item-custom-warning special_schedule" data-toggle="modal" data-id="${infopreventive.id}" data-target="#specialSchedule"><i class="bi bi-clipboard-plus-fill"></i>&nbsp;Special Schedule</button>
+        </div>
+    </div> --}}
+    <!-- End Modal Add Base on Preventive -->
+
+    <!-- Modal Add Off Preventive -->
+    <div class="modal fade" id="offSchedule" tabindex="-1" role="dialog" aria-labelledby="offScheduleLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_offschedule"></div>
+                <div class="modal-body" id="modal_data_offschedule"></div>
+                <div class="modal-footer" id="modal_button_offschedule"></div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Add Off Preventive -->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -92,6 +117,7 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/formatdate.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             @if (session('success'))
@@ -111,10 +137,6 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('.select2').select2({
-                placeholder: 'Select :',
-                searchInputPlaceholder: 'Search'
-            });
 
             // Set automatic soft refresh table
             setInterval(function() {
@@ -126,43 +148,22 @@
             }, 60000); // 60000 milidetik = 60 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
-            let table = $('#recordTables').DataTable({
+            const table = $('#preventiveTables').DataTable({
                 ajax: {
-                    url: '{{ route("refreshrecord") }}',
+                    url: '{{ route("refreshpreventive") }}',
                     dataSrc: function(data) {
-                        let groupedData = {};
-                        // Group data by monthly_id
-                        data.refreshrecords.forEach(record => {
-                            let month = record.monthly_id;
-                            if (!groupedData[month]) {
-                                groupedData[month] = {
-                                    monthly_id: month,
-                                    schedule_id: record.schedule_id,
-                                    name_schedule: record.name_schedule_month,
-                                    array_schedule: JSON.parse(record.schedule_collection),
-                                    completed: 0,
-                                    uncompleted: 0,
-                                    schedule_status: record.schedule_status
-                                };
-                            }
-                            // Increment counts based on machine_schedule_status
-                            if (record.machine_schedule_status === 1) {
-                                groupedData[month].completed += 1;
-                            } else if (record.machine_schedule_status === 0) {
-                                groupedData[month].uncompleted += 1;
-                            }
+                        // let scheduleIds = JSON.parse(data.refreshprevenitve.schedule_collection);
+                        return data.refreshpreventive.map(function(infopreventive, index) {
+                            return {
+                                id: infopreventive.id,
+                                number: index + 1,
+                                schedule_name: infopreventive.name_schedule_year,
+                                machine_count: infopreventive.machine_schedules_count,
+                                created_date: formatDate(infopreventive.created_at),
+                                schedule_status: infopreventive.schedule_agreed,
+                                other: `<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-id="${infopreventive.id}" data-target="#offSchedule" tabindex="0"><i class="bi bi-calendar2-plus-fill"></i>&nbsp; Input PM Diluar Schedule</button>`
+                            };
                         });
-
-                        // Convert grouped data back into an array
-                        return Object.values(groupedData).map((record, index) => ({
-                            number: index + 1,
-                            id: record.schedule_id,
-                            name_schedule: record.name_schedule,
-                            total_machine: record.array_schedule.length,
-                            completed: record.completed,
-                            uncompleted: record.uncompleted,
-                            schedule_status: record.schedule_status
-                        }));
                     }
                 },
                 columns: [
@@ -175,33 +176,26 @@
                         "orderable": false,
                     },
                     { data: 'number' },
-                    { data: 'name_schedule' },
-                    { data: 'total_machine' },
-                    { data: 'completed' },
-                    { data: 'uncompleted' },
+                    { data: 'schedule_name' },
+                    { data: 'machine_count' },
+                    { data: 'created_date' },
                     {
                         data: 'schedule_status',
                         render: function(data, type, row) {
                             if (data === 0) {
-                                return '<span class="badge badge-danger" value="0">UNFINISHED</span>';
+                                return '<span class="badge badge-danger" value="0">BELUM DISETUJUI</span>';
                             } else if (data === 1) {
-                                return '<span class="badge badge-success" value="1">COMPLETED</span>';
+                                return '<span class="badge badge-success" value="1">SUDAH DISETUJUI</span>';
                             }
                         }
-                    }
+                    },
+                    { data: 'other' }
                 ]
             });
 
-            $('#recordTables tbody').on('click', 'td.table-accordion', function () {
+            $('#preventiveTables tbody').on('click', 'td.table-accordion', function () {
                 let tr = $(this).closest('tr');
                 let row = table.row(tr);
-
-                // Ensure row.data() is valid
-                if (!row.data()) {
-                    console.error("Row data is not available.");
-                    return;
-                }
-
                 let rowId = row.data().id;
                 const toggleIcon = this.querySelector('.toggle-icon');
 
@@ -212,77 +206,57 @@
                 } else {
                     $.ajax({
                         type: 'GET',
-                        url: '{{route("refreshdetailrecord", ":id")}}'.replace(':id', rowId),
+                        url: '{{route("refreshdetailpreventive", ":id")}}'.replace(':id', rowId),
                         success: function(data) {
+
+                            let tableRows = '';
+
+                            if (!data.refreshdetailpreventive || data.refreshdetailpreventive.length === 0) {
+                                tableRows = `
+                                    <tr>
+                                        <td colspan="5">
+                                            <h5 style="text-align: center;">ERROR DATA PERBULAN TIDAK DITEMUKAN!</h5>
+                                        </td>
+                                    </tr>
+                                `;
+                            } else {
+                                data.refreshdetailpreventive.forEach((infodetailpreventive, key) => {
+                                    tableRows += `
+                                        <tr>
+                                            <td>${key + 1}</td>
+                                            <td>${infodetailpreventive.name_schedule_month}</td>
+                                            <td>${infodetailpreventive.machine_count}</td>
+                                            <td>${formatDate(infodetailpreventive.created_at)}</td>
+                                            <td>
+                                                ${infodetailpreventive.schedule_status  === 0 ? '<span class="badge badge-danger">UNFINISHED</span>' : infodetailpreventive.schedule_status  === 1 ? '<span class="badge badge-success">COMPLETED</span>' : ''}
+                                            </td>
+                                            <td>
+                                                <div class="dynamic-button-group">
+                                                    <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${infodetailpreventive.getmonthid}" data-target="#baseOnSchedule"><i class="bi bi-pencil-square"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `;
+                                });
+                            }
+
                             let detailTable = `
-                                <table class="table-child" id="recordTablesChild">
+                                <table class="table-child" id="scheduleTablesChild">
                                     <thead>
                                         <tr>
-                                            <th>INVENT NUMBER</th>
-                                            <th>NOMOR MESIN</th>
-                                            <th>NAMA MESIN</th>
-                                            <th>BRAND MESIN</th>
-                                            <th>TYPE MESIN</th>
-                                            <th>WAKTU PREVENTIVE</th>
+                                            <th>NO.</th>
+                                            <th>NAMA SCHEDULE</th>
+                                            <th>JUMLAH SCHEDULE PREVENTIVE</th>
+                                            <th>TANGGAL PEMBUATAN</th>
+                                            <th>SCHEDULE STATUS</th>
                                             <th>ACTION</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                            `;
-                            let currentTime = new Date();
-                            data.refreshdetailrecord.forEach(recordmachine => {
-                                let schedule_pm = null;
-
-                                if (recordmachine.reschedule_date_3) {
-                                    schedule_pm = recordmachine.reschedule_date_3;
-                                } else if (recordmachine.reschedule_date_2) {
-                                    schedule_pm = recordmachine.reschedule_date_2;
-                                } else if (recordmachine.reschedule_date_1) {
-                                    schedule_pm = recordmachine.reschedule_date_1;
-                                } else {
-                                    schedule_pm = recordmachine.schedule_date;
-                                }
-                                let scheduleDate = new Date(schedule_pm);
-                                let scheduleEnd = new Date(recordmachine.schedule_end);
-                                let checkStatus = recordmachine.machine_schedule_status;
-
-                                let rowClass = '';
-
-                                if (checkStatus == 1) {
-                                    rowClass += 'status-clear';
-                                } else {
-                                    if (currentTime > scheduleDate && currentTime < scheduleEnd) {
-                                        rowClass += 'urgent-time';
-                                    }
-                                    if (currentTime > scheduleDate && currentTime > scheduleEnd) {
-                                        rowClass += 'elapsed-time';
-                                    }
-                                }
-                                detailTable += `
-                                    <tr class="${rowClass}">
-                                        <td>${recordmachine.invent_number}</td>
-                                        <td>${recordmachine.machine_number || '-'}</td>
-                                        <td>${recordmachine.machine_name}</td>
-                                        <td>${recordmachine.machine_brand || '-'}</td>
-                                        <td>${recordmachine.machine_type || '-'}</td>
-                                        <td>${(scheduleDate ? scheduleDate.toLocaleString('en-ID', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: '2-digit',
-                                        }) : 'N/A')}</td>
-                                        <td>
-                                            <a class="btn btn-primary btn-sm btn-Id" href="${'{{ route("formpreventive", ":id") }}'.replace(':id', recordmachine.schedule_id)}">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                `;
-                            });
-                            detailTable += `
-                                </tbody>
-                            </table>
-                            `;
-
+                                        ${tableRows}
+                                    </tbody>
+                                </table>
+                            `
                             row.child(detailTable).show();
                             tr.addClass('shown');
                             toggleIcon.classList.add('active');
@@ -295,45 +269,274 @@
                             }
                             setTimeout(function() {
                                 $('#warningModal').modal('hide');
-                                $('#correctModal').modal('hide');
                             }, 2000);
                         }
                     });
                 }
             });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const filterByName = document.getElementById('filterByName');
-            const filterByStatus = document.getElementById('filterByStatus');
-            const table = document.getElementById('recordTables');
-            const rows = table.getElementsByTagName('tr');
 
-            // Function to filter table
-            function filterTable() {
-                const nameValue = filterByName.value.toLowerCase();
-                const statusValue = filterByStatus.value.toLowerCase();
+            $('#baseOnSchedule').on('shown.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const scheduleId = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route("readpreventive-onschedule", ':id') }}'.replace(':id', scheduleId),
+                    success: function(data) {
 
-                for (let i = 1; i < rows.length; i++) {
-                    const nameCell = rows[i].getElementsByTagName('td')[2];
-                    const statusCell = rows[i].getElementsByTagName('td')[6];
+                        const header_modal = `
+                            <h5 class="modal-title">Base On Schedule PM Mesin</h5>
+                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                        `;
 
-                    const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                    const statusText = statusCell ? statusCell.textContent.toLowerCase() : '';
+                        const data_modal = `
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                    <div>
+                                        <input class="form-control" type="text" value="${data.baseonscheduledata[0].name_schedule_month}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table table-bordered" id="dataTables">
+                                <thead>
+                                    <tr>
+                                        <th>NO.</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>NO INVENTARIS</th>
+                                        <th>KAPASITAS</th>
+                                        <th>NOMOR MESIN</th>
+                                        <th>DURASI</th>
+                                        <th>TANGGAL PREVENTIVE</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.baseonscheduledata.map((schedule, index) => {
+                                        let reschedulePM = null;
+                                        let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === schedule.standart_id);
+                                        let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
 
-                    if (nameText.includes(nameValue) &&
-                        (statusValue === "select :" || statusText.includes(statusValue))) {
-                        rows[i].style.display = '';
-                    } else {
-                        rows[i].style.display = 'none';
+                                        if (schedule.reschedule_date_3) {
+                                            reschedulePM = formatDate(schedule.reschedule_date_3) + ' (Reschedule ke 3)';
+                                        } else if (schedule.reschedule_date_2) {
+                                            reschedulePM = formatDate(schedule.reschedule_date_2) + ' (Reschedule ke 2)';
+                                        } else if (schedule.reschedule_date_1) {
+                                            reschedulePM = formatDate(schedule.reschedule_date_1) + ' (Reschedule)';
+                                        } else {
+                                            reschedulePM = formatDate(schedule.schedule_date);
+                                        }
+                                        return `
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>${schedule.machine_name}</td>
+                                                <td>${schedule.invent_number}</td>
+                                                <td>${schedule.machine_type || '-'}</td>
+                                                <td>${schedule.machine_number || '-'}</td>
+                                                <td>${machineHour} /Jam</td>
+                                                <td>${reschedulePM}</td>
+                                                <td>
+                                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${schedule.schedule_id}" data-toggle="modal" data-target="#updateModal"><i class="bi bi-play-fill"></i>Start Preventive</a>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                        const button_modal =`
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        `;
+                        $('#modal_title_onschedule').html(header_modal);
+                        $('#modal_data_onschedule').html(data_modal);
+                        $('#modal_button_onschedule').html(button_modal);
+
+                        $('#saveButton').on('click', function() {
+                            if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
+                                $.ajax({
+                                    type: 'PUT',
+                                    url: '{{ route("edityear-accept", ':id') }}'.replace(':id', scheduleId),
+                                    data: {
+                                        '_token': '{{ csrf_token() }}',
+                                        'accept_by': acceptBy,
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            const successMessage = response.success;
+                                            $('#successText').text(successMessage);
+                                            $('#successModal').modal('show');
+                                        }
+                                        setTimeout(function() {
+                                            $('#successModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
+                                        }, 2000);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        if (xhr.responseText) {
+                                            const warningMessage = JSON.parse(xhr.responseText).error;
+                                            $('#warningText').text(warningMessage);
+                                            $('#warningModal').modal('show');
+                                        }
+                                        setTimeout(function() {
+                                            $('#warningModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
+                                        }, 2000);
+                                    }
+                                }).always(function() {
+                                    table.ajax.reload(null, false);
+                                });
+                            } else {
+                                // User cancelled the deletion, do nothing
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data:', error);
                     }
-                }
-            }
+                });
+            });
 
-            // Attach event listeners
-            filterByName.addEventListener('input', filterTable);
-            filterByStatus.addEventListener('change', filterTable);
+
+            $('#offSchedule').on('shown.bs.modal', function(event) {
+                const button = $(event.relatedTarget);
+                const scheduleId = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route("readpreventive-offschedule", ':id') }}'.replace(':id', scheduleId),
+                    success: function(data) {
+
+                        const header_modal = `
+                            <h5 class="modal-title">Off Schedule PM Mesin</h5>
+                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                        `;
+
+                        const data_modal = `
+                            <div class="row" align-items="center">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p class="mg-b-10">Filter Nomor Invent </p>
+                                        <input class="form-control" id="get_by_number">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p class="mg-b-10">Filter Nama Mesin</p>
+                                        <input class="form-control" id="get_by_name">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p class="mg-b-10"Filter >Waktu Preventive</p>
+                                        <select class="form-control" id="get_by_month">
+                                            <option value="">Pilih bulan...</option>
+                                            <option value="January">Januari</option>
+                                            <option value="February">Februari</option>
+                                            <option value="March">Maret</option>
+                                            <option value="April">April</option>
+                                            <option value="May">Mei</option>
+                                            <option value="June">Juni</option>
+                                            <option value="July">Juli</option>
+                                            <option value="August">Agustus</option>
+                                            <option value="September">September</option>
+                                            <option value="October">Oktober</option>
+                                            <option value="November">November</option>
+                                            <option value="December">Desember</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="addMonthlyTables" width="100%">
+                                        <thead>
+                                            <th>NO.</th>
+                                            <th>NO.INVENT</th>
+                                            <th>NO.MESIN/LOKASI</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>MODEL/TYPE</th>
+                                            <th>BRAND/MERK</th>
+                                            <th>DURASI</th>
+                                            <th>RENTANG WAKTU PREVENTIVE</th>
+                                            <th>RENTANG WAKTU PREVENTIVE</th>
+                                            <th>ADD</th>
+                                        </thead>
+                                        <tbody>
+                                        ${data.offscheduledata.map((schedule, index) => {
+                                            let machineHour = 0; // Deklarasikan di sini
+                                            const workingHour = data.workinghourdata.find(wo => wo.id === schedule.standart_id);
+                                            if (workingHour) {
+                                                machineHour = workingHour.preventive_hour; // Ambil nilai preventive_hour
+                                            }
+                                            return `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${schedule.invent_number}</td>
+                                                    <td>${schedule.machine_number || '-'}</td>
+                                                    <td>${schedule.machine_name}</td>
+                                                    <td>${schedule.machine_type || '-'}</td>
+                                                    <td>${schedule.machine_brand || '-'}</td>
+                                                    <td>${machineHour} /Jam</td>
+                                                    <td>${formatDate(schedule.schedule_start)}</td>
+                                                    <td>${formatDate(schedule.schedule_end)}</td>
+                                                    <td><a class="btn btn-primary btn-sm" style="color:white" data-id="${schedule.machinescheduleid}" data-toggle="modal" data-target="#updateModal"><i class="bi bi-play-fill"></i>Start Preventive</a></td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        const button_modal =`
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
+                        `;
+                        $('#modal_title_offschedule').html(header_modal);
+                        $('#modal_data_offschedule').html(data_modal);
+                        $('#modal_button_offschedule').html(button_modal);
+
+                        $('#saveButton').on('click', function() {
+                            let acceptBy = '{{ Auth::user()->id }}';
+                            if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
+                                $.ajax({
+                                    type: 'PUT',
+                                    url: '{{ route("editmonth-accept", ':id') }}'.replace(':id', scheduleId),
+                                    data: {
+                                        '_token': '{{ csrf_token() }}',
+                                        'accept_by': acceptBy,
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            const successMessage = response.success;
+                                            $('#successText').text(successMessage);
+                                            $('#successModal').modal('show');
+                                        }
+                                        setTimeout(function() {
+                                            $('#successModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
+                                        }, 2000);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        if (xhr.responseText) {
+                                            const warningMessage = JSON.parse(xhr.responseText).error;
+                                            $('#warningText').text(warningMessage);
+                                            $('#warningModal').modal('show');
+                                        }
+                                        setTimeout(function() {
+                                            $('#warningModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
+                                        }, 2000);
+                                    }
+                                }).always(function() {
+                                    table.ajax.reload(null, false);
+                                });
+                            } else {
+                                // User cancelled the deletion, do nothing
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data:', error);
+                    }
+                });
+            });
         });
     </script>
 @endpush

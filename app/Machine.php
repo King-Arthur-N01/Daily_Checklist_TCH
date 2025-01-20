@@ -24,7 +24,7 @@ class Machine extends Model
         'machine_problem',
         'machine_action',
         'property_id',
-        ' ',
+        'standart_id',
     ];
     public function getchildernproperty()
     {
