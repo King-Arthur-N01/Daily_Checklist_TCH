@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Approval Schedule Perbulan</h1>
+            <h1 class="h3 mb-2 text-gray-800">Accept Schedule Perbulan</h1>
             <div class="card shadow">
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
@@ -77,6 +77,21 @@
         </div>
     </div>
     <!-- End accept Schedule Month -->
+
+    <!-- View Schedule Month -->
+    <div class="modal fade show" id="viewModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_view">
+                </div>
+                <div class="modal-body" id="modal_data_view">
+                </div>
+                <div class="modal-footer" id="modal_button_view">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End View Schedule Month -->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -167,7 +182,10 @@
                                 day: '2-digit'
                             }),
                             actions: `
-                                    <button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>
+                                ${refreshschedule.schedule_agreed === null ?
+                                    `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>` :
+                                    `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></i></button>`
+                                }
                                 `
                         };
                     });
@@ -297,6 +315,75 @@
                             // User cancelled the deletion, do nothing
                         }
                     });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+
+        $('#viewModal').on('shown.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const scheduleId = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("readmonth-accept", ":id") }}'.replace(':id', scheduleId),
+                success: function(data) {
+
+                    const header_modal = `
+                        <h5 class="modal-title">Lihat Schedule Perbulan Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    const data_modal = `
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                <div>
+                                    <input class="form-control" type="text" value="${data.scheduledata[0].name_schedule_month}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered" id="dataTables">
+                            <thead>
+                                <tr>
+                                    <th>NO.</th>
+                                    <th>NO.INVENT</th>
+                                    <th>NAMA MESIN</th>
+                                    <th>MODEL/TYPE</th>
+                                    <th>BRAND/MERK</th>
+                                    <th>NO.MESIN/AREA</th>
+                                    <th>DURASI</th>
+                                    <th>SCHEDULE PM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.scheduledata.map((schedule, index) => {
+                                    let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === schedule.standart_id);
+                                    let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
+                                    let schedule_pm = schedule.schedule_date;
+                                    return `
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td>${schedule.invent_number}</td>
+                                            <td>${schedule.machine_name}</td>
+                                            <td>${schedule.machine_type || '-'}</td>
+                                            <td>${schedule.machine_brand || '-'}</td>
+                                            <td>${schedule.machine_number || '-'}</td>
+                                            <td>${machineHour} /Jam</td>
+                                            <td>${formatDate(schedule_pm)}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    const button_modal =`
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    `;
+                    $('#modal_title_view').html(header_modal);
+                    $('#modal_data_view').html(data_modal);
+                    $('#modal_button_view').html(button_modal);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching data:', error);

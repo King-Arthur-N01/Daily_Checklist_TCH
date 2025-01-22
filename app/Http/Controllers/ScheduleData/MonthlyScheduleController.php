@@ -23,14 +23,27 @@ class MonthlyScheduleController extends Controller
     public function viewdataschedule($id)
     {
         try {
-            $getschedulemonth = DB::table('monthly_schedules')
-            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
-            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->where('monthly_schedules.id', '=', $id)
-            ->get();
+            $findSchedule = MonthlySchedule::where('id', $id)->first();
 
-            return response()->json(['getschedulemonth' => $getschedulemonth]);
+            $isSpecialSchedule = $findSchedule->schedule_special;
+
+            if ($isSpecialSchedule == false) {
+                $monthlyscheduledata = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->get();
+            } else if ($isSpecialSchedule == true) {
+                $monthlyscheduledata = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id') //bedakan disini !!!
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->get();
+            }
+
+            return response()->json(['monthlyscheduledata' => $monthlyscheduledata]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Error getting data'], 500);
@@ -53,7 +66,7 @@ class MonthlyScheduleController extends Controller
     public function readscheduleyeardata($id)
     {
         try {
-            $getmachines = DB::table('yearly_schedules')
+            $machinescheduledata = DB::table('yearly_schedules')
                 ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
@@ -63,7 +76,7 @@ class MonthlyScheduleController extends Controller
             $workinghourdata = WorkingHour::get();
 
             return response()->json([
-                'getmachines' => $getmachines,
+                'machinescheduledata' => $machinescheduledata,
                 'workinghourdata' => $workinghourdata
             ]);
         } catch (\Exception $e) {
@@ -156,7 +169,6 @@ class MonthlyScheduleController extends Controller
             ]);
             // dd($request->all());
             $name_schedule = $request->input('name_schedule');
-            $create_by = $request->input('schedule_create');
             // $schedule_duration = $request->input('schedule_duration', []);
             $schedule_date = $request->input('schedule_date', []);
             $schedule_key = $request->input('machine_schedule_id', []);
@@ -209,13 +221,27 @@ class MonthlyScheduleController extends Controller
     public function printdataschedulemonth($id)
     {
         try {
-            $scheduledata = DB::table('monthly_schedules')
-            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'working_hours.preventive_hour')
-            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->join('working_hours', 'machines.standart_id', '=', 'working_hours.id')
-            ->where('monthly_schedules.id', '=', $id)
-            ->get();
+            $findSchedule = MonthlySchedule::where('id', $id)->first();
+
+            $isSpecialSchedule = $findSchedule->schedule_special;
+
+            if ($isSpecialSchedule == false) {
+                $scheduledata = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'working_hours.preventive_hour')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->join('working_hours', 'machines.standart_id', '=', 'working_hours.id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->get();
+            } else if ($isSpecialSchedule == true) {
+                $scheduledata = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'working_hours.preventive_hour')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->join('working_hours', 'machines.standart_id', '=', 'working_hours.id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->get();
+            }
 
             // Ambil data schedule
             $firstSchedule = $scheduledata->first();
@@ -255,15 +281,28 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    public function readschedulemonthdata($id) //global function untuk recognize dan agreed month
+    public function readschedulemonthdata($id) //global function untuk accept dan planner month
     {
         try{
-            $scheduledata = DB::table('monthly_schedules')
-            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
-            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
-            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-            ->where('monthly_schedules.id', '=', $id)
-            ->get();
+            $findSchedule = MonthlySchedule::where('id', $id)->first();
+
+            $isSpecialSchedule = $findSchedule->schedule_special;
+
+            if ($isSpecialSchedule == false) {
+                $scheduledata = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->get();
+            } else if ($isSpecialSchedule == true) {
+                $scheduledata = DB::table('monthly_schedules')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('monthly_schedules.id', '=', $id)
+                ->get();
+            }
 
             $workinghourdata = WorkingHour::get();
 
@@ -277,7 +316,7 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    public function refreshtableschedulemonth() //global function untuk recognize dan agreed month
+    public function refreshtableschedulemonth()
     {
         try {
             $refreshschedule = MonthlySchedule::get();
@@ -434,16 +473,21 @@ class MonthlyScheduleController extends Controller
     // <<<==================================batas special schedule====================================>>>
     // <<<============================================================================================>>>
 
-    public function readspecialscheduledata()
+    public function readspecialscheduledata($id)
     {
         try {
-            $userdata = DB::table('users')
-            ->where('users.status','=', true)
-            ->orderBy('users.id', 'desc')
-            ->get();
+            $specialscheduledata = DB::table('yearly_schedules')
+                ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
+                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+                ->where('yearly_schedules.id', '=', $id)
+                ->get();
+
+            $workinghourdata = WorkingHour::get();
 
             return response()->json([
-                'userdata' => $userdata
+                'specialscheduledata' => $specialscheduledata,
+                'workinghourdata' => $workinghourdata
             ]);
         } catch (\Exception $e) {
             Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
@@ -451,17 +495,63 @@ class MonthlyScheduleController extends Controller
         }
     }
 
-    public function readmachinespecialdata()
+    // public function readmachinespecialdata()
+    // {
+    //     try {
+    //         // $machinedata = Machine::get();
+    //         $machinedata = DB::table('machines')
+    //         ->select('id','invent_number','machine_number','machine_name','machine_brand','machine_type','machine_spec','machine_info');
+
+    //         return DataTables::of($machinedata)->make(true);
+    //     } catch (\Exception $e) {
+    //         Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => 'An unexpected error occurred'], 500);
+    //     }
+    // }
+
+    public function createspecialschedule(Request $request)
     {
         try {
-            // $machinedata = Machine::get();
-            $machinedata = DB::table('machines')
-            ->select('id','invent_number','machine_number','machine_name','machine_brand','machine_type','machine_spec','machine_info');
-            
-            return DataTables::of($machinedata)->make(true);
+            // dd($request)->all();
+            $request->validate([
+                'name_schedule' => 'required',
+                'schedule_date' => 'required|array',
+            ]);
+            // dd($request->all());
+            $name_schedule = $request->input('name_schedule');
+            $id_schedule = $request->input('id_schedule_year');
+            $create_by = $request->input('schedule_create');
+            // $schedule_duration = $request->input('schedule_duration', []);
+            $schedule_date = $request->input('schedule_date', []);
+            $schedule_key = $request->input('machine_schedule_id', []);
+
+            // Validasi jumlah elemen pada kedua array
+            if (count($schedule_date) !== count($schedule_key)) {
+                return response()->json(['error' => 'Mismatch between machines and schedule ids'], 400);
+            }
+
+            $StoreSchedule = new MonthlySchedule();
+            $StoreSchedule->name_schedule_month = $name_schedule;
+            $StoreSchedule->schedule_create = $create_by;
+            $StoreSchedule->schedule_collection = json_encode($schedule_key);
+            $StoreSchedule->id_schedule_year = $id_schedule;
+            $StoreSchedule->schedule_special = true;
+            $StoreSchedule->save();
+
+            $getspecialid = $StoreSchedule->id;
+
+            foreach ($schedule_key as $index => $key) {
+                $StoreMachineSchedule = MachineSchedule::find($key);
+                // $StoreMachineSchedule->schedule_duration = $schedule_duration[$index];
+                $StoreMachineSchedule->schedule_date = Carbon::createFromFormat('d-m-Y', $schedule_date[$index])->format('Y-m-d');
+                $StoreMachineSchedule->special_id = $getspecialid;
+                $StoreMachineSchedule->save();
+            }
+
+            return response()->json(['success' => 'Special schedule mesin berhasil di TAMBAHKAN!']);
         } catch (\Exception $e) {
-            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'An unexpected error occurred'], 500);
+            Log::error($e->getMessage());
+            return response()->json(['error' => 'Error creating data'], 500);
         }
     }
 

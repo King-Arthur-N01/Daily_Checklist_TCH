@@ -8,10 +8,10 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Approval Schedule Planner</h1>
+            <h1 class="h3 mb-2 text-gray-800">Schedule Planner</h1>
             <div class="card shadow">
                 <div class="card-header">
-                    <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Koreksi Preventive Mesin</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -191,7 +191,7 @@
             const scheduleId = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route("readmonth-planner", ':id') }}'.replace(':id', scheduleId),
+                url: '{{ route("readmonth-planner", ":id") }}'.replace(':id', scheduleId),
                 success: function(data) {
 
                     function selectCheckbox() {
@@ -403,7 +403,7 @@
             const scheduleId = button.data('id');
             $.ajax({
                 type: 'GET',
-                url: '{{ route("findmonth-planner", ':id') }}'.replace(':id', scheduleId),
+                url: '{{ route("findmonth-planner", ":id") }}'.replace(':id', scheduleId),
                 success: function(data) {
 
                     function selectCheckbox() {
@@ -495,21 +495,23 @@
                             </thead>
                             <tbody>
                                 ${data.scheduledata.map((schedule, index) => {
-                                    let reschedule_pm = null;
-                                    let machineHour = 0; // Deklarasikan di sini
-                                    const duration = schedule.standart_id == data.workinghourdata[0].id; // Pastikan untuk mengakses array dengan benar
-                                    if (duration) {
-                                        machineHour = data.workinghourdata[0].preventive_hour; // Ambil nilai preventive_hour
-                                    }
+                                    let reschedulePM = null;
+                                    let rescheduleDate = null;
+                                    let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === schedule.standart_id);
+                                    let machineHour = machineHourData ? machineHourData.preventive_hour : '0';
 
                                     if (schedule.reschedule_date_3) {
-                                        reschedule_pm = schedule.reschedule_date_3;
+                                        rescheduleDate = schedule.reschedule_date_3;
+                                        reschedulePM = formatDate(schedule.reschedule_date_3) + ' ***';
                                     } else if (schedule.reschedule_date_2) {
-                                        reschedule_pm = schedule.reschedule_date_2;
+                                        rescheduleDate = schedule.reschedule_date_2;
+                                        reschedulePM = formatDate(schedule.reschedule_date_2) + ' **';
                                     } else if (schedule.reschedule_date_1) {
-                                        reschedule_pm = schedule.reschedule_date_1;
+                                        rescheduleDate = schedule.reschedule_date_1;
+                                        reschedulePM = formatDate(schedule.reschedule_date_1) + ' *';
                                     } else {
-                                        reschedule_pm = schedule.schedule_date;
+                                        rescheduleDate = schedule.schedule_date;
+                                        reschedulePM = formatDate(schedule.schedule_date);
                                     }
 
                                     // Tentukan apakah salah satu reschedule_date tidak null
@@ -524,7 +526,7 @@
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
                                             <td>${machineHour} Jam</td>
-                                            <td>${formatDate(schedule.schedule_date)}</td>
+                                            <td>${reschedulePM}</td>
                                             <td>
                                                 <div id="option_${schedule.schedule_id}">
                                                     <input type="checkbox" id="condition_${schedule.schedule_id}" value="iya" ${!isNotNull ? 'checked' : ''}>SESUAI
@@ -536,7 +538,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control datepicker" name="machine_reschedule" id="datepicker-${schedule.schedule_id}" data-schedule-date="${reschedule_pm}" readonly>
+                                                <input type="text" class="form-control datepicker" name="machine_reschedule" id="datepicker-${schedule.schedule_id}" data-schedule-date="${rescheduleDate}" readonly>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control" name="reschedule_note" placeholder="Opsional" readonly value="${schedule.reschedule_note || '-'}">
@@ -605,7 +607,7 @@
                                 url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
                                 data: {
                                     '_token': '{{ csrf_token() }}',
-                                    'planner_by': plannerBy,
+                                    'planned_by': plannerBy,
                                     'machine_reschedule': machineReschedule
                                 },
                                 success: function(response) {

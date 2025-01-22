@@ -112,16 +112,13 @@ Route::get ('/schedule/month/print/{id}','ScheduleData\MonthlyScheduleController
 Route::delete('/schedule/month/delete/{id}','ScheduleData\MonthlyScheduleController@deleteschedulemonth')->name('removemonth');
 // Route::get ('/schedule/machineschedule/read/{id}','ScheduleData\MonthlyScheduleController@readdatamachineschedule')->name('readmachineschedule');
 
-Route::get ('/schedule/special/read/special','ScheduleData\MonthlyScheduleController@readspecialscheduledata')->name('readyear-special');
-Route::get ('/schedule/special/read/machine','ScheduleData\MonthlyScheduleController@readmachinespecialdata')->name('readmachine-special');
+// Route::get ('/schedule/special/read/machine','ScheduleData\MonthlyScheduleController@readmachinespecialdata')->name('readmachine-special');
 // schedule month route
 
-// schedule month recognize
-// Route::get ('/schedule/month/recognize','ScheduleData\MonthlyScheduleController@indexschedulemonthrecognize')->name('indexmonth-recognize');
-// Route::get ('/schedule/month/recognize/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-recognize');
-// Route::put ('/schedule/month/recognize/register/{id}','ScheduleData\MonthlyScheduleController@registerrecognize')->name('editmonth-recognize');
-// Route::get ('/schedule/month/recognize/table/refresh/','ScheduleData\MonthlyScheduleController@refreshtableschedulemonth')->name('refresh-recognize');
-// schedule month recognize end
+// schedule month special
+Route::get ('/schedule/special/read/{id}','ScheduleData\MonthlyScheduleController@readspecialscheduledata')->name('readyear-special');
+Route::post('/schedule/special/create','ScheduleData\MonthlyScheduleController@createspecialschedule')->name('addmonth-special');
+// schedule month special end
 
 // schedule month accept
 Route::get ('/schedule/month/accept','ScheduleData\MonthlyScheduleController@indexschedulemonthaccept')->name('indexmonth-accept');
@@ -141,7 +138,7 @@ Route::get ('/schedule/month/planner/table/refresh/','ScheduleData\MonthlySchedu
 // preventive
 Route::get ('/preventive','RecordsData\MachinerecordController@indexpreventive')->name('indexpreventive');
 Route::get ('/preventive/read/onschedule/{id}','RecordsData\MachinerecordController@readonscheduledata')->name('readpreventive-onschedule');
-Route::get ('/preventive/read/offschedule/{id}','RecordsData\MachinerecordController@readoffscheduledata')->name('readpreventive-offschedule');
+// Route::get ('/preventive/read/offschedule/{id}','RecordsData\MachinerecordController@readoffscheduledata')->name('readpreventive-offschedule');
 // Route::get ('/preventive/read/special','RecordsData\MachinerecordController@readspecialscheduledata')->name('readpreventive-special');
 // Route::get ('/preventive/read/machine','RecordsData\MachinerecordController@readmachinedata')->name('readmachinepreventive');
 Route::get ('/preventive/schedule/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');

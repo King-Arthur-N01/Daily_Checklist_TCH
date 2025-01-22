@@ -54,10 +54,23 @@ class YearlyScheduleController extends Controller
                 ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
                 ->where('yearly_schedules.id', '=', $id)
                 ->get();
+
+            $refreshschedulespecial = DB::table('yearly_schedules')
+                ->select('monthly_schedules.*', 'yearly_schedules.id', 'monthly_schedules.id as getspecialid')
+                ->join('monthly_schedules', 'yearly_schedules.id', '=', 'monthly_schedules.id_schedule_year')
+                ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id')
+                ->groupBy('monthly_schedules.id')
+                ->selectRaw('count(machine_schedules.special_id) as special_count')
+                ->where('yearly_schedules.id', '=', $id)
+                ->get();
+
             return response()->json([
                 'refreshscheduledetail' => $refreshscheduledetail,
                 'getmonthid' => $refreshscheduledetail->pluck('getmonthid'),
-                'machine_count' => $refreshscheduledetail->pluck('machine_count')
+                'machine_count' => $refreshscheduledetail->pluck('machine_count'),
+                'refreshschedulespecial' => $refreshschedulespecial,
+                'getspecialid' => $refreshschedulespecial->pluck('getspecialid'),
+                'special_count' => $refreshschedulespecial->pluck('special_count')
             ]);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), ['exception' => $e]);
@@ -309,120 +322,120 @@ class YearlyScheduleController extends Controller
     }
 
     // fungsi dicadangkan karena masih terdapat bug
-    public function updatescheduleEXPERIMENTAL(Request $request, $id)
-    {
-        try {
-            // dd($request)->all();
-            $request->validate([
-                'name_schedule' => 'required',
-                'limit_schedule' => 'required|integer',
-                'schedule_time' => 'required|array',
-                'machine_id' => 'required|array',
-                'preventive_cycle' => 'required|array',
-            ]);
+    // public function updatescheduleEXPERIMENTAL(Request $request, $id)
+    // {
+    //     try {
+    //         // dd($request)->all();
+    //         $request->validate([
+    //             'name_schedule' => 'required',
+    //             'limit_schedule' => 'required|integer',
+    //             'schedule_time' => 'required|array',
+    //             'machine_id' => 'required|array',
+    //             'preventive_cycle' => 'required|array',
+    //         ]);
 
-            $machine_key = $request->input('machine_id');
-            $schedule_times = $request->input('schedule_time');
-            $preventive_cycles = $request->input('preventive_cycle');
-            $limit_schedule = $request->input('limit_schedule');
+    //         $machine_key = $request->input('machine_id');
+    //         $schedule_times = $request->input('schedule_time');
+    //         $preventive_cycles = $request->input('preventive_cycle');
+    //         $limit_schedule = $request->input('limit_schedule');
 
-            // Validasi jumlah elemen pada semua array
-            if (count($machine_key) !== count($schedule_times) || count($machine_key) !== count($preventive_cycles)) {
-                return response()->json(['error' => 'Mismatch between machines, schedule times, and preventive cycles'], 400);
-            }
+    //         // Validasi jumlah elemen pada semua array
+    //         if (count($machine_key) !== count($schedule_times) || count($machine_key) !== count($preventive_cycles)) {
+    //             return response()->json(['error' => 'Mismatch between machines, schedule times, and preventive cycles'], 400);
+    //         }
 
-            $previous_machine_schedule = DB::table('yearly_schedules')
-                ->select('yearly_schedules.id', 'machine_schedules.*', 'machine_schedules.id as machine_schedule')
-                ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
-                ->where('yearly_schedules.id', '=', $id)
-                ->get();
+    //         $previous_machine_schedule = DB::table('yearly_schedules')
+    //             ->select('yearly_schedules.id', 'machine_schedules.*', 'machine_schedules.id as machine_schedule')
+    //             ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
+    //             ->where('yearly_schedules.id', '=', $id)
+    //             ->get();
 
-            // Ambil data ID MachineSchedule berdasarkan machine_id yang ada
-            $previous_machine = $previous_machine_schedule->pluck('machine_id')->toArray();
-            $deleted_machine = array_diff($machine_key, $previous_machine);
+    //         // Ambil data ID MachineSchedule berdasarkan machine_id yang ada
+    //         $previous_machine = $previous_machine_schedule->pluck('machine_id')->toArray();
+    //         $deleted_machine = array_diff($machine_key, $previous_machine);
 
-            // jika ada mesin yang dihapus dari schedule
-            if ($deleted_machine) {
-                // Hapus semua MachineSchedule yang tidak ada di request terbaru
-                foreach ($deleted_machine as $delete_machine) {
-                    MachineSchedule::where('machine_id', $delete_machine)->where('yearly_id', $id)->delete();
-                }
-            }
+    //         // jika ada mesin yang dihapus dari schedule
+    //         if ($deleted_machine) {
+    //             // Hapus semua MachineSchedule yang tidak ada di request terbaru
+    //             foreach ($deleted_machine as $delete_machine) {
+    //                 MachineSchedule::where('machine_id', $delete_machine)->where('yearly_id', $id)->delete();
+    //             }
+    //         }
 
-            $months_in_year = 12;
+    //         $months_in_year = 12;
 
-            foreach ($machine_key as $index => $key) {
-                Log::info("Machine ID: " . $key);
-                $ScheduleTimeRange = $schedule_times[$index];
-                $ScheduleCycle = $preventive_cycles[$index];
-                list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
+    //         foreach ($machine_key as $index => $key) {
+    //             Log::info("Machine ID: " . $key);
+    //             $ScheduleTimeRange = $schedule_times[$index];
+    //             $ScheduleCycle = $preventive_cycles[$index];
+    //             list($ScheduleStart, $ScheduleEnd) = explode(' - ', $ScheduleTimeRange);
 
-                $result_in_year = $months_in_year / $ScheduleCycle;
+    //             $result_in_year = $months_in_year / $ScheduleCycle;
 
-                $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
-                $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
+    //             $ScheduleStartCarbon = Carbon::parse($ScheduleStart);
+    //             $ScheduleEndCarbon = Carbon::parse($ScheduleEnd);
 
-                $PreviousMachineSchedule = MachineSchedule::where('machine_id', $key)->where('yearly_id', $id);
-                $firstMachineSchedule = $PreviousMachineSchedule->first();
+    //             $PreviousMachineSchedule = MachineSchedule::where('machine_id', $key)->where('yearly_id', $id);
+    //             $firstMachineSchedule = $PreviousMachineSchedule->first();
 
-                if ($firstMachineSchedule) {
-                    if ($firstMachineSchedule->preventive_cycle !== $ScheduleCycle) {
-                        // Jika preventive cycle berbeda, update jadwal
-                        $PreviousMachineSchedule->delete();
+    //             if ($firstMachineSchedule) {
+    //                 if ($firstMachineSchedule->preventive_cycle !== $ScheduleCycle) {
+    //                     // Jika preventive cycle berbeda, update jadwal
+    //                     $PreviousMachineSchedule->delete();
 
-                        for ($i = 0; $i < $result_in_year; $i++) {
-                            $new_schedule_start = $ScheduleStartCarbon->copy()->addMonths(($ScheduleCycle * $i));
-                            $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
+    //                     for ($i = 0; $i < $result_in_year; $i++) {
+    //                         $new_schedule_start = $ScheduleStartCarbon->copy()->addMonths(($ScheduleCycle * $i));
+    //                         $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
 
-                            if ($new_schedule_start->year > $request->input('limit_schedule')) {
-                                break; // Hentikan loop jika tahun mencapai limit_schedule
-                            }
+    //                         if ($new_schedule_start->year > $request->input('limit_schedule')) {
+    //                             break; // Hentikan loop jika tahun mencapai limit_schedule
+    //                         }
 
-                            $UpdateMachineSchedule = new MachineSchedule();
-                            $UpdateMachineSchedule->schedule_start = $new_schedule_start;
-                            $UpdateMachineSchedule->schedule_end = $new_schedule_end;
-                            $UpdateMachineSchedule->preventive_cycle = $ScheduleCycle;
-                            $UpdateMachineSchedule->machine_id = $key;
-                            $UpdateMachineSchedule->yearly_id = $id;
-                            $UpdateMachineSchedule->save();
-                        }
-                    } else {
-                        // Jika preventive cycle sama, lewati pembaruan
-                        Log::info("Machine ID: $key already has the same preventive cycle. Skipping update.");
-                    }
-                } else {
-                    // Jika tidak ada jadwal sebelumnya, buat jadwal baru
-                    for ($i = 0; $i < $result_in_year; $i++) {
-                        $new_schedule_start = $ScheduleStartCarbon->copy()->addMonths(($ScheduleCycle * $i));
-                        $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
+    //                         $UpdateMachineSchedule = new MachineSchedule();
+    //                         $UpdateMachineSchedule->schedule_start = $new_schedule_start;
+    //                         $UpdateMachineSchedule->schedule_end = $new_schedule_end;
+    //                         $UpdateMachineSchedule->preventive_cycle = $ScheduleCycle;
+    //                         $UpdateMachineSchedule->machine_id = $key;
+    //                         $UpdateMachineSchedule->yearly_id = $id;
+    //                         $UpdateMachineSchedule->save();
+    //                     }
+    //                 } else {
+    //                     // Jika preventive cycle sama, lewati pembaruan
+    //                     Log::info("Machine ID: $key already has the same preventive cycle. Skipping update.");
+    //                 }
+    //             } else {
+    //                 // Jika tidak ada jadwal sebelumnya, buat jadwal baru
+    //                 for ($i = 0; $i < $result_in_year; $i++) {
+    //                     $new_schedule_start = $ScheduleStartCarbon->copy()->addMonths(($ScheduleCycle * $i));
+    //                     $new_schedule_end = $ScheduleEndCarbon->copy()->addMonths(($ScheduleCycle * $i));
 
-                        if ($new_schedule_start->year > $request->input('limit_schedule')) {
-                            break; // Hentikan loop jika tahun mencapai limit_schedule
-                        }
+    //                     if ($new_schedule_start->year > $request->input('limit_schedule')) {
+    //                         break; // Hentikan loop jika tahun mencapai limit_schedule
+    //                     }
 
-                        $UpdateMachineSchedule = new MachineSchedule();
-                        $UpdateMachineSchedule->schedule_start = $new_schedule_start;
-                        $UpdateMachineSchedule->schedule_end = $new_schedule_end;
-                        $UpdateMachineSchedule->preventive_cycle = $ScheduleCycle;
-                        $UpdateMachineSchedule->machine_id = $key;
-                        $UpdateMachineSchedule->yearly_id = $id;
-                        $UpdateMachineSchedule->save();
-                    }
-                }
-            }
+    //                     $UpdateMachineSchedule = new MachineSchedule();
+    //                     $UpdateMachineSchedule->schedule_start = $new_schedule_start;
+    //                     $UpdateMachineSchedule->schedule_end = $new_schedule_end;
+    //                     $UpdateMachineSchedule->preventive_cycle = $ScheduleCycle;
+    //                     $UpdateMachineSchedule->machine_id = $key;
+    //                     $UpdateMachineSchedule->yearly_id = $id;
+    //                     $UpdateMachineSchedule->save();
+    //                 }
+    //             }
+    //         }
 
-            // Update Year lySchedule
-            $UpdateSchedule = YearlySchedule::find($id);
-            $UpdateSchedule->name_schedule_year = $request->input('name_schedule');
-            $UpdateSchedule->schedule_year = $limit_schedule;
-            $UpdateSchedule->save();
+    //         // Update Year lySchedule
+    //         $UpdateSchedule = YearlySchedule::find($id);
+    //         $UpdateSchedule->name_schedule_year = $request->input('name_schedule');
+    //         $UpdateSchedule->schedule_year = $limit_schedule;
+    //         $UpdateSchedule->save();
 
-            return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json(['error' => 'Error updating data'], 500);
-        }
-    }
+    //         return response()->json(['success' => 'Schedule mesin berhasil di UPDATE!']);
+    //     } catch (\Exception $e) {
+    //         Log::error($e->getMessage());
+    //         return response()->json(['error' => 'Error updating data'], 500);
+    //     }
+    // }
 
     public function updateschedule(Request $request, $id)
     {

@@ -86,7 +86,7 @@ class MachinerecordController extends Controller
             ->groupBy('monthly_schedules.id')
             ->selectRaw('count(machine_schedules.monthly_id) as machine_count')
             ->where('yearly_schedules.id', '=', $id)
-            ->where('monthly_schedules.schedule_agreed', '=', !null)
+            ->where('monthly_schedules.schedule_planner', '=', !null)
             ->get();
 
             return response()->json([
@@ -109,12 +109,34 @@ class MachinerecordController extends Controller
             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
             ->where('monthly_schedules.id', '=', $id)
             ->get();
-            // dd($baseonscheduledata);
+
+            // Ambil ID dari baseonscheduledata untuk filter
+            $baseonScheduleIds = $baseonscheduledata->pluck('schedule_id')->toArray();
+
+            $offscheduledata = DB::table('monthly_schedules')
+            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('monthly_schedules.schedule_planner', '=', !null)
+            ->where('monthly_schedules.schedule_status', '=', false)
+            ->get();
+
+            // Ambil data dari pendingscheduledata dengan filter
+            $pendingscheduledata = DB::table('monthly_schedules')
+            ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'machine_schedules.id as schedule_id')
+            ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->where('monthly_schedules.schedule_special', '=', false)
+            ->where('machine_schedules.machine_schedule_status', '=', 0)
+            ->whereNotIn('machine_schedules.id', $baseonScheduleIds) // Filter untuk menghindari pengiriman ulang
+            ->get();
 
             $workinghourdata = WorkingHour::get();
 
             return response()->json([
                 'baseonscheduledata' => $baseonscheduledata,
+                'offscheduledata' => $offscheduledata,
+                'pendingscheduledata' => $pendingscheduledata,
                 'workinghourdata' => $workinghourdata
             ]);
         } catch (\Exception $e) {

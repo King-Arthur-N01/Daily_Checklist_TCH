@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Approval Schedule Pertahun</h1>
+            <h1 class="h3 mb-2 text-gray-800">Accept Schedule Pertahun</h1>
             <div class="card shadow">
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
@@ -79,14 +79,14 @@
     <!-- End accept Schedule Year -->
 
     <!-- View Schedule Year -->
-    <div class="modal fade" id="viewScheduleYear" tabindex="-1">
+    <div class="modal fade" id="viewModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                <div class="modal-header" id="modal_title_year_view">
+                <div class="modal-header" id="modal_title_view">
                 </div>
-                <div class="modal-body" id="modal_data_year_view">
+                <div class="modal-body" id="modal_data_view">
                 </div>
-                <div class="modal-footer" id="modal_button_year_view">
+                <div class="modal-footer" id="modal_button_view">
                 </div>
             </div>
         </div>
@@ -182,7 +182,10 @@
                                 day: '2-digit'
                             }),
                             actions: `
-                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>
+                                ${refreshschedule.schedule_agreed === null ?
+                                    `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>` :
+                                    `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></i></button>`
+                                }
                                 `
                         };
                     });
@@ -300,6 +303,65 @@
                             // User cancelled the deletion, do nothing
                         }
                     });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        });
+
+
+        $('#viewModal').on('shown.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const scheduleId = button.data('id');
+            $.ajax({
+                type: 'GET',
+                url: '{{ route("readyear-accept", ':id') }}'.replace(':id', scheduleId),
+                success: function(data) {
+
+                    const header_modal = `
+                        <h5 class="modal-title">Lihat Schedule Pertahun Mesin</h5>
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                    `;
+
+                    const data_modal = `
+                        <div class="row align-items-center">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="scheduleTables" width="100%">
+                                    <thead>
+                                        <th>NO.</th>
+                                        <th>NO.INVENT</th>
+                                        <th>NO.MESIN/LOKASI</th>
+                                        <th>NAMA MESIN</th>
+                                        <th>MODEL/TYPE</th>
+                                        <th>BRAND/MERK</th>
+                                        <th colspan="2">RENTANG WAKTU PREVENTIVE</th>
+                                    </thead>
+                                        <tbody>
+                                            ${data.scheduledata.map((machine, index) => `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${machine.invent_number}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
+                                                    <td>${machine.machine_name}</td>
+                                                    <td>${machine.machine_type || '-'}</td>
+                                                    <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${formatDate(machine.schedule_start)}</td>
+                                                    <td>${formatDate(machine.schedule_end)}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>;
+                    `;
+                    const button_modal =`
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    `;
+                    $('#modal_title_view').html(header_modal);
+                    $('#modal_data_view').html(data_modal);
+                    $('#modal_button_view').html(button_modal);
+
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching data:', error);

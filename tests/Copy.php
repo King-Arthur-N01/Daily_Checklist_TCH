@@ -1,175 +1,488 @@
-E-AB-96-0001
-E-AA-05-0038
-E-AA-07-0041
-E-AA-08-0043
-E-AA-10-0050
-E-AA-11-0064
-E-AA-11-0066
-E-AA-11-0067
-E-AA-11-0068
-E-AA-11-0072
-E-AA-11-0073
-E-AA-11-0083
-E-AA-11-0085
-E-AA-12-0096
-E-AA-14-0100
-E-AA-14-0101
-E-AA-14-0102
-E-AA-14-0103
-E-AA-14-0104
-E-AA-16-0105
-E-AA-16-0106
-E-AA-16-0107
-E-AA-16-0108
-E-AA-23-0111
-E-AA-23-0110
-E-JA-04-0002
-E-JA-08-0051
-E-JA-08-0057
-E-JA-11-0059
-E-JA-11-0061
-E-JA-11-0063
-E-JA-24-0065
-E-JA-24-0066
-E-JA-24-0067
-E-JA-24-0068
-E-JA-24-0069
-E-JA-24-0070
-E-JA-24-0071
-E-JG-09-0013
-E-JG-12-0017
-E-JG-12-0019
-E-JG-12-0020
-E-JG-12-0021
-E-JE-05-0001
-E-JE-21-0005
-E-JB-23-0001
-E-JB-23-0002
-E-JB-07-0010
-E-JB-08-0012
-E-JB-20-0013
-E-JB-12-0016
-E-JB-16-0017
-E-JB-12-0018
-E-JB-12-0019
-E-JB-12-0020
-E-JB-12-0022
-E-JB-13-0023
-E-JB-13-0027
-E-JB-13-0028
-E-JB-14-0030
-E-JB-14-0031
-E-JB-14-0032
-E-JB-14-0033
-E-JB-14-0035
-E-JB-14-0036
-E-JB-14-0037
-E-JB-14-0038
-E-JB-15-0039
-E-JB-15-0040
-E-JB-15-0041
-E-JB-16-0043
-E-JB-16-0044
-E-JB-17-0045
-E-JB-17-0046
-E-JB-17-0047
-E-JB-17-0048
-E-JB-17-0050
-E-JB-17-0051
-E-JB-17-0052
-E-JB-17-0053
-E-JB-17-0054
-E-JB-17-0055
-E-JB-18-0056
-E-JB-19-0058
-E-JB-20-0059
-E-JB-20-0060
-E-JB-21-0061
-E-JB-21-0062
-E-JB-22-0063
-E-JB-22-0064
-E-JB-22-0065
-E-JB-22-0066
-E-JB-23-0067
-E-JB-17-0068
-E-JB-24-0069
-E-JB-24-0070
-E-JC-03-0005
-E-JC-0X-0006
-E-JC-07-0010
-E-JC-08-0011
-E-JC-08-0012
-E-JC-10-0014
-E-JC-11-0015
-E-JC-11-0016
-E-JC-11-0019
-E-JC-11-0020
-E-JC-11-0021
-E-JC-11-0022
-E-JC-11-0023
-E-JC-12-0024
-E-JC-12-0025
-E-JC-12-0026
-E-JC-12-0028
-E-JC-12-0029
-E-JC-14-0030
-E-JC-14-0031
-E-JC-14-0032
-E-JC-14-0033
-E-JC-14-0034
-E-JC-14-0035
-E-JC-15-0037
-E-JC-15-0038
-E-JC-16-0042
-E-JC-16-0044
-E-JC-16-0045
-E-JC-16-0046
-E-JC-16-0047
-E-JC-18-0050
-E-JC-18-0051
-E-JC-20-0052
-E-JC-20-0053
-E-JC-24-0054
-E-JC-24-0055
-E-JG-16-0005
-E-JG-18-0006
-E-JG-21-0007
-E-JG-22-0008
-E-JG-23-0009
-E-JG-23-0010
-E-JG-23-0011
-E-JI-20-0001
-E-CA-11-0005
-E-CA-22-0006
-E-KB-05-0001
-E-KB-05-0002
-E-KB-05-0003
-E-KB-14-0007
-E-KB-17-0008
-E-KB-21-0009
-E-KB-21-0010
-F-AG-10-0007
-F-AG-09-0010
-F-AG-11-0011
-F-AG-21-0012
-E-JH-11-0003
-E-JH-11-0004
-E-JH-11-0005
-E-JH-11-0006
-E-JH-11-0007
-E-JH-11-0008
-E-JH-11-0009
-E-JH-20-0010
-E-JH-20-0011
-E-JH-23-0012
-E-JH-23-0013
-E-JH-20-0001
-E-KB-22-0003
-E-KB-22-0004
-E-MB-11-0005
-E-MB-11-0006
-E-MR-19-0002
-E-BA-03-0002
-F-KB-24-0001
-F-KB-24-0001
-F-KB-24-0001
+{
+    "offscheduledata": [
+        "Special schedule january 2025": [
+            {
+            "id": 31,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-02 00:00:00",
+            "schedule_end": "2025-06-08 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-19 00:00:00",
+            "reschedule_date_1": null,
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": null,
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 31,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-11-0063",
+            "machine_number": "KONTRUKSI ",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "KONTRUKSI ",
+            "mfg_number": "P25000YA0162025",
+            "install_date": "2011",
+            "production_date": "2008",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 13
+            },
+            {
+            "id": 32,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-09 00:00:00",
+            "schedule_end": "2025-06-15 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-06 00:00:00",
+            "reschedule_date_1": "2025-01-26 00:00:00",
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": "reshedule",
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 32,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0065",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449004",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 15
+            },
+            {
+            "id": 33,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-16 00:00:00",
+            "schedule_end": "2025-06-22 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-22 00:00:00",
+            "reschedule_date_1": "2025-01-21 00:00:00",
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": "reshedule",
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 33,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0066",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449036",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 17
+            },
+            {
+            "id": 34,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-23 00:00:00",
+            "schedule_end": "2025-06-29 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-21 00:00:00",
+            "reschedule_date_1": "2025-01-05 00:00:00",
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": "reshedule",
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 34,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0067",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449003",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 19
+            },
+            {
+            "id": 35,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-02 00:00:00",
+            "schedule_end": "2025-06-08 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-30 00:00:00",
+            "reschedule_date_1": null,
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": null,
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 35,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0068",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449002",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 21
+            },
+            {
+            "id": 36,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-09 00:00:00",
+            "schedule_end": "2025-06-15 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-16 00:00:00",
+            "reschedule_date_1": "2025-01-27 00:00:00",
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": "reshedule",
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 36,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0069",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449001",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 23
+            },
+            {
+            "id": 37,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-16 00:00:00",
+            "schedule_end": "2025-06-22 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-13 00:00:00",
+            "reschedule_date_1": "2025-01-20 00:00:00",
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": "reshedule",
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 37,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0070",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449037",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 25
+            },
+            {
+            "id": 38,
+            "name_schedule_month": "Special schedule january 2025",
+            "schedule_collection": "[\"13\", \"15\", \"17\", \"19\", \"21\", \"23\", \"25\", \"27\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:50",
+            "updated_at": "2025-01-21 10:07:00",
+            "schedule_start": "2025-06-23 00:00:00",
+            "schedule_end": "2025-06-29 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-19 00:00:00",
+            "reschedule_date_1": null,
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": null,
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 38,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 10,
+            "invent_number": "E-JA-24-0071",
+            "machine_number": "MOBIL GOLF",
+            "machine_name": "WELDING CO2 MANUAL",
+            "machine_brand": "O T C",
+            "machine_type": "CPXDS-350",
+            "machine_spec": "350 A",
+            "machine_power": "18 KW",
+            "machine_made": "JAPAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "CO311MP11449005",
+            "install_date": "45605",
+            "production_date": "2024",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 4,
+            "schedule_id": 27
+            },
+        ],
+        "Special schedule february 2025"; [
+            {
+            "id": 144,
+            "name_schedule_month": "Special schedule february 2025",
+            "schedule_collection": "[\"48\", \"56\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:51",
+            "updated_at": "2025-01-21 10:07:47",
+            "schedule_start": "2025-10-14 00:00:00",
+            "schedule_end": "2025-10-20 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-12 00:00:00",
+            "reschedule_date_1": null,
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": null,
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 144,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 11,
+            "invent_number": "E-KB-05-0001",
+            "machine_number": "M1",
+            "machine_name": "DRILLING MACHINE",
+            "machine_brand": "HORNG DAR",
+            "machine_type": "HD - 25",
+            "machine_spec": "25 MM",
+            "machine_power": "1,5 KW",
+            "machine_made": "TAIWAN",
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "9309",
+            "install_date": "2005",
+            "production_date": "2005",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 5,
+            "schedule_id": 48
+            },
+            {
+            "id": 148,
+            "name_schedule_month": "Special schedule february 2025",
+            "schedule_collection": "[\"48\", \"56\"]",
+            "schedule_status": 0,
+            "schedule_special": 1,
+            "schedule_create": 1,
+            "schedule_recognize": null,
+            "schedule_agreed": null,
+            "schedule_planner": null,
+            "id_schedule_year": 1,
+            "created_at": "2025-01-21 09:23:51",
+            "updated_at": "2025-01-21 10:07:47",
+            "schedule_start": "2025-10-14 00:00:00",
+            "schedule_end": "2025-10-20 00:00:00",
+            "preventive_cycle": 6,
+            "schedule_date": "2025-01-24 00:00:00",
+            "reschedule_date_1": null,
+            "reschedule_date_2": null,
+            "reschedule_date_3": null,
+            "reschedule_note": null,
+            "schedule_record": null,
+            "machine_schedule_status": 0,
+            "schedule_time_status": null,
+            "machine_id": 148,
+            "yearly_id": 1,
+            "monthly_id": null,
+            "special_id": 11,
+            "invent_number": "E-KB-17-0008",
+            "machine_number": "M5",
+            "machine_name": "DRILLING MACHINE ",
+            "machine_brand": "MORITA",
+            "machine_type": "RF-32",
+            "machine_spec": null,
+            "machine_power": null,
+            "machine_made": null,
+            "machine_status": 1,
+            "machine_info": "PRODUKSI",
+            "mfg_number": "1060451",
+            "install_date": null,
+            "production_date": "2017",
+            "machine_abnormal_status": 0,
+            "machine_problem": null,
+            "machine_action": "0",
+            "property_id": null,
+            "standart_id": 5,
+            "schedule_id": 56
+            }
+        ]
+  ]
+}
