@@ -8,10 +8,10 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- Page Heading -->
-            <h1 class="h3 mb-2 text-gray-800">Table Persetujuan Checklist Mesin</h1>
+            <h1 class="h3 mb-2 text-gray-800">Table Persetujuan Preventive Mesin</h1>
             <div class="card shadow mt-4 mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Hasil Checkpoint Preventive Mesin</h6>
                 </div>
                 <div class="card-body">
                     <div class="col-sm-12 col-md-12">
@@ -41,17 +41,16 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="preventiveTables2" width="100%">
+                        <table class="table table-bordered" id="preventiveTables" width="100%">
                             <thead>
                                 <th>NO.</th>
-                                <th>NAMA MESIN</th>
                                 <th>NO.INVENT</th>
-                                <th>SPEC/TONAGE</th>
+                                <th>NAMA MESIN</th>
                                 <th>NO.MESIN/AREA</th>
-                                <th>STATUS</th>
-                                <th>STATUS PM</th>
-                                <th>SHIFT</th>
                                 <th>WAKTU PM</th>
+                                <th>STATUS DIKOREKSI</th>
+                                <th>STATUS DISETUJUI</th>
+                                <th>STATUS PM</th>
                                 <th>ACTION</th>
                             </thead>
                         </table>
@@ -65,14 +64,14 @@
     </div>
 
     <!-- Approval Modal -->
-    <div class="modal fade" id="approveModal" tabindex="-1">
+    <div class="modal fade" id="acceptModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-                <div class="modal-header" id="modal_title_approve">
+                <div class="modal-header" id="modal_title_accept">
                 </div>
-                <div class="modal-body" id="modal_data_approve">
+                <div class="modal-body" id="modal_data_accept">
                 </div>
-                <div class="modal-footer" id="modal_button_approve">
+                <div class="modal-footer" id="modal_button_accept">
                 </div>
             </div>
         </div>
@@ -152,24 +151,26 @@
             }, 30000); // 30000 milidetik = 30 second
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
-            const table = $('#preventiveTables2').DataTable({
+            const table = $('#preventiveTables').DataTable({
                 ajax: {
-                    url: '{{ route("refreshapproval") }}',
+                    url: '{{ route("refreshpreventive-accept") }}',
                     dataSrc: function(data) {
                         return data.refreshrecord.map((refreshrecord, index) => {
                             return {
                                 number: index + 1,
-                                machine_name: refreshrecord.machine_name,
                                 invent_number: refreshrecord.invent_number,
-                                machine_spec: refreshrecord.machine_spec ?? '-',
+                                machine_name: refreshrecord.machine_name,
                                 machine_number: refreshrecord.machine_number ?? '-',
-                                status: refreshrecord.approve_by ? (refreshrecord.approve_by > 0 ? 'Sudah Disetujui' : 'Belum Disetujui') : 'Belum Disetujui',
+                                schedule_record: new Date(refreshrecord.schedule_record).toLocaleString('en-ID', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: '2-digit'
+                                }),
+                                correct_by: refreshrecord.correct_by,
+                                approve_by: refreshrecord.approve_by,
                                 record_status: refreshrecord.machinerecord_status,
-                                shift: refreshrecord.shift,
-                                getcreatedate: refreshrecord.preventive_date,
-                                schedule_status: refreshrecord.schedule_time_status,
                                 actions: `
-                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#approveModal"><i class="bi bi-pencil-square"></i></button>
+                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>
                                 `
                             };
                         });
@@ -177,39 +178,35 @@
                 },
                 columns: [
                     { data: 'number' },
-                    { data: 'machine_name' },
                     { data: 'invent_number' },
-                    { data: 'machine_spec' },
+                    { data: 'machine_name' },
                     { data: 'machine_number' },
-                    { data: 'status' },
-                    { data: 'record_status', render: function(data) {
-                        if (data === 0) {
-                            return '<span class="badge badge-danger">OPEN</span>';
-                        } else if (data === 1) {
-                            return '<span class="badge badge-success">CLOSE</span>';
+                    { data: 'schedule_record' },
+                    { data: 'correct_by', render: function(data, type, row) {
+                        return data === null ? '<span class="badge badge-danger">Belum Dikoreksi</span>' : '<span class="badge badge-success">Sudah Dikoreksi</span>';
+                    }},
+                    { data: 'approve_by', render: function(data, type, row) {
+                        return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
+                    }},
+                    { data: 'record_status', render: function(data, type, row) {
+                        if (data == 0) {
+                            return '<span class="badge badge-info">Open</span>';
+                        } else if (data == 1) {
+                            return '<span class="badge badge-success">Close</span>';
+                        } else if (data == 2) {
+                            return '<span class="badge badge-warning">Abnormal</span>';
                         }
                     }},
-                    { data: 'shift' },
-                    {
-                        data: 'getcreatedate',
-                        // render: function(data, type, row) {
-                        //     // Cek status dan ubah warna latar belakang jika perlu
-                        //     if (row.schedule_status == false) {
-                        //         return `<span style="color: red;">${formatDate(data)}</span>`;
-                        //     }
-                        //     return formatDate(data);
-                        // }
-                    },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
             });
 
-            $('#approveModal').on('shown.bs.modal', function(event) {
+            $('#acceptModal').on('shown.bs.modal', function(event) {
                 let button = $(event.relatedTarget);
                 let approveId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("readapproval", ':id') }}'.replace(':id', approveId),
+                    url: '{{ route("readpreventive-accept", ':id') }}'.replace(':id', approveId),
                     success: function(data) {
                         let table_modal = '';
                         const operatorActionArray = JSON.parse(data.combineresult[0].operator_action || '[]');
@@ -278,7 +275,7 @@
                                     </div>
                                     <div class="col-6">
                                         <a>WAKTU PREVENTIVE :</a>
-                                        <input class="form-control" value="${new Date(data.usersdata[0].record_date).toLocaleDateString()}" readonly>
+                                        <input class="form-control" value="${formatDate(data.preventivedata[0].record_date)} (${data.preventivedata[0].shift})" readonly>
                                     </div>
                                 </div>
                                 <table class="table table-bordered" id="dataTables" width="100%">
@@ -298,29 +295,57 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.usersdata[0].note || '-'}</textarea>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.preventivedata[0].note || '-'}</textarea>
+                                    <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
+                                    <input type="hidden" id="machine_id" value="${data.preventivedata[0].machine_id}">
                                 </div>
-                                ${data.usersdata[0].machinerecord_status === 0 ? `
-                                        <input type="hidden" id="machine_id" value="${data.machinedata[0].machine_id}">
-                                ` : ''}
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
                                         <thead>
                                             <tr>
-                                                <th>Shift :</th>
                                                 <th>Disetujui oleh :</th>
                                                 <th>Dikoreksi oleh :</th>
                                                 <th colspan="4">Dibuat oleh :</th>
                                             </tr>
                                             <tr>
-                                                <td>${data.usersdata[0].shift}</td>
-                                                <td>${data.usersdata[0].approve_by_name ? data.usersdata[0].approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.usersdata[0].correct_by_name ? data.usersdata[0].correct_by_name : 'Belum dikoreksi'}</td>
+                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
                                                 ${data.usernames.map((get_user_id) => `
                                                     <td>${get_user_id}</td>
                                                 `).join('')}
                                             </tr>
                                         </thead>
+                                    </table>
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered" id="abnormalityTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Masalah :</th>
+                                                <th>Penyebab :</th>
+                                                <th>Tindakan :</th>
+                                                <th>Status :</th>
+                                                <th>Target :</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="problem" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].problem}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="cause" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].cause}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="action" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].action}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="status" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].status}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="target" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].target}</textarea>
+                                                </td>
+                                            </tr>
                                     </table>
                                 </div>
                             </div>
@@ -332,13 +357,13 @@
                             @endcan
                             <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
                         `;
-                        $('#modal_title_approve').html(header_modal);
-                        $('#modal_data_approve').html(data_modal);
-                        $('#modal_button_approve').html(button_modal);
+                        $('#modal_title_accept').html(header_modal);
+                        $('#modal_data_accept').html(data_modal);
+                        $('#modal_button_accept').html(button_modal);
                         mergeCells();
 
                         $('.datepicker').daterangepicker({
-                            parentEl: '#approveModal',
+                            parentEl: '#acceptModal',
                             singleDatePicker: true,
                             showDropdowns: true,
                             minDate: moment().startOf('day'), // Mengatur tanggal minimum ke hari ini
@@ -352,20 +377,31 @@
                         // Save button
                         $('#saveButton').on('click', function(event) {
                             event.preventDefault();
-
                             let note = $('#input_note').val();
+                            let problem = $('#problem').val();
+                            let cause = $('#cause').val();
+                            let action = $('#action').val();
+                            let status = $('#status').val();
+                            let target = $('#target').val();
+                            let recordId = $('#record_id').val();
                             let machineId = $('#machine_id').val();
-                            let approvedBy = '{{ Auth::user()->id }}';
+                            let acceptBy = '{{ Auth::user()->id }}';
 
                             if (confirm("Apakah yakin mengapprove preventive ini?")) {
                                 $.ajax({
                                     type: 'PUT',
-                                    url: '{{ route("insertapproval", ':id') }}'.replace(':id', approveId),
+                                    url: '{{ route("editpreventive-accept", ':id') }}'.replace(':id', approveId),
                                     data: {
                                         '_token': '{{ csrf_token() }}', // Include the CSRF token
-                                        'approve_by': approvedBy,
                                         'note': note,
-                                        'machine_id': machineId
+                                        'problem': problem,
+                                        'cause': cause,
+                                        'action': action,
+                                        'status': status,
+                                        'target': target,
+                                        'record_id': recordId,
+                                        'machine_id': machineId,
+                                        'accept_by': acceptBy,
                                     },
                                     success: function(response) {
                                         if (response.success) {
@@ -375,7 +411,7 @@
                                         }
                                         setTimeout(function() {
                                             $('#successModal').modal('hide');
-                                            $('#approveModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
                                         }, 2000);
                                     },
                                     error: function(xhr, status, error) {
@@ -386,7 +422,7 @@
                                         }
                                         setTimeout(function() {
                                             $('#warningModal').modal('hide');
-                                            $('#approveModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
                                         }, 2000);
                                     }
                                 }).always(function() {
@@ -414,7 +450,7 @@
                                         }
                                         setTimeout(function() {
                                             $('#successModal').modal('hide');
-                                            $('#approveModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
                                         }, 2000);
                                     },
                                     error: function(xhr, status, error) {
@@ -425,7 +461,7 @@
                                         }
                                         setTimeout(function() {
                                             $('#warningModal').modal('hide');
-                                            $('#approveModal').modal('hide');
+                                            $('#acceptModal').modal('hide');
                                         }, 2000);
                                     }
                                 }).always(function() {

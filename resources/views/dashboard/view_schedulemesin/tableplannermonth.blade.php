@@ -195,7 +195,7 @@
                 success: function(data) {
 
                     function selectCheckbox() {
-                        const table = document.getElementById("dataTables");
+                        const table = document.getElementById("plannerTables");
                         const rows = table.querySelectorAll("tbody tr");
 
                         rows.forEach((row) => {
@@ -249,7 +249,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered" id="dataTables">
+                        <table class="table table-bordered" id="plannerTables">
                             <thead>
                                 <tr>
                                     <th>NO.</th>
@@ -259,6 +259,7 @@
                                     <th>BRAND/MERK</th>
                                     <th>NO.MESIN/AREA</th>
                                     <th>DURASI</th>
+                                    <th>JAM PM</th>
                                     <th>SCHEDULE PM</th>
                                     <th colspan="2">ACTION</th>
                                     <th>KETERSEDIAAN</th>
@@ -278,6 +279,10 @@
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
                                             <td>${machineHour} /Jam</td>
+                                            <td>
+                                                <input type="hidden" class="form-control" name="schedule_id" value="${schedule.schedule_id}">
+                                                <input type="time" class="form-control" name="schedule_hour" id="schedule_hour_${schedule.schedule_id}">
+                                            </td>
                                             <td>${formatDate(schedule.schedule_date)}</td>
                                             <td>
                                                 <div id="option_${schedule.schedule_id}">
@@ -308,7 +313,7 @@
                     $('#modal_title_planner').html(header_modal);
                     $('#modal_data_planner').html(data_modal);
                     $('#modal_button_planner').html(button_modal);
-                    selectCheckbox()
+                    selectCheckbox();
 
                     $('.datepicker').each(function() {
                         const scheduleDate = $(this).data('schedule-date'); // Ambil tanggal dari data attribute
@@ -340,16 +345,33 @@
 
 
                     $('#saveButton').on('click', function() {
-                        let machineReschedule = [];
                         let plannedBy = '{{ Auth::user()->id }}';
-                        const selectedCheckboxes = $('input[type="checkbox"][value="tidak"]:checked');
+                        let rescheduleId = [];
+                        let rescheduleHour = [];
+                        let rescheduleValue = [];
+                        let rescheduleNote = [];
 
-                        selectedCheckboxes.each(function() {
-                            const row = $(this).closest('tr');
-                            const scheduleId = row.find('input[name="machine_reschedule"]').attr('id').replace('datepicker-', '');
-                            const rescheduleValue = row.find('input[name="machine_reschedule"]').val();
-                            const rescheduleNote = row.find('input[name="reschedule_note"]').val();
-                            machineReschedule.push({ schedule_id: scheduleId, reschedule_value: rescheduleValue, reschedule_note: rescheduleNote });
+                        $('input[name="schedule_id"]').each(function() {
+                            rescheduleId.push($(this).val());
+                        });
+                        $('input[name="schedule_hour"]').each(function() {
+                            rescheduleHour.push($(this).val());
+                        });
+
+                        // Periksa setiap baris untuk mendapatkan nilai checkbox dan catatan
+                        $('#plannerTables tbody tr').each(function() {
+                            const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
+                            const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
+                            const isCheckedIya = $(this).find('input[type="checkbox"][value="iya"]').is(':checked');
+                            const isCheckedTidak = $(this).find('input[type="checkbox"][value="tidak"]').is(':checked');
+
+                            if (isCheckedTidak) {
+                                rescheduleValue.push(machineRescheduleInput.val());
+                                rescheduleNote.push(rescheduleNoteInput.val());
+                            } else {
+                                rescheduleValue.push(null);
+                                rescheduleNote.push(null);
+                            }
                         });
 
                         if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
@@ -359,7 +381,10 @@
                                 data: {
                                     '_token': '{{ csrf_token() }}',
                                     'planned_by': plannedBy,
-                                    'machine_reschedule': machineReschedule
+                                    'reschedule_id': rescheduleId,
+                                    'reschedule_hour': rescheduleHour,
+                                    'reschedule_value': rescheduleValue,
+                                    'reschedule_note': rescheduleNote
                                 },
                                 success: function(response) {
                                     if (response.success) {
@@ -407,7 +432,7 @@
                 success: function(data) {
 
                     function selectCheckbox() {
-                        const table = document.getElementById("dataTables");
+                        const table = document.getElementById("plannerTables");
                         const rows = table.querySelectorAll("tbody tr");
 
                         rows.forEach((row) => {
@@ -447,7 +472,7 @@
                     }
 
                     function updateReadonlyState() {
-                        const rows = document.querySelectorAll("#dataTables tbody tr");
+                        const rows = document.querySelectorAll("#plannerTables tbody tr");
                         rows.forEach((row) => {
                             const checkboxTidak = row.querySelector('input[type="checkbox"][value="tidak"]');
                             const machineRescheduleInput = row.querySelector('input[name="machine_reschedule"]');
@@ -477,7 +502,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered" id="dataTables">
+                        <table class="table table-bordered" id="plannerTables">
                             <thead>
                                 <tr>
                                     <th>NO.</th>
@@ -487,6 +512,7 @@
                                     <th>BRAND/MERK</th>
                                     <th>NO.MESIN/AREA</th>
                                     <th>DURASI</th>
+                                    <th>JAM PM</th>
                                     <th>SCHEDULE PM</th>
                                     <th colspan="2">ACTION</th>
                                     <th>KETERSEDIAAN</th>
@@ -526,6 +552,10 @@
                                             <td>${schedule.machine_brand || '-'}</td>
                                             <td>${schedule.machine_number || '-'}</td>
                                             <td>${machineHour} Jam</td>
+                                            <td>
+                                                <input type="hidden" class="form-control" name="schedule_id" value="${schedule.schedule_id}">
+                                                <input type="time" class="form-control" name="schedule_hour" id="schedule_hour_${schedule.schedule_id}" value="${schedule.schedule_hour}">
+                                            </td>
                                             <td>${reschedulePM}</td>
                                             <td>
                                                 <div id="option_${schedule.schedule_id}">
@@ -557,7 +587,7 @@
                     $('#modal_data_planner_edit').html(data_modal);
                     $('#modal_button_planner_edit').html(button_modal);
                     updateReadonlyState();
-                    selectCheckbox()
+                    selectCheckbox();
 
                     $('.datepicker').each(function() {
                         const scheduleDate = $(this).data('schedule-date'); // Ambil tanggal dari data attribute
@@ -587,18 +617,34 @@
                         }
                     });
 
-
                     $('#saveButton').on('click', function() {
-                        let machineReschedule = [];
-                        let plannerBy = '{{ Auth::user()->id }}';
-                        const selectedCheckboxes = $('input[type="checkbox"][value="tidak"]:checked');
+                        let plannedBy = '{{ Auth::user()->id }}';
+                        let rescheduleId = [];
+                        let rescheduleHour = [];
+                        let rescheduleValue = [];
+                        let rescheduleNote = [];
 
-                        selectedCheckboxes.each(function() {
-                            const row = $(this).closest('tr');
-                            const scheduleId = row.find('input[name="machine_reschedule"]').attr('id').replace('datepicker-', '');
-                            const rescheduleValue = row.find('input[name="machine_reschedule"]').val();
-                            const rescheduleNote = row.find('input[name="reschedule_note"]').val();
-                            machineReschedule.push({ schedule_id: scheduleId, reschedule_value: rescheduleValue, reschedule_note: rescheduleNote });
+                        $('input[name="schedule_id"]').each(function() {
+                            rescheduleId.push($(this).val());
+                        });
+                        $('input[name="schedule_hour"]').each(function() {
+                            rescheduleHour.push($(this).val());
+                        });
+
+                        // Periksa setiap baris untuk mendapatkan nilai checkbox dan catatan
+                        $('#plannerTables tbody tr').each(function() {
+                            const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
+                            const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
+                            const isCheckedIya = $(this).find('input[type="checkbox"][value="iya"]').is(':checked');
+                            const isCheckedTidak = $(this).find('input[type="checkbox"][value="tidak"]').is(':checked');
+
+                            if (isCheckedTidak) {
+                                rescheduleValue.push(machineRescheduleInput.val());
+                                rescheduleNote.push(rescheduleNoteInput.val());
+                            } else {
+                                rescheduleValue.push(null);
+                                rescheduleNote.push(null);
+                            }
                         });
 
                         if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
@@ -607,8 +653,11 @@
                                 url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
                                 data: {
                                     '_token': '{{ csrf_token() }}',
-                                    'planned_by': plannerBy,
-                                    'machine_reschedule': machineReschedule
+                                    'planned_by': plannedBy,
+                                    'reschedule_id': rescheduleId,
+                                    'reschedule_hour': rescheduleHour,
+                                    'reschedule_value': rescheduleValue,
+                                    'reschedule_note': rescheduleNote
                                 },
                                 success: function(response) {
                                     if (response.success) {

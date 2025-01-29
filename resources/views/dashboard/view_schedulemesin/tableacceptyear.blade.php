@@ -167,7 +167,7 @@
         // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
         const table = $('#scheduleTables').DataTable({
             ajax: {
-                url: '{{ route("refreshyear") }}',
+                url: '{{ route("refreshyear-accept") }}',
                 dataSrc: function(data) {
                     return data.refreshschedule.map((refreshschedule, index) => {
                         return {

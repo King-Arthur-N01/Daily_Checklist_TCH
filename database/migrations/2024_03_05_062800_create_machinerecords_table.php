@@ -18,12 +18,15 @@ class CreateMachinerecordsTable extends Migration
             $table->string('shift')->nullable();
             $table->string('note')->nullable();
             $table->string('problem')->nullable();
-            $table->string('analysis')->nullable();
+            $table->string('cause')->nullable();
             $table->string('action')->nullable();
+            $table->string('status')->nullable();
+            $table->string('target')->nullable();
             $table->json('create_by')->nullable();
             $table->unsignedBigInteger('correct_by')->nullable();
             $table->unsignedBigInteger('approve_by')->nullable();
             $table->unsignedBigInteger('machine_id')->nullable();
+            $table->unsignedBigInteger('machine_schedule_id')->nullable();
             $table->json('operator_action');
             $table->json('result');
             $table->integer('machinerecord_status')->default(0);

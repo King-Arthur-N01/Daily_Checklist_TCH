@@ -212,10 +212,6 @@
                 });
             }, 60000); // 60000 milidetik = 60 second
 
-            let nameScheduleYear = "";
-            let nameScheduleMonth = "";
-            let combinedMachineId = [];
-
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#scheduleTables').DataTable({
                 ajax: {
@@ -269,10 +265,10 @@
                     { data: 'name_schedule' },
                     { data: 'id_machine' },
                     { data: 'status_1', render: function(data, type, row) {
-                        return data === null ? '<span class="badge badge-danger">BELUM DIKETAHUI</span>' : '<span class="badge badge-success">SUDAH DIKETAHUI</span>';
+                        return data === null ? '<span class="badge badge-danger">Belum Diketahui</span>' : '<span class="badge badge-success">Sudah Diketahui</span>';
                     }},
                     { data: 'status_2', render: function(data, type, row) {
-                        return data === null ? '<span class="badge badge-danger">BELUM DISETUJUI</span>' : '<span class="badge badge-success">SUDAH DISETUJUI</span>';
+                        return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
                     }},
                     { data: 'created_at' },
                     { data: 'actions', orderable: false, searchable: false }
@@ -300,7 +296,7 @@
                                 tableRows = `
                                     <tr>
                                         <td colspan="5">
-                                            <h5 style="text-align: center;">ERROR DATA PERBULAN TIDAK DITEMUKAN!</h5>
+                                            <h5 style="text-align: center;">Data perbulan tidak ditemukan !!!!</h5>
                                         </td>
                                     </tr>
                                 `;
@@ -482,22 +478,22 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
 
-                        combinedMachineId = [];
-                        nameScheduleYear = "";
-                        limitScheduleYear = "";
+                        let combinedAddMachineId = [];
+                        let yearlyNameData = "";
+                        let yearlyLimitData = "";
 
                         // Check if previous selections exist in sessionStorage
                         let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
 
                         function updateSelectedMachines() {
-                            combinedMachineId = [];
+                            sessionStorage.removeItem('tempData');
                             let checkboxes = document.getElementsByName("machineinput");
                             checkboxes.forEach(checkbox => {
                                 if (checkbox.checked) {
-                                    combinedMachineId.push(checkbox.value);
+                                    combinedAddMachineId.push(checkbox.value);
                                 }
                             });
-                            sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                            sessionStorage.setItem('tempData', JSON.stringify(combinedAddMachineId));
                         }
 
                         function selectDateRange() {
@@ -506,11 +502,19 @@
                                 showDropdowns: true,
                                 locale: {
                                     firstDay: 1,
-                                    format: 'DD-MM-YYYY'
+                                    format: 'DD-MM-YYYY' // Format tanggal
                                 },
                                 maxSpan: {
-                                    days: 6
+                                    days: 6 // Maksimal rentang tanggal
                                 },
+                            }).on('apply.daterangepicker', function(ev, picker) {
+                                // Ketika tanggal dipilih, tambahkan kelas "is-valid"
+                                $(this).removeClass('is-invalid');
+                                $(this).addClass('is-valid');
+                            }).on('cancel.daterangepicker', function(ev, picker) {
+                                // Jika tanggal dibatalkan, hapus kelas "is-valid"
+                                $(this).removeClass('is-valid');
+                                $(this).addClass('is-invalid');
                             });
                         }
 
@@ -520,6 +524,12 @@
 
                             const startYear = currentYear - 5;
                             const endYear = currentYear + 5;
+
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = "";
+                            defaultOption.textContent = 'Pilih tahun :';
+                            defaultOption.selected = true;
+                            yearDropdown.appendChild(defaultOption);
 
                             for (let year = startYear; year <= endYear; year++) {
                                 const option = document.createElement('option');
@@ -663,12 +673,12 @@
 
                             let inputSchedule = document.getElementById("name_schedule_year");
                             inputSchedule.addEventListener('input', function() {
-                                nameScheduleYear = inputSchedule.value;
+                                yearlyNameData = inputSchedule.value;
                             });
 
                             let limitSchedule = document.getElementById("year_dropdown");
                             limitSchedule.addEventListener('change', function() {
-                                limitScheduleYear = limitSchedule.value;
+                                yearlyLimitData = limitSchedule.value;
                             });
 
 
@@ -687,15 +697,35 @@
                         // Display the selected machines in the second modal (confirmation menu)
                         function renderSecondMenu() {
                             const selectedMachines = data.refreshmachine.filter(machine =>
-                                combinedMachineId.includes(machine.id.toString())
+                                combinedAddMachineId.includes(machine.id.toString())
                             );
 
                             let tableRows2 = `
                                 <h5>SAAT PEMBUATAN JADWAL PREVENTIVE MAKA JADWAL BULAN BERIKUT NYA AKAN SAMA DENGAN HARI SAAT DITENTUKAN</h5>
+                                <div class="row" align-items="center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p class="mg-b-10">Filter Nomor Invent </p>
+                                            <input class="form-control" id="get_by_number">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p class="mg-b-10">Filter Nama Mesin</p>
+                                            <input class="form-control" id="get_by_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p class="mg-b-10">Filter No.Mesin/Lokasi</p>
+                                            <input class="form-control" id="get_by_info">
+                                        </div>
+                                    </div>
+                                </div>
                                 <form id="addSchedule" method="post">
-                                    <input type="hidden" name="name_schedule_year" value="${nameScheduleYear}">
-                                    <input type="hidden" name="limit_schedule_year" value="${limitScheduleYear}">
-                                    <table class="table table-bordered" id="machineTables2" width="100%">
+                                    <input type="hidden" name="name_schedule_year" value="${yearlyNameData}">
+                                    <input type="hidden" name="limit_schedule_year" value="${yearlyLimitData}">
+                                    <table class="table table-bordered" id="addYearlyTable" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>NO.</th>
@@ -720,13 +750,13 @@
                                                     <td>${machine.machine_brand || '-'}</td>
                                                     <td>${machine.machine_number || '-'}</td>
                                                     <td>
-                                                        <input class="form-control daterange-picker" type="text" name="schedule_time">
+                                                        <input class="form-control daterange-picker is-invalid" type="text" name="schedule_time" oninput="validateInput(this)">
                                                         <input type="hidden" name="machine_id_year" value="${machine.id}">
                                                     </td>
                                                     <td>
                                                         <select class="form-control" name="preventive_cycle">
                                                             <option value="3">3/Bulanan</option>
-                                                            <option value="6">6/Bulanan</option>
+                                                            <option value="6" selected>6/Bulanan</option>
                                                             <option value="12">12/Bulanan</option>
                                                         </select>
                                                     </td>
@@ -764,6 +794,7 @@
                                 document.getElementById("addYearlyButton").addEventListener('click', function() {
                                     addYearlySchedule();
                                 });
+                                filterTable();
                             }
                         }
 
@@ -778,10 +809,10 @@
 
                         document.getElementById("modal_button_add").addEventListener('click', function(event) {
                             if (event.target.id === "nextButton") {
-                                if (nameScheduleYear === "") {
-                                    alert("Harap masukan nama untuk jadwal.!!!");
+                                if (yearlyNameData === "" || yearlyLimitData === "") {
+                                    alert("Nama schedule atau tahun schedule tidak boleh kosong.!!!");
                                 } else {
-                                    changeMenu(2, nameScheduleYear, limitScheduleYear);
+                                    changeMenu(2, yearlyNameData, yearlyLimitData);
                                     selectDateRange();
                                 }
                             }
@@ -874,7 +905,7 @@
                 const scheduleId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("findscheduleid", ':id') }}'.replace(':id', scheduleId),
+                    url: '{{ route("findyearid", ':id') }}'.replace(':id', scheduleId),
                     success: function(data) {
 
                         const header_modal = `
@@ -882,23 +913,24 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
 
-                        let combinedMachineId = [];
-                        let nameScheduleYear = "";
-                        let limitScheduleYear = "";
+                        let combinedEditMachineId = [];
+                        let yearlyNameEditData = "";
+                        let yearlyLimitEditData = "";
 
                         // Check if previous selections exist in sessionStorage
                         let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
 
                         // Function to update selected machines
                         function updateSelectedMachines() {
-                            combinedMachineId = [];
+                            sessionStorage.removeItem('tempData');
+                            combinedEditMachineId = [];
                             let checkboxes = document.getElementsByName("machineinput");
                             checkboxes.forEach(checkbox => {
                                 if (checkbox.checked) {
-                                    combinedMachineId.push(checkbox.value);
+                                    combinedEditMachineId.push(checkbox.value);
                                 }
                             });
-                            sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                            sessionStorage.setItem('tempData', JSON.stringify(combinedEditMachineId));
                         }
 
                         // Function to initialize date range picker with dynamic values
@@ -915,7 +947,22 @@
                                 maxSpan: {
                                     days: 6
                                 }
+                            }).on('apply.daterangepicker', function(ev, picker) {
+                                // Ketika tanggal dipilih, tambahkan kelas "is-valid"
+                                $(this).removeClass('is-invalid');
+                                $(this).addClass('is-valid');
+                            }).on('cancel.daterangepicker', function(ev, picker) {
+                                // Jika tanggal dibatalkan, hapus kelas "is-valid"
+                                $(this).removeClass('is-valid');
+                                $(this).addClass('is-invalid');
                             });
+
+                            // Validasi awal
+                            if (startDate == undefined || endDate == undefined) {
+                                $(inputSelector).addClass('is-invalid');
+                            } else {
+                                $(inputSelector).removeClass('is-invalid');
+                            }
                         }
 
                         function dropdownYear() {
@@ -923,6 +970,11 @@
                             const currentYear = new Date().getFullYear();
                             const startYear = currentYear - 5;
                             const endYear = currentYear + 5;
+
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = "";
+                            defaultOption.textContent = 'Pilih tahun :';
+                            yearDropdown.appendChild(defaultOption);
 
                             for (let year = startYear; year <= endYear; year++) {
                                 const option = document.createElement('option');
@@ -933,8 +985,8 @@
                                 }
                                 yearDropdown.appendChild(option);
                             }
-                            // Tetapkan nilai awal ke limitScheduleYear
-                            limitScheduleYear = yearDropdown.value;
+                            // Tetapkan nilai awal ke yearlyLimitEditData
+                            yearlyLimitEditData = yearDropdown.value;
                         }
 
 
@@ -1017,7 +1069,6 @@
                                             <thead>
                                                 <th>NO.</th>
                                                 <th>NO.INVENT</th>
-
                                                 <th>NAMA MESIN</th>
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
@@ -1070,22 +1121,22 @@
                             document.getElementById("modal_data_edit").innerHTML = tableRows1;
 
                             let inputSchedule = document.getElementById("name_schedule_year_edit");
-                            nameScheduleYear = inputSchedule.value;
+                            yearlyNameEditData = inputSchedule.value;
                             inputSchedule.addEventListener('input', function() {
-                                nameScheduleYear = inputSchedule.value;
+                                yearlyNameEditData = inputSchedule.value;
                             });
 
                             let limitSchedule = document.getElementById("year_dropdown");
-                            limitScheduleYear = limitSchedule.value;
+                            yearlyLimitEditData = limitSchedule.value;
                             limitSchedule.addEventListener('change', function() {
-                                limitScheduleYear = limitSchedule.value;
+                                yearlyLimitEditData = limitSchedule.value;
                             });
 
-                            combinedMachineId = [];
+                            combinedEditMachineId = [];
                             let checkboxes = document.getElementsByName("machineinput");
                             checkboxes.forEach(checkbox => {
                                 if (checkbox.checked) {
-                                    combinedMachineId.push(checkbox.value);
+                                    combinedEditMachineId.push(checkbox.value);
                                 }
                                 $('#modal_data_edit').off('change', "input[name='machineinput']").on('change', "input[name='machineinput']", updateSelectedMachines);
                             });
@@ -1098,21 +1149,41 @@
                                 updateSelectedMachines();
                             });
                             updateSelectedMachines();
-                            sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                            sessionStorage.setItem('tempData', JSON.stringify(combinedEditMachineId));
                         }
 
                         // Function to render the second menu with dynamic date ranges
                         function renderSecondMenu() {
                             const selectedMachines = data.refreshmachine.filter(machine =>
-                                combinedMachineId.includes(machine.id.toString())
+                                combinedEditMachineId.includes(machine.id.toString())
                             );
 
                             let tableRows2 = `
                                 <h5>SAAT PEMBUATAN JADWAL PREVENTIVE MAKA JADWAL BULAN BERIKUT NYA AKAN SAMA DENGAN HARI SAAT DITENTUKAN</h5>
+                                <div class="row" align-items="center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p class="mg-b-10">Filter Nomor Invent </p>
+                                            <input class="form-control" id="get_by_number">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p class="mg-b-10">Filter Nama Mesin</p>
+                                            <input class="form-control" id="get_by_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p class="mg-b-10">Filter No.Mesin/Lokasi</p>
+                                            <input class="form-control" id="get_by_info">
+                                        </div>
+                                    </div>
+                                </div>
                                 <form id="addSchedule" method="post">
-                                    <input type="hidden" name="name_schedule_year_edit" value="${nameScheduleYear}">
-                                    <input type="hidden" name="limit_schedule_year_edit" value="${limitScheduleYear}">
-                                    <table class="table table-bordered" id="machineTables2" width="100%">
+                                    <input type="hidden" name="name_schedule_year_edit" value="${yearlyNameEditData}">
+                                    <input type="hidden" name="limit_schedule_year_edit" value="${yearlyLimitEditData}">
+                                    <table class="table table-bordered" id="editYearlyTable" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>NO.</th>
@@ -1131,10 +1202,20 @@
                                             const machineSchedule = data.refreshschedule.find(
                                                 (schedule) => schedule.machine_id === machine.id
                                             );
-                                            let startDate = machineSchedule ? moment(machineSchedule.schedule_start).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY');
-                                            let endDate = machineSchedule ? moment(machineSchedule.schedule_end).format('DD-MM-YYYY') : moment().add(6, 'days').format('DD-MM-YYYY');
-                                            let preventiveCycleValue = machineSchedule && machineSchedule.preventive_cycle !== undefined ? machineSchedule.preventive_cycle : '';
+                                            let currentTime = new Date();
+                                            let startDate = null;
+                                            let endDate = null;
+                                            let preventiveCycleValue = null;
 
+                                            if (machineSchedule == undefined) {
+                                                startDate = undefined;
+                                                endDate = undefined;
+                                                preventiveCycleValue = undefined;
+                                            } else {
+                                                startDate = machineSchedule ? moment(machineSchedule.schedule_start).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY');
+                                                endDate = machineSchedule ? moment(machineSchedule.schedule_end).format('DD-MM-YYYY') : moment().add(6, 'days').format('DD-MM-YYYY');
+                                                preventiveCycleValue = machineSchedule && machineSchedule.preventive_cycle !== undefined ? machineSchedule.preventive_cycle : '';
+                                            }
                                             tableRows2 += `
                                                 <tr>
                                                     <td>${index + 1}</td>
@@ -1190,6 +1271,7 @@
                                 document.getElementById("editYearlyButton").addEventListener('click', function() {
                                     editYearlySchedule(scheduleId);
                                 });
+                                filterTable();
                             }
                         }
 
@@ -1200,10 +1282,10 @@
                             if (event.target.id === "previousButton") {
                                 changeMenu(1);
                             } else if (event.target.id === "nextButton") {
-                                if (nameScheduleYear === "") {
-                                    alert("Harap masukan nama untuk jadwal.!!!");
+                                if (yearlyNameEditData === "" || yearlyLimitEditData === "") {
+                                    alert("Nama schedule atau tahun schedule tidak boleh kosong.!!!");
                                 } else {
-                                    changeMenu(2, nameScheduleYear, limitScheduleYear);
+                                    changeMenu(2, yearlyNameEditData, yearlyLimitEditData);
                                     selectDateRange();
                                 }
                             }
@@ -1336,22 +1418,22 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
 
-                        combinedScheduleId = [];
-                        nameScheduleSpecial = "";
-                        let idSchedule = '';
+                        let combinedSpecialScheduleId = [];
+                        let monthlyNameSpecialData = "";
 
                         // Check if previous selections exist in sessionStorage
                         let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
 
                         function updateSelectedMachines() {
-                            combinedScheduleId = [];
+                            sessionStorage.removeItem('tempData');
+                            combinedSpecialScheduleId = [];
                             let checkboxes = document.getElementsByName("machineinput");
                             checkboxes.forEach(checkbox => {
                                 if (checkbox.checked) {
-                                    combinedScheduleId.push(checkbox.value);
+                                    combinedSpecialScheduleId.push(checkbox.value);
                                 }
                             });
-                            sessionStorage.setItem('tempData', JSON.stringify(combinedScheduleId));
+                            sessionStorage.setItem('tempData', JSON.stringify(combinedSpecialScheduleId));
                         }
 
                         function selectSingleDate(inputElement) {
@@ -1363,6 +1445,14 @@
                                     firstDay: 1,
                                     format: 'DD-MM-YYYY'
                                 }
+                            }).on('apply.daterangepicker', function(ev, picker) {
+                                // Ketika tanggal dipilih, tambahkan kelas "is-valid"
+                                $(this).removeClass('is-invalid');
+                                $(this).addClass('is-valid');
+                            }).on('cancel.daterangepicker', function(ev, picker) {
+                                // Jika tanggal dibatalkan, hapus kelas "is-valid"
+                                $(this).removeClass('is-valid');
+                                $(this).addClass('is-invalid');
                             });
                         }
 
@@ -1382,16 +1472,18 @@
                                 for (let i = 1; i < rows.length; i++) {
                                     const numberCell = rows[i].getElementsByTagName('td')[1];
                                     const nameCell = rows[i].getElementsByTagName('td')[2];
-                                    const monthCell = rows[i].getElementsByTagName('td')[7];
+                                    const startDate = rows[i].getElementsByTagName('td')[7];
+                                    const endDate = rows[i].getElementsByTagName('td')[8];
 
                                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                                    const monthText = monthCell ? monthCell.textContent.toLowerCase() : '';
+                                    const startText = startDate ? startDate.textContent.toLowerCase() : '';
+                                    const endText = endDate ? endDate.textContent.toLowerCase() : '';
 
                                     // Check if row matches the filter criteria
                                     if (nameText.includes(nameValue) &&
                                         numberText.includes(numberValue) &&
-                                        (monthValue === "select :" || monthText.includes(monthValue))) {
+                                        (monthValue === "select :" || startText.includes(monthValue) || endText.includes(monthValue))) {
                                         rows[i].style.display = '';  // Show the row
                                     } else {
                                         rows[i].style.display = 'none';  // Hide the row
@@ -1432,7 +1524,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <p class="mg-b-10"Filter >Waktu Preventive</p>
+                                            <p class="mg-b-10">Filter Waktu Preventive</p>
                                             <select class="form-control" id="get_by_month">
                                                 <option value="">Pilih bulan...</option>
                                                 <option value="January">Januari</option>
@@ -1455,13 +1547,12 @@
                                             <thead>
                                                 <th>NO.</th>
                                                 <th>NO.INVENT</th>
-                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>NAMA MESIN</th>
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
+                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>DURASI</th>
-                                                <th>RENTANG WAKTU PREVENTIVE</th>
-                                                <th>RENTANG WAKTU PREVENTIVE</th>
+                                                <th colspan="2">RENTANG WAKTU PREVENTIVE</th>
                                                 <th>STATUS</th>
                                                 <th>ADD</th>
                                             </thead>
@@ -1486,10 +1577,10 @@
                                                     <tr>
                                                         <td>${index + 1}</td>
                                                         <td>${machineSchedule.invent_number}</td>
-                                                        <td>${machineSchedule.machine_number || '-'}</td>
                                                         <td>${machineSchedule.machine_name}</td>
                                                         <td>${machineSchedule.machine_type || '-'}</td>
                                                         <td>${machineSchedule.machine_brand || '-'}</td>
+                                                        <td>${machineSchedule.machine_number || '-'}</td>
                                                         <td>${machineHour} /Jam</td>
                                                         <td>${formatDate(machineSchedule.schedule_start)}</td>
                                                         <td>${formatDate(machineSchedule.schedule_end)}</td>
@@ -1509,7 +1600,7 @@
 
                             let inputSchedule = document.getElementById("name_schedule_month");
                             inputSchedule.addEventListener('input', function() {
-                                nameScheduleSpecial = inputSchedule.value;
+                                monthlyNameSpecialData = inputSchedule.value;
                             });
 
                             // Re-add event listeners for new checkboxes
@@ -1520,12 +1611,12 @@
                         // Display the selected machines in the second modal (confirmation menu)
                         function renderSecondMenu() {
                             const selectedMachines = data.specialscheduledata.filter(machine =>
-                                combinedScheduleId.includes(machine.machinescheduleid.toString())
+                                combinedSpecialScheduleId.includes(machine.machinescheduleid.toString())
                             );
 
                             let tableRows2 = `
                                 <form id="addSchedule" method="post">
-                                    <input type="hidden" name="name_special_schedule" value="${nameScheduleSpecial}">
+                                    <input type="hidden" name="name_special_schedule" value="${monthlyNameSpecialData}">
                                     <input type="hidden" name="id_special_schedule_year" value="${selectedMachines[0].yearly_id}">
                                     <input type="hidden" name="user_special_schedule" value="{{ Auth::user()->id }}">
                                     <table class="table table-bordered" id="addSpecialTables2" width="100%">
@@ -1558,7 +1649,7 @@
                                                                     <i class="bi bi-calendar3"></i>
                                                                 </div>
                                                             </div>
-                                                            <input name="special_schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.machinescheduleid}">
+                                                            <input class="form-control datepicker is-invalid" name="special_schedule_date" type="text"  id="datepicker-${machine.machinescheduleid}">
                                                             <input type="hidden" name="machine_special_schedule_id" value="${machine.machinescheduleid}">
                                                         </div>
                                                     </td>
@@ -1614,12 +1705,12 @@
 
                         document.getElementById("modal_button_special").addEventListener('click', function(event) {
                             if (event.target.id === "nextButton") {
-                                if (nameScheduleSpecial === "") {
+                                if (monthlyNameSpecialData === "") {
                                     alert("Harap masukan nama untuk jadwal.!!!");
                                 } else {
-                                    changeMenu(2, nameScheduleSpecial, idSchedule);
+                                    changeMenu(2, monthlyNameSpecialData, combinedSpecialScheduleId);
                                     selectSingleDate();
-                                    console.log(combinedScheduleId);
+                                    console.log(combinedSpecialScheduleId);
                                 }
                             }
                         });
@@ -1629,7 +1720,6 @@
                     }
                 });
             });
-
 
             // FUNGSI UNTUK SAVE BUTTON SPECIAL SCHEDULE DAN MENGIRIM REQUEST AJAX
             function addSpecialSchedule() {
@@ -1708,22 +1798,22 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
 
-                        combinedScheduleId = [];
-                        nameScheduleMonth = "";
-                        let idSchedule = '';
+                        let combinedAddScheduleId = [];
+                        let monthlyNameAddData = "";
 
                         // Check if previous selections exist in sessionStorage
                         let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
 
                         function updateSelectedMachines() {
-                            combinedScheduleId = [];
+                            sessionStorage.removeItem('tempData');
+                            combinedAddScheduleId = [];
                             let checkboxes = document.getElementsByName("machineinput");
                             checkboxes.forEach(checkbox => {
                                 if (checkbox.checked) {
-                                    combinedScheduleId.push(checkbox.value);
+                                    combinedAddScheduleId.push(checkbox.value);
                                 }
                             });
-                            sessionStorage.setItem('tempData', JSON.stringify(combinedScheduleId));
+                            sessionStorage.setItem('tempData', JSON.stringify(combinedAddScheduleId));
                         }
 
                         function selectSingleDate(inputElement, minDate, maxDate) {
@@ -1737,6 +1827,14 @@
                                     firstDay: 1,
                                     format: 'DD-MM-YYYY'
                                 }
+                            }).on('apply.daterangepicker', function(ev, picker) {
+                                // Ketika tanggal dipilih, tambahkan kelas "is-valid"
+                                $(this).removeClass('is-invalid');
+                                $(this).addClass('is-valid');
+                            }).on('cancel.daterangepicker', function(ev, picker) {
+                                // Jika tanggal dibatalkan, hapus kelas "is-valid"
+                                $(this).removeClass('is-valid');
+                                $(this).addClass('is-invalid');
                             });
                         }
 
@@ -1756,16 +1854,18 @@
                                 for (let i = 1; i < rows.length; i++) {
                                     const numberCell = rows[i].getElementsByTagName('td')[1];
                                     const nameCell = rows[i].getElementsByTagName('td')[2];
-                                    const monthCell = rows[i].getElementsByTagName('td')[7];
+                                    const startDate = rows[i].getElementsByTagName('td')[7];
+                                    const endDate = rows[i].getElementsByTagName('td')[8];
 
                                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                                    const monthText = monthCell ? monthCell.textContent.toLowerCase() : '';
+                                    const startText = startDate ? startDate.textContent.toLowerCase() : '';
+                                    const endText = endDate ? endDate.textContent.toLowerCase() : '';
 
                                     // Check if row matches the filter criteria
                                     if (nameText.includes(nameValue) &&
                                         numberText.includes(numberValue) &&
-                                        (monthValue === "select :" || monthText.includes(monthValue))) {
+                                        (monthValue === "select :" || startText.includes(monthValue) || endText.includes(monthValue))) {
                                         rows[i].style.display = '';  // Show the row
                                     } else {
                                         rows[i].style.display = 'none';  // Hide the row
@@ -1806,7 +1906,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <p class="mg-b-10"Filter >Waktu Preventive</p>
+                                            <p class="mg-b-10">Filter Waktu Preventive</p>
                                             <select class="form-control" id="get_by_month">
                                                 <option value="">Pilih bulan...</option>
                                                 <option value="January">Januari</option>
@@ -1829,13 +1929,12 @@
                                             <thead>
                                                 <th>NO.</th>
                                                 <th>NO.INVENT</th>
-                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>NAMA MESIN</th>
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
+                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>DURASI</th>
-                                                <th>RENTANG WAKTU PREVENTIVE</th>
-                                                <th>RENTANG WAKTU PREVENTIVE</th>
+                                                <th colspan="2">RENTANG WAKTU PREVENTIVE</th>
                                                 <th>STATUS</th>
                                                 <th>ADD</th>
                                             </thead>
@@ -1850,20 +1949,20 @@
 
                                                 let schedule_status = null;
                                                 if (machineSchedule.machine_schedule_status === 0) {
-                                                    schedule_status = '<span class="badge badge-danger">BELUM DIKERJAKAN</span>';
+                                                    schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
                                                 } else if (machineSchedule.machine_schedule_status === 1) {
-                                                    schedule_status = '<span class="badge badge-success" value="0">SUDAH DIKERJAKAN</span>';
+                                                    schedule_status = '<span class="badge badge-success" value="0">Sudah Dikerjakan</span>';
                                                 } else if (machineSchedule.machine_schedule_status === 2){
-                                                    schedule_status = '<span class="badge badge-danger" value="0">TERJADI ABNORMAL</span>';
+                                                    schedule_status = '<span class="badge badge-danger" value="0">Terjadi Abnomal</span>';
                                                 }
                                                 tableRows1 += `
                                                     <tr>
                                                         <td>${index + 1}</td>
                                                         <td>${machineSchedule.invent_number}</td>
-                                                        <td>${machineSchedule.machine_number || '-'}</td>
                                                         <td>${machineSchedule.machine_name}</td>
                                                         <td>${machineSchedule.machine_type || '-'}</td>
                                                         <td>${machineSchedule.machine_brand || '-'}</td>
+                                                        <td>${machineSchedule.machine_number || '-'}</td>
                                                         <td>${machineHour} /Jam</td>
                                                         <td>${formatDate(machineSchedule.schedule_start)}</td>
                                                         <td>${formatDate(machineSchedule.schedule_end)}</td>
@@ -1883,7 +1982,7 @@
 
                             let inputSchedule = document.getElementById("name_schedule_month");
                             inputSchedule.addEventListener('input', function() {
-                                nameScheduleMonth = inputSchedule.value;
+                                monthlyNameAddData = inputSchedule.value;
                             });
 
                             // Re-add event listeners for new checkboxes
@@ -1894,23 +1993,23 @@
                         // Display the selected machines in the second modal (confirmation menu)
                         function renderSecondMenu() {
                             const selectedMachines = data.machinescheduledata.filter(machine =>
-                                combinedScheduleId.includes(machine.machinescheduleid.toString())
+                                combinedAddScheduleId.includes(machine.machinescheduleid.toString())
                             );
 
                             let tableRows2 = `
                                 <form id="addSchedule" method="post">
-                                    <input type="hidden" name="name_schedule_month" value="${nameScheduleMonth}">
+                                    <input type="hidden" name="name_schedule_month" value="${monthlyNameAddData}">
                                     <input type="hidden" name="id_schedule_year" value="${selectedMachines[0].yearly_id}">
                                     <input type="hidden" name="user_schedule_create" value="{{ Auth::user()->id }}">
-                                    <table class="table table-bordered" id="machineTables2" width="100%">
+                                    <table class="table table-bordered" id="addMonthlyTables" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>NO.</th>
                                                 <th>NO.INVENT</th>
-                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>NAMA MESIN</th>
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
+                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>RENCANA TGL</th>
                                             </tr>
                                         </thead>
@@ -1921,10 +2020,10 @@
                                                 <tr>
                                                     <td>${index + 1}</td>
                                                     <td>${machine.invent_number}</td>
-                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>${machine.machine_name}</td>
                                                     <td>${machine.machine_type || '-'}</td>
                                                     <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -1932,7 +2031,7 @@
                                                                     <i class="bi bi-calendar3"></i>
                                                                 </div>
                                                             </div>
-                                                            <input name="schedule_date" type="text" class="form-control datepicker" id="datepicker-${machine.machinescheduleid}">
+                                                            <input class="form-control datepicker is-invalid" name="schedule_date" type="text" id="datepicker-${machine.machinescheduleid}">
                                                             <input type="hidden" name="machine_schedule_id" value="${machine.machinescheduleid}">
                                                         </div>
                                                     </td>
@@ -1990,12 +2089,12 @@
 
                         document.getElementById("modal_button_month_add").addEventListener('click', function(event) {
                             if (event.target.id === "nextButton") {
-                                if (nameScheduleMonth === "") {
+                                if (monthlyNameAddData === "") {
                                     alert("Harap masukan nama untuk jadwal.!!!");
                                 } else {
-                                    changeMenu(2, nameScheduleMonth, idSchedule);
+                                    changeMenu(2, monthlyNameAddData, combinedAddScheduleId);
                                     selectSingleDate();
-                                    console.log(combinedScheduleId);
+                                    console.log(combinedAddScheduleId);
                                 }
                             }
                         });
@@ -2082,22 +2181,22 @@
                             <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
                         `;
 
-                        combinedMachineId = [];
-                        nameScheduleMonth = "";
-                        let idSchedule = '';
+                        let combinedEditScheduleId = [];
+                        let monthlyNameEditData = "";
 
                         // Check if previous selections exist in sessionStorage
                         let tempData = JSON.parse(sessionStorage.getItem('tempData')) || [];
 
                         function updateSelectedMachines() {
-                            combinedMachineId = [];
+                            sessionStorage.removeItem('tempData');
+                            combinedEditScheduleId = [];
                             let checkboxes = document.getElementsByName("machineinput");
                             checkboxes.forEach(checkbox => {
                                 if (checkbox.checked) {
-                                    combinedMachineId.push(checkbox.value);
+                                    combinedEditScheduleId.push(checkbox.value);
                                 }
                             });
-                            sessionStorage.setItem('tempData', JSON.stringify(combinedMachineId));
+                            sessionStorage.setItem('tempData', JSON.stringify(combinedEditScheduleId));
                         }
 
                         function selectSingleDate(inputElement, minDate, maxDate) {
@@ -2111,6 +2210,14 @@
                                     firstDay: 1,
                                     format: 'DD-MM-YYYY'
                                 }
+                            }).on('apply.daterangepicker', function(ev, picker) {
+                                // Ketika tanggal dipilih, tambahkan kelas "is-valid"
+                                $(this).removeClass('is-invalid');
+                                $(this).addClass('is-valid');
+                            }).on('cancel.daterangepicker', function(ev, picker) {
+                                // Jika tanggal dibatalkan, hapus kelas "is-valid"
+                                $(this).removeClass('is-valid');
+                                $(this).addClass('is-invalid');
                             });
                         }
 
@@ -2129,17 +2236,19 @@
 
                                 for (let i = 1; i < rows.length; i++) {
                                     const numberCell = rows[i].getElementsByTagName('td')[1];
-                                    const nameCell = rows[i].getElementsByTagName('td')[3];
-                                    const monthCell = rows[i].getElementsByTagName('td')[6];
+                                    const nameCell = rows[i].getElementsByTagName('td')[2];
+                                    const startDate = rows[i].getElementsByTagName('td')[7];
+                                    const endDate = rows[i].getElementsByTagName('td')[8];
 
                                     const numberText = numberCell ? numberCell.textContent.toLowerCase() : '';
                                     const nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
-                                    const monthText = monthCell ? monthCell.textContent.toLowerCase() : '';
+                                    const startText = startDate ? startDate.textContent.toLowerCase() : '';
+                                    const endText = endDate ? endDate.textContent.toLowerCase() : '';
 
                                     // Check if row matches the filter criteria
                                     if (nameText.includes(nameValue) &&
                                         numberText.includes(numberValue) &&
-                                        (monthValue === "select :" || monthText.includes(monthValue))) {
+                                        (monthValue === "select :" || startText.includes(monthValue) || endText.includes(monthValue))) {
                                         rows[i].style.display = '';  // Show the row
                                     } else {
                                         rows[i].style.display = 'none';  // Hide the row
@@ -2202,36 +2311,46 @@
                                             <thead>
                                                 <th>NO.</th>
                                                 <th>NO.INVENT</th>
-                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>NAMA MESIN</th>
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
+                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>DURASI</th>
                                                 <th colspan="2">RENTANG WAKTU PREVENTIVE</th>
+                                                <th>STATUS</th>
                                                 <th>ADD</th>
                                             </thead>
                                             <tbody>
                                         `;
                                             let scheduleIds = JSON.parse(data.monthlyscheduledata.schedule_collection);
-                                            data.getmachines.forEach((machine, index) => {
+                                            data.machinescheduledata.forEach((machineSchedule, index) => {
                                                 let machineHour = 0; // Deklarasikan di sini
-                                                const workingHour = data.workinghourdata.find(wo => wo.id === machine.standart_id);
+                                                const workingHour = data.workinghourdata.find(wo => wo.id === machineSchedule.standart_id);
                                                 if (workingHour) {
                                                     machineHour = workingHour.preventive_hour; // Ambil nilai preventive_hour
+                                                }
+
+                                                let schedule_status = null;
+                                                if (machineSchedule.machine_schedule_status === 0) {
+                                                    schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
+                                                } else if (machineSchedule.machine_schedule_status === 1) {
+                                                    schedule_status = '<span class="badge badge-success" value="0">Sudah Dikerjakan</span>';
+                                                } else if (machineSchedule.machine_schedule_status === 2){
+                                                    schedule_status = '<span class="badge badge-danger" value="0">Terjadi Abnomal</span>';
                                                 }
                                                 tableRows1 += `
                                                     <tr>
                                                         <td>${index + 1}</td>
-                                                        <td>${machine.invent_number}</td>
-                                                        <td>${machine.machine_number || '-'}</td>
-                                                        <td>${machine.machine_name}</td>
-                                                        <td>${machine.machine_type || '-'}</td>
-                                                        <td>${machine.machine_brand || '-'}</td>
+                                                        <td>${machineSchedule.invent_number}</td>
+                                                        <td>${machineSchedule.machine_name}</td>
+                                                        <td>${machineSchedule.machine_type || '-'}</td>
+                                                        <td>${machineSchedule.machine_brand || '-'}</td>
+                                                        <td>${machineSchedule.machine_number || '-'}</td>
                                                         <td>${machineHour} /Jam</td>
-                                                        <td>${formatDate(machine.schedule_start)}</td>
-                                                        <td>${formatDate(machine.schedule_end)}</td>
+                                                        <td>${formatDate(machineSchedule.schedule_start)}</td>
+                                                        <td>${formatDate(machineSchedule.schedule_end)}</td>
                                                         <td>
-                                                            <input type="checkbox" name="machineinput" value="${machine.machinescheduleid}" ${scheduleIds.map(String).includes(String(machine.machinescheduleid)) ? 'checked' : ''}>
+                                                            <input type="checkbox" name="machineinput" value="${machineSchedule.machinescheduleid}" ${scheduleIds.map(String).includes(String(machineSchedule.machinescheduleid)) ? 'checked' : ''}>
                                                         </td>
                                                     </tr>
                                                 `;
@@ -2246,9 +2365,9 @@
                             document.getElementById("modal_data_month_edit").innerHTML = tableRows1;
 
                             let inputSchedule = document.getElementById("name_schedule_month_edit");
-                            nameScheduleMonth = inputSchedule.value;
+                            monthlyNameEditData = inputSchedule.value;
                             inputSchedule.addEventListener('input', function() {
-                                nameScheduleMonth = inputSchedule.value;
+                                monthlyNameEditData = inputSchedule.value;
                             });
 
                             // Re-add event listeners for new checkboxes
@@ -2259,21 +2378,21 @@
                         // Display the selected machines in the second modal (confirmation menu)
                         function renderSecondMenu() {
                             const selectedMachines = data.getmachines.filter(machine =>
-                                combinedMachineId.includes(machine.machinescheduleid.toString())
+                                combinedEditScheduleId.includes(machine.machinescheduleid.toString())
                             );
 
                             let tableRows2 = `
                                 <form id="editSchedule" method="post">
-                                    <input type="hidden" name="name_schedule_month_edit" value="${nameScheduleMonth}">
-                                    <table class="table table-bordered" id="machineTables2" width="100%">
+                                    <input type="hidden" name="name_schedule_month_edit" value="${monthlyNameEditData}">
+                                    <table class="table table-bordered" id="editMonthlyTables" width="100%">
                                         <thead>
                                             <tr>
                                                 <th>NO.</th>
                                                 <th>NO.INVENT</th>
-                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>NAMA MESIN</th>
                                                 <th>MODEL/TYPE</th>
                                                 <th>BRAND/MERK</th>
+                                                <th>NO.MESIN/LOKASI</th>
                                                 <th>RENCANA TGL</th>
                                             </tr>
                                         </thead>
@@ -2284,10 +2403,10 @@
                                                 <tr>
                                                     <td>${index + 1}</td>
                                                     <td>${machine.invent_number}</td>
-                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>${machine.machine_name}</td>
                                                     <td>${machine.machine_type || '-'}</td>
                                                     <td>${machine.machine_brand || '-'}</td>
+                                                    <td>${machine.machine_number || '-'}</td>
                                                     <td>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -2295,7 +2414,7 @@
                                                                     <i class="bi bi-calendar3"></i>
                                                                 </div>
                                                             </div>
-                                                            <input name="schedule_date_edit" type="text" class="form-control datepicker" id="datepicker-${machine.machinescheduleid}">
+                                                            <input class="form-control datepicker is-invalid" name="schedule_date_edit" type="text" id="datepicker-${machine.machinescheduleid}">
                                                             <input type="hidden" name="machine_schedule_id_edit" value="${machine.machinescheduleid}">
                                                         </div>
                                                     </td>
@@ -2354,10 +2473,10 @@
                         document.getElementById("modal_button_month_edit").addEventListener('click', function(event) {
                             if (event.target.id === "nextButton") {
                                 updateSelectedMachines();
-                                if (nameScheduleMonth === "") {
+                                if (monthlyNameEditData === "") {
                                     alert("Harap masukan nama untuk jadwal.!!!");
                                 } else {
-                                    changeMenu(2, nameScheduleMonth, idSchedule);
+                                    changeMenu(2, monthlyNameEditData, combinedEditScheduleId);
                                     selectSingleDate();
                                 }
                             }
@@ -2461,22 +2580,27 @@
                                         <th>KAPASITAS</th>
                                         <th>NOMOR MESIN</th>
                                         <th>RENCANA TANGGAL</th>
+                                        <th>KETERSEDIAAN</th>
                                         <th>STATUS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${data.monthlyscheduledata.map((schedule, index) => {
-                                        let reschedule_pm = null;
+                                        let reschedulePM = null;
+                                        let scheduleHour = schedule.schedule_hour;
+                                        if (scheduleHour == null) {
+                                            scheduleHour = 'Belum ada'
+                                        }
                                         let schedule_status = null;
 
                                         if (schedule.reschedule_date_3) {
-                                            reschedule_pm = formatDate(schedule.reschedule_date_3) + ' ***';
+                                            reschedulePM = formatDate(schedule.reschedule_date_3) + ' ***';
                                         } else if (schedule.reschedule_date_2) {
-                                            reschedule_pm = formatDate(schedule.reschedule_date_2) + ' **';
+                                            reschedulePM = formatDate(schedule.reschedule_date_2) + ' **';
                                         } else if (schedule.reschedule_date_1) {
-                                            reschedule_pm = formatDate(schedule.reschedule_date_1) + ' *';
+                                            reschedulePM = formatDate(schedule.reschedule_date_1) + ' *';
                                         } else {
-                                            reschedule_pm = formatDate(schedule.schedule_date);
+                                            reschedulePM = formatDate(schedule.schedule_date);
                                         }
 
                                         if (schedule.machine_schedule_status === 0) {
@@ -2493,7 +2617,8 @@
                                                 <td>${schedule.invent_number}</td>
                                                 <td>${schedule.machine_type || '-'}</td>
                                                 <td>${schedule.machine_number || '-'}</td>
-                                                <td>${reschedule_pm}</td>
+                                                <td>${reschedulePM}</td>
+                                                <td>${scheduleHour.split(':').slice(0, 2).join(':')}</td>
                                                 <td>${schedule_status}</td>
                                             </tr>
                                         `;

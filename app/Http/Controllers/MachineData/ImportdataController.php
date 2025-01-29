@@ -107,7 +107,7 @@ class ImportdataController extends Controller
     }
 
     // fungsi upload data excel ke database
-    public function importdata(Request $request)
+    public function importmachinedata(Request $request)
     {
         $request->validate([
             'file' => 'mimes:xlsx,xls,csv',

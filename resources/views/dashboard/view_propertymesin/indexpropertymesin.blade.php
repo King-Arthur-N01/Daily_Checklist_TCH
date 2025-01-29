@@ -15,15 +15,18 @@
                 </div>
                 <div class="card-body">
                     <div class="div-tables">
-                        <div class="col-sm-12 col-md-12">
-                            <a type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#registerModal" tabindex="0">+ Standarisasi mesin</a>
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#uploadModal" tabindex="0"><i class="bi bi-bookmark-plus-fill"></i>&nbsp; Standarisasi mesin</button>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
                         </div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="propertyTables" width="100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>No.</th>
                                     <th>Nama Standarisasi Mesin</th>
                                     <th>Jumlah Componencheck</th>
                                     <th>Jumlah Standart/Parameter</th>
@@ -41,8 +44,34 @@
         <!-- ============================================================== -->
     </div>
 
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload File</h5>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addPropertyModal">Tambahkan Secara Manual</button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadData">
+                        @csrf
+                        <p>Format excel harus <mark>.xlsx</mark> selain itu tidak akan terbaca dan aturan urutan Kolom pada excel</p>
+                        <p class="text-upload-header">No.<mark>|</mark>No.Invent Mesin<mark>|</mark>Nama Mesin<mark>|</mark>Brand/Merk<mark>|</mark>Model/Type<mark>|</mark>Spec/Output<mark>|</mark>No.MFG<mark>|</mark>Tahun Pembuatan<mark>|</mark>Input Daya<mark>|</mark>Buatan<mark>|</mark>Install Date<mark>|</mark>No.MFG<mark>|</mark>Keterangan<mark>|</mark>No.Mesin</p>
+                        <label for="importExcel" class="table-buttons" id="customButton"><i class="fas fa-file-medical"></i>&nbsp; Select a file</label>
+                        <input type="file" name="fileupload" id="importExcel" hidden>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="uploadButton">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Upload Modal-->
+
     <!-- Register Modal -->
-    <div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal fade" id="addPropertyModal" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <form id="registerform" method="post">
@@ -230,6 +259,7 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script>
         $(document).ready(function() {
             // Set automatic soft refresh table
@@ -275,6 +305,46 @@
                     { data: 'metodecheck' },
                     { data: 'actions', orderable: false, searchable: false}
                 ]
+            });
+
+            $('#uploadButton').on('click', function(e) {
+                e.preventDefault();
+                let file = $('#importExcel')[0].files[0];
+                let uploadData = new FormData();
+                uploadData.append('file', file);
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('importproperty') }}",
+                    data: uploadData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.success) {
+                            const successMessage = response.success;
+                            $('#successText').text(successMessage);
+                            $('#successModal').modal('show');
+                            overlay.toggleClass('is-active');
+                        }
+                        setTimeout(function() {
+                                $('#successModal').modal('hide');
+                                $('#uploadModal').modal('hide');
+                                overlay.removeClass('is-active');
+                        }, 2000);
+                    },
+                    error: function(xhr, status, error) {
+                        if (xhr.responseText) {
+                            const warningMessage = JSON.parse(xhr.responseText).error;
+                            $('#failedText').text(warningMessage);
+                            $('#failedModal').modal('show');
+                        }
+                        setTimeout(function() {
+                            $('#failedModal').modal('hide');
+                            $('#uploadModal').modal('hide');
+                        }, 2000);
+                    }
+                }).always(function() {
+                    table.ajax.reload(null, false);
+                });
             });
 
             $('#registerform').on('submit', function(event) {
@@ -331,7 +401,7 @@
                             }
                             setTimeout(function() {
                                     $('#successModal').modal('hide');
-                                    $('#registerModal').modal('hide');
+                                    $('#addPropertyModal').modal('hide');
                             }, 2000);
                         },
                         error: function(xhr, status, error) {
@@ -342,7 +412,7 @@
                             }
                             setTimeout(function() {
                                 $('#failedModal').modal('hide');
-                                $('#registerModal').modal('hide');
+                                $('#addPropertyModal').modal('hide');
                             }, 2000);
                         }
                     }).always(function() {

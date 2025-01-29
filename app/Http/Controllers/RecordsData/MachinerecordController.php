@@ -17,9 +17,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Permission\Traits\HasPermissions;
+use Spatie\Permission\Traits\HasRoles;
 
 class MachinerecordController extends Controller
 {
+    use HasPermissions, HasRoles;
     // fungsi untuk permission
     // public function __construct(){
     //     $this->middleware('permission:#namapermission#', ['only' => ['#namafunction#']]);
@@ -100,7 +103,7 @@ class MachinerecordController extends Controller
         }
     }
 
-    public function readonscheduledata($id)
+    public function readscheduledata($id)
     {
         try {
             $baseonscheduledata = DB::table('monthly_schedules')
@@ -329,42 +332,50 @@ class MachinerecordController extends Controller
     }
 
     // fungsi tampilan formulir untuk mengisi preventive mesin (record mesin)
-    public function formmachinerecord($id)
+    public function formpreventive($id)
     {
-        $users = User::get();
-        $timenow = Carbon::now();
+        try {
+            $users = User::get();
+            $timenow = Carbon::now();
 
-        $joinmachine = DB::table('machine_schedules')
-        ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
-        ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-        ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
-        ->join('componenchecks', 'componenchecks.id_property', '=', 'machineproperties.id')
-        ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
-        ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
-        ->where('machine_schedules.id', '=', $id)
-        ->get();
+            $joinmachine = DB::table('machine_schedules')
+            ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'machine_schedules.id as getscheduleid', 'machines.id as getmachineid')
+            ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+            ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+            ->join('componenchecks', 'componenchecks.id_property', '=', 'machineproperties.id')
+            ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
+            ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
+            ->where('machine_schedules.id', '=', $id)
+            ->get();
+            // dd($joinmachine);
 
-        if ($joinmachine->isEmpty()) {
-            // Return an error message or a default view
-            return view('dashboard.view_blockpage.404', ['message' => 'No machine record found.']);
+            if ($joinmachine->isEmpty()) {
+                // Return an error message or a default view
+                return view('dashboard.view_blockpage.404', ['message' => 'No machine record found.']);
+            }
+            return view('dashboard.view_recordmesin.formrecordmesin', [
+                'joinmachine' => $joinmachine,
+                'timenow' => $timenow,
+                'users' => $users,
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->withErrors(['message' => 'Error!!!! Checklist failed to add. ' . $e->getMessage()]);
         }
-        return view('dashboard.view_recordmesin.formrecordmesin', [
-            'joinmachine' => $joinmachine,
-            'machine_id' => $id,
-            'timenow' => $timenow,
-            'users' => $users,
-        ]);
     }
 
     // fungsi meregister hasil formulir preventive mesin (record mesin) ke dalam database
-    public function createmachinerecord(Request $request)
+    public function createpreventive(Request $request)
     {
         try {
             // dd($request)->all();
-            $schedule_id = ($request->input('id_schedule'));
-            $abnormal = ($request->input('combined_abnormal'));
-
-            $abnormal_json = json_encode($abnormal);
+            $machine_id = ($request->input('machine_id'));
+            $schedule_id = ($request->input('schedule_id'));
+            $problem = ($request->input('problem'));
+            $cause = ($request->input('cause'));
+            $action = ($request->input('action'));
+            $status = ($request->input('status'));
+            $target = ($request->input('target'));
             $create_by_json = json_encode($request->input('combined_create_by'));
             $operator_action_json = json_encode(array_values($request->input('operator_action')));
             $result_json = json_encode(array_values($request->input('result')));
@@ -389,78 +400,100 @@ class MachinerecordController extends Controller
                 $shifttime = 'Diluar Shift Atau Lembur';
             }
 
-            function hasValidAbnormalData($abnormal)
-            {
-                if (is_array($abnormal)) {
-                    foreach ($abnormal as $value) {
-                        if (!is_null($value) && $value !== '') {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
+            // function hasValidAbnormalData($abnormal)
+            // {
+            //     if (is_array($abnormal)) {
+            //         foreach ($abnormal as $value) {
+            //             if (!is_null($value) && $value !== '') {
+            //                 return true;
+            //             }
+            //         }
+            //     }
+            //     return false;
+            // }
 
             $StoreRecords = new Machinerecord();
             $StoreRecords->shift = $shifttime;
             $StoreRecords->note = $request->input('note');
-            $StoreRecords->id_machine_schedule = $schedule_id;
+            $StoreRecords->machine_id = $machine_id;
+            $StoreRecords->machine_schedule_id = $schedule_id;
             $StoreRecords->operator_action = $operator_action_json;
             $StoreRecords->result = $result_json;
             $StoreRecords->create_by = $create_by_json;
             $StoreRecords->record_date = $record_date;
             $StoreRecords->start_preventive = $currenttime;
-            if (hasValidAbnormalData($abnormal)) {
-                $StoreRecords->abnormal_record = $abnormal_json;
-                $StoreRecords->machinerecord_status = false;
-                $StoreRecords->finish_preventive = null;
-            } else {
-                $StoreRecords->abnormal_record = null;
-                $StoreRecords->machinerecord_status = true;
+
+            // PERATURAN STATUS RECORD YANG ADA PADA COLUMN "machinerecord_status"
+            // 0 = RECORD OPEN
+            // 1 = RECORD CLOSE
+            // 2 = RECORD ABNORMAL
+
+            if ($problem == null) {
+                $StoreRecords->machinerecord_status = 0;
                 $StoreRecords->finish_preventive = $currenttime;
+            } else {
+                $StoreRecords->problem = $problem;
+                $StoreRecords->cause = $cause;
+                $StoreRecords->action = $action;
+                $StoreRecords->status = $status;
+                $StoreRecords->target = $target;
+                $StoreRecords->machinerecord_status = 2;
+                $StoreRecords->finish_preventive = null;
             }
             $StoreRecords->save();
 
             $StoreSchedule = Machineschedule::find($schedule_id);
-            $schedule_start = Carbon::parse($StoreSchedule->schedule_start);
-            $schedule_end = Carbon::parse($StoreSchedule->schedule_end);
-            $schedule_date = Carbon::parse($StoreSchedule->schedule_date);
-            $schedulenext = $schedule_date->copy()->addMonths(6);
-
-            $reschedule_pm = null;
-
-            if ($StoreSchedule->reschedule_date_3) {
-                $reschedule_pm = $StoreSchedule->reschedule_date_3;
-            } else if ($StoreSchedule->reschedule_date_2) {
-                $reschedule_pm = $StoreSchedule->reschedule_date_2;
-            } else if ($StoreSchedule->reschedule_date_1) {
-                $reschedule_pm = $StoreSchedule->reschedule_date_1;
-            }
-
-            $StoreSchedule->schedule_next = $schedulenext;
-            $StoreSchedule->machine_schedule_status = 1;
-            if ($record_date->between($schedule_start, $schedule_end)) {
-                $StoreSchedule->schedule_time_status = true;
+            // PERATURAN STATUS SCHEDULE YANG ADA PADA COLUMN "machine_schedule_status"
+            // 1 = RECORD SUDAH DIKERJAKAN
+            // 2 = RECORD SUDAH DIKERJAKAN TETAPI TERDAPAT ABONORMALITY
+            if ($problem == null) {
+                $StoreSchedule->machine_schedule_status = 1;
             } else {
-                if ($reschedule_pm) {
-                    $record_planner = Carbon::parse($reschedule_pm);
-                    if ($record_planner->eq($record_date)) {
-                        $StoreSchedule->schedule_time_status = true;
-                    } else {
-                        $StoreSchedule->schedule_time_status = false;
-                    }
-                }
-                $StoreSchedule->schedule_time_status = false;
+                $StoreSchedule->machine_schedule_status = 2;
             }
+            $StoreSchedule->schedule_record = $record_date;
             $StoreSchedule->save();
 
-            $monthly_id = ($StoreSchedule->monthly_id);
-            $yearly_id = ($StoreSchedule->yearly_id);
+            // $StoreSchedule = Machineschedule::find($schedule_id);
+            // $schedule_start = Carbon::parse($StoreSchedule->schedule_start);
+            // $schedule_end = Carbon::parse($StoreSchedule->schedule_end);
+            // $schedule_date = Carbon::parse($StoreSchedule->schedule_date);
+            // $schedulenext = $schedule_date->copy()->addMonths(6);
 
-            $this->checkstatusmonth($monthly_id);
-            $this->checkstatusyear($yearly_id);
+            // $reschedule_pm = null;
 
-            return redirect()->route("indexmachinerecord")->withSuccess('Checklist added successfully.');
+            // if ($StoreSchedule->reschedule_date_3) {
+            //     $reschedule_pm = $StoreSchedule->reschedule_date_3;
+            // } else if ($StoreSchedule->reschedule_date_2) {
+            //     $reschedule_pm = $StoreSchedule->reschedule_date_2;
+            // } else if ($StoreSchedule->reschedule_date_1) {
+            //     $reschedule_pm = $StoreSchedule->reschedule_date_1;
+            // }
+
+            // $StoreSchedule->schedule_next = $schedulenext;
+            // $StoreSchedule->machine_schedule_status = 1;
+            // if ($record_date->between($schedule_start, $schedule_end)) {
+            //     $StoreSchedule->schedule_time_status = true;
+            // } else {
+            //     if ($reschedule_pm) {
+            //         $record_planner = Carbon::parse($reschedule_pm);
+            //         if ($record_planner->eq($record_date)) {
+            //             $StoreSchedule->schedule_time_status = true;
+            //         } else {
+            //             $StoreSchedule->schedule_time_status = false;
+            //         }
+            //     }
+            //     $StoreSchedule->schedule_time_status = false;
+            // }
+            // $StoreSchedule->save();
+
+            // $monthly_id = ($StoreSchedule->monthly_id);
+            // $yearly_id = ($StoreSchedule->yearly_id);
+
+            // $this->checkstatusmonth($monthly_id);
+            // $this->checkstatusyear($yearly_id);
+
+            return redirect()->route("indexpreventive")->withSuccess('Checklist added successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->withErrors(['message' => 'Error!!!! Checklist failed to add. ' . $e->getMessage()]);
@@ -507,133 +540,133 @@ class MachinerecordController extends Controller
     // <<<============================================================================================>>>
 
     // index tampilan untuk koreksi preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
-    public function indexcorrection()
-    {
-        return view('dashboard.view_recordmesin.tableapproval1');
-    }
+    // public function indexcorrection()
+    // {
+    //     return view('dashboard.view_recordmesin.tableapproval1');
+    // }
 
-    public function refreshtablecorrection()
-    {
-        try {
-            $refreshrecord = DB::table('machine_schedules')
-                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as preventive_date')
-                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
-                ->orderBy('machinerecords.id', 'desc')
-                ->get();
+    // public function refreshtablecorrection()
+    // {
+    //     try {
+    //         $refreshrecord = DB::table('machine_schedules')
+    //             ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as preventive_date')
+    //             ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+    //             ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
+    //             ->orderBy('machinerecords.id', 'desc')
+    //             ->get();
 
-            return response()->json([
-                'refreshrecord' => $refreshrecord
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error fetching data'], 500);
-        }
-    }
+    //         return response()->json([
+    //             'refreshrecord' => $refreshrecord
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
 
     // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk dikoreksi
-    public function readdatacorrection($id)
-    {
-        try{
-            $machinedata = DB::table('machinerecords')
-                ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
-                ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
-                ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
-                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
-                ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-                ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-                ->where('machinerecords.id', '=', $id)
-                ->get();
+    // public function readdatacorrection($id)
+    // {
+    //     try{
+    //         $machinedata = DB::table('machinerecords')
+    //             ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+    //             ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
+    //             ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
+    //             ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
+    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
+    //             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+    //             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+    //             ->where('machinerecords.id', '=', $id)
+    //             ->get();
 
-            $usersdata = DB::table('machinerecords')
-                ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
-                ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
-                ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
-                ->where('machinerecords.id', '=', $id)
-                ->get();
+    //         $usersdata = DB::table('machinerecords')
+    //             ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+    //             ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
+    //             ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
+    //             ->where('machinerecords.id', '=', $id)
+    //             ->get();
 
-            $usernames = [];
-            $userarray = json_decode($usersdata->first()->create_by);
-            $userids = explode(',', $userarray[0]);
+    //         $usernames = [];
+    //         $userarray = json_decode($usersdata->first()->create_by);
+    //         $userids = explode(',', $userarray[0]);
 
-            foreach ($userids as $eachuserid){
-                $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
-            }
+    //         foreach ($userids as $eachuserid){
+    //             $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
+    //         }
 
-            $IsAbnormalExist = $usersdata->first()->abnormal_record;
-            $abnormals = [];
-            if ($IsAbnormalExist != null) {
-                $abnormal_array = json_decode($usersdata->first()->abnormal_record);
-                $abnormalid = explode(',', $abnormal_array[0]);
+    //         $IsAbnormalExist = $usersdata->first()->abnormal_record;
+    //         $abnormals = [];
+    //         if ($IsAbnormalExist != null) {
+    //             $abnormal_array = json_decode($usersdata->first()->abnormal_record);
+    //             $abnormalid = explode(',', $abnormal_array[0]);
 
-                foreach ($abnormalid as $eachabnormal) {
-                    $abnormals[] = DB::table('componenchecks')->select('name_componencheck')->where('id', $eachabnormal)->first()->name_componencheck;
-                }
-            }
+    //             foreach ($abnormalid as $eachabnormal) {
+    //                 $abnormals[] = DB::table('componenchecks')->select('name_componencheck')->where('id', $eachabnormal)->first()->name_componencheck;
+    //             }
+    //         }
 
-            $combineresult[] = [
-                'operator_action' => $usersdata->first()->operator_action,
-                'result' => $usersdata->first()->result
-            ];
+    //         $combineresult[] = [
+    //             'operator_action' => $usersdata->first()->operator_action,
+    //             'result' => $usersdata->first()->result
+    //         ];
 
-            return response()->json([
-                'machinedata' => $machinedata,
-                'usersdata' => $usersdata,
-                'combineresult' => $combineresult,
-                'usernames' => $usernames,
-                'abnormals' => $abnormals,
-            ]);
-        } catch (\Exception $e) {
-            Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'Error fetching data'], 500);
-        }
-    }
+    //         return response()->json([
+    //             'machinedata' => $machinedata,
+    //             'usersdata' => $usersdata,
+    //             'combineresult' => $combineresult,
+    //             'usernames' => $usernames,
+    //             'abnormals' => $abnormals,
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => 'Error fetching data'], 500);
+    //     }
+    // }
     // fungsi untuk mengkoreksi dan meregister hasil preventive mesin [leader + foreman + supervisor + ass.manager + manager only]
-    public function registercorrection(Request $request, $id)
-    {
-        try {
-            $request->validate([
-                'correct_by' => 'required'
-            ]);
+    // public function registercorrection(Request $request, $id)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'correct_by' => 'required'
+    //         ]);
 
-            $currenttime = Carbon::now('Asia/Jakarta');
-            $clear_abnormal = $request->input('clear_abnormals');
+    //         $currenttime = Carbon::now('Asia/Jakarta');
+    //         $clear_abnormal = $request->input('clear_abnormals');
 
-            $StoreRecords = Machinerecord::find($id);
+    //         $StoreRecords = Machinerecord::find($id);
 
-            if (!$StoreRecords) {
-                return response()->json(['error' => 'Record not found !!!!'], 404);
-            } else if ($StoreRecords->correct_by) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data sudah dikoreksi oleh orang lain.'], 422);
-            } else {
-                $updateData = [
-                    'correct_by' => $request->input('correct_by'),
-                    'note' => $request->input('note'),
-                    'finish_preventive' => $currenttime,
-                ];
-                if ($clear_abnormal == 1) {
-                    $updateData['machinerecord_status'] = true;
-                }
-                $StoreRecords->update($updateData);
-            }
+    //         if (!$StoreRecords) {
+    //             return response()->json(['error' => 'Record not found !!!!'], 404);
+    //         } else if ($StoreRecords->correct_by) {
+    //             return response()->json(['error' => 'Pembaruan data gagal. Data sudah dikoreksi oleh orang lain.'], 422);
+    //         } else {
+    //             $updateData = [
+    //                 'correct_by' => $request->input('correct_by'),
+    //                 'note' => $request->input('note'),
+    //                 'finish_preventive' => $currenttime,
+    //             ];
+    //             if ($clear_abnormal == 1) {
+    //                 $updateData['machinerecord_status'] = true;
+    //             }
+    //             $StoreRecords->update($updateData);
+    //         }
 
-            return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
-        } catch (\Exception $e) {
-            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'Error sending data'], 500);
-        }
-    }
+    //         return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
+    //     } catch (\Exception $e) {
+    //         Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => 'Error sending data'], 500);
+    //     }
+    // }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
-    public function deletecorrection($id) {
-        try {
-            $DeleteRecords = Machinerecord::find($id);
-            $DeleteRecords->correct_by = null;
-            return response()->json(['success' => 'Record deleted successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to delete record.'], 500);
-        }
-    }
+    // public function deletecorrection($id) {
+    //     try {
+    //         $DeleteRecords = Machinerecord::find($id);
+    //         $DeleteRecords->correct_by = null;
+    //         return response()->json(['success' => 'Record deleted successfully!']);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Failed to delete record.'], 500);
+    //     }
+    // }
     // <<<============================================================================================>>>
     // <<<=============================batas koreksi machine records end==============================>>>
     // <<<============================================================================================>>>
@@ -649,36 +682,37 @@ class MachinerecordController extends Controller
     // <<<============================================================================================>>>
 
     // index tampilan untuk koreksi preventive mesin [supervisor + ass.manager + manager only]
-    public function indexapproval()
+    public function indexpreventiveaccept()
     {
         return view('dashboard.view_recordmesin.tableapproval2');
     }
 
-    public function refreshtableapproval()
+    public function refreshtablepreventiveaccept()
     {
         try {
-            $refreshrecord = DB::table('machine_schedules')
-                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id', 'machinerecords.record_date as preventive_date')
-                ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->join('machinerecords', 'machine_schedules.id', '=', 'machinerecords.id_machine_schedule')
+            $refreshrecord = DB::table('machinerecords')
+                ->select('machinerecords.*', 'machine_schedules.*', 'machines.*', 'machinerecords.id as records_id')
+                ->join('machines', 'machinerecords.machine_id', '=', 'machines.id')
+                ->join('machine_schedules', 'machinerecords.machine_schedule_id', '=', 'machine_schedules.id')
                 ->orderBy('machinerecords.id', 'desc')
                 ->get();
 
-        return response()->json([
+            return response()->json([
                 'refreshrecord' => $refreshrecord
             ]);
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error fetching data'], 500);
         }
     }
 
     // fungsi $ajax untuk mengambil detail data mesin + hasil preventive mesin dari database untuk disetujui
-    public function readdataapproval($id)
+    public function readpreventivedata($id)
     {
         try{
             $machinedata = DB::table('machinerecords')
-                ->select('machinerecords.id_machine_schedule', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'machine_schedules.yearly_id as year_id')
-                ->leftJoin('machine_schedules', 'machinerecords.id_machine_schedule', '=', 'machine_schedules.id')
+                ->select('machinerecords.machine_schedule_id', 'machine_schedules.machine_id', 'machines.*', 'machineproperties.id', 'componenchecks.name_componencheck', 'parameters.name_parameter', 'metodechecks.name_metodecheck')
+                ->leftJoin('machine_schedules', 'machinerecords.machine_schedule_id', '=', 'machine_schedules.id')
                 ->leftJoin('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->leftJoin('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
                 ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
@@ -687,43 +721,31 @@ class MachinerecordController extends Controller
                 ->where('machinerecords.id', '=', $id)
                 ->get();
 
-            $usersdata = DB::table('machinerecords')
-                ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name')
+            $preventivedata = DB::table('machinerecords')
+                ->select('machinerecords.*', 'users_correct.name as correct_by_name', 'users_approve.name as approve_by_name', 'machinerecords.id as record_id')
                 ->leftJoin('users as users_correct', 'machinerecords.correct_by', '=' ,'users_correct.id')
                 ->leftJoin('users as users_approve', 'machinerecords.approve_by', '=' ,'users_approve.id')
                 ->where('machinerecords.id', '=', $id)
                 ->get();
 
             $usernames = [];
-            $userarray = json_decode($usersdata->first()->create_by);
+            $userarray = json_decode($preventivedata->first()->create_by);
             $userids = explode(',', $userarray[0]);
 
             foreach ($userids as $eachuserid){
                 $usernames[] = DB::table('users')->select('name')->where('id', $eachuserid)->first()->name;
             }
 
-            $IsAbnormalExist = $usersdata->first()->abnormal_record;
-            $abnormals = [];
-            if ($IsAbnormalExist != null) {
-                $abnormal_array = json_decode($usersdata->first()->abnormal_record);
-                $abnormalid = explode(',', $abnormal_array[0]);
-
-                foreach ($abnormalid as $eachabnormal) {
-                    $abnormals[] = DB::table('componenchecks')->select('name_componencheck')->where('id', $eachabnormal)->first()->name_componencheck;
-                }
-            }
-
             $combineresult[] = [
-                'operator_action' => $usersdata->first()->operator_action,
-                'result' => $usersdata->first()->result
+                'operator_action' => $preventivedata->first()->operator_action,
+                'result' => $preventivedata->first()->result
             ];
 
             return response()->json([
                 'machinedata' => $machinedata,
-                'usersdata' => $usersdata,
+                'preventivedata' => $preventivedata,
                 'combineresult' => $combineresult,
                 'usernames' => $usernames,
-                'abnormals' => $abnormals,
             ]);
         } catch (\Exception $e) {
             Log::error(' fetch data error: ' . $e->getMessage(), ['exception' => $e]);
@@ -731,39 +753,54 @@ class MachinerecordController extends Controller
         }
     }
     // fungsi untuk mensetujui dan meregister hasil preventive mesin [supervisor + ass.manager + manager only]
-    public function registerapproval(Request $request, $id)
+    public function registerpreventiveccept(Request $request, $id)
     {
-        try{
+        try {
+            // Validasi input
             $request->validate([
-                'approve_by' => 'required'
+                'accept_by' => 'required',
+                'machine_id' => 'required',
             ]);
+
+            $accept_by = $request->input('accept_by');
             $machine_id = $request->input('machine_id');
 
-            $machinerecord = Machinerecord::find($id);
-            if (!$machinerecord) {
-                return response()->json(['error' => 'Data record not found !!!!'], 404);
-            }
-            else if (!$machinerecord->correct_by) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data belum dikoreksi oleh orang lain.'], 422);
-            }
-            else if ($machinerecord->approve_by) {
-                return response()->json(['error' => 'Pembaruan data gagal. Data sudah disetujui oleh orang lain.'], 422);
-            }
-            else if ($machine_id) {
-                $this->createabnormalmachine($machine_id);
+            // Temukan jadwal berdasarkan ID
+            $StoreRecords = Machinerecord::find($id);
 
-                $machinerecord->update([
-                    'approve_by' => $request->input('approve_by'),
-                    'note' => $request->input('note'),
-                    'machinerecord_status' => true,
-                ]);
-            } else {
-                $machinerecord->update([
-                    'approve_by' => $request->input('approve_by'),
-                    'note' => $request->input('note')
-                ]);
+            if (!$StoreRecords) {
+                return response()->json(['error' => 'Schedule not found !!!!'], 404);
             }
-            return response()->json(['success' => 'Data Preventive was successfully ACCEPTED']);
+
+            // Cek izin pengguna
+            $user = auth()->user(); // Ambil pengguna yang sedang login
+
+            if ($user->hasPermissionTo('corrected_record')) {
+                $StoreRecords->correct_by = $accept_by;
+                $StoreRecords->note = $request->input('note');
+                $StoreRecords->problem = $request->input('problem');
+                $StoreRecords->cause = $request->input('cause');
+                $StoreRecords->action = $request->input('action');
+                $StoreRecords->status = $request->input('status');
+                $StoreRecords->target = $request->input('target');
+                $StoreRecords->status = $request->input('status');
+                $StoreRecords->save();
+            }
+
+            if ($user->hasPermissionTo('agreed_schedule') && $user->hasPermissionTo('recognize_schedule')) {
+                $StoreRecords->correct_by = $accept_by;
+                $StoreRecords->approve_by = $accept_by; // Bedakan disini !!!!
+                $StoreRecords->note = $request->input('note');
+                $StoreRecords->problem = $request->input('problem');
+                $StoreRecords->cause = $request->input('cause');
+                $StoreRecords->action = $request->input('action');
+                $StoreRecords->status = $request->input('status');
+                $StoreRecords->target = $request->input('target');
+                $StoreRecords->status = $request->input('status');
+                $StoreRecords->save();
+            }
+
+            return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
         } catch (\Exception $e) {
             Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error sending data'], 500);
@@ -773,14 +810,15 @@ class MachinerecordController extends Controller
     private function createabnormalmachine($machine_id)
     {
         $UpdateMachine = Machine::find($machine_id);
-        $UpdateMachine->machine_abnormal = true;
+        $UpdateMachine->machine_abnormal_status = true;
         $UpdateMachine->save();
     }
 
     // fungsi untuk menghapus preventive mesin (HATI-HATI FUNGSI INI DIBUAT UNTUK BERJAGA-JAGA JIKA ADA MASALAH PADA APLIKASI) [admin only]
-    public function deleteapproval($id) {
+    public function deleteaccept($id) {
         try {
             $DeleteRecords = Machinerecord::find($id);
+            $DeleteRecords->correct_by = null;
             $DeleteRecords->approve_by = null;
             return response()->json(['success' => 'Record deleted successfully!']);
         } catch (\Exception $e) {

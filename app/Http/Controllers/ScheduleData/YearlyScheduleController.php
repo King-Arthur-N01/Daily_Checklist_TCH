@@ -108,7 +108,6 @@ class YearlyScheduleController extends Controller
     public function findschedule($id)
     {
         try {
-            // $refreshschedule = YearlySchedule::find($id);
             $refreshmachine = Machine::where('machine_status', true)->get();
 
             // Ambil jadwal terbaru untuk setiap mesin
@@ -585,19 +584,19 @@ class YearlyScheduleController extends Controller
             // Cek izin pengguna
             $user = auth()->user(); // Ambil pengguna yang sedang login
 
-            if ($user->hasPermissionTo('agreed_schedule')) {
-                $StoreSchedule->schedule_agreed = $accept_by;
-                $StoreSchedule->save();
-            }
-
-            if ($user->hasPermissionTo('agreed_schedule') && $user->hasPermissionTo('recognize_schedule')) {
-                $StoreSchedule->schedule_agreed = $accept_by;
+            if ($user->hasPermissionTo('recognize_schedule')) {
                 $StoreSchedule->schedule_recognize = $accept_by;
                 $StoreSchedule->save();
             }
 
+            if ($user->hasPermissionTo('agreed_schedule') && $user->hasPermissionTo('recognize_schedule')) {
+                $StoreSchedule->schedule_recognize = $accept_by;
+                $StoreSchedule->schedule_agreed = $accept_by;
+                $StoreSchedule->save();
+            }
             return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
         } catch (\Exception $e) {
+            // Log::info('User  permissions: ', $user->getAllPermissions()->toArray());
             Log::error('Update data error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['error' => 'Error sending data'], 500);
         }

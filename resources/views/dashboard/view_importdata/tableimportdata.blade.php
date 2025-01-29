@@ -311,7 +311,7 @@
                 formData.append('file', file);
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('uploadfile') }}",
+                    url: "{{ route('importmachine') }}",
                     data: formData,
                     contentType: false,
                     processData: false,

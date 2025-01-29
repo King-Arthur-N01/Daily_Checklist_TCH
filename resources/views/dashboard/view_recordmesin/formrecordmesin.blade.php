@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div id="errorMessages"></div>
                     <div class="table-responsive">
-                        <form action="{{ route('addrecord') }}" id="registerform" method="post">
+                        <form action="{{ route('addpreventive') }}" id="registerform" method="post">
                             @csrf
                             @method('post')
                             <table class="table table-header">
@@ -115,7 +115,8 @@
                             <div class="form-custom">
                                 <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                 <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
-                                <input type="hidden" name="id_schedule" value="{{ $machine_id }}">
+                                <input type="hidden" name="machine_id" value="{{ $joinmachine[0]->getmachineid }}">
+                                <input type="hidden" name="schedule_id" value="{{ $joinmachine[0]->getscheduleid }}">
                                 <input type="hidden" name="combined_create_by[]" id="combined_create_by">
                             </div>
                             <div class="form-custom">
@@ -132,8 +133,8 @@
                                 <table class="table table-bordered" id="abnormalityTable">
                                     <thead>
                                         <tr>
-                                            <th>Problem :</th>
-                                            <th>Analisis :</th>
+                                            <th>Masalah :</th>
+                                            <th>Penyebab :</th>
                                             <th>Tindakan :</th>
                                             <th>Status :</th>
                                             <th>Target :</th>
@@ -142,19 +143,19 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                                <textarea class="form-control abnormal-input" type="text" name="problem" placeholder="Isi bila diperlukan!" rows="6" cols="50" readonly></textarea>
                                             </td>
                                             <td>
-                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                                <textarea class="form-control abnormal-input" type="text" name="cause" placeholder="Isi bila diperlukan!" rows="6" cols="50" readonly></textarea>
                                             </td>
                                             <td>
-                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                                <textarea class="form-control abnormal-input" type="text" name="action" placeholder="Isi bila diperlukan!" rows="6" cols="50" readonly></textarea>
                                             </td>
                                             <td>
-                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                                <textarea class="form-control abnormal-input" type="text" name="status" placeholder="Isi bila diperlukan!" rows="6" cols="50" readonly></textarea>
                                             </td>
                                             <td>
-                                                <textarea class="form-control abnormal-input" type="text" name="abnormality" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled></textarea>
+                                                <textarea class="form-control abnormal-input" type="text" name="target" placeholder="Isi bila diperlukan!" rows="6" cols="50" readonly></textarea>
                                             </td>
                                         </tr>
                                 </table>
@@ -266,9 +267,9 @@
             // Enable/Disable abnormality select based on the switch
             $('input[name="option"]').on('change', function() {
                 if ($(this).attr('id') === 'yes') {
-                    $('.abnormal-input').prop('disabled', false);
+                    $('.abnormal-input').prop('readonly', false);
                 } else {
-                    $('.abnormal-input').prop('disabled', true);
+                    $('.abnormal-input').prop('readonly', true);
                 }
             });
             combineCreateByUsers();

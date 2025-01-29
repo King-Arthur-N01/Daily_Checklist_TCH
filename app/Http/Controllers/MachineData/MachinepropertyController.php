@@ -5,12 +5,14 @@ namespace App\Http\Controllers\MachineData;
 use App\Http\Controllers\Controller;
 use App\Machineproperty;
 use App\Componencheck;
+use App\Importdata;
 use App\Machine;
 use App\Parameter;
 use App\Metodecheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MachinepropertyController extends Controller
 {
@@ -63,10 +65,25 @@ class MachinepropertyController extends Controller
     //     }
     // }
 
+    // fungsi upload data excel ke database
+    public function importpropertydata(Request $request)
+    {
+        $request->validate([
+            'file' => 'mimes:xlsx,xls,csv',
+        ]);
+        try {
+            Excel::import(new Machineproperty, $request->file('file'));
+            return response()->json(['success' => 'Data imported successfully!']);
+        } catch (\Exception $e) {
+            Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function createproperty(Request $request)
     {
         try {
-            // dd($request);
+            // dd($request)->all();
             $StoreProperty = new Machineproperty();
             $StoreProperty->name_property = $request->input('name_property');
             $StoreProperty->save();
@@ -82,7 +99,7 @@ class MachinepropertyController extends Controller
 
                     $StoreComponent = new Componencheck();
                     $StoreComponent->name_componencheck = $componentChecks[0];
-                    $StoreComponent->id_property2 = $machinepropertyid;
+                    $StoreComponent->id_property = $machinepropertyid;
                     $StoreComponent->save();
 
                     $componencheckid = Componencheck::latest('id')->first()->id;

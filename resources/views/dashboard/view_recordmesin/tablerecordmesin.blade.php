@@ -144,7 +144,6 @@
                 ajax: {
                     url: '{{ route("refreshpreventive") }}',
                     dataSrc: function(data) {
-                        // let scheduleIds = JSON.parse(data.refreshprevenitve.schedule_collection);
                         return data.refreshpreventive.map(function(infopreventive, index) {
                             return {
                                 id: infopreventive.id,
@@ -173,11 +172,7 @@
                     {
                         data: 'schedule_status',
                         render: function(data, type, row) {
-                            if (data === 0) {
-                                return '<span class="badge badge-danger" value="0">Belum Disetujui</span>';
-                            } else if (data === 1) {
-                                return '<span class="badge badge-success" value="1">Sudah Disetujui</span>';
-                            }
+                            return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
                         }
                     },
                 ]
@@ -272,13 +267,13 @@
                 let lastCounter = 1;
                 let lastRow = 0;
                 for (let i = 0; i < dbRows.length; i++) {
-                    let thisValue1 = dbRows[i].cells[1].innerHTML;
+                    let thisValue1 = dbRows[i].cells[0].innerHTML;
                     if (thisValue1 == lastValue1) {
                         lastCounter++;
-                        dbRows[lastRow].cells[1].rowSpan = lastCounter;
-                        dbRows[i].cells[1].style.display = "none";
+                        dbRows[lastRow].cells[0].rowSpan = lastCounter;
+                        dbRows[i].cells[0].style.display = "none";
                     } else {
-                        dbRows[i].cells[1].style.display = "table-cell";
+                        dbRows[i].cells[0].style.display = "table-cell";
                         lastValue1 = thisValue1;
                         lastCounter = 1;
                         lastRow = i;
@@ -291,7 +286,7 @@
                 const scheduleId = button.data('id');
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("readpreventive-onschedule", ':id') }}'.replace(':id', scheduleId),
+                    url: '{{ route("readpreventive", ':id') }}'.replace(':id', scheduleId),
                     success: function(data) {
 
                         const header_modal_onschedule = `
@@ -312,6 +307,7 @@
                                         <th>KAPASITAS</th>
                                         <th>NOMOR MESIN</th>
                                         <th>DURASI</th>
+                                        <th>JAM PREVENTIVE</th>
                                         <th>TANGGAL PREVENTIVE</th>
                                         <th>STATUS</th>
                                         <th>ACTION</th>
@@ -320,9 +316,11 @@
                                 <tbody>
                                     ${data.baseonscheduledata.map((schedule, index) => {
                                         let reschedulePM = null;
-                                        let schedule_status = null;
+                                        let scheduleStatus = null;
+                                        let actionButton = null;
                                         let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === schedule.standart_id);
                                         let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
+                                        let scheduleHour = schedule.schedule_hour;
 
                                         if (schedule.reschedule_date_3) {
                                             reschedulePM = formatDate(schedule.reschedule_date_3) + ' ***)';
@@ -335,11 +333,17 @@
                                         }
 
                                         if (schedule.machine_schedule_status === 0) {
-                                            schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
+                                            scheduleStatus = '<span class="badge badge-danger">Belum Dikerjakan</span>';
                                         } else if (schedule.machine_schedule_status === 1) {
-                                            schedule_status = '<span class="badge badge-success" value="0">Sudah Dikerjakan</span>';
+                                            scheduleStatus = '<span class="badge badge-success">Sudah Dikerjakan</span>';
                                         } else if (schedule.machine_schedule_status === 2){
-                                            schedule_status = '<span class="badge badge-success" value="0">Terjadi Abnormal</span>';
+                                            scheduleStatus = '<span class="badge badge-warning">Terjadi Abnormal</span>';
+                                        }
+
+                                        if (schedule.machine_schedule_status === 0) {
+                                            actionButton = '<a class="btn btn-primary btn-sm" style="color:white" id="preventiveButton" data-id="${schedule.schedule_id}"><i class="bi bi-play-fill"></i>Start Preventive</a>'
+                                        } else if (schedule.machine_schedule_status === 2) {
+                                            actionButton = '<a class="btn btn-primary btn-sm" style="color:white" id="preventiveButton" data-id="${schedule.schedule_id}"><i class="bi bi-play-fill"></i>Continue Preventive</a>'
                                         }
                                         return `
                                             <tr>
@@ -349,11 +353,10 @@
                                                 <td>${schedule.machine_type || '-'}</td>
                                                 <td>${schedule.machine_number || '-'}</td>
                                                 <td>${machineHour} /Jam</td>
+                                                <td>${scheduleHour.split(':').slice(0, 2).join(':') || 'Belum ada'}</td>
                                                 <td>${reschedulePM}</td>
-                                                <td>${schedule_status}</td>
-                                                <td>
-                                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${schedule.schedule_id}" data-toggle="modal" data-target="#updateModal"><i class="bi bi-play-fill"></i>Start Preventive</a>
-                                                </td>
+                                                <td>${scheduleStatus}</td>
+                                                <td>${actionButton}</td>
                                             </tr>
                                         `;
                                     }).join('')}
@@ -361,67 +364,81 @@
                             </table>
                         `;
 
-                        const data_modal_pending_schedule = `
-                            <div class="col-xl-12">
-                                <h4>Pending Schedule</h4>
-                            </div>
-                            <table class="table table-bordered" id="onScheduleTables">
-                                <thead>
-                                    <tr>
-                                        <th>NO.</th>
-                                        <th>NAMA MESIN</th>
-                                        <th>NO INVENTARIS</th>
-                                        <th>KAPASITAS</th>
-                                        <th>NOMOR MESIN</th>
-                                        <th>DURASI</th>
-                                        <th>TANGGAL PREVENTIVE</th>
-                                        <th>STATUS</th>
-                                        <th>ACTION</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${data.pendingscheduledata.map((pendingschedule, index) => {
-                                        let reschedulePM = null;
-                                        let schedule_status = null;
-                                        let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === pendingschedule.standart_id);
-                                        let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
+                        const data_modal_pending_schedule =
+                            (!data.pendingscheduledata || data.pendingscheduledata.length === 0) ? `
+                                <table class="table table-bordered" id="pendingScheduleTables">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="9">
+                                                <h5 style="text-align: center;">Tidak ada pending schedule saat ini</h5>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            ` : `
+                                <div class="col-xl-12">
+                                    <h4>Pending Schedule</h4>
+                                </div>
+                                <table class="table table-bordered" id="pendingScheduleTables">
+                                    <thead>
+                                        <tr>
+                                            <th>NO.</th>
+                                            <th>NAMA MESIN</th>
+                                            <th>NO INVENTARIS</th>
+                                            <th>KAPASITAS</th>
+                                            <th>NOMOR MESIN</th>
+                                            <th>DURASI</th>
+                                            <th>JAM PREVENTIVE</th>
+                                            <th>TANGGAL PREVENTIVE</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.pendingscheduledata.map((pendingschedule, index) => {
+                                            let reschedulePM = null;
+                                            let schedule_status = null;
+                                            let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === pendingschedule.standart_id);
+                                            let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
+                                            let scheduleHour = pendingschedule.schedule_hour;
 
-                                        if (pendingschedule.reschedule_date_3) {
-                                            reschedulePM = formatDate(pendingschedule.reschedule_date_3) + ' ***';
-                                        } else if (pendingschedule.reschedule_date_2) {
-                                            reschedulePM = formatDate(pendingschedule.reschedule_date_2) + ' **';
-                                        } else if (pendingschedule.reschedule_date_1) {
-                                            reschedulePM = formatDate(pendingschedule.reschedule_date_1) + ' *';
-                                        } else {
-                                            reschedulePM = formatDate(pendingschedule.schedule_date);
-                                        }
+                                            if (pendingschedule.reschedule_date_3) {
+                                                reschedulePM = formatDate(pendingschedule.reschedule_date_3) + ' ***';
+                                            } else if (pendingschedule.reschedule_date_2) {
+                                                reschedulePM = formatDate(pendingschedule.reschedule_date_2) + ' **';
+                                            } else if (pendingschedule.reschedule_date_1) {
+                                                reschedulePM = formatDate(pendingschedule.reschedule_date_1) + ' *';
+                                            } else {
+                                                reschedulePM = formatDate(pendingschedule.schedule_date);
+                                            }
 
-                                        if (pendingschedule.machine_schedule_status === 0) {
-                                            schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
-                                        } else if (pendingschedule.machine_schedule_status === 1) {
-                                            schedule_status = '<span class="badge badge-success" value="0">Sudah Dikerjakan</span>';
-                                        } else if (pendingschedule.machine_schedule_status === 2){
-                                            schedule_status = '<span class="badge badge-danger" value="0">Terjadi Abnormal</span>';
-                                        }
-                                        return `
-                                            <tr>
-                                                <td>${index + 1}</td>
-                                                <td>${pendingschedule.machine_name}</td>
-                                                <td>${pendingschedule.invent_number}</td>
-                                                <td>${pendingschedule.machine_type || '-'}</td>
-                                                <td>${pendingschedule.machine_number || '-'}</td>
-                                                <td>${machineHour} /Jam</td>
-                                                <td>${reschedulePM}</td>
-                                                <td>${schedule_status}</td>
-                                                <td>
-                                                    <a class="btn btn-primary btn-sm" style="color:white" data-id="${pendingschedule.schedule_id}" data-toggle="modal" data-target="#updateModal"><i class="bi bi-play-fill"></i>Start Preventive</a>
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        `;
+                                            if (pendingschedule.machine_schedule_status === 0) {
+                                                schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
+                                            } else if (pendingschedule.machine_schedule_status === 1) {
+                                                schedule_status = '<span class="badge badge-success">Sudah Dikerjakan</span>';
+                                            } else if (pendingschedule.machine_schedule_status === 2){
+                                                schedule_status = '<span class="badge badge-warning">Terjadi Abnormal</span>';
+                                            }
+                                            return `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${pendingschedule.machine_name}</td>
+                                                    <td>${pendingschedule.invent_number}</td>
+                                                    <td>${pendingschedule.machine_type || '-'}</td>
+                                                    <td>${pendingschedule.machine_number || '-'}</td>
+                                                    <td>${machineHour} /Jam</td>
+                                                    <td>${scheduleHour.split(':').slice(0, 2).join(':') || 'Belum ada'}</td>
+                                                    <td>${reschedulePM}</td>
+                                                    <td>${schedule_status}</td>
+                                                    <td>
+                                                        <a class="btn btn-primary btn-sm" style="color:white" id="preventiveButton" data-id="${pendingschedule.schedule_id}"><i class="bi bi-play-fill"></i>Start Preventive</a>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            `;
 
                         const header_modal_offschedule = `
                             <h5 class="modal-title">Special Schedule PM Mesin</h5>
@@ -433,7 +450,7 @@
                                     <thead>
                                         <tr>
                                             <td colspan="9">
-                                                <h4 style="text-align: center;">TIDAK ADA SPECIAL SCHEDULE SAAT INI</h4>
+                                                <h5 style="text-align: center;">Tidak ada special schedule saat ini</h5>
                                             </td>
                                         </tr>
                                     </thead>
@@ -442,13 +459,14 @@
                                 <table class="table table-bordered" id="offScheduleTables">
                                     <thead>
                                         <tr>
-                                            <th>NO.</th>
                                             <th>SPECIAL SCHEDULE</th>
+                                            <th>NO.</th>
                                             <th>NAMA MESIN</th>
                                             <th>NO INVENTARIS</th>
                                             <th>KAPASITAS</th>
                                             <th>NOMOR MESIN</th>
                                             <th>DURASI</th>
+                                            <th>JAM PREVENTIVE</th>
                                             <th>TANGGAL PREVENTIVE</th>
                                             <th>STATUS</th>
                                             <th>ACTION</th>
@@ -460,6 +478,7 @@
                                             let schedule_status = null;
                                             let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === offschedule.standart_id);
                                             let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
+                                            let scheduleHour = offschedule.schedule_hour;
 
                                             if (offschedule.reschedule_date_3) {
                                                 reschedulePM = formatDate(offschedule.reschedule_date_3) + ' ***';
@@ -474,23 +493,24 @@
                                             if (offschedule.machine_schedule_status === 0) {
                                                 schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
                                             } else if (offschedule.machine_schedule_status === 1) {
-                                                schedule_status = '<span class="badge badge-success" value="0">Sudah Dikerjakan</span>';
+                                                schedule_status = '<span class="badge badge-success">Sudah Dikerjakan</span>';
                                             } else if (offschedule.machine_schedule_status === 2){
-                                                schedule_status = '<span class="badge badge-danger" value="0">Terjadi Abnormal</span>';
+                                                schedule_status = '<span class="badge badge-warning">Terjadi Abnormal</span>';
                                             }
                                             return `
                                                 <tr>
+                                                    <td><h5>${offschedule.name_schedule_month}</h5></td>
                                                     <td>${index + 1}</td>
-                                                    <td>${offschedule.name_schedule_month}</td>
                                                     <td>${offschedule.machine_name}</td>
                                                     <td>${offschedule.invent_number}</td>
                                                     <td>${offschedule.machine_type || '-'}</td>
                                                     <td>${offschedule.machine_number || '-'}</td>
                                                     <td>${machineHour} /Jam</td>
+                                                    <td>${scheduleHour.split(':').slice(0, 2).join(':') || 'Belum ada'}</td>
                                                     <td>${reschedulePM}</td>
                                                     <td>${schedule_status}</td>
                                                     <td>
-                                                        <a class="btn btn-primary btn-sm" style="color:white" data-id="${offschedule.schedule_id}" data-toggle="modal" data-target="#updateModal"><i class="bi bi-play-fill"></i>Start Preventive</a>
+                                                        <a class="btn btn-primary btn-sm" style="color:white" id="preventiveButton" data-id="${offschedule.schedule_id}"><i class="bi bi-play-fill"></i>Start Preventive</a>
                                                     </td>
                                                 </tr>
                                             `;
@@ -510,43 +530,12 @@
                         $('#modal_button_onschedule').html(button_modal);
                         mergeCells();
 
-                        $('#saveButton').on('click', function() {
-                            if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
-                                $.ajax({
-                                    type: 'PUT',
-                                    url: '{{ route("edityear-accept", ':id') }}'.replace(':id', scheduleId),
-                                    data: {
-                                        '_token': '{{ csrf_token() }}',
-                                        'accept_by': acceptBy,
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            const successMessage = response.success;
-                                            $('#successText').text(successMessage);
-                                            $('#successModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#successModal').modal('hide');
-                                            $('#acceptModal').modal('hide');
-                                        }, 2000);
-                                    },
-                                    error: function(xhr, status, error) {
-                                        if (xhr.responseText) {
-                                            const warningMessage = JSON.parse(xhr.responseText).error;
-                                            $('#warningText').text(warningMessage);
-                                            $('#warningModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#warningModal').modal('hide');
-                                            $('#acceptModal').modal('hide');
-                                        }, 2000);
-                                    }
-                                }).always(function() {
-                                    table.ajax.reload(null, false);
-                                });
-                            } else {
-                                // User cancelled the deletion, do nothing
-                            }
+                        $('#preventiveButton').on('click', function() {
+                            const button = $(event.relatedTarget);
+                            const preventiveId = button.data('id');
+                            open_url = '{{ route("formpreventive", ':id') }}'.replace(':id', preventiveId);
+                            window.location.href = open_url;
+                            return;
                         });
                     },
                     error: function(xhr, status, error) {

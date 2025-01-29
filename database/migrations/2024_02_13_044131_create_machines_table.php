@@ -26,8 +26,8 @@ class CreateMachinesTable extends Migration
             $table->string('install_date')->nullable();
             $table->string('production_date')->nullable();
             $table->boolean('machine_abnormal_status')->default(false);
-            $table->string('machine_problem')->nullable();
-            $table->string('machine_action')->default(false);
+            // $table->string('machine_problem')->nullable();
+            // $table->string('machine_action')->default(false);
             $table->unsignedBigInteger('property_id')->nullable();
             $table->unsignedBigInteger('standart_id')->nullable();
             $table->timestamps();

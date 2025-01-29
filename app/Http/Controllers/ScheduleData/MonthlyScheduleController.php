@@ -15,10 +15,11 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\Permission\Traits\HasPermissions;
+use Spatie\Permission\Traits\HasRoles;
 
 class MonthlyScheduleController extends Controller
 {
-    use HasPermissions;
+    use HasPermissions, HasRoles;
 
     public function viewdataschedule($id)
     {
@@ -71,6 +72,7 @@ class MonthlyScheduleController extends Controller
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('yearly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_start', 'asc')
                 ->get();
 
             $workinghourdata = WorkingHour::get();
@@ -90,7 +92,7 @@ class MonthlyScheduleController extends Controller
         try {
             $monthlyscheduledata = MonthlySchedule::find($id);
             $workinghourdata = WorkingHour::get();
-            $getmachines = DB::table('yearly_schedules')
+            $machinescheduledata = DB::table('yearly_schedules')
                 ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
@@ -100,7 +102,7 @@ class MonthlyScheduleController extends Controller
             return response()->json([
                 'monthlyscheduledata' => $monthlyscheduledata,
                 'workinghourdata' => $workinghourdata,
-                'getmachines' => $getmachines
+                'machinescheduledata' => $machinescheduledata
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
@@ -225,23 +227,24 @@ class MonthlyScheduleController extends Controller
 
             $isSpecialSchedule = $findSchedule->schedule_special;
 
-            if ($isSpecialSchedule == false) {
+            if ($isSpecialSchedule == 0) {
                 $scheduledata = DB::table('monthly_schedules')
-                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'working_hours.preventive_hour')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*')
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->join('working_hours', 'machines.standart_id', '=', 'working_hours.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
-            } else if ($isSpecialSchedule == true) {
+            } else if ($isSpecialSchedule == 1) {
                 $scheduledata = DB::table('monthly_schedules')
-                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*', 'working_hours.preventive_hour')
+                ->select('monthly_schedules.*', 'machine_schedules.*', 'machines.*')
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->join('working_hours', 'machines.standart_id', '=', 'working_hours.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
             }
+            $workinghourdata = WorkingHour::get();
 
             // Ambil data schedule
             $firstSchedule = $scheduledata->first();
@@ -260,7 +263,7 @@ class MonthlyScheduleController extends Controller
             $user_agreed_name = $user_agreed->name ?? 'Belum Ada';
 
             // Render PDF
-            $pdf = PDF::loadView('dashboard.view_schedulemesin.printschedulemonth', compact('scheduledata', 'user_create_name', 'user_recognize_name', 'user_agreed_name'));
+            $pdf = PDF::loadView('dashboard.view_schedulemesin.printschedulemonth', compact('scheduledata', 'workinghourdata', 'user_create_name', 'user_recognize_name', 'user_agreed_name'));
             $pdf->setPaper('A4', 'portrait');
             return $pdf->stream();
         } catch (\Exception $e) {
@@ -294,6 +297,7 @@ class MonthlyScheduleController extends Controller
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
             } else if ($isSpecialSchedule == true) {
                 $scheduledata = DB::table('monthly_schedules')
@@ -301,6 +305,7 @@ class MonthlyScheduleController extends Controller
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
             }
 
@@ -370,24 +375,25 @@ class MonthlyScheduleController extends Controller
                 return response()->json(['error' => 'Schedule not found !!!!'], 404);
             }
 
-            // Cek izin pengguna
+            // Check user permissions
             $user = auth()->user(); // Ambil pengguna yang sedang login
+            Log::info('User  permissions: ', $user->getAllPermissions()->toArray());
 
-            if ($user->hasPermissionTo('agreed_schedule')) {
-                $StoreSchedule->schedule_agreed = $accept_by;
-                $StoreSchedule->save();
-            }
-
-            if ($user->hasPermissionTo('agreed_schedule') && $user->hasPermissionTo('recognize_schedule')) {
-                $StoreSchedule->schedule_agreed = $accept_by;
+            if ($user->hasPermissionTo('recognize_schedule')) {
                 $StoreSchedule->schedule_recognize = $accept_by;
                 $StoreSchedule->save();
             }
 
-            return response()->json(['success' => 'Data Schedule was successfully ACCEPTED']);
+            if ($user->hasPermissionTo('agreed_schedule') && $user->hasPermissionTo('recognize_schedule')) {
+                $StoreSchedule->schedule_recognize = $accept_by;
+                $StoreSchedule->schedule_agreed = $accept_by;
+                $StoreSchedule->save();
+            }
+
+            return response()->json(['success' => 'Data schedule berhasil di TERIMA!']);
         } catch (\Exception $e) {
-            Log::error(' update data error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => 'Error sending data'], 500);
+            Log::error('Update data error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['error' => 'Error sending data: ' . $e->getMessage()], 500);
         }
     }
 
@@ -422,24 +428,35 @@ class MonthlyScheduleController extends Controller
     public function registerplanner(Request $request, $id)
     {
         try {
+            // dd($request)->all();
             $request->validate([
                 'planned_by' => 'required'
             ]);
-            // dd($request->all());
             $StoreSchedule = MonthlySchedule::find($id);
             if (!$StoreSchedule) {
                 return response()->json(['error' => 'Schedule not found !!!!'], 404);
-            } else {
-                $StoreSchedule->schedule_planner = $request->input('planned_by');
-                $StoreSchedule->save();
             }
 
-            $machine_reschedule = $request->input('machine_reschedule');
-            if ($machine_reschedule) {
-                foreach ($machine_reschedule as $reschedule) {
-                    $StoreMachineSchedule = MachineSchedule::find($reschedule['schedule_id']);
-                    if ($StoreMachineSchedule) {
-                        $reschedule_date = Carbon::createFromFormat('d-m-Y', $reschedule['reschedule_value'])->format('Y-m-d');
+            // Cek izin pengguna
+            $user = auth()->user(); // Ambil pengguna yang sedang login
+
+            if ($user->hasPermissionTo('reschedule_schedule')) {
+                $StoreSchedule->schedule_planner = $request->input('planned_by');
+                $StoreSchedule->save();
+            } else {
+                return response()->json(['error' => 'The user does not have the required permissions !!!!'], 422);
+            }
+
+            $machine_reschedule = $request->input('reschedule_id');
+            foreach ($machine_reschedule as $key => $reschedule) {
+                $StoreMachineSchedule = MachineSchedule::find($reschedule);
+                $reschedule_hour = $request->input('reschedule_hour')[$key];
+                $reschedule_value = $request->input('reschedule_value')[$key];
+                $reschedule_note = $request->input('reschedule_note')[$key];
+
+                if ($StoreMachineSchedule) {
+                    if ($reschedule_value != null) {
+                        $reschedule_date = Carbon::createFromFormat('d-m-Y', $reschedule_value)->format('Y-m-d');
                         if ($StoreMachineSchedule->reschedule_date_1 == null) {
                             $StoreMachineSchedule->reschedule_date_1 = $reschedule_date;
                         } else if ($StoreMachineSchedule->reschedule_date_2 == null) {
@@ -449,11 +466,12 @@ class MonthlyScheduleController extends Controller
                         } else {
                             return response()->json(['error' => 'Tidak bisa lebih dari 3x melakukan RESCHEDULE!!! '], 422);
                         }
-                        $StoreMachineSchedule->reschedule_note = $reschedule['reschedule_note'];
-                        $StoreMachineSchedule->save();
-                    } else {
-                        return response()->json(['error' => 'Machine schedule not found for ID: ' . $reschedule['schedule_id']], 404);
                     }
+                    $StoreMachineSchedule->schedule_hour = $reschedule_hour;
+                    $StoreMachineSchedule->reschedule_note = $reschedule_note;
+                    $StoreMachineSchedule->save();
+                } else {
+                    return response()->json(['error' => 'Machine schedule not found for ID: ' . $reschedule], 404);
                 }
             }
             return response()->json(['success' => 'Schedule mesin berhasil di TERIMA!']);
@@ -481,6 +499,7 @@ class MonthlyScheduleController extends Controller
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('yearly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_start', 'asc')
                 ->get();
 
             $workinghourdata = WorkingHour::get();

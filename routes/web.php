@@ -36,7 +36,7 @@ Route::get ('/machinedata/table/refresh','MachineData\ImportdataController@refre
 Route::post('/machinedata/create','MachineData\MachineController@createmachine')->name('addmachine');
 Route::put ('/machinedata/update/{id}','MachineData\MachineController@updatemachine')->name('editmachine');
 Route::delete('/machinedata/delete/{id}','MachineData\MachineController@deletemachine')->name('removemachine');
-Route::post('/machinedata/import','MachineData\ImportdataController@importdata')->name('uploadfile');
+Route::post('/machinedata/import','MachineData\ImportdataController@importmachinedata')->name('importmachine');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailmachinedata')->name('detailmachine');
 Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachine')->name('findmachineid');
 Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
@@ -54,6 +54,7 @@ Route::put ('/machineproperty/update/{id}','MachineData\MachinepropertyControlle
 // Route::get('/machineproperty/find/{id}','MachineData\MachinepropertyController@findproperty')->name('findproperty');
 Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyController@refreshtableproperty')->name('refreshproperty');
 Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
+Route::post('/machineproperty/import','MachineData\MachinepropertyController@importpropertydata')->name('importproperty');
 // machine property route end
 
 // machine working route
@@ -73,8 +74,8 @@ Route::post('/schedule/create','ScheduleData\YearlyScheduleController@createsche
 Route::put ('/schedule/update/{id}','ScheduleData\YearlyScheduleController@updateschedule')->name('edityear');
 Route::delete('/schedule/delete/{id}','ScheduleData\YearlyScheduleController@deleteschedule')->name('removeyear');
 Route::get ('/schedule/read','ScheduleData\YearlyScheduleController@readmachinedata')->name('readmachineyear');
-Route::get ('/schedule/find/{id}','ScheduleData\YearlyScheduleController@findschedule')->name('findscheduleid');
-Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshyear'); // juga buat numpang tabel known & agreed year
+Route::get ('/schedule/find/{id}','ScheduleData\YearlyScheduleController@findschedule')->name('findyearid');
+Route::get ('/schedule/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshyear'); // juga buat page accept year
 Route::get ('/schedule/table/refresh/{id}','ScheduleData\YearlyScheduleController@refreshdetailtableschedule')->name('refreshdetailyear');
 Route::get ('/schedule/view/{id}', 'ScheduleData\YearlyScheduleController@viewdataschedule')->name('viewyear');
 // khusus view fullcalendar
@@ -96,6 +97,7 @@ Route::get ('/schedule/print/quarter2/{id}','ScheduleData\YearlyScheduleControll
 Route::get ('/schedule/accept','ScheduleData\YearlyScheduleController@indexscheduleaccept')->name('indexyear-accept');
 Route::get ('/schedule/accept/read/{id}','ScheduleData\YearlyScheduleController@readscheduledata')->name('readyear-accept');
 Route::put ('/schedule/accept/register/{id}','ScheduleData\YearlyScheduleController@registeraccept')->name('edityear-accept');
+Route::get ('/schedule/accept/table/refresh','ScheduleData\YearlyScheduleController@refreshtableschedule')->name('refreshyear-accept');
 // schedule year accept end
 
 
@@ -137,30 +139,30 @@ Route::get ('/schedule/month/planner/table/refresh/','ScheduleData\MonthlySchedu
 
 // preventive
 Route::get ('/preventive','RecordsData\MachinerecordController@indexpreventive')->name('indexpreventive');
-Route::get ('/preventive/read/onschedule/{id}','RecordsData\MachinerecordController@readonscheduledata')->name('readpreventive-onschedule');
+Route::get ('/preventive/read/schedule/{id}','RecordsData\MachinerecordController@readscheduledata')->name('readpreventive');
 // Route::get ('/preventive/read/offschedule/{id}','RecordsData\MachinerecordController@readoffscheduledata')->name('readpreventive-offschedule');
 // Route::get ('/preventive/read/special','RecordsData\MachinerecordController@readspecialscheduledata')->name('readpreventive-special');
 // Route::get ('/preventive/read/machine','RecordsData\MachinerecordController@readmachinedata')->name('readmachinepreventive');
-Route::get ('/preventive/schedule/{id}','RecordsData\MachinerecordController@formmachinerecord')->name('formpreventive');
-Route::post('/preventive/create','RecordsData\MachinerecordController@createmachinerecord')->name('addrecord');
+Route::get ('/preventive/machine/{id}','RecordsData\MachinerecordController@formpreventive')->name('formpreventive');
+Route::post('/preventive/create','RecordsData\MachinerecordController@createpreventive')->name('addpreventive');
 Route::get ('/preventive/table/refresh','RecordsData\MachinerecordController@refreshtablepreventive')->name('refreshpreventive');
 Route::get ('/preventive/table/refresh/{id}','RecordsData\MachinerecordController@refreshdetailtablepreventive')->name('refreshdetailpreventive');
 // preventive end
 
 // machine records correction
-Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('indexcorrection');
-Route::get ('/machinerecord/correction/table/refresh','RecordsData\MachinerecordController@refreshtablecorrection')->name('refreshcorrect');
-Route::get ('/machinerecord/correction/read/{id}','RecordsData\MachinerecordController@readdatacorrection')->name('readcorrection');
-Route::put ('/machinerecord/correction/insert/{id}','RecordsData\MachinerecordController@registercorrection')->name('insertcorrection');
-Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrection');
+// Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('indexcorrection');
+// Route::get ('/machinerecord/correction/table/refresh','RecordsData\MachinerecordController@refreshtablecorrection')->name('refreshcorrect');
+// Route::get ('/machinerecord/correction/read/{id}','RecordsData\MachinerecordController@readdatacorrection')->name('readcorrection');
+// Route::put ('/machinerecord/correction/insert/{id}','RecordsData\MachinerecordController@registercorrection')->name('insertcorrection');
+// Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrection');
 // machine records correction end
 
 // machine records approval
-Route::get ('/machinerecord/approval','RecordsData\MachinerecordController@indexapproval')->name('indexapproval');
-Route::get ('/machinerecord/approval/table/refresh','RecordsData\MachinerecordController@refreshtableapproval')->name('refreshapproval');
-Route::get ('/machinerecord/approval/read/{id}','RecordsData\MachinerecordController@readdataapproval')->name('readapproval');
-Route::put ('/machinerecord/approval/insert/{id}','RecordsData\MachinerecordController@registerapproval')->name('insertapproval');
-Route::delete('/machinerecord/approval/delete/{id}','RecordsData\MachinerecordController@deleteapproval')->name('removeapproval');
+Route::get ('/preventive/accept','RecordsData\MachinerecordController@indexpreventiveaccept')->name('indexpreventive-accept');
+Route::get ('/preventive/accept/read/{id}','RecordsData\MachinerecordController@readpreventivedata')->name('readpreventive-accept');
+Route::put ('/preventive/accept/register/{id}','RecordsData\MachinerecordController@registerpreventiveccept')->name('editpreventive-accept');
+Route::delete('/preventive/accept/delete/{id}','RecordsData\MachinerecordController@deleteaccept')->name('removeapproval');
+Route::get ('/preventive/accept/table/refresh','RecordsData\MachinerecordController@refreshtablepreventiveaccept')->name('refreshpreventive-accept');
 // machine records approval end
 
 // record data machine route

@@ -103,15 +103,18 @@
         <tbody>
             @foreach ($scheduledata as $key => $printdata)
                 @php
-                    $schedule_pm = null;
+                    $machineHourData = $workinghourdata->firstWhere('id', $printdata->standart_id);
+                    $machineHour = $machineHourData ? $machineHourData->preventive_hour : '0';
+                    $reschedule_pm = null;
+                    $schedule_hour = $printdata->schedule_hour ? Carbon\Carbon::parse($printdata->schedule_hour)->format('H:s') : '-';
 
                     // Mengambil tanggal reschedule yang valid
                     if ($printdata->reschedule_date_3) {
-                        $schedule_pm = $printdata->reschedule_date_3;
+                        $reschedule_pm = $printdata->reschedule_date_3;
                     } elseif ($printdata->reschedule_date_2) {
-                        $schedule_pm = $printdata->reschedule_date_2;
+                        $reschedule_pm = $printdata->reschedule_date_2;
                     } elseif ($printdata->reschedule_date_1) {
-                        $schedule_pm = $printdata->reschedule_date_1;
+                        $reschedule_pm = $printdata->reschedule_date_1;
                     }
                 @endphp
                 <tr>
@@ -120,18 +123,20 @@
                     <td width="15%">{{ $printdata->invent_number }}</td>
                     <td width="15%">{{ $printdata->machine_spec }}</td>
                     <td width="15%">{{ $printdata->machine_number }}</td>
-                    <td width="15%">{{ $printdata->preventive_hour }} Jam</td>
+                    <td width="15%">{{ $machineHour }} Jam</td>
                     <td width="20%">
-                        @php $format_date = Carbon\Carbon::parse($printdata->schedule_date)->format('d-F-Y'); @endphp
-                        {{ $format_date }}
+                        @php $schedule_date = Carbon\Carbon::parse($printdata->schedule_date)->format('d-F-Y'); @endphp
+                        {{ $schedule_date }}
                     </td>
                     <td width="10%">
                         @php
-                            $reschedule_date = $schedule_pm ? Carbon\Carbon::parse($schedule_pm)->format('d-F-Y') : '-';
+                            $reschedule_date = $reschedule_pm ? Carbon\Carbon::parse($reschedule_pm)->format('d-F-Y') : '-';
                         @endphp
                         {{ $reschedule_date }}
                     </td>
-                    <td width="10%"></td>
+                    <td width="10%">
+                        {{ $schedule_hour }}
+                    </td>
                     <td width="20%">{{$printdata->reschedule_note}}</td>
                 </tr>
             @endforeach

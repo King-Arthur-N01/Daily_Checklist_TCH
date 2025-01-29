@@ -10,6 +10,7 @@ class MachineSchedule extends Model
         'schedule_start',
         'schedule_end',
         'schedule_date',
+        'schedule_hour',
         'reschedule_date_1',
         'reschedule_date_2',
         'reschedule_date_3',
