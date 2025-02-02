@@ -48,8 +48,8 @@
                                 <th>NAMA MESIN</th>
                                 <th>NO.MESIN/AREA</th>
                                 <th>WAKTU PM</th>
-                                <th>STATUS DIKOREKSI</th>
-                                <th>STATUS DISETUJUI</th>
+                                <th>STATUS KOREKSI</th>
+                                <th>STATUS SETUJUI</th>
                                 <th>STATUS PM</th>
                                 <th>ACTION</th>
                             </thead>
@@ -77,6 +77,21 @@
         </div>
     </div>
     <!-- End Approval Modal-->
+
+    <!-- View Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_view">
+                </div>
+                <div class="modal-body" id="modal_data_view">
+                </div>
+                <div class="modal-footer" id="modal_button_view">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End View Modal-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -170,7 +185,10 @@
                                 approve_by: refreshrecord.approve_by,
                                 record_status: refreshrecord.machinerecord_status,
                                 actions: `
-                                    <button type="button" class="btn btn-primary btn-sm btn-Id" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>
+                                    ${refreshrecord.approve_by === null ?
+                                        `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>` :
+                                        `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshrecord.records_id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></button>`
+                                    }
                                 `
                             };
                         });
@@ -190,11 +208,11 @@
                     }},
                     { data: 'record_status', render: function(data, type, row) {
                         if (data == 0) {
-                            return '<span class="badge badge-info">Open</span>';
+                            return '<span class="badge badge-success">OPEN</span>';
                         } else if (data == 1) {
-                            return '<span class="badge badge-success">Close</span>';
+                            return '<span class="badge badge-info">CLOSE</span>';
                         } else if (data == 2) {
-                            return '<span class="badge badge-warning">Abnormal</span>';
+                            return '<span class="badge badge-warning">ABNORMAL</span>';
                         }
                     }},
                     { data: 'actions', orderable: false, searchable: false }
@@ -295,9 +313,8 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.preventivedata[0].note || '-'}</textarea>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.preventivedata[0].note || ''}</textarea>
                                     <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
-                                    <input type="hidden" id="machine_id" value="${data.preventivedata[0].machine_id}">
                                 </div>
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
@@ -310,7 +327,7 @@
                                             <tr>
                                                 <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
                                                 <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
-                                                ${data.usernames.map((get_user_id) => `
+                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
                                                     <td>${get_user_id}</td>
                                                 `).join('')}
                                             </tr>
@@ -331,21 +348,22 @@
                                         <tbody>
                                             <tr>
                                                 <td>
-                                                    <textarea class="form-control abnormal-input" type="text" id="problem" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].problem}</textarea>
+                                                    <textarea class="form-control abnormal-input" type="text" id="problem" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].problem || ''}</textarea>
                                                 </td>
                                                 <td>
-                                                    <textarea class="form-control abnormal-input" type="text" id="cause" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].cause}</textarea>
+                                                    <textarea class="form-control abnormal-input" type="text" id="cause" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].cause || ''}</textarea>
                                                 </td>
                                                 <td>
-                                                    <textarea class="form-control abnormal-input" type="text" id="action" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].action}</textarea>
+                                                    <textarea class="form-control abnormal-input" type="text" id="action" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].action || ''}</textarea>
                                                 </td>
                                                 <td>
-                                                    <textarea class="form-control abnormal-input" type="text" id="status" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].status}</textarea>
+                                                    <textarea class="form-control abnormal-input" type="text" id="status" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].status || ''}</textarea>
                                                 </td>
                                                 <td>
-                                                    <textarea class="form-control abnormal-input" type="text" id="target" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].target}</textarea>
+                                                    <textarea class="form-control abnormal-input" type="text" id="target" placeholder="Isi bila diperlukan!" rows="6" cols="50">${data.preventivedata[0].target || ''}</textarea>
                                                 </td>
                                             </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -373,7 +391,6 @@
                             }
                         });
 
-
                         // Save button
                         $('#saveButton').on('click', function(event) {
                             event.preventDefault();
@@ -384,10 +401,9 @@
                             let status = $('#status').val();
                             let target = $('#target').val();
                             let recordId = $('#record_id').val();
-                            let machineId = $('#machine_id').val();
                             let acceptBy = '{{ Auth::user()->id }}';
 
-                            if (confirm("Apakah yakin mengapprove preventive ini?")) {
+                            if (confirm("Apakah yakin mensetujui preventive ini?")) {
                                 $.ajax({
                                     type: 'PUT',
                                     url: '{{ route("editpreventive-accept", ':id') }}'.replace(':id', approveId),
@@ -400,7 +416,6 @@
                                         'status': status,
                                         'target': target,
                                         'record_id': recordId,
-                                        'machine_id': machineId,
                                         'accept_by': acceptBy,
                                     },
                                     success: function(response) {
@@ -471,6 +486,166 @@
                                 // User cancelled the deletion, do nothing
                             }
                         });
+                    }
+                });
+            });
+
+            $('#viewModal').on('shown.bs.modal', function(event) {
+                let button = $(event.relatedTarget);
+                let approveId = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route("readpreventive-accept", ':id') }}'.replace(':id', approveId),
+                    success: function(data) {
+                        let table_modal = '';
+                        const operatorActionArray = JSON.parse(data.combineresult[0].operator_action || '[]');
+                        const resultArray = JSON.parse(data.combineresult[0].result || '[]');
+                        const maxLength = Math.min(
+                            data.machinedata.length,
+                            operatorActionArray.length,
+                            resultArray.length
+                        );
+
+                        for (let index = 0; index < maxLength; index++) {
+                            const actions = operatorActionArray[index]?.join(' & ') || 'No actions';
+                            const result = resultArray[index] || 'No result';
+
+                            table_modal += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${data.machinedata[index].name_componencheck}</td>
+                                    <td>${data.machinedata[index].name_parameter}</td>
+                                    <td>${data.machinedata[index].name_metodecheck}</td>
+                                    <td>${actions}</td>
+                                    <td>${result}</td>
+                                </tr>
+                            `;
+                        }
+
+                        const header_modal = `
+                            <h5 class="modal-title">Extra Large Modal</h5>
+                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                        `;
+
+                        const data_modal = `
+                            <div class="table-responsive">
+                                <table class="table table-header" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th>No. Invent Mesin :</th>
+                                            <th>${data.machinedata[0].invent_number}</th>
+                                            <th>Spec/Tonage :</th>
+                                            <th>${data.machinedata[0].machine_spec || '-'}</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Nama Mesin :</th>
+                                            <th>${data.machinedata[0].machine_name}</th>
+                                            <th>Buatan :</th>
+                                            <th>${data.machinedata[0].machine_made || '-'}</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Brand/Merk :</th>
+                                            <th>${data.machinedata[0].machine_brand || '-'}</th>
+                                            <th>Mfg.NO :</th>
+                                            <th>${data.machinedata[0].mfg_number || '-'}</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Model/Type :</th>
+                                            <th>${data.machinedata[0].machine_type || '-'}</th>
+                                            <th>Install Date :</th>
+                                            <th>${data.machinedata[0].install_date || '-'}</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="header-input">
+                                    <div class="col-6">
+                                        <a>NO.MESIN :</a>
+                                        <input class="form-control" value="${data.machinedata[0].machine_number || '-'}" readonly>
+                                    </div>
+                                    <div class="col-6">
+                                        <a>WAKTU PREVENTIVE :</a>
+                                        <input class="form-control" value="${formatDate(data.preventivedata[0].record_date)} (${data.preventivedata[0].shift})" readonly>
+                                    </div>
+                                </div>
+                                <table class="table table-bordered" id="dataTables" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Bagian Yang Dicheck</th>
+                                            <th>Standart/Parameter</th>
+                                            <th>Metode Pengecekan</th>
+                                            <th>Action</th>
+                                            <th>Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${table_modal}
+                                    </tbody>
+                                </table>
+                                <div class="form-custom">
+                                    <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" disabled>${data.preventivedata[0].note || ''}</textarea>
+                                    <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered table-custom" id="userTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Disetujui oleh :</th>
+                                                <th>Dikoreksi oleh :</th>
+                                                <th colspan="4">Dibuat oleh :</th>
+                                            </tr>
+                                            <tr>
+                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
+                                                    <td>${get_user_id}</td>
+                                                `).join('')}
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered" id="abnormalityTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Masalah :</th>
+                                                <th>Penyebab :</th>
+                                                <th>Tindakan :</th>
+                                                <th>Status :</th>
+                                                <th>Target :</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="problem" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].problem || ''}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="cause" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].cause || ''}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="action" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].action || ''}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="status" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].status || ''}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="target" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].target || ''}</textarea>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        const button_modal =`
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        `;
+                        $('#modal_title_view').html(header_modal);
+                        $('#modal_data_view').html(data_modal);
+                        $('#modal_button_view').html(button_modal);
+                        mergeCells();
                     }
                 });
             });

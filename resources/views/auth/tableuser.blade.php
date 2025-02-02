@@ -126,9 +126,9 @@
                 ajax: {
                     url: '{{ route("refreshuser") }}',
                     dataSrc: function(data) {
-                        return data.refreshusers.map(function(refreshusers) {
+                        return data.refreshusers.map((refreshusers, index) =>{
                             return {
-                                id: refreshusers.id,
+                                number: index + 1,
                                 name: refreshusers.name,
                                 nik: refreshusers.nik,
                                 department: refreshusers.department,
@@ -151,7 +151,7 @@
                     }
                 },
                 columns: [
-                    { data: 'id' },
+                    { data: 'number' },
                     { data: 'name' },
                     { data: 'nik' },
                     { data: 'department' },
@@ -217,6 +217,24 @@
                             </div>
                         </div>
                         <div class="row" align-items="center">
+                            <div class="col-xl-12">
+                                <div class="form-group">
+                                    <label class="col-form-label text-sm-right" style="margin-left: 4px;">Role</label>
+                                    <div>
+                                        <select selected="selected" class="form-control" name="role" id="category-input">
+                                            <option value="" selected>Pilih Role...</option>
+                                            <option value="6">Planner</option>
+                                            <option value="5">Operator</option>
+                                            <option value="4">Leader</option>
+                                            <option value="3">Foreman</option>
+                                            <option value="2">Supervisor</option>
+                                            <option value="1">Manager</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" align-items="center">
                             <div class="col-xl-6">
                                 <div class="form-group">
                                     <div>
@@ -256,6 +274,7 @@
                         'nik': $('input[name="nik"]').val(),
                         'status': $('select[name="status"]').val(),
                         'department': $('input[name="department"]').val(),
+                        'role': $('select[name="role"]').val(),
                         'password': $('input[name="password"]').val(),
                         'password_confirmation': $('input[name="password_confirmation"]').val()
                     };
@@ -269,6 +288,7 @@
                                 'nik': formData.nik,
                                 'status': formData.status,
                                 'department': formData.department,
+                                'role': formData.role,
                                 'password': formData.password,
                                 'password_confirmation': formData.password_confirmation
                             },

@@ -119,7 +119,7 @@
         <tbody>
             @foreach ($scheduledata as $key => $printdata1)
                 @php
-                    $printdata2 = $recorddata->firstWhere('machine_id', $printdata1->schedule_id);
+                    $printdata2 = $recorddata->firstWhere('machine_schedule_id', $printdata1->schedule_id);
                     $schedule_start = Carbon\Carbon::parse($printdata1->schedule_start);
                     $schedule_end = Carbon\Carbon::parse($printdata1->schedule_end);
                     $month = $schedule_start->month;

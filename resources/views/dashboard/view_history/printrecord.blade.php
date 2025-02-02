@@ -170,7 +170,12 @@
 
         .text-area{
             border-color: transparent;
-            height: 14%;
+            height: 10%;
+        }
+
+        .abnormal-input{
+            border-color: transparent;
+            height: 5%;
         }
 
         #hidden-column {
@@ -221,7 +226,7 @@
         </tbody>
     </table>
     @php
-        $date = new DateTime($usersdata[0]->record_date);
+        $date = new DateTime($preventivedata[0]->record_date);
         $formattedDate = $date->format('d-m-Y');
     @endphp
     <table class="table-input">
@@ -274,41 +279,40 @@
             <tr>
                 <td colspan="5">LD - MTN - 03</td>
             </tr>
-            <tr>
-                <td width="4%"></td>
-                <th width="25%" colspan="2">Action :</th>
-                <th width="10%"></th>
-                <th width="28%">Result :</th>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input class="check-mark" type="checkbox" checked> = Check</td>
-                <td><input class="check-mark" type="checkbox" checked> = Adjust</td>
-                <td></td>
-                <td>O = OKE</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input class="check-mark" type="checkbox" checked> = Cleaning</td>
-                <td><input class="check-mark" type="checkbox" checked> = Replace/ganti</td>
-                <td></td>
-                <td>X = NG</td>
-            </tr>
-            <tr>
-                <td colspan="5" rowspan="2" style="font-size:6px">
-                    NOTE : JIKA "NG" URAIAN DIISI DI KOLOM KETERANGAN
-                </td>
-            </tr>
         </tbody>
     </table>
     <table class="table-note">
         <tbody>
             <tr>
-                <th>keterangan :</th>
+                <th colspan="5">keterangan :</th>
             </tr>
             <tr>
-                <td height="14%">
-                    <textarea class="text-area">{{$usersdata[0]->note}} @if (!empty($abnormals)) @foreach($abnormals as $abnormal) Abnormality=( {{$abnormal}} ) @endforeach @endif</textarea>
+                <td colspan="5">
+                    <textarea class="text-area">{{$preventivedata[0]->note}}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>Masalah :</th>
+                <th>Penyebab :</th>
+                <th>Tindakan :</th>
+                <th>Status :</th>
+                <th>Target :</th>
+            </tr>
+            <tr>
+                <td width="20%">
+                    <textarea class="abnormal-input" type="text">{{ $preventivedata[0]->problem }}</textarea>
+                </td>
+                <td width="20%">
+                    <textarea class="abnormal-input" type="text">{{ $preventivedata[0]->cause }}</textarea>
+                </td>
+                <td width="20%">
+                    <textarea class="abnormal-input" type="text">{{ $preventivedata[0]->action }}</textarea>
+                </td>
+                <td width="20%">
+                    <textarea class="abnormal-input" type="text">{{ $preventivedata[0]->status }}</textarea>
+                </td>
+                <td width="20%">
+                    <textarea class="abnormal-input" type="text">{{ $preventivedata[0]->target }}</textarea>
                 </td>
             </tr>
         </tbody>
@@ -329,8 +333,8 @@
             </tr>
             <tr>
                 <td width="55%" id="hidden-column"></td>
-                <th>{{$usersdata[0]->correct_by_name}}</th>
-                <th>{{$usersdata[0]->approve_by_name}}</th>
+                <th>{{$preventivedata[0]->correct_by_name}}</th>
+                <th>{{$preventivedata[0]->approve_by_name}}</th>
                 <th>@foreach ($usernames as $get_user_id)
                     {{$get_user_id}},
                 @endforeach</th>

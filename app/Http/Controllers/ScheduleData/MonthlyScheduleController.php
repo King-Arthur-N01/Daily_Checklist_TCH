@@ -34,6 +34,7 @@ class MonthlyScheduleController extends Controller
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
             } else if ($isSpecialSchedule == true) {
                 $monthlyscheduledata = DB::table('monthly_schedules')
@@ -41,6 +42,7 @@ class MonthlyScheduleController extends Controller
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.special_id') //bedakan disini !!!
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
             }
 
@@ -130,12 +132,12 @@ class MonthlyScheduleController extends Controller
             }
 
             $check_monthly_status = MonthlySchedule::where('id_schedule_year', $id_schedule)->latest('id')->first();
-            // dd($check_monthly_status);
+
             if (!$check_monthly_status) {
                 // No previous planner status found
             } else {
                 if ($check_monthly_status->schedule_recognize === null) {
-                    return response()->json(['error' => 'Schedule sebelum nya belum dicek oleh PLANNER!!!.'], 422);
+                    return response()->json(['error' => 'Schedule sebelum nya belum dicek oleh ATASAN!!!.'], 422);
                 }
             }
 
@@ -407,6 +409,11 @@ class MonthlyScheduleController extends Controller
     // <<<==================================batas schedule planner====================================>>>
     // <<<============================================================================================>>>
 
+    public function indexscheduleyearplanner()
+    {
+        return view('dashboard.view_schedulemesin.tablescheduleplanner');
+    }
+
     public function indexschedulemonthplanner()
     {
         return view('dashboard.view_schedulemesin.tableplannermonth');
@@ -430,7 +437,9 @@ class MonthlyScheduleController extends Controller
         try {
             // dd($request)->all();
             $request->validate([
-                'planned_by' => 'required'
+                'planned_by' => 'required',
+                'reschedule_id' => 'required|array',
+                'reschedule_hour' => 'required|array'
             ]);
             $StoreSchedule = MonthlySchedule::find($id);
             if (!$StoreSchedule) {

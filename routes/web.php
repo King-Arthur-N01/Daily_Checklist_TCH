@@ -130,6 +130,7 @@ Route::get ('/schedule/month/accept/table/refresh/','ScheduleData\MonthlySchedul
 // schedule month accept end
 
 // schedule month planner
+Route::get ('/schedule/year/planner','ScheduleData\MonthlyScheduleController@indexscheduleyearplanner')->name('indexyear-planner');
 Route::get ('/schedule/month/planner','ScheduleData\MonthlyScheduleController@indexschedulemonthplanner')->name('indexmonth-planner');
 Route::get ('/schedule/month/planner/read/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('readmonth-planner');
 Route::get ('/schedule/month/planner/find/{id}','ScheduleData\MonthlyScheduleController@readschedulemonthdata')->name('findmonth-planner');
@@ -144,32 +145,26 @@ Route::get ('/preventive/read/schedule/{id}','RecordsData\MachinerecordControlle
 // Route::get ('/preventive/read/special','RecordsData\MachinerecordController@readspecialscheduledata')->name('readpreventive-special');
 // Route::get ('/preventive/read/machine','RecordsData\MachinerecordController@readmachinedata')->name('readmachinepreventive');
 Route::get ('/preventive/machine/{id}','RecordsData\MachinerecordController@formpreventive')->name('formpreventive');
+Route::get ('/preventive/machine/update/{id}','RecordsData\MachinerecordController@formeditpreventive')->name('formeditpreventive');
 Route::post('/preventive/create','RecordsData\MachinerecordController@createpreventive')->name('addpreventive');
+Route::put ('/preventive/update/{id}','RecordsData\MachinerecordController@updatepreventive')->name('editpreventive');
 Route::get ('/preventive/table/refresh','RecordsData\MachinerecordController@refreshtablepreventive')->name('refreshpreventive');
 Route::get ('/preventive/table/refresh/{id}','RecordsData\MachinerecordController@refreshdetailtablepreventive')->name('refreshdetailpreventive');
 // preventive end
 
-// machine records correction
-// Route::get ('/machinerecord/correction','RecordsData\MachinerecordController@indexcorrection')->name('indexcorrection');
-// Route::get ('/machinerecord/correction/table/refresh','RecordsData\MachinerecordController@refreshtablecorrection')->name('refreshcorrect');
-// Route::get ('/machinerecord/correction/read/{id}','RecordsData\MachinerecordController@readdatacorrection')->name('readcorrection');
-// Route::put ('/machinerecord/correction/insert/{id}','RecordsData\MachinerecordController@registercorrection')->name('insertcorrection');
-// Route::delete('/machinerecord/correction/delete/{id}','RecordsData\MachinerecordController@deletecorrection')->name('removecorrection');
-// machine records correction end
-
-// machine records approval
+// machine records accept
 Route::get ('/preventive/accept','RecordsData\MachinerecordController@indexpreventiveaccept')->name('indexpreventive-accept');
 Route::get ('/preventive/accept/read/{id}','RecordsData\MachinerecordController@readpreventivedata')->name('readpreventive-accept');
 Route::put ('/preventive/accept/register/{id}','RecordsData\MachinerecordController@registerpreventiveccept')->name('editpreventive-accept');
 Route::delete('/preventive/accept/delete/{id}','RecordsData\MachinerecordController@deleteaccept')->name('removeapproval');
 Route::get ('/preventive/accept/table/refresh','RecordsData\MachinerecordController@refreshtablepreventiveaccept')->name('refreshpreventive-accept');
-// machine records approval end
+// machine records accept end
 
 // record data machine route
-Route::get ('/historyrecord','RecordsData\MachinerecordController@indexhistoryrecord')->name('indexhistoryrecord');
-Route::get ('/historyrecord/table/refresh','RecordsData\MachinerecordController@refreshtablehistory')->name('refreshistory');
-Route::get ('/historyrecord/view/{id}','RecordsData\MachinerecordController@detailpreventive')->name('detailhistory');
-Route::get ('/historyrecord/print/{id}','RecordsData\MachinerecordController@printdatarecord')->name('printrecord');
+Route::get ('/preventive/history','RecordsData\MachinerecordController@indexhistoryrecord')->name('indexhistoryrecord');
+Route::get ('/preventive/history/table/refresh','RecordsData\MachinerecordController@refreshtablehistory')->name('refreshistory');
+Route::get ('/preventive/history/view/{id}','RecordsData\MachinerecordController@detailpreventive')->name('detailhistory');
+Route::get ('/preventive/history/print/{id}','RecordsData\MachinerecordController@printdatarecord')->name('printrecord');
 // record data machine route end
 
 

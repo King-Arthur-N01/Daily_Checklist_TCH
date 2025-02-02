@@ -46,11 +46,12 @@ class RegisterController extends Controller
                 'nik' => ['required', 'string', 'unique:users'],
                 'status' => ['required', 'boolean'],
                 'department' => ['required','string','max:255'],
+                'role' => ['required','string','max:255'],
                 'password' => ['required', 'string', 'confirmed'],
             ]);
 
             $data = $request->all();
-            $user = $this->createuser($data);
+            $this->createuser($data);
             return response()->json(['success' => 'USER account created successfully!']);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['error' => 'This NIK already exists! or Password confirmation not match'], 422);
@@ -58,15 +59,44 @@ class RegisterController extends Controller
             return response()->json(['error' => 'Error creating user'], 500);
         }
     }
+
     protected function createuser(array $data)
     {
-        return User::create([
+        // Buat user baru
+        $user = User::create([
             'name' => $data['name'],
             'nik' => $data['nik'],
             'status' => $data['status'],
-            'department' =>  $data['department'],
+            'department' => $data['department'],
             'password' => Hash::make($data['password']),
         ]);
+
+        // Menetapkan role berdasarkan input
+        switch ($data['role']) {
+            case '6':
+                $user->assignRole('planner');
+                break;
+            case '5':
+                $user->assignRole('operator');
+                break;
+            case '4':
+                $user->assignRole('leader');
+                break;
+            case '3':
+                $user->assignRole('foreman');
+                break;
+            case '2':
+                $user->assignRole('supervisor');
+                break;
+            case '1':
+                $user->assignRole('manager');
+                break;
+            default:
+                // Handle case where role is not recognized
+                break;
+        }
+
+        return $user;
     }
     public function authenticateedit(Request $request, $id)
     {

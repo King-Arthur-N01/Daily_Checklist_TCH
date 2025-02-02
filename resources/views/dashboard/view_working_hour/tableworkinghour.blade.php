@@ -320,7 +320,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="addWorkingHour" width="100%">
+                                    <table class="table table-bordered" id="addWorkingHourTable" width="100%">
                                         <thead>
                                             <th>NO.</th>
                                             <th>NO.INVENT</th>
@@ -353,7 +353,7 @@
                         const filterByName = document.getElementById('filter_by_name');
                         const filterByBrand = document.getElementById('filter_by_brand');
                         const filterBySpec = document.getElementById('filter_by_spec');
-                        const tableName = document.getElementById('addWorkingHour');
+                        const tableName = document.getElementById('addWorkingHourTable');
 
                         // Add event listeners for filtering
                         filterByName.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));
@@ -527,7 +527,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="editWorkingHour" width="100%">
+                                    <table class="table table-bordered" id="editWorkingHourTable" width="100%">
                                         <thead>
                                             <th>NO.</th>
                                             <th>NO.INVENT</th>
@@ -560,7 +560,7 @@
                         const filterByName = document.getElementById('filter_by_name');
                         const filterByBrand = document.getElementById('filter_by_brand');
                         const filterBySpec = document.getElementById('filter_by_spec');
-                        const tableName = document.getElementById('editWorkingHour');
+                        const tableName = document.getElementById('editWorkingHourTable');
 
                         // Add event listeners for filtering
                         filterByName.addEventListener('input', () => filterTable(filterByName, filterByBrand, filterBySpec, tableName));

@@ -281,7 +281,7 @@
                                             <td>${machineHour} /Jam</td>
                                             <td>
                                                 <input type="hidden" class="form-control" name="schedule_id" value="${schedule.schedule_id}">
-                                                <input type="time" class="form-control" name="schedule_hour" id="schedule_hour_${schedule.schedule_id}">
+                                                <input type="time" class="form-control" name="schedule_hour" id="schedule_hour_${schedule.schedule_id}" required>
                                             </td>
                                             <td>${formatDate(schedule.schedule_date)}</td>
                                             <td>
@@ -327,7 +327,6 @@
                                 format: 'DD-MM-YYYY'
                             }
                         });
-
                         // Tambahkan properti enable/disable manual
                         const daterangepickerInstance = $(this).data('daterangepicker');
                         daterangepickerInstance.enable = function() {
@@ -336,45 +335,64 @@
                         daterangepickerInstance.disable = function() {
                             this.element.prop('disabled', true);
                         };
-
                         // Set initial state based on readonly attribute
                         if ($(this).prop('readonly')) {
                             daterangepickerInstance.disable();
                         }
                     });
 
+                    $('#saveButton').on('click', function (event) {
+                        event.preventDefault(); // Cegah form submit otomatis
 
-                    $('#saveButton').on('click', function() {
-                        let plannedBy = '{{ Auth::user()->id }}';
-                        let rescheduleId = [];
-                        let rescheduleHour = [];
-                        let rescheduleValue = [];
-                        let rescheduleNote = [];
+                        let isValid = true;
+                        let firstInvalidInput = null;
 
-                        $('input[name="schedule_id"]').each(function() {
-                            rescheduleId.push($(this).val());
-                        });
-                        $('input[name="schedule_hour"]').each(function() {
-                            rescheduleHour.push($(this).val());
-                        });
-
-                        // Periksa setiap baris untuk mendapatkan nilai checkbox dan catatan
-                        $('#plannerTables tbody tr').each(function() {
-                            const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
-                            const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
-                            const isCheckedIya = $(this).find('input[type="checkbox"][value="iya"]').is(':checked');
-                            const isCheckedTidak = $(this).find('input[type="checkbox"][value="tidak"]').is(':checked');
-
-                            if (isCheckedTidak) {
-                                rescheduleValue.push(machineRescheduleInput.val());
-                                rescheduleNote.push(rescheduleNoteInput.val());
+                        // Cek semua input yang memiliki atribut required
+                        $('input[required]').each(function () {
+                            if (!$(this).val()) {
+                                isValid = false;
+                                $(this).addClass('is-invalid'); // Tambahkan border merah
+                                if (!firstInvalidInput) firstInvalidInput = $(this);
                             } else {
-                                rescheduleValue.push(null);
-                                rescheduleNote.push(null);
+                                $(this).removeClass('is-invalid'); // Hapus border merah jika sudah diisi
                             }
                         });
+                        if (!isValid) {
+                            alert('Harap isi semua input yang wajib sebelum melanjutkan!');
 
+                            // Fokus ke input pertama yang kosong
+                            firstInvalidInput.focus();
+                            return; // Stop eksekusi AJAX jika masih ada input kosong
+                        }
+                        // Jika semua input valid, lanjutkan dengan AJAX request
                         if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
+                            let plannedBy = '{{ Auth::user()->id }}';
+                            let rescheduleId = [];
+                            let rescheduleHour = [];
+                            let rescheduleValue = [];
+                            let rescheduleNote = [];
+
+                            $('input[name="schedule_id"]').each(function () {
+                                rescheduleId.push($(this).val());
+                            });
+                            $('input[name="schedule_hour"]').each(function () {
+                                rescheduleHour.push($(this).val());
+                            });
+
+                            $('#plannerTables tbody tr').each(function () {
+                                const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
+                                const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
+                                const isCheckedTidak = $(this).find('input[type="checkbox"][value="tidak"]').is(':checked');
+
+                                if (isCheckedTidak) {
+                                    rescheduleValue.push(machineRescheduleInput.val());
+                                    rescheduleNote.push(rescheduleNoteInput.val());
+                                } else {
+                                    rescheduleValue.push(null);
+                                    rescheduleNote.push(null);
+                                }
+                            });
+
                             $.ajax({
                                 type: 'PUT',
                                 url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
@@ -386,10 +404,9 @@
                                     'reschedule_value': rescheduleValue,
                                     'reschedule_note': rescheduleNote
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     if (response.success) {
-                                        const successMessage = response.success;
-                                        $('#successText').text(successMessage);
+                                        $('#successText').text(response.success);
                                         $('#successModal').modal('show');
                                     }
                                     setTimeout(function() {
@@ -411,10 +428,9 @@
                             }).always(function() {
                                 table.ajax.reload(null, false);
                             });
-                        } else {
-                            // User cancelled the deletion, do nothing
                         }
                     });
+
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching data:', error);

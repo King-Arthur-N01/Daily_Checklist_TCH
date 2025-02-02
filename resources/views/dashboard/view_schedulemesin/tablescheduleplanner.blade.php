@@ -7,42 +7,10 @@
             <!-- Page Heading -->
             <h1 class="h3 mb-2 text-gray-800">Schedule Preventive Mesin</h1>
             <div class="card shadow">
-                <div class="card card-filter collapse" id="filterCard">
-                    <div class="card-header">
-                        <h6 class="m-0 font-weight-bold text-primary">Filter</h6>
-                    </div>
-                    <div class="table-filter">
-                        <div class="col-4">
-                            <p class="mg-b-10">Tahun Schedule </p>
-                            <input class="form-control" id="filterByNumber">
-                        </div>
-                        <div class="col-4">
-                            <p class="mg-b-10">Nama Mesin</p>
-                            <input class="form-control" id="filterByName">
-                        </div>
-                        <div class="col-4">
-                            <p class="mg-b-10">Standarisasi Mesin</p>
-                            <select class="form-control" id="filterByProperty">
-                                {{-- <option selected="selected">Select :</option>
-                                @foreach ($fetchmachines as $getmachine)
-                                    <option value="{{$getmachine->name_property}}">{{$getmachine->name_property}}</option>
-                                @endforeach --}}
-                            </select>
-                        </div>
-                    </div>
-                </div>
                 <div class="card-header">
                     <h6 class="m-0 font-weight-bold text-primary">Schedule Preventive Mesin</h6>
                 </div>
                 <div class="card-body">
-                    <div class="div-tables">
-                        <div class="col-sm-6 col-md-6">
-                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#addScheduleYear" tabindex="0"><i class="bi bi-calendar2-plus-fill"></i>&nbsp; Schedule Tahunan Mesin</button>
-                        </div>
-                        <div class="col-sm-6 col-md-6">
-                            <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
-                        </div>
-                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="scheduleTables" width="100%">
                             <thead>
@@ -232,19 +200,11 @@
                                 }),
                                 actions: `
                                     <div class="dynamic-button-group">
-                                        ${refreshschedule.schedule_recognize && refreshschedule.schedule_agreed !== null ?
-                                            `<button class="btn btn-success btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleMonth"><i class="bi bi-plus-circle-fill"></i></button>`
-                                            : ''
-                                        }
-                                        <button class="btn btn-warning btn-circle" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#addScheduleSpecial"><i class="bi bi-plus-circle-fill"></i></button>
                                         <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
                                         <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
                                             <button class="dropdown-item-custom-primary-more print_quarter2" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print Quarter 2</button>
                                             <button class="dropdown-item-custom-primary-more print_quarter1" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;print Quarter 1</button>
                                             <button class="dropdown-item-custom-primary-more print_year" data-id="${refreshschedule.id}"><i class="bi bi-printer-fill"></i>&nbsp;Print Annual</button>
-                                            <button class="dropdown-item-custom-success view_schedule_year" data-id="${refreshschedule.id}"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
-                                            <button class="dropdown-item-custom-primary" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#editScheduleYear"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
-                                            <button class="dropdown-item-custom-danger btn-delete-year" data-id="${refreshschedule.id}"><i class="bi bi-trash3-fill"></i>&nbsp;Delete</button>
                                         </div>
                                     </div>
                                 `
@@ -314,14 +274,7 @@
                                                 ${schedulemonth.schedule_status == 0 ? '<span class="badge badge-danger">Unfinished</span>' : '<span class="badge badge-success">Finished</span>'}
                                             </td>
                                             <td>
-                                                <div class="dynamic-button-group">
-                                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
-                                                    <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                        <button class="dropdown-item-custom-success" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
-                                                        <button class="dropdown-item-custom-primary" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#editScheduleMonth"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
-                                                        <button class="dropdown-item-custom-danger btn-delete-month" data-id="${schedulemonth.getmonthid}"><i class="bi bi-trash-fill"></i>&nbsp;Delete</button>
-                                                    </div>
-                                                </div>
+                                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-id="${schedulemonth.getmonthid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i></button>
                                             </td>
                                         </tr>
                                     `;
@@ -370,13 +323,7 @@
                                                 ${schedulespecial.schedule_status == 0 ? '<span class="badge badge-danger">Unfinished</span>' : '<span class="badge badge-success">Finished</span>'}
                                             </td>
                                             <td>
-                                                <div class="dynamic-button-group">
-                                                    <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
-                                                    <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                                        <button class="dropdown-item-custom-success" data-toggle="modal" data-id="${schedulespecial.getspecialid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
-                                                        <button class="dropdown-item-custom-danger btn-delete-month" data-id="${schedulespecial.getspecialid}"><i class="bi bi-trash-fill"></i>&nbsp;Delete</button>
-                                                    </div>
-                                                </div>
+                                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-id="${schedulespecial.getspecialid}" data-target="#viewScheduleMonth"><i class="bi bi-eye-fill"></i></button>
                                             </td>
                                         </tr>
                                     `;

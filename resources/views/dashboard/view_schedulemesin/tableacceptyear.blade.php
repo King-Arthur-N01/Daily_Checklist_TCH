@@ -184,7 +184,7 @@
                             actions: `
                                 ${refreshschedule.schedule_agreed === null ?
                                     `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#acceptModal"><i class="bi bi-pencil-square"></i></button>` :
-                                    `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></i></button>`
+                                    `<button type="button" class="btn btn-primary btn-sm" style="color:white" data-toggle="modal" data-id="${refreshschedule.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></button>`
                                 }
                                 `
                         };

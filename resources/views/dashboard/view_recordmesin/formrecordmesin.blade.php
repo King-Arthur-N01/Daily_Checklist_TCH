@@ -117,7 +117,7 @@
                                 <textarea class="form-control" id="input_note" type="text" name="note" placeholder="Catatan bila diperlukan!" rows="6" cols="50"></textarea>
                                 <input type="hidden" name="machine_id" value="{{ $joinmachine[0]->getmachineid }}">
                                 <input type="hidden" name="schedule_id" value="{{ $joinmachine[0]->getscheduleid }}">
-                                <input type="hidden" name="combined_create_by[]" id="combined_create_by">
+                                <input type="hidden" id="combined_create_by" name="combined_create_by">
                             </div>
                             <div class="form-custom">
                                 <label>Opsi jika terdapat abnormal terhadap preventive</label>
@@ -171,33 +171,44 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <select class="form-control select2-no-search" id="create_by_1" readonly>
-                                                    <option value="{{ Auth::user()->id }}">{{ Auth::user()->name }}</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-control select2" id="create_by_2">
+                                                <select class="form-control select2" name="user_input" id="create_by_1">
                                                     <option value="0" selected="selected">Tidak ada</option>
+                                                    <option value="other">Lainnya</option>
                                                     @foreach ($users as $getuser)
-                                                        <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                        <option value="{{ $getuser->name }}">{{ $getuser->name }}</option>
                                                     @endforeach
                                                 </select>
+                                                <input type="text" class="form-control custom-input-option" id="custom_user_input_1" style="display:none;" placeholder="Masukkan nama..." />
                                             </td>
                                             <td>
-                                                <select class="form-control select2" id="create_by_3">
+                                                <select class="form-control select2" name="user_input" id="create_by_2">
                                                     <option value="0" selected="selected">Tidak ada</option>
+                                                    <option value="other">Lainnya</option>
                                                     @foreach ($users as $getuser)
-                                                        <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                        <option value="{{ $getuser->name }}">{{ $getuser->name }}</option>
                                                     @endforeach
                                                 </select>
+                                                <input type="text" class="form-control custom-input-option" id="custom_user_input_2" style="display:none;" placeholder="Masukkan nama..." />
                                             </td>
                                             <td>
-                                                <select class="form-control select2" id="create_by_4">
+                                                <select class="form-control select2" name="user_input" id="create_by_3">
                                                     <option value="0" selected="selected">Tidak ada</option>
+                                                    <option value="other">Lainnya</option>
                                                     @foreach ($users as $getuser)
-                                                        <option value="{{ $getuser->id }}">{{ $getuser->name }}</option>
+                                                        <option value="{{ $getuser->name }}">{{ $getuser->name }}</option>
                                                     @endforeach
                                                 </select>
+                                                <input type="text" class="form-control custom-input-option" id="custom_user_input_3" style="display:none;" placeholder="Masukkan nama..." />
+                                            </td>
+                                            <td>
+                                                <select class="form-control select2" name="user_input" id="create_by_4">
+                                                    <option value="0" selected="selected">Tidak ada</option>
+                                                    <option value="other">Lainnya</option>
+                                                    @foreach ($users as $getuser)
+                                                        <option value="{{ $getuser->name }}">{{ $getuser->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="text" class="form-control custom-input-option" id="custom_user_input_4" style="display:none;" placeholder="Masukkan nama..." />
                                             </td>
                                         </tr>
                                     </thead>
@@ -226,7 +237,7 @@
     <script src="{{ asset('assets/vendor/custom-js/formalert.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/select-radiobox.js') }}"></script>
     <script src="{{ asset('assets/vendor/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script>
+    {{-- <script src="{{ asset('assets/vendor/custom-js/multi-input-user.js') }}"></script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -272,9 +283,64 @@
                     $('.abnormal-input').prop('readonly', true);
                 }
             });
-            combineCreateByUsers();
-            disableDoubleSelectUsers()
+            // combineCreateByUsers();
+            // disableDoubleSelectUsers();
             mergeCells();
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function combineCreateByUsers() {
+                const createBy1 = document.getElementById("create_by_1").value === "other"
+                    ? document.getElementById("custom_user_input_1").value
+                    : document.getElementById("create_by_1").value;
+
+                const createBy2 = document.getElementById("create_by_2").value === "other"
+                    ? document.getElementById("custom_user_input_2").value
+                    : document.getElementById("create_by_2").value;
+
+                const createBy3 = document.getElementById("create_by_3").value === "other"
+                    ? document.getElementById("custom_user_input_3").value
+                    : document.getElementById("create_by_3").value;
+
+                const createBy4 = document.getElementById("create_by_4").value === "other"
+                    ? document.getElementById("custom_user_input_4").value
+                    : document.getElementById("create_by_4").value;
+
+                // Filter agar tidak ada nilai kosong atau "0"
+                const combinedUserValue = [createBy1, createBy2, createBy3, createBy4].filter(value => value && value !== "0");
+
+                console.log("Combined User Values:", combinedUserValue); // Debugging
+                document.getElementById("combined_create_by").value = JSON.stringify(combinedUserValue);
+            }
+
+            function toggleInput(selectElement) {
+                const inputId = selectElement.id.replace("create_by_", "custom_user_input_");
+                const inputField = document.getElementById(inputId);
+
+                if (inputField) {
+                    if (selectElement.value === "other") {
+                        inputField.style.display = "block";
+                        inputField.focus();
+                    } else {
+                        inputField.style.display = "none";
+                        inputField.value = "";
+                    }
+                }
+            }
+
+            // Tambahkan event listener ke setiap select
+            document.querySelectorAll("select[name='user_input']").forEach(select => {
+                select.addEventListener("change", function () {
+                    toggleInput(this);
+                    combineCreateByUsers();
+                });
+            });
+
+            // Tambahkan event listener untuk input manual agar memicu kombinasi data
+            document.querySelectorAll(".custom-input-option").forEach(input => {
+                input.addEventListener("input", combineCreateByUsers);
+            });
         });
     </script>
 @endpush

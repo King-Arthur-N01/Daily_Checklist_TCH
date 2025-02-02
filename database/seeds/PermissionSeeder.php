@@ -19,11 +19,6 @@ class PermissionSeeder extends Seeder
         // reset cahced roles and permission
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // create permissions
-        // Permission::create(['name' => 'create_form']);
-        // Permission::create(['name' => 'viewtable_form']);
-        // Permission::create(['name' => 'edit_form']);
-
         Permission::create(['name' => 'create_record']);
         Permission::create(['name' => 'edit_record']);
         Permission::create(['name' => 'view_record']);
@@ -209,6 +204,6 @@ class PermissionSeeder extends Seeder
             'department' => 'Planner',
             'password' => bcrypt('user123'),
         ]);
-        $planner->assignRole('operator');
+        $planner->assignRole('planner');
     }
 }

@@ -28,8 +28,6 @@
                                 <p class="mg-b-10">Status Mesin</p>
                                 <select class="form-control" name="sample" id="filterByStatus">
                                     <option selected="selected">Select :</option>
-                                    <option><i class="fas fa-check-circle"></i>Sudah Dipreventive</option>
-                                    <option>Belum Dipreventive</option>
                                 </select>
                             </div>
                         </div>
@@ -39,12 +37,12 @@
                             <thead>
                                 <tr>
                                     <th>NO.</th>
-                                    <th>NAMA MESIN</th>
                                     <th>NO.INVENT</th>
+                                    <th>NAMA MESIN</th>
                                     <th>TYPE MESIN</th>
                                     <th>NOMOR MESIN</th>
-                                    <th>STATUS</th>
-                                    <th>STATUS</th>
+                                    <th>STATUS KOREKSI</th>
+                                    <th>STATUS SETUJUI</th>
                                     <th>STATUS PM</th>
                                     <th>WAKTU PM</th>
                                     <th>ACTION</th>
@@ -107,12 +105,12 @@
                                 number: index + 1,
                                 machine_name: joinrecords.machine_name,
                                 invent_number: joinrecords.invent_number,
-                                machine_type: joinrecords.machine_type,
-                                machine_number: joinrecords.machine_number ?? '-',
-                                correct_status: joinrecords.getcorrect,
-                                approve_status: joinrecords.getapprove,
+                                machine_type: joinrecords.machine_type || '-',
+                                machine_number: joinrecords.machine_number || '-',
+                                correct_status: joinrecords.getcorrect || '-',
+                                approve_status: joinrecords.getapprove || '-',
                                 record_status: joinrecords.machinerecord_status,
-                                getcreatedate: joinrecords.preventive_date,
+                                getcreatedate: formatDate(joinrecords.preventive_date),
                                 schedule_status: joinrecords.schedule_time_status,
                                 actions: `
                                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-id="${joinrecords.records_id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i></button>
@@ -131,20 +129,15 @@
                     { data: 'approve_status' },
                     { data: 'record_status', render: function(data, type, row) {
                         if (data === 0) {
-                            return '<span class="badge badge-danger">ABNORMAL</span>';
+                            return '<span class="badge badge-success">OPEN</span>';
                         } else if (data === 1) {
-                            return '<span class="badge badge-success">NORMAL</span>';
+                            return '<span class="badge badge-info">CLOSE</span>';
+                        } else if (data === 2) {
+                            return '<span class="badge badge-warning">ABNORMAL</span>';
                         }
                     }},
                     {
                         data: 'getcreatedate',
-                        // render: function(data, type, row) {
-                        //     // Cek status dan ubah warna latar belakang jika perlu
-                        //     if (row.schedule_status == false) {
-                        //         return `<span style="color: red;">${formatDate(data)}</span>`;
-                        //     }
-                        //     return formatDate(data);
-                        // }
                     },
                     { data: 'actions', orderable: false, searchable: false }
                 ]
@@ -165,6 +158,35 @@
                             operatorActionArray.length,
                             resultArray.length
                         );
+
+                        let header_input_modal = '';
+                        if (data.preventivedata[0].fix_abnormal_date == null) {
+                            header_input_modal += `
+                                <div class="col-6">
+                                    <a>NO.MESIN :</a>
+                                    <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number || '-'}" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <a>WAKTU PREVENTIVE :</a>
+                                    <input class="form-control" value="${formatDate(data.preventivedata[0].record_date)} (${data.preventivedata[0].shift})" readonly>
+                                </div>
+                            `;
+                        } else {
+                            header_input_modal += `
+                                <div class="col-4">
+                                    <a>NO.MESIN :</a>
+                                    <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number || '-'}" readonly>
+                                </div>
+                                <div class="col-4">
+                                    <a>WAKTU PREVENTIVE :</a>
+                                    <input class="form-control" value="${formatDate(data.preventivedata[0].record_date)} (${data.preventivedata[0].shift})" readonly>
+                                </div>
+                                <div class="col-4">
+                                    <a>WAKTU PERBAIKAN MESIN :</a>
+                                    <input class="form-control" value="${formatDate(data.preventivedata[0].fix_abnormal_date)}" readonly>
+                                </div>
+                            `;
+                        }
 
                         for (let index = 0; index < maxLength; index++) {
                             const actions = operatorActionArray[index]?.join(' & ') || 'No actions';
@@ -218,14 +240,7 @@
                                     </tbody>
                                 </table>
                                 <div class="header-input">
-                                    <div class="col-6">
-                                        <a>NO.MESIN :</a>
-                                        <input class="form-control" type="int" name="machine_number" id="machine_number" value="${data.machinedata[0].machine_number || '-'}" readonly>
-                                    </div>
-                                    <div class="col-6">
-                                        <a>WAKTU PREVENTIVE :</a>
-                                        <input class="form-control" value="${new Date(data.usersdata[0].record_date).toLocaleDateString()}" readonly>
-                                    </div>
+                                    ${header_input_modal}
                                 </div>
                                 <table class="table table-bordered" id="dataTables" width="100%">
                                     <thead>
@@ -244,29 +259,56 @@
                                 </table>
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
-                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" readonly>${data.usersdata[0].note || '-'}</textarea>
-                                </div>
-                                    <a>Abnormality terhadap preventive</a>
-                                    <input class="form-control" value="${data.abnormals}" readonly>
+                                    <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" disabled>${data.preventivedata[0].note || '-'}</textarea>
                                 </div>
                                 <div class="form-custom">
                                     <table class="table table-bordered table-custom" id="userTable">
                                         <thead>
                                             <tr>
-                                                <th>Shift :</th>
                                                 <th>Disetujui oleh :</th>
                                                 <th>Dikoreksi oleh :</th>
                                                 <th colspan="4">Dibuat oleh :</th>
                                             </tr>
                                             <tr>
-                                                <td>${data.usersdata[0].shift}</td>
-                                                <td>${data.usersdata[0].approve_by_name ? data.usersdata[0].approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.usersdata[0].correct_by_name ? data.usersdata[0].correct_by_name : 'Belum dikoreksi'}</td>
-                                                ${data.usernames.map((get_user_id) => `
+                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
                                                     <td>${get_user_id}</td>
                                                 `).join('')}
                                             </tr>
                                         </thead>
+                                    </table>
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered" id="abnormalityTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Masalah :</th>
+                                                <th>Penyebab :</th>
+                                                <th>Tindakan :</th>
+                                                <th>Status :</th>
+                                                <th>Target :</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="problem" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].problem || '-'}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="cause" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].cause || '-'}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="action" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].action || '-'}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="status" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].status || '-'}</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control abnormal-input" type="text" id="target" placeholder="Isi bila diperlukan!" rows="6" cols="50" disabled>${data.preventivedata[0].target || '-'}</textarea>
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -274,7 +316,7 @@
 
                         const button_modal = `
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" data-id="${data.usersdata[0].record_id}" id="printButton">Print</button>
+                            <button type="submit" class="btn btn-primary" data-id="${data.preventivedata[0].record_id}" id="printButton">Print</button>
                         `;
 
                         $('#modal_title_view').html(header_modal);
