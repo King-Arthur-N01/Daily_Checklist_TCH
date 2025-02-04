@@ -88,6 +88,7 @@ class MachinerecordController extends Controller
                 ->join('machine_schedules', 'monthly_schedules.id', '=', 'machine_schedules.monthly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->where('monthly_schedules.id', '=', $id)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
 
             // Ambil ID dari baseonscheduledata untuk filter
@@ -100,6 +101,7 @@ class MachinerecordController extends Controller
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
                 ->whereNotNull('monthly_schedules.schedule_planner')
                 ->where('monthly_schedules.schedule_status', '=', 0)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
 
             // Data Pending Schedule
@@ -309,9 +311,14 @@ class MachinerecordController extends Controller
                 Log::error("Schedule not found for ID: " . $schedule_id);
             }
 
-            $monthly_id = $StoreSchedule->monthly_id;
+            if ($StoreSchedule->special_id == null) {
+                $monthly_id = $StoreSchedule->monthly_id;
+                $this->checkstatusmonth($monthly_id);
+            } else {
+                $monthly_id = $StoreSchedule->special_id;
+                $this->checkstatusmonth($monthly_id);
+            }
 
-            $this->checkstatusmonth($monthly_id);
             return redirect()->route("indexpreventive")->withSuccess('Checklist added successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -327,7 +334,8 @@ class MachinerecordController extends Controller
     }
 
     private function checkstatusmonth($monthly_id) {
-        $CheckSchedule = MonthlySchedule::find($monthly_id);
+        // $CheckSchedule = MonthlySchedule::find($monthly_id);
+        $CheckSchedule = MonthlySchedule::where('id', $monthly_id)->first();
         $isSpecialSchedule = $CheckSchedule->schedule_special;
         $schedulecount =  count(json_decode($CheckSchedule->schedule_collection));
 

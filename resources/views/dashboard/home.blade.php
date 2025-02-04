@@ -59,13 +59,13 @@
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body-custom">
                         <div class="col-7">
-                            <h5 class="card-title-head">Standarisasi Jam PM Mesin</h5>
+                            <h5 class="card-title-head">Standarisasi Durasi PM Mesin</h5>
                         </div>
                         <div class="col-5" style="text-align: right">
                             <img class="image-card-home" src="{{ asset('assets/icons/working_hour_home.png') }}">
                         </div>
                         <div class="card-footer-item-custom col-12">
-                            <a class="card-title">Tambah Jam Preventive Mesin &nbsp; <i class="fas fa-indent"></i></a>
+                            <a class="card-title">Tambah Durasi Preventive Mesin &nbsp; <i class="fas fa-indent"></i></a>
                         </div>
                     </div>
                 </div>

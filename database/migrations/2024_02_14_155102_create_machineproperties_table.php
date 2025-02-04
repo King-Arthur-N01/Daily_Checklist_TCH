@@ -16,7 +16,7 @@ class CreateMachinepropertiesTable extends Migration
         Schema::create('machineproperties', function (Blueprint $table) {
             $table->id();
             $table->string('name_property');
-            $table->string('standart_checksheet')->nullable();
+            // $table->string('standart_checksheet')->nullable();
             $table->timestamps();
         });
     }

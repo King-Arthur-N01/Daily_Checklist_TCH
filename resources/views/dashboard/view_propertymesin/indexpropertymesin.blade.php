@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div class="div-tables">
                         <div class="col-sm-6 col-md-6">
-                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#uploadModal" tabindex="0"><i class="bi bi-bookmark-plus-fill"></i>&nbsp; Standarisasi mesin</button>
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#uploadModal" tabindex="0"><i class="bi bi-clipboard2-plus-fill"></i></i>&nbsp; Standarisasi mesin</button>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>
@@ -187,8 +187,8 @@
                                     </td>
                                     <td>
                                         <div class="dynamic-button-group">
-                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtnEdit">Add Rows</button>
-                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtnEdit">Delete Rows</button>
+                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtnEdit">Add Rows</i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtnEdit">Delete Rows</i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -204,6 +204,21 @@
         </div>
     </div>
     <!-- End Update Modal-->
+
+    <!-- View Modal -->
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog modal-xxl">
+            <div class="modal-content">
+                <div class="modal-header" id="modal_title_view">
+                </div>
+                <div class="modal-body" id="modal_data_view">
+                </div>
+                <div class="modal-footer" id="modal_button_view">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End View Modal-->
 
     <!-- Alert Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-modal="true" role="dialog">
@@ -259,6 +274,7 @@
 
 @push('script')
     <script src="{{ asset('assets/vendor/custom-js/dynamicinput.js') }}"></script>
+    <script src="{{ asset('assets/vendor/custom-js/mergecell.js') }}"></script>
     <script src="{{ asset('assets/vendor/custom-js/upload.js') }}"></script>
     <script>
         $(document).ready(function() {
@@ -272,7 +288,7 @@
             }, 60000); // 60000 milidetik = 60 second
 
             // Ambil nilai data-id dari tombol updatemodal
-            $(document).on('click', '.btn-edit[data-toggle="modal"]', function() {
+            $(document).on('click', '.dropdown-item-custom-primary', function() {
                 const propertyId = $(this).data('id');
                 $('#property_id').val(propertyId);
             });
@@ -290,8 +306,14 @@
                                 parameter: getproperty.parameter_count,
                                 metodecheck: getproperty.metodecheck_count,
                                 actions: `
-                                    <a class="btn btn-primary btn-sm btn-edit" style="color:white" data-id="${getproperty.id}" data-toggle="modal" data-target="#updateModal">Edit</a>
-                                    <a class="btn btn-danger btn-sm btn-delete" data-id="${getproperty.id}" id="deleteButton" style="color:white">Delete</a>
+                                    <div class="dynamic-button-group">
+                                        <a class="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bars"></i></a>
+                                        <div class="dropdown-menu animated--fade-in" aria-labelledby="dropdownMenuButton">
+                                            <button class="dropdown-item-custom-success" data-toggle="modal" data-id="${getproperty.id}" data-target="#viewModal"><i class="bi bi-eye-fill"></i>&nbsp;Detail</button>
+                                            <button class="dropdown-item-custom-primary" data-toggle="modal" data-id="${getproperty.id}" data-target="#updateModal"><i class="bi bi-pencil-square"></i>&nbsp;Edit</button>
+                                            <button class="dropdown-item-custom-danger delete-property" data-id="${getproperty.id}"><i class="bi bi-trash-fill"></i>&nbsp;Delete</button>
+                                        </div>
+                                    </div>
                                 `
                             };
                         });
@@ -314,7 +336,7 @@
                 uploadData.append('file', file);
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('importproperty') }}",
+                    url: "",
                     data: uploadData,
                     contentType: false,
                     processData: false,
@@ -351,7 +373,7 @@
                 event.preventDefault();
                 let formData = {
                     '_token': '{{ csrf_token() }}',
-                    name_property: $('input[name="name_property"]').val(),
+                    propertyName: $('input[name="name_property"]').val(),
                 };
 
                 $('#tableBody tr').each(function(index) {
@@ -402,6 +424,8 @@
                             setTimeout(function() {
                                     $('#successModal').modal('hide');
                                     $('#addPropertyModal').modal('hide');
+                                    $('#uploadModal').modal('hide');
+                                    location.reload(); // TINDAKAN SEMENTARA KARENA PAGE KURANG RESPONSIVE
                             }, 2000);
                         },
                         error: function(xhr, status, error) {
@@ -413,6 +437,8 @@
                             setTimeout(function() {
                                 $('#failedModal').modal('hide');
                                 $('#addPropertyModal').modal('hide');
+                                $('#uploadModal').modal('hide');
+                                location.reload(); // TINDAKAN SEMENTARA KARENA PAGE KURANG RESPONSIVE
                             }, 2000);
                         }
                     }).always(function() {
@@ -427,8 +453,8 @@
                 event.preventDefault();
                 let formData = {
                     '_token': '{{ csrf_token() }}',
-                    name_property: $('input[name="name_property_edit"]').val(),
-                    id_property: $('input[name="id_property"]').val(),
+                    propertyNameEdit: $('input[name="name_property_edit"]').val(),
+                    propertyId: $('input[name="id_property"]').val(),
                 };
 
                 $('#editTableBody tr').each(function(index) {
@@ -468,7 +494,7 @@
 
                 if (confirm('Apakah sudah yakin mengisi data dengan benar?')) {
                     $.ajax({
-                        url: '{{ route("editproperty", ":id") }}'.replace(':id', formData.id_property),
+                        url: '{{ route("editproperty", ":id") }}'.replace(':id', formData.propertyId),
                         type: 'PUT',
                         data: formData,
                         success: function(response) {
@@ -480,6 +506,7 @@
                             setTimeout(function() {
                                 $('#successModal').modal('hide');
                                 $('#updateModal').modal('hide');
+                                location.reload(); // TINDAKAN SEMENTARA KARENA PAGE KURANG RESPONSIVE
                             }, 2000);
                         },
                         error: function(xhr, status, error) {
@@ -491,6 +518,7 @@
                             setTimeout(function() {
                                 $('#failedModal').modal('hide');
                                 $('#updateModal').modal('hide');
+                                location.reload(); // TINDAKAN SEMENTARA KARENA PAGE KURANG RESPONSIVE
                             }, 2000);
                         }
                     }).always(function() {
@@ -501,7 +529,71 @@
                 }
             });
 
-            $('#propertyTables').on('click', '.btn-delete', function(e) {
+
+            // <===========================================================================================>
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<VIEW PROPERTY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // <===========================================================================================>
+            $('#viewModal').on('shown.bs.modal', function(event) {
+                let button = $(event.relatedTarget);
+                let propertyId = button.data('id');
+                // var no_mesin = $("#viewButton")$(this).attr("data-id");
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route("viewproperty", ':id') }}'.replace(':id', propertyId),
+                    success: function(data) {
+                        const header_modal = `
+                            <h5 class="modal-title">Detail Preventive Mesin</h5>
+                            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
+                        `;
+                        const data_modal = `
+                            <h5>Detail Chedksheet</h5>
+                            <table class="table table-bordered" id="dataTables">
+                                <thead>
+                                    <tr>
+                                        <th>Bagian Yang Dicheck</th>
+                                        <th>Standart/Parameter</th>
+                                        <th>Metode Pengecekan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                ${data.propertydata.map(property => `
+                                        <tr>
+                                            <td>${property.name_componencheck}</td>
+                                            <td>${property.name_parameter}</td>
+                                            <td>${property.name_metodecheck}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                        const button_modal = `
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" data-id="${propertyId}" id="printButton">Print Checksheet</button>
+                        `;
+                        $('#modal_title_view').html(header_modal);
+                        $('#modal_data_view').html(data_modal);
+                        $('#modal_button_view').html(button_modal);
+                        mergeCells();
+
+                        // Add event listener to print button
+                        $('#printButton').on('click', function() {
+                            new_url_pdf = '{{ route("printproperty", ':id') }}'.replace(':id', propertyId);
+                            window.open(new_url_pdf, '_blank');
+                            return;
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('error:', error);
+                        $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                    }
+                });
+            });
+            // <===========================================================================================>
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END VIEW PROPERTY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // <===========================================================================================>
+
+
+            $('#propertyTables').on('click', '.delete-property', function(e) {
                 event.preventDefault();
                 const button = $(this);
                 const propertyId = button.data('id');

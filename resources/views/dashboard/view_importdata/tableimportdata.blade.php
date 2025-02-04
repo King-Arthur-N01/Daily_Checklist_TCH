@@ -857,12 +857,12 @@
                     type: 'GET',
                     url: '{{ route("detailmachine", ':id') }}'.replace(':id', machineId),
                     success: function(data) {
-                        if (!data || !data.fetchmachines || data.fetchmachines.length === 0) {
+                        if (!data || !data.machinedata || data.machinedata.length === 0) {
                             $('#modal_data_view').html(
                                 '<h4 style="text-align: center;">Error data ketegory mesin belum tersedia!</h4>'
                             );
                         } else {
-                            const machine = data.fetchmachines[0];
+                            const machine = data.machinedata[0];
                             const header_modal = `
                                 <h5 class="modal-title">Detail Preventive Mesin</h5>
                                 <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -904,7 +904,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    ${data.fetchmachines.map(machine => `
+                                    ${data.machinedata.map(machine => `
                                             <tr>
                                                 <td>${machine.name_componencheck}</td>
                                                 <td>${machine.name_parameter}</td>

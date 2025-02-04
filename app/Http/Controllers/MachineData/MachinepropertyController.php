@@ -12,7 +12,8 @@ use App\Metodecheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
+// use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class MachinepropertyController extends Controller
 {
@@ -39,12 +40,51 @@ class MachinepropertyController extends Controller
         }
     }
 
+    public function viewproperty($id)
+    {
+        try {
+            $propertydata = DB::table('machineproperties')
+                ->select('machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
+                ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
+                ->join('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machineproperties.id', '=', $id)
+                ->get();
+            return response()->json(['propertydata' => $propertydata]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
+
+    public function printpropertydata($id)
+    {
+        try {
+            $propertydata = DB::table('machineproperties')
+            ->select('machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'metodechecks.id as metodecheck_id')
+            ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
+            ->join('parameters', 'parameters.id_componencheck', '=', 'componenchecks.id')
+            ->join('metodechecks', 'metodechecks.id_parameter', '=', 'parameters.id')
+            ->where('machineproperties.id', '=', $id)
+            ->get();
+
+            // Render PDF
+            $pdf = PDF::loadView('dashboard.view_propertymesin.printproperty', compact('propertydata'));
+            $pdf->setPaper('A4', 'portrait');
+
+            return $pdf->stream();
+            // return $pdf->download('data.pdf');
+        } catch (\Exception $e) {
+            Log::error('DOM PDF failed: '.$e->getMessage());
+            return response()->json(['error' => 'Error getting data']);
+        }
+    }
+
     // public function findproperty($id)
     // {
     //     try {
     //         $joinproperty = DB::table('machineproperties')
     //             ->select('machineproperties.id', 'componenchecks.id', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'componenchecks.id as join_id')
-    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
     //             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
     //             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
     //             ->where('machineproperties.id', '=', $id)
@@ -52,7 +92,7 @@ class MachinepropertyController extends Controller
 
     //         $joincomponent = DB::table('machineproperties')
     //             ->select('machineproperties.*', 'componenchecks.name_componencheck', 'componenchecks.id as componen_id')
-    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
     //             ->where('machineproperties.id', '=', $id)
     //             ->get();
 
@@ -65,30 +105,29 @@ class MachinepropertyController extends Controller
     //     }
     // }
 
-    // fungsi upload data excel ke database
-    public function importpropertydata(Request $request)
-    {
-        $request->validate([
-            'file' => 'mimes:xlsx,xls,csv',
-        ]);
-        try {
-            Excel::import(new Machineproperty, $request->file('file'));
-            return response()->json(['success' => 'Data imported successfully!']);
-        } catch (\Exception $e) {
-            Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
+    // fungsi upload data excel ke database (EXPERIMENTAL PERLU PENGEMBANGAN LEBIH LANJUT)
+    // public function importpropertydata(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'mimes:xlsx,xls,csv',
+    //     ]);
+    //     try {
+    //         Excel::import(new Machineproperty, $request->file('file'));
+    //         return response()->json(['success' => 'Data imported successfully!']);
+    //     } catch (\Exception $e) {
+    //         Log::error('Data import error: ' . $e->getMessage(), ['exception' => $e]);
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
 
     public function createproperty(Request $request)
     {
         try {
-            // dd($request)->all();
             $StoreProperty = new Machineproperty();
-            $StoreProperty->name_property = $request->input('name_property');
+            $StoreProperty->name_property = $request->input('propertyName');
             $StoreProperty->save();
 
-            $machinepropertyid = Machineproperty::latest('id')->first()->id;
+            $machinepropertyid = $StoreProperty->id;
 
             foreach ($request->all() as $key => $dataRow) {
                 if (strpos($key, 'dataRows_') === 0) {
@@ -102,26 +141,28 @@ class MachinepropertyController extends Controller
                     $StoreComponent->id_property = $machinepropertyid;
                     $StoreComponent->save();
 
-                    $componencheckid = Componencheck::latest('id')->first()->id;
+                    $componencheckid = $StoreComponent->id; // Ambil ID dari objek yang baru disimpan
 
                     for ($i = 0; $i < $userInputCount; $i++) {
-                        $StoreParameter = new Parameter();
-                        $StoreParameter->name_parameter = $parameters[$i];
-                        $StoreParameter->id_componencheck = $componencheckid;
-                        $StoreParameter->save();
+                        if (isset($parameters[$i]) && isset($checkMethods[$i])) {
+                            $StoreParameter = new Parameter();
+                            $StoreParameter->name_parameter = $parameters[$i];
+                            $StoreParameter->id_componencheck = $componencheckid;
+                            $StoreParameter->save();
 
-                        $parameterid = Parameter::latest('id')->first()->id;
+                            $parameterid = $StoreParameter->id; // Ambil ID dari objek yang baru disimpan
 
-                        $StoreMethod = new Metodecheck();
-                        $StoreMethod->name_metodecheck = $checkMethods[$i];
-                        $StoreMethod->id_parameter = $parameterid;
-                        $StoreMethod->save();
+                            $StoreMethod = new Metodecheck();
+                            $StoreMethod->name_metodecheck = $checkMethods[$i];
+                            $StoreMethod->id_parameter = $parameterid;
+                            $StoreMethod->save();
+                        }
                     }
                 }
-                return response()->json(['success' => 'Machine property created successfully.']);
             }
+            return response()->json(['success' => 'Machine property created successfully.']);
         } catch (\Exception $e) {
-            // Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
+            Log::error('Error adding property: '. $e->getMessage(), ['stack' => $e->getTraceAsString()]);
             return response()->json(['error' => 'Error machine property failed to add!!!!'], 500);
         }
     }
@@ -129,8 +170,9 @@ class MachinepropertyController extends Controller
     public function updateproperty(Request $request, $id)
     {
         try {
+            // dd($request->all());
             $StoreProperty = Machineproperty::find($id);
-            $StoreProperty->name_property = $request->input('name_property');
+            $StoreProperty->name_property = $request->input('propertyNameEdit');
             $StoreProperty->save();
 
             $property_id = $StoreProperty->id;
@@ -138,7 +180,7 @@ class MachinepropertyController extends Controller
             $joinproperty = DB::table('machineproperties')
                 ->select('machineproperties.id', 'componenchecks.id', 'parameters.id', 'metodechecks.id',
                         'machineproperties.id as property_id', 'componenchecks.id as componen_id', 'parameters.id as parameter_id')
-                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property2')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
                 ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
                 ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machineproperties.id', '=', $id)
@@ -146,7 +188,7 @@ class MachinepropertyController extends Controller
 
             // Delete each related record
             foreach ($joinproperty as $property) {
-                DB::table('componenchecks')->where('id_property2', $property->property_id)->delete();
+                DB::table('componenchecks')->where('id_property', $property->property_id)->delete();
                 DB::table('parameters')->where('id_componencheck', $property->componen_id)->delete();
                 DB::table('metodechecks')->where('id_parameter', $property->parameter_id)->delete();
             }
@@ -161,7 +203,7 @@ class MachinepropertyController extends Controller
 
                     $StoreComponent = new Componencheck();
                     $StoreComponent->name_componencheck = $componentChecks[0];
-                    $StoreComponent->id_property2 = $property_id;
+                    $StoreComponent->id_property = $property_id;
                     $StoreComponent->save();
 
                     $componencheckid = $StoreComponent->id; // Ambil ID dari objek yang baru disimpan

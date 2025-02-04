@@ -14,7 +14,7 @@ class MachinesSeeder extends Seeder
     {
         Machine::create([
             // 'machine_code'  => '1',
-            'invent_number' => 'E-JG-09-0013',
+            'invent_number' => 'E-JG-09-0043',
             'machine_number'=> 'S.10',
             'machine_name'  => 'INVERTER WELD',
             'machine_brand' => 'OTC',
@@ -27,7 +27,7 @@ class MachinesSeeder extends Seeder
         ]);
         Machine::create([
             // 'machine_code'  => '2',
-            'invent_number' => 'E-JG-09-0014',
+            'invent_number' => 'E-JG-09-0064',
             'machine_number'=> 'S.15',
             'machine_name'  => 'INVERTER WELD',
             'machine_brand' => 'PANASONIC',
@@ -40,7 +40,7 @@ class MachinesSeeder extends Seeder
         ]);
         Machine::create([
             // 'machine_code'  => '7',
-            'invent_number' => 'F-AA-04-0007',
+            'invent_number' => 'F-AA-04-0037',
             'machine_number' => 'C.12',
             'machine_name'  => 'SCREW COMPRESSORE',
             'machine_brand' => 'GRECOMP',

@@ -49,10 +49,10 @@
         }
         /* #header-name-control{
             width: 15%;
-        }
+        }*/
         #header-value-control{
-            width: 30%;
-        } */
+            width: 34%;
+        }
 
         .table-input {
             width: 100%;
@@ -139,14 +139,43 @@
             border: 0.5px solid #000000;
             /* border-radius: .35rem; */
         }
-        .textarea-control{
-            height: 150px;
+
+        .table-note{
+            width: 100%;
+            clear: both;
+            border-spacing: 0;
+            font-size: 0.6rem;
+            align-items: center;
+            border: 0.4px solid #000000;
+        }
+        .table-note tr td{
+            border: 0.3px solid #000000;
+            padding: 3px;
+            justify-content: start;
+            text-align: left;
+        }
+        .table-note tr th{
+            text-transform: uppercase;
+            border: 0.3px solid #000000;
+            padding: 3px;
+            text-transform: uppercase;
+            text-align: center;
         }
 
         .check-mark{
             display:inline;
             justify-content: center;
             align-content: center;
+        }
+
+        .text-area{
+            border-color: transparent;
+            height: 10%;
+        }
+
+        .abnormal-input{
+            border-color: transparent;
+            height: 5%;
         }
 
         #hidden-column {
@@ -165,78 +194,73 @@
             <tr>
                 <th id="header-name-control">No. Invent Mesin</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->invent_number }}</th>
+                <th id="header-value-control"></th>
                 <th id="header-name-control">Spec/Tonage</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->machine_spec }}</th>
+                <th id="header-value-control"></th>
             </tr>
             <tr>
                 <th id="header-name-control">Nama Mesin</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->machine_name }}</th>
+                <th id="header-value-control"></th>
                 <th id="header-name-control">Buatan</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->machine_made }}</th>
+                <th id="header-value-control"></th>
             </tr>
             <tr>
                 <th id="header-name-control">Brand/Merk</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->machine_brand }}</th>
+                <th id="header-value-control"></th>
                 <th id="header-name-control">Mfg.NO</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->mfg_number }}</th>
+                <th id="header-value-control"></th>
             </tr>
             <tr>
                 <th id="header-name-control">Model/Type</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->machine_type }}</th>
+                <th id="header-value-control"></th>
                 <th id="header-name-control">Install Date</th>
                 <th>:</th>
-                <th id="header-value-control">{{ $machinedata[0]->install_date }}</th>
+                <th id="header-value-control"></th>
             </tr>
         </tbody>
     </table>
-    @php
-        $formattedDate = Carbon\Carbon::now()->format('d-m-Y');
-    @endphp
     <table class="table-input">
         <tbody>
             <tr>
                 <th width="10%">NO. MESIN</th>
                 <th width="25%">:</th>
-                <th width="25%">{{ $machinedata[0]->machine_number }}</th>
+                <th width="25%"></th>
                 <th width="10%" style="border-left: 0.5px solid #000000">TANGGAL</th>
                 <th width="25%">:</th>
-                <th width="25%">{{$formattedDate}}</th>
+                <th width="25%"></th>
             </tr>
         </tbody>
     </table>
     <table class="table">
-        <thead>
-            <tr>
-                <th width="4%" rowspan="2">No.</th>
-                <th width="23%" rowspan="2">Bagian Yang Dicheck</th>
-                <th width="23%" rowspan="2">Standart/Parameter</th>
-                <th width="20%" rowspan="2">Metode Pengecekan</th>
-                <th width="15%" colspan="4">Action</th>
-                <th width="12%" rowspan="2">Result</th>
-            </tr>
-            <tr>
-                <th>ch</th>
-                <th>cl</th>
-                <th>adj</th>
-                <th>rep</th>
-            </tr>
-        </thead>
+        <tr>
+            <th width="4%" rowspan="2">No.</th>
+            <th width="23%" rowspan="2">Bagian Yang Dicheck</th>
+            <th width="23%" rowspan="2">Standart/Parameter</th>
+            <th width="20%" rowspan="2">Metode Pengecekan</th>
+            <th width="15%" colspan="4">Action</th>
+            <th width="12%" rowspan="2">Result</th>
+        </tr>
+        <tr>
+            <th>ch</th>
+            <th>cl</th>
+            <th>adj</th>
+            <th>rep</th>
+        </tr>
         <tbody>
-            @foreach ($machinedata as $key => $recordsget)
+            @foreach ($propertydata as $key => $property)
             @for ($number=0; $number<=$key; $number ++)
             @endfor
                 <tr>
                     <td style="text-align: center;">{{ $number }}</td>
-                    <td>{{ $recordsget->name_componencheck }}</td>
-                    <td>{{ $recordsget->name_parameter }}</td>
-                    <td>{{ $recordsget->name_metodecheck }}</td>
+                    <td>{{ $property->name_componencheck }}</td>
+                    <td>{{ $property->name_parameter }}</td>
+                    <td>{{ $property->name_metodecheck }}</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -246,6 +270,7 @@
             @endforeach
         </tbody>
     </table>
+
     <table class="table-text">
         <tbody>
             <tr>
@@ -325,5 +350,4 @@
         </tbody>
     </table>
 </body>
-
 </html>

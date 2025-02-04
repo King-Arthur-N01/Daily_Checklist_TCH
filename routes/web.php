@@ -39,7 +39,7 @@ Route::delete('/machinedata/delete/{id}','MachineData\MachineController@deletema
 Route::post('/machinedata/import','MachineData\ImportdataController@importmachinedata')->name('importmachine');
 Route::get ('/machinedata/view/{id}','MachineData\ImportdataController@detailmachinedata')->name('detailmachine');
 Route::get ('/machinedata/find/{id}','MachineData\ImportdataController@findmachine')->name('findmachineid');
-Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printdatamachine')->name('printmachine');
+Route::get ('/machinedata/print/{id}','MachineData\ImportdataController@printmachinedata')->name('printmachine');
 // export data route
 Route::get ('/machinedata/export/csv','MachineData\ImportdataController@exportexcel')->name('exportexcel');
 Route::get ('/machinedata/export/csv/{id}','MachineData\ImportdataController@exportexcelwithcondition')->name('exportexcelvalue');
@@ -51,10 +51,12 @@ Route::get ('/machinedata/export/pdf/{id}','MachineData\ImportdataController@exp
 Route::get ('/machineproperty','MachineData\MachinepropertyController@indexmachineproperty')->name('indexproperty');
 Route::post('/machineproperty/create','MachineData\MachinepropertyController@createproperty')->name('addproperty');
 Route::put ('/machineproperty/update/{id}','MachineData\MachinepropertyController@updateproperty')->name('editproperty');
+Route::get ('/machineproperty/view/{id}','MachineData\MachinepropertyController@viewproperty')->name('viewproperty');
 // Route::get('/machineproperty/find/{id}','MachineData\MachinepropertyController@findproperty')->name('findproperty');
 Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyController@refreshtableproperty')->name('refreshproperty');
 Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
-Route::post('/machineproperty/import','MachineData\MachinepropertyController@importpropertydata')->name('importproperty');
+// Route::post('/machineproperty/import','MachineData\MachinepropertyController@importpropertydata')->name('importproperty'); EXPERIMENTAL PERLU PENGEMBANGAN LEBIH LANJUT
+Route::get ('/machineproperty/print/{id}','MachineData\MachinepropertyController@printpropertydata')->name('printproperty');
 // machine property route end
 
 // machine working route

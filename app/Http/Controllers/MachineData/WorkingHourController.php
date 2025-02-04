@@ -24,12 +24,11 @@ class WorkingHourController extends Controller
     public function refreshtableworkinghour()
     {
         try {
-            // $refreshworkinghours = WorkingHour::get();
             $refreshworkinghours = DB::table('working_hours')
-            ->select('working_hours.*', DB::raw('COUNT(DISTINCT machines.id) as machines_count'))
-            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
-            ->groupBy('working_hours.id')
-            ->get();
+                ->select('working_hours.*', DB::raw('COUNT(DISTINCT machines.id) as machines_count'))
+                ->leftJoin('machines', 'working_hours.id', '=', 'machines.standart_id')
+                ->groupBy('working_hours.id')
+                ->get();
 
             return response()->json([
                 'refreshworkinghours' => $refreshworkinghours
@@ -63,7 +62,7 @@ class WorkingHourController extends Controller
             $workinghourdata = WorkingHour::get();
             $selectedworkinghourdata = DB::table('working_hours')
             ->select('working_hours.*', 'machines.id', 'machines.id as machine_id')
-            ->join('machines', 'working_hours.id', '=', 'machines.standart_id')
+            ->leftJoin('machines', 'working_hours.id', '=', 'machines.standart_id')
             ->where('working_hours.id', '=', $id)
             ->get();
 

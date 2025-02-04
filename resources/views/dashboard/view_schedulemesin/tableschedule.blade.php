@@ -585,7 +585,7 @@
                                 <div class="row" align-items="center">
                                     <div class="col-xl-6">
                                         <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule Pertahun</label>
                                             <div>
                                                 <input class="form-control" id="name_schedule_year" type="text" placeholder="Nama Jadwal">
                                             </div>
@@ -638,7 +638,7 @@
                                                     (fetchschedule) => fetchschedule.machine_id === machine.id
                                                 );
                                                 if (schedule) {
-                                                    next_preventive = schedule.schedule_date || 'Belum ada data';
+                                                    next_preventive = formatDate(schedule.record_date) || 'Belum ada data';
                                                 }
                                                 // Tambahkan baris tabel
                                                 tableRows1 += `
@@ -1031,7 +1031,7 @@
                                 <div class="row align-items-center">
                                     <div class="col-xl-6">
                                         <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule Pertahun</label>
                                             <div>
                                                 <input class="form-control" id="name_schedule_year_edit" type="text" placeholder="Nama Jadwal" value="${data.refreshschedule[0].name_schedule_year}">
                                             </div>
@@ -1086,7 +1086,7 @@
                                                     (fetchschedule) => fetchschedule.machine_id === machine.id
                                                 );
                                                 if (schedule) {
-                                                    last_preventive = schedule.record_date || 'Belum ada data';
+                                                    last_preventive = formatDate(schedule.record_date) || 'Belum ada data';
                                                 }
                                                 tableRows1 += `
                                                     <tr>
@@ -1503,7 +1503,7 @@
                                 <div class="row" align-items="center">
                                     <div class="col-xl-12">
                                         <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule Special</label>
                                             <div>
                                                 <input class="form-control" id="name_schedule_month" type="text" placeholder="Periode :">
                                             </div>
@@ -1885,7 +1885,7 @@
                                 <div class="row" align-items="center">
                                     <div class="col-xl-12">
                                         <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule Perbulan</label>
                                             <div>
                                                 <input class="form-control" id="name_schedule_month" type="text" placeholder="Periode :">
                                             </div>
@@ -2267,7 +2267,7 @@
                                 <div class="row" align-items="center">
                                     <div class="col-xl-12">
                                         <div class="form-group">
-                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule</label>
+                                            <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Schedule Perbulan</label>
                                             <div>
                                                 <input class="form-control" id="name_schedule_month_edit" type="text" placeholder="Periode :" value="${data.monthlyscheduledata.name_schedule_month}">
                                             </div>
@@ -2287,7 +2287,7 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <p class="mg-b-10"Filter >Waktu Preventive</p>
+                                            <p class="mg-b-10">FilterWaktu Preventive</p>
                                             <select class="form-control" id="get_by_month">
                                                 <option value="">Pilih bulan...</option>
                                                 <option value="January">Januari</option>
@@ -2328,6 +2328,15 @@
                                                 if (workingHour) {
                                                     machineHour = workingHour.preventive_hour; // Ambil nilai preventive_hour
                                                 }
+
+                                                let schedule_status = null;
+                                                if (machineSchedule.machine_schedule_status === 0) {
+                                                    schedule_status = '<span class="badge badge-danger">Belum Dikerjakan</span>';
+                                                } else if (machineSchedule.machine_schedule_status === 1) {
+                                                    schedule_status = '<span class="badge badge-success">Sudah Dikerjakan</span>';
+                                                } else if (machineSchedule.machine_schedule_status === 2){
+                                                    schedule_status = '<span class="badge badge-warning">Terjadi Abnomal</span>';
+                                                }
                                                 tableRows1 += `
                                                     <tr>
                                                         <td>${index + 1}</td>
@@ -2339,6 +2348,7 @@
                                                         <td>${machineHour} /Jam</td>
                                                         <td>${formatDate(machineSchedule.schedule_start)}</td>
                                                         <td>${formatDate(machineSchedule.schedule_end)}</td>
+                                                        <td>${schedule_status}</td>
                                                         <td>
                                                             <input type="checkbox" name="machineinput" value="${machineSchedule.machinescheduleid}" ${scheduleIds.map(String).includes(String(machineSchedule.machinescheduleid)) ? 'checked' : ''}>
                                                         </td>
@@ -2367,7 +2377,7 @@
 
                         // Display the selected machines in the second modal (confirmation menu)
                         function renderSecondMenu() {
-                            const selectedMachines = data.getmachines.filter(machine =>
+                            const selectedMachines = data.machinescheduledata.filter(machine =>
                                 combinedEditScheduleId.includes(machine.machinescheduleid.toString())
                             );
 
@@ -2463,7 +2473,7 @@
                         document.getElementById("modal_button_month_edit").addEventListener('click', function(event) {
                             if (event.target.id === "nextButton") {
                                 updateSelectedMachines();
-                                if (monthlyNameEditData === "") {
+                                if (monthlyNameEditData.trim() === "") {
                                     alert("Harap masukan nama untuk jadwal.!!!");
                                 } else {
                                     changeMenu(2, monthlyNameEditData, combinedEditScheduleId);

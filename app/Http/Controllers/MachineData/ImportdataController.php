@@ -74,7 +74,7 @@ class ImportdataController extends Controller
     public function detailmachinedata($id)
     {
         try {
-            $fetchmachines = DB::table('machines')
+            $machinedata = DB::table('machines')
                 ->select('machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*')
                 ->join('machineproperties', 'machines.property_id', '=', 'machineproperties.id')
                 ->join('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
@@ -82,7 +82,7 @@ class ImportdataController extends Controller
                 ->join('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
                 ->where('machines.id', '=', $id)
                 ->get();
-            return response()->json(['fetchmachines' => $fetchmachines]);
+            return response()->json(['machinedata' => $machinedata]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching data'], 500);
         }
@@ -122,7 +122,7 @@ class ImportdataController extends Controller
     }
 
     // fungsi untuk print out kosongan data mesin beserta kategory checksheet nya
-    public function printdatamachine($id)
+    public function printmachinedata($id)
     {
         try {
             $machinedata = DB::table('machines')

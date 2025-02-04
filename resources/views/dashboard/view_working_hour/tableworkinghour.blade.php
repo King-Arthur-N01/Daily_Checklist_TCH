@@ -34,7 +34,7 @@
                     <div id="errorMessages"></div>
                     <div class="div-tables">
                         <div class="col-sm-6 col-md-6">
-                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#addWorkingHour" tabindex="0"><i class="bi bi-calendar2-plus-fill"></i>&nbsp; Standart Preventive Mesin</button>
+                            <button type="button" class="table-buttons" data-toggle="modal" data-target="#addWorkingHour" tabindex="0"><i class="bi bi-bookmark-plus-fill"></i></i>&nbsp; Standart Preventive Mesin</button>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <button type="button" class="table-buttons" id="filterButton"><i class="fas fa-filter"></i>&nbsp; Filter</button>

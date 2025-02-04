@@ -98,7 +98,7 @@ class MonthlyScheduleController extends Controller
                 ->select('machine_schedules.*', 'machines.*', 'machine_schedules.id as machinescheduleid')
                 ->join('machine_schedules', 'yearly_schedules.id', '=', 'machine_schedules.yearly_id')
                 ->join('machines', 'machine_schedules.machine_id', '=', 'machines.id')
-                ->orderBy('yearly_schedules.id', 'desc')
+                ->orderBy('machine_schedules.schedule_start', 'asc')
                 ->get();
 
             return response()->json([

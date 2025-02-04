@@ -47,8 +47,6 @@ class PermissionSeeder extends Seeder
         $operatorRole = Role::create(['name' => 'operator']);
         $operatorRole->givePermissionTo('create_record');
         $operatorRole->givePermissionTo('view_record');
-        $operatorRole->givePermissionTo('create_schedule');
-        $operatorRole->givePermissionTo('edit_schedule');
         $operatorRole->givePermissionTo('view_schedule');
 
         $leaderRole = Role::create(['name' => 'leader']);

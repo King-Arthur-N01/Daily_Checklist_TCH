@@ -15,7 +15,7 @@ class CreateMetodechecksTable extends Migration
     {
         Schema::create('metodechecks', function (Blueprint $table) {
             $table->id();
-            $table->string('name_metodecheck');
+            $table->text('name_metodecheck');
             $table->timestamps();
         });
     }
