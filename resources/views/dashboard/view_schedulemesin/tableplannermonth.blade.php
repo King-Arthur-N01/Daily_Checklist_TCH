@@ -234,7 +234,6 @@
                         });
                     }
 
-
                     const header_modal = `
                         <h5 class="modal-title">Koreksi Schedule Perbaikan Mesin</h5>
                         <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" aria-label="Close"><i class="fas fa-window-close"></i></button>
@@ -281,17 +280,21 @@
                                             <td>${machineHour} /Jam</td>
                                             <td>
                                                 <input type="hidden" class="form-control" name="schedule_id" value="${schedule.schedule_id}">
-                                                <input type="time" class="form-control" name="schedule_hour" id="schedule_hour_${schedule.schedule_id}" required>
+                                                <input type="hidden" class="form-control" name="combine_schedule_hour" id="combine_schedule_hour_${schedule.schedule_id}">
+                                                <div class="input-group">
+                                                    <input type="time" class="form-control" name="start_time" id="start_time_${schedule.schedule_id}" required>
+                                                    <input type="time" class="form-control" name="end_time" id="end_time_${schedule.schedule_id}" required>
+                                                </div>
                                             </td>
                                             <td>${formatDate(schedule.schedule_date)}</td>
                                             <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition" value="iya" checked>SESUAI
+                                                <div class="form-check" id="option_${schedule.schedule_id}">
+                                                    <input class="form-check-input" type="checkbox" id="condition" value="iya" checked>Sesuai
                                                 </div>
                                             </td>
                                             <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition" value="tidak">TIDAK SESUAI
+                                                <div class="form-check" id="option_${schedule.schedule_id}">
+                                                    <input class="form-check-input" type="checkbox" id="condition" value="tidak">Tidak Sesuai
                                                 </div>
                                             </td>
                                             <td>
@@ -314,6 +317,28 @@
                     $('#modal_data_planner').html(data_modal);
                     $('#modal_button_planner').html(button_modal);
                     selectCheckbox();
+
+                    document.querySelectorAll('input[type="time"]').forEach(input => {
+                        input.addEventListener('change', () => {
+                            const scheduleId = input.id.split('_')[2];
+                            const startTimeInput = document.querySelector(`#start_time_${scheduleId}`);
+                            const endTimeInput = document.querySelector(`#end_time_${scheduleId}`);
+                            const combineScheduleHourInput = document.querySelector(`#combine_schedule_hour_${scheduleId}`);
+
+                            if (startTimeInput && endTimeInput) {
+                                const startTime = startTimeInput.value;
+                                const endTime = endTimeInput.value;
+
+                                if (startTime && endTime && startTime > endTime) {
+                                    alert('Waktu mulai tidak boleh lebih besar dari waktu selesai.');
+                                    endTimeInput.value = '';
+                                } else {
+                                    const combinedTimeValue = JSON.stringify([startTime, endTime]);
+                                    combineScheduleHourInput.value = combinedTimeValue;
+                                }
+                            }
+                        });
+                    });
 
                     $('.datepicker').each(function() {
                         const scheduleDate = $(this).data('schedule-date'); // Ambil tanggal dari data attribute
@@ -375,7 +400,7 @@
                             $('input[name="schedule_id"]').each(function () {
                                 rescheduleId.push($(this).val());
                             });
-                            $('input[name="schedule_hour"]').each(function () {
+                            $('input[name="combine_schedule_hour"]').each(function () {
                                 rescheduleHour.push($(this).val());
                             });
 
@@ -393,41 +418,45 @@
                                 }
                             });
 
-                            $.ajax({
-                                type: 'PUT',
-                                url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
-                                data: {
-                                    '_token': '{{ csrf_token() }}',
-                                    'planned_by': plannedBy,
-                                    'reschedule_id': rescheduleId,
-                                    'reschedule_hour': rescheduleHour,
-                                    'reschedule_value': rescheduleValue,
-                                    'reschedule_note': rescheduleNote
-                                },
-                                success: function (response) {
-                                    if (response.success) {
-                                        $('#successText').text(response.success);
-                                        $('#successModal').modal('show');
+                            if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
+                                $.ajax({
+                                    type: 'PUT',
+                                    url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
+                                    data: {
+                                        '_token': '{{ csrf_token() }}',
+                                        'planned_by': plannedBy,
+                                        'reschedule_id': rescheduleId,
+                                        'reschedule_hour': rescheduleHour,
+                                        'reschedule_value': rescheduleValue,
+                                        'reschedule_note': rescheduleNote
+                                    },
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('#successText').text(response.success);
+                                            $('#successModal').modal('show');
+                                        }
+                                        setTimeout(function() {
+                                            $('#successModal').modal('hide');
+                                            $('#plannerModal').modal('hide');
+                                        }, 2000);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        if (xhr.responseText) {
+                                            const warningMessage = JSON.parse(xhr.responseText).error;
+                                            $('#warningText').text(warningMessage);
+                                            $('#warningModal').modal('show');
+                                        }
+                                        setTimeout(function() {
+                                            $('#warningModal').modal('hide');
+                                            $('#plannerModal').modal('hide');
+                                        }, 2000);
                                     }
-                                    setTimeout(function() {
-                                        $('#successModal').modal('hide');
-                                        $('#plannerModal').modal('hide');
-                                    }, 2000);
-                                },
-                                error: function(xhr, status, error) {
-                                    if (xhr.responseText) {
-                                        const warningMessage = JSON.parse(xhr.responseText).error;
-                                        $('#warningText').text(warningMessage);
-                                        $('#warningModal').modal('show');
-                                    }
-                                    setTimeout(function() {
-                                        $('#warningModal').modal('hide');
-                                        $('#plannerModal').modal('hide');
-                                    }, 2000);
-                                }
-                            }).always(function() {
-                                table.ajax.reload(null, false);
-                            });
+                                }).always(function() {
+                                    table.ajax.reload(null, false);
+                                });
+                            } else {
+                                // User cancelled the deletion, do nothing
+                            }
                         }
                     });
 
@@ -448,7 +477,7 @@
                 success: function(data) {
 
                     function selectCheckbox() {
-                        const table = document.getElementById("plannerTables");
+                        const table = document.getElementById("plannerEditTables");
                         const rows = table.querySelectorAll("tbody tr");
 
                         rows.forEach((row) => {
@@ -488,7 +517,7 @@
                     }
 
                     function updateReadonlyState() {
-                        const rows = document.querySelectorAll("#plannerTables tbody tr");
+                        const rows = document.querySelectorAll("#plannerEditTables tbody tr");
                         rows.forEach((row) => {
                             const checkboxTidak = row.querySelector('input[type="checkbox"][value="tidak"]');
                             const machineRescheduleInput = row.querySelector('input[name="machine_reschedule"]');
@@ -518,7 +547,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered" id="plannerTables">
+                        <table class="table table-bordered" id="plannerEditTables">
                             <thead>
                                 <tr>
                                     <th>NO.</th>
@@ -557,7 +586,11 @@
                                     }
 
                                     // Tentukan apakah salah satu reschedule_date tidak null
-                                    const isNotNull = schedule.reschedule_date_1 || schedule.reschedule_date_2 || schedule.reschedule_date_3;
+                                    const hasReschedule = schedule.reschedule_date_1 || schedule.reschedule_date_2 || schedule.reschedule_date_3;
+
+                                    scheduleHour = JSON.parse(schedule.schedule_hour); // Menggunakan JSON.parse untuk mengubah string menjadi array
+                                    const startTime = scheduleHour.length > 0 ? formatTime(scheduleHour[0]) : '';
+                                    const endTime = scheduleHour.length > 1 ? formatTime(scheduleHour[1]) : '';
 
                                     return `
                                         <tr>
@@ -570,17 +603,21 @@
                                             <td>${machineHour} Jam</td>
                                             <td>
                                                 <input type="hidden" class="form-control" name="schedule_id" value="${schedule.schedule_id}">
-                                                <input type="time" class="form-control" name="schedule_hour" id="schedule_hour_${schedule.schedule_id}" value="${schedule.schedule_hour}">
+                                                <input type="hidden" class="form-control" name="combine_schedule_hour" id="combine_schedule_hour_${schedule.schedule_id}">
+                                                <div class="input-group">
+                                                    <input type="time" class="form-control" name="start_time" id="start_time_${schedule.schedule_id}" value="${startTime}" required>
+                                                    <input type="time" class="form-control" name="end_time" id="end_time_${schedule.schedule_id}" value="${endTime}" required>
+                                                </div>
                                             </td>
                                             <td>${reschedulePM}</td>
                                             <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition_${schedule.schedule_id}" value="iya" ${!isNotNull ? 'checked' : ''}>SESUAI
+                                                <div class="form-check" id="option_${schedule.schedule_id}">
+                                                    <input class="form-check-input" type="checkbox" id="condition_${schedule.schedule_id}" value="iya" ${!hasReschedule ? 'checked' : ''}>Sesuai
                                                 </div>
                                             </td>
                                             <td>
-                                                <div id="option_${schedule.schedule_id}">
-                                                    <input type="checkbox" id="condition_${schedule.schedule_id}" value="tidak" ${isNotNull ? 'checked' : ''}>TIDAK SESUAI
+                                                <div class="form-check" id="option_${schedule.schedule_id}">
+                                                    <input class="form-check-input" type="checkbox" id="condition_${schedule.schedule_id}" value="tidak" ${hasReschedule ? 'checked' : ''}>Tidak Sesuai
                                                 </div>
                                             </td>
                                             <td>
@@ -604,6 +641,43 @@
                     $('#modal_button_planner_edit').html(button_modal);
                     updateReadonlyState();
                     selectCheckbox();
+
+                    document.querySelectorAll('input[type="time"]').forEach(input => {
+                        input.addEventListener('change', () => {
+                            const scheduleId = input.id.split('_')[2];
+                            const startTimeInput = document.querySelector(`#start_time_${scheduleId}`);
+                            const endTimeInput = document.querySelector(`#end_time_${scheduleId}`);
+                            const combineScheduleHourInput = document.querySelector(`#combine_schedule_hour_${scheduleId}`);
+
+                            if (startTimeInput && endTimeInput) {
+                                const startTime = startTimeInput.value;
+                                const endTime = endTimeInput.value;
+
+                                if (startTime && endTime && startTime > endTime) {
+                                    alert('Waktu mulai tidak boleh lebih besar dari waktu selesai.');
+                                    endTimeInput.value = '';
+                                } else {
+                                    const combinedTimeValue = JSON.stringify([startTime, endTime]);
+                                    combineScheduleHourInput.value = combinedTimeValue;
+                                }
+                            }
+                        });
+                    });
+
+                    function formatTime(timeString) {
+                        // Pastikan input adalah string yang sesuai dengan format waktu (misalnya "HH:mm")
+                        if (!timeString) return '';
+
+                        // Jika input adalah format yang benar, langsung return
+                        if (/^\d{2}:\d{2}$/.test(timeString)) {
+                            return timeString;
+                        }
+                        const date = new Date(`1970-01-01T${timeString}`);
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    }
+
 
                     $('.datepicker').each(function() {
                         const scheduleDate = $(this).data('schedule-date'); // Ambil tanggal dari data attribute
@@ -643,12 +717,12 @@
                         $('input[name="schedule_id"]').each(function() {
                             rescheduleId.push($(this).val());
                         });
-                        $('input[name="schedule_hour"]').each(function() {
+                        $('input[name="combine_schedule_hour"]').each(function () {
                             rescheduleHour.push($(this).val());
                         });
 
                         // Periksa setiap baris untuk mendapatkan nilai checkbox dan catatan
-                        $('#plannerTables tbody tr').each(function() {
+                        $('#plannerEditTables tbody tr').each(function() {
                             const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
                             const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
                             const isCheckedIya = $(this).find('input[type="checkbox"][value="iya"]').is(':checked');

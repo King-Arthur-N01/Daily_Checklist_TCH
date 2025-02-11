@@ -19,14 +19,13 @@ class CreateMachineSchedulesTable extends Migration
             $table->timestamp('schedule_end')->nullable();
             $table->integer('preventive_cycle')->nullable();
             $table->timestamp('schedule_date')->nullable();
-            $table->time('schedule_hour')->nullable();
+            $table->json('schedule_hour')->nullable();
             $table->timestamp('reschedule_date_1')->nullable();
             $table->timestamp('reschedule_date_2')->nullable();
             $table->timestamp('reschedule_date_3')->nullable();
             $table->string('reschedule_note')->nullable();
             $table->timestamp('schedule_record')->nullable();
             $table->integer('machine_schedule_status')->default(0);
-            // $table->boolean('schedule_time_status')->nullable();
             $table->unsignedBigInteger('machine_id')->nullable();
             $table->unsignedBigInteger('yearly_id');
             $table->unsignedBigInteger('monthly_id')->nullable();

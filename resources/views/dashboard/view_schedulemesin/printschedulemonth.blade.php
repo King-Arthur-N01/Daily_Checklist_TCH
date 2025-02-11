@@ -67,21 +67,25 @@
                 <th colspan="2" rowspan="4"><img src="../public/assets/icons/trmitra_logo.png" height="70"></th>
                 <th colspan="4">INFORMASI PREV.MTC.MACHINE</th>
                 <td>DI SETUJUI</td>
-                <td colspan="2">DI KETAHUI</td>
+                <td>DI KETAHUI</td>
                 <td>DI BUAT</td>
             </tr>
             <tr>
                 <th colspan="4" rowspan="3"><h2>{{ $scheduledata[0]->name_schedule_month }}</h2></th>
-                <th rowspan="2"></th>
-                <th rowspan="2" colspan="2"></th>
-                <th rowspan="2"></th>
+                <th rowspan="2">{{ 'Signed By ' . ($user_agreed_name ?? 'Belum Ada') }}</th>
+                <th rowspan="2">{{ 'Signed By ' . ($user_recognize_name ?? 'Belum Ada') }}</th>
+                <th rowspan="2">{{ 'Signed By ' . ($user_create_name ?? 'Belum Ada') }}</th>
             </tr>
             <tr></tr>
             <tr>
                 <td>{{ $user_create_name}}</td>
-                <td colspan="2">{{ $user_recognize_name}}</td>
+                <td>{{ $user_recognize_name}}</td>
                 <td>{{ $user_agreed_name}}</td>
             </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
             <tr>
                 <th rowspan="2">NO.</th>
                 <th rowspan="2">NAMA MESIN</th>
@@ -106,7 +110,9 @@
                     $machineHourData = $workinghourdata->firstWhere('id', $printdata->standart_id);
                     $machineHour = $machineHourData ? $machineHourData->preventive_hour : '0';
                     $reschedule_pm = null;
-                    $schedule_hour = $printdata->schedule_hour ? Carbon\Carbon::parse($printdata->schedule_hour)->format('H:s') : '-';
+                    $scheduleHour = json_decode($printdata->schedule_hour, true); // Menggunakan json_decode untuk mengubah string menjadi array
+                    $startTime = is_array($scheduleHour) && count($scheduleHour) > 0 ? $scheduleHour[0] : 'Belum ada';
+                    $endTime = is_array($scheduleHour) && count($scheduleHour) > 1 ? $scheduleHour[1] : 'Belum ada';
 
                     // Mengambil tanggal reschedule yang valid
                     if ($printdata->reschedule_date_3) {
@@ -130,14 +136,19 @@
                     </td>
                     <td width="10%">
                         @php
-                            $reschedule_date = $reschedule_pm ? Carbon\Carbon::parse($reschedule_pm)->format('d-F-Y') : '-';
+                            $reschedule_date = $reschedule_pm ? Carbon\Carbon::parse($reschedule_pm)->format('d-F-Y') : 'Sesuai';
+                            if ($printdata->schedule_planner) {
+                                $reschedule_date = $reschedule_pm ? Carbon\Carbon::parse($reschedule_pm)->format('d-F-Y') : 'Sesuai';
+                            } else {
+                                $reschedule_date = $reschedule_pm ? Carbon\Carbon::parse($reschedule_pm)->format('d-F-Y') : 'Belum ada';
+                            }
                         @endphp
                         {{ $reschedule_date }}
                     </td>
                     <td width="10%">
-                        {{ $schedule_hour }}
+                        {{ $startTime }}-{{ $endTime }}
                     </td>
-                    <td width="20%">{{$printdata->reschedule_note}}</td>
+                    <td width="20%">{{ $printdata->reschedule_note ?? ($user_planner_name) }}</td>
                 </tr>
             @endforeach
         </tbody>

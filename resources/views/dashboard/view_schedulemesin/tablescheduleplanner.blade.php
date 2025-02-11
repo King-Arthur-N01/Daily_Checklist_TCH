@@ -2524,9 +2524,15 @@
                                 <tbody>
                                     ${data.monthlyscheduledata.map((schedule, index) => {
                                         let reschedulePM = null;
-                                        let scheduleHour = schedule.schedule_hour;
+                                        let scheduleHour = JSON.parse(schedule.schedule_hour);
+                                        let startTime = null;
+                                        let endTime = null;
+
                                         if (scheduleHour == null) {
                                             scheduleHour = 'Belum ada'
+                                        } else {
+                                            startTime = scheduleHour.length > 0 ? scheduleHour[0] : '';
+                                            endTime = scheduleHour.length > 1 ? scheduleHour[1] : '';
                                         }
                                         let scheduleStatus = null;
 
@@ -2555,7 +2561,7 @@
                                                 <td>${schedule.machine_type || '-'}</td>
                                                 <td>${schedule.machine_number || '-'}</td>
                                                 <td>${reschedulePM}</td>
-                                                <td>${scheduleHour.split(':').slice(0, 2).join(':')}</td>
+                                                <td>${startTime} - ${endTime}</td>
                                                 <td>${scheduleStatus}</td>
                                             </tr>
                                         `;

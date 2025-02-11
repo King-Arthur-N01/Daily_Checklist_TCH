@@ -139,23 +139,6 @@
                 </div>
             </div>
         @endcan
-        @can('reschedule_schedule', Permission::class)
-        <div class="col-xl-4 col-md-4 mb-4" onclick="window.location='{{ route('indexyear-planner') }}'" style="cursor: pointer;">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body-custom">
-                    <div class="col-7">
-                        <h5 class="card-title-head">Lihat Schedule Preventive</h5>
-                    </div>
-                    <div class="col-5" style="text-align: right">
-                        <img class="image-card-home" src="{{ asset('assets/icons/view_schedule_home.png') }}">
-                    </div>
-                    <div class="card-footer-item-custom col-12">
-                        <a class="card-title">Lihat Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endcan
         {{-- @can('recognize_schedule', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4" onclick="window.location='{{ route('indexpreventive') }}'" style="cursor: pointer;">
                 <div class="card border-left-primary shadow h-100 py-2">
@@ -224,6 +207,23 @@
                 </div>
             </div>
         @endcanany
+        @can('reschedule_schedule', Permission::class)
+            <div class="col-xl-4 col-md-4 mb-4" onclick="window.location='{{ route('indexyear-planner') }}'" style="cursor: pointer;">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body-custom">
+                        <div class="col-7">
+                            <h5 class="card-title-head">Lihat Schedule Preventive</h5>
+                        </div>
+                        <div class="col-5" style="text-align: right">
+                            <img class="image-card-home" src="{{ asset('assets/icons/view_schedule_home.png') }}">
+                        </div>
+                        <div class="card-footer-item-custom col-12">
+                            <a class="card-title">Lihat Jadwal Preventive &nbsp; <i class="fas fa-calendar-alt"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endcan
         @can('reschedule_schedule', Permission::class)
             <div class="col-xl-4 col-md-4 mb-4" onclick="window.location='{{ route('indexmonth-planner') }}'" style="cursor: pointer;">
                 <div class="card border-left-primary shadow h-100 py-2">

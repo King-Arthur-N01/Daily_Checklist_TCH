@@ -2442,7 +2442,7 @@ textarea.form-control {
 
 .form-check {
     position: relative;
-    display: block;
+    display: inline-block;
     padding-left: 1.25rem;
     justify-content: flex-end;
 }
@@ -5540,6 +5540,9 @@ input:checked+.slider:before {
 .custom-header {
     display: flex;
     align-items: center;
+}
+
+.custom-option{
 }
 
 .card-header-custom {

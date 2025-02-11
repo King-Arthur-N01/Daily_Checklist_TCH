@@ -73,9 +73,9 @@
             <tr>
                 {{-- <th></th> --}}
                 <th colspan="11" rowspan="3"><h2>{{ $scheduledata[0]->name_schedule_year}}</h2></th>
-                <th colspan="2" rowspan="2"></th>
-                <th colspan="2" rowspan="2"></th>
-                <th colspan="2" rowspan="2"></th>
+                <th colspan="2" rowspan="2">{{ 'Signed By ' . ($user_agreed_name ?? 'Belum Ada') }}</th>
+                <th colspan="2" rowspan="2">{{ 'Signed By ' . ($user_recognize_name ?? 'Belum Ada') }}</th>
+                <th colspan="2" rowspan="2">{{ 'Signed By ' . ($user_create_name ?? 'Belum Ada') }}</th>
             </tr>
             <tr>
 

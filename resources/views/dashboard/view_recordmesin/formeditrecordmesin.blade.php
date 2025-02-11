@@ -52,12 +52,12 @@
                                     <a>NO.MESIN :</a>
                                     <input class="form-control" type="int" value="{{ $preventivedata[0]->machine_number }}" placeholder="Nomor Mesin" readonly>
                                 </div>
+                                @php
+                                    $timenow = \Carbon\Carbon::now()->format('Y-m-d');
+                                @endphp
                                 <div class="col-6">
                                     <a>WAKTU PREVENTIVE :</a>
-                                    @php
-                                        $recordDate = \Carbon\Carbon::parse($preventivedata[0]->record_date);
-                                    @endphp
-                                    <input class="form-control" value="{{ $recordDate->format('Y-m-d') }}" readonly>
+                                    <input type="date" class="form-control" name="edit_record_date" value="{{$timenow}}">
                                 </div>
                             </div>
                             <table class="table table-bordered" id="dataTables" width="100%">

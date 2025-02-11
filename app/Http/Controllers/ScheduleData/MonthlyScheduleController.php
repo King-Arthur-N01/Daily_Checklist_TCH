@@ -253,19 +253,22 @@ class MonthlyScheduleController extends Controller
             $schedule_create = $firstSchedule ? $firstSchedule->schedule_create : null;
             $schedule_recognize = $firstSchedule ? $firstSchedule->schedule_recognize : null;
             $schedule_agreed = $firstSchedule ? $firstSchedule->schedule_agreed : null;
+            $schedule_planner = $firstSchedule ? $firstSchedule->schedule_planner : null;
 
             // Ambil nama pengguna dengan pemeriksaan
             $user_create = DB::table('users')->select('name')->where('id', $schedule_create)->first();
             $user_recognize = DB::table('users')->select('name')->where('id', $schedule_recognize)->first();
             $user_agreed = DB::table('users')->select('name')->where('id', $schedule_agreed)->first();
+            $user_planner = DB::table('users')->select('name')->where('id', $schedule_planner)->first();
 
             // Gunakan null coalescing untuk menghindari error
             $user_create_name = $user_create->name ?? 'Belum Ada';
             $user_recognize_name = $user_recognize->name ?? 'Belum Ada';
             $user_agreed_name = $user_agreed->name ?? 'Belum Ada';
+            $user_planner_name = $user_planner->name ?? 'Belum Ada';
 
             // Render PDF
-            $pdf = PDF::loadView('dashboard.view_schedulemesin.printschedulemonth', compact('scheduledata', 'workinghourdata', 'user_create_name', 'user_recognize_name', 'user_agreed_name'));
+            $pdf = PDF::loadView('dashboard.view_schedulemesin.printschedulemonth', compact('scheduledata', 'workinghourdata', 'user_create_name', 'user_recognize_name', 'user_agreed_name', 'user_planner_name'));
             $pdf->setPaper('A4', 'portrait');
             return $pdf->stream();
         } catch (\Exception $e) {

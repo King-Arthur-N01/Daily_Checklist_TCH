@@ -253,12 +253,32 @@
             <th>rep</th>
         </tr>
         <tbody>
-            @foreach ($propertydata as $key => $property)
-            @for ($number=0; $number<=$key; $number ++)
-            @endfor
+            <?php
+            $rowspanData = []; // Menyimpan jumlah kemunculan tiap "Bagian Yang Dicheck"
+
+            // Hitung jumlah kemunculan setiap "Bagian Yang Dicheck"
+            foreach ($propertydata as $property) {
+                $bagian = $property->name_componencheck;
+                if (!isset($rowspanData[$bagian])) {
+                    $rowspanData[$bagian] = 0;
+                }
+                $rowspanData[$bagian]++;
+            }
+
+            $printedSection = []; // Untuk melacak apakah "Bagian Yang Dicheck" sudah dicetak
+            $number = 1; // Nomor urut
+
+            foreach ($propertydata as $property):
+                $bagian = $property->name_componencheck;
+            ?>
                 <tr>
-                    <td style="text-align: center;">{{ $number }}</td>
-                    <td>{{ $property->name_componencheck }}</td>
+                    <td style="text-align: center;"><?= $number++ ?></td>
+
+                    <?php if (!isset($printedSection[$bagian])): ?>
+                        <td rowspan="<?= $rowspanData[$bagian] ?>"><?= $bagian ?></td>
+                        <?php $printedSection[$bagian] = true; ?>
+                    <?php endif; ?>
+
                     <td>{{ $property->name_parameter }}</td>
                     <td>{{ $property->name_metodecheck }}</td>
                     <td></td>
@@ -267,7 +287,7 @@
                     <td></td>
                     <td></td>
                 </tr>
-            @endforeach
+            <?php endforeach; ?>
         </tbody>
     </table>
 

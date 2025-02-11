@@ -197,7 +197,6 @@ class MachinerecordController extends Controller
     {
         try {
             $users = User::get();
-            $timenow = Carbon::now();
 
             $joinmachine = DB::table('machine_schedules')
             ->select('machine_schedules.*', 'machines.*', 'machineproperties.*', 'componenchecks.*', 'parameters.*', 'metodechecks.*', 'machine_schedules.id as getscheduleid', 'machines.id as getmachineid')
@@ -216,7 +215,6 @@ class MachinerecordController extends Controller
             }
             return view('dashboard.view_recordmesin.formrecordmesin', [
                 'joinmachine' => $joinmachine,
-                'timenow' => $timenow,
                 'users' => $users,
             ]);
         } catch (\Exception $e) {
@@ -241,8 +239,8 @@ class MachinerecordController extends Controller
             $operator_action_json = json_encode(array_values($request->input('operator_action')));
             $result_json = json_encode(array_values($request->input('result')));
 
-            $record_date = Carbon::parse($request->input('record_date'));
-            $currenttime = Carbon::now('Asia/Jakarta');
+            $record_date = $request->input('record_date');
+            // $currenttime = Carbon::now('Asia/Jakarta');
 
             $current_shift_time = Carbon::now()->format('H:i');
             if ($current_shift_time >= '07:00' && $current_shift_time < '15:59') {
@@ -271,7 +269,7 @@ class MachinerecordController extends Controller
             $StoreRecords->result = $result_json;
             $StoreRecords->create_by = $create_by_json;
             $StoreRecords->record_date = $record_date;
-            $StoreRecords->start_preventive = $currenttime;
+            $StoreRecords->start_preventive = $record_date;
 
             // PERATURAN STATUS RECORD YANG ADA PADA COLUMN "machinerecord_status"
             // 0 = RECORD OPEN
@@ -285,7 +283,7 @@ class MachinerecordController extends Controller
                 $StoreRecords->status = trim($status . " | " . $previous_status_value, " | ");
                 $StoreRecords->target = trim($target . " | " . $previous_target_value, " | ");
                 $StoreRecords->machinerecord_status = 0;
-                $StoreRecords->finish_preventive = $currenttime;
+                $StoreRecords->finish_preventive = $record_date;
             } else {
                 // Gabungkan data baru dengan data lama menggunakan separator
                 $StoreRecords->problem = trim($problem . " | " . $previous_problem_value, " | ");
@@ -436,14 +434,13 @@ class MachinerecordController extends Controller
     {
         try {
             // dd($request)->all();
+            $edit_record_date = $request->input('edit_record_date');
             $note = $request->input('note');
             $problem = $request->input('problem');
             $cause = $request->input('cause');
             $action = $request->input('action');
             $status = $request->input('status');
             $target = $request->input('target');
-
-            $currenttime = Carbon::now('Asia/Jakarta');
 
             $UpdateMachineRecord = Machinerecord::find($id);
 
@@ -462,8 +459,8 @@ class MachinerecordController extends Controller
             $UpdateMachineRecord->status = $status;
             $UpdateMachineRecord->target = $target;
             $UpdateMachineRecord->machinerecord_status = 1;
-            $UpdateMachineRecord->finish_preventive = $currenttime;
-            $UpdateMachineRecord->fix_abnormal_date = $currenttime;
+            $UpdateMachineRecord->finish_preventive = $edit_record_date;
+            $UpdateMachineRecord->fix_abnormal_date = $edit_record_date;
             $UpdateMachineRecord->save();
 
             // $MachineStatus = Machine::find('id', $machine_id);

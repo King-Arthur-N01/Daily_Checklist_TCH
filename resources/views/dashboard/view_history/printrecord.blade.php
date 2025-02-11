@@ -255,22 +255,39 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($machinedata as $index => $recordsget)
-                @php
-                    // Decode JSON ke array
-                    $actions = json_decode($combineresult[0]['operator_action'], true)[$index] ?? [];
-                    $result = json_decode($combineresult[0]['result'], true)[$index] ?? '';
-                @endphp
+            <?php
+            $rowspanData = []; // Menyimpan jumlah kemunculan tiap "Bagian Yang Dicheck";
+            // Hitung jumlah kemunculan setiap "Bagian Yang Dicheck"
+            foreach ($machinedata as $record) {
+                $bagian = $record->name_componencheck;
+                if (!isset($rowspanData[$bagian])) {
+                    $rowspanData[$bagian] = 0;
+                }
+                $rowspanData[$bagian]++;
+            }
 
+            $printedSection = []; // Untuk melacak apakah "Bagian Yang Dicheck" sudah dicetak
+            $number = 1; // Nomor urut
+
+            foreach ($machinedata as $index => $record):
+                $bagian = $record->name_componencheck;
+                $actions = json_decode($combineresult[0]['operator_action'], true)[$index] ?? [];
+                $result = json_decode($combineresult[0]['result'], true)[$index] ?? ''
+            ?>
                 <tr>
-                    <td style="text-align: center;">{{ $index + 1 }}</td>
-                    <td>{{ $recordsget->name_componencheck }}</td>
-                    <td>{{ $recordsget->name_parameter }}</td>
-                    <td>{{ $recordsget->name_metodecheck }}</td>
+                    <td style="text-align: center;"><?= $number++ ?></td>
+
+                    <?php if (!isset($printedSection[$bagian])): ?>
+                        <td rowspan="<?= $rowspanData[$bagian] ?>"><?= $bagian ?></td>
+                        <?php $printedSection[$bagian] = true; ?>
+                    <?php endif; ?>
+
+                    <td>{{ $record->name_parameter }}</td>
+                    <td>{{ $record->name_metodecheck }}</td>
                     <td>{{ implode(' & ', $actions) }}</td>
                     <td>{{ $result }}</td>
                 </tr>
-            @endforeach
+            <?php endforeach; ?>
         </tbody>
     </table>
 

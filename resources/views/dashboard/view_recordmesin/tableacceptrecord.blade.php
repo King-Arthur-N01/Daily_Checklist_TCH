@@ -567,7 +567,7 @@
                                         <input class="form-control" value="${formatDate(data.preventivedata[0].record_date)} (${data.preventivedata[0].shift})" readonly>
                                     </div>
                                 </div>
-                                <table class="table table-bordered" id="dataTables" width="100%">
+                                <table class="table table-bordered" id="dataTables">
                                     <thead>
                                         <tr>
                                             <th>No.</th>

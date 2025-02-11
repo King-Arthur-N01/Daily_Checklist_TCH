@@ -320,7 +320,16 @@
                                         let actionButton = null;
                                         let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === schedule.standart_id);
                                         let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
-                                        let scheduleHour = schedule.schedule_hour;
+                                        let scheduleHour = JSON.parse(schedule.schedule_hour);
+                                        let startTime = null;
+                                        let endTime = null;
+
+                                        if (scheduleHour == null) {
+                                            scheduleHour = 'Belum ada'
+                                        } else {
+                                            startTime = scheduleHour.length > 0 ? scheduleHour[0] : '';
+                                            endTime = scheduleHour.length > 1 ? scheduleHour[1] : '';
+                                        }
 
                                         if (schedule.reschedule_date_3) {
                                             reschedulePM = formatDate(schedule.reschedule_date_3) + ' ***)';
@@ -350,7 +359,7 @@
                                                 <td>${schedule.machine_type || '-'}</td>
                                                 <td>${schedule.machine_number || '-'}</td>
                                                 <td>${machineHour} /Jam</td>
-                                                <td>${scheduleHour.split(':').slice(0, 2).join(':') || 'Belum ada'}</td>
+                                                <td>${startTime} - ${endTime}</td>
                                                 <td>${reschedulePM}</td>
                                                 <td>${scheduleStatus}</td>
                                                 <td>
@@ -400,7 +409,16 @@
                                             let pendingActionButton = null;
                                             let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === pendingschedule.standart_id);
                                             let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
-                                            let scheduleHour = pendingschedule.schedule_hour;
+                                            let scheduleHour = JSON.parse(pendingschedule.schedule_hour);
+                                            let startTime = null;
+                                            let endTime = null;
+
+                                            if (scheduleHour == null) {
+                                                scheduleHour = 'Belum ada'
+                                            } else {
+                                                startTime = scheduleHour.length > 0 ? scheduleHour[0] : '';
+                                                endTime = scheduleHour.length > 1 ? scheduleHour[1] : '';
+                                            }
 
                                             if (pendingschedule.reschedule_date_3) {
                                                 pendingReschedulePM = formatDate(pendingschedule.reschedule_date_3) + ' ***';
@@ -430,7 +448,7 @@
                                                     <td>${pendingschedule.machine_type || '-'}</td>
                                                     <td>${pendingschedule.machine_number || '-'}</td>
                                                     <td>${machineHour} /Jam</td>
-                                                    <td>${scheduleHour.split(':').slice(0, 2).join(':') || 'Belum ada'}</td>
+                                                    <td>${startTime} - ${endTime}</td>
                                                     <td>${pendingReschedulePM}</td>
                                                     <td>${pendingScheduleStatus}</td>
                                                     <td>
@@ -482,7 +500,16 @@
                                             let offActionButton = null;
                                             let machineHourData = data.workinghourdata.find(workinghour => workinghour.id === offschedule.standart_id);
                                             let machineHour = machineHourData ? machineHourData.preventive_hour : '0'; // Ambil preventive_hour atau 'N/A' jika tidak ditemukan
-                                            let scheduleHour = offschedule.schedule_hour;
+                                            let scheduleHour = JSON.parse(offschedule.schedule_hour);
+                                            let startTime = null;
+                                            let endTime = null;
+
+                                            if (scheduleHour == null) {
+                                                scheduleHour = 'Belum ada'
+                                            } else {
+                                                startTime = scheduleHour.length > 0 ? scheduleHour[0] : '';
+                                                endTime = scheduleHour.length > 1 ? scheduleHour[1] : '';
+                                            }
 
                                             if (offschedule.reschedule_date_3) {
                                                 offReschedulePM = formatDate(offschedule.reschedule_date_3) + ' ***';
@@ -513,7 +540,7 @@
                                                     <td>${offschedule.machine_type || '-'}</td>
                                                     <td>${offschedule.machine_number || '-'}</td>
                                                     <td>${machineHour} /Jam</td>
-                                                    <td>${scheduleHour.split(':').slice(0, 2).join(':') || 'Belum ada'}</td>
+                                                    <td>${startTime} - ${endTime}</td>
                                                     <td>${offReschedulePM}</td>
                                                     <td>${offScheduleStatus}</td>
                                                     <td>

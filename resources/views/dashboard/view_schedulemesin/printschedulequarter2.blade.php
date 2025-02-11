@@ -73,9 +73,9 @@
             <tr>
                 {{-- <th></th> --}}
                 <th colspan="5" rowspan="3"><h2>{{ $scheduledata[0]->name_schedule_year}}</h2></th>
-                <th colspan="2" rowspan="2"></th>
-                <th colspan="2" rowspan="2"></th>
-                <th colspan="2" rowspan="2"></th>
+                <th colspan="2" rowspan="2">{{ 'Signed By ' . ($user_agreed_name ?? 'Belum Ada') }}</th>
+                <th colspan="2" rowspan="2">{{ 'Signed By ' . ($user_recognize_name ?? 'Belum Ada') }}</th>
+                <th colspan="2" rowspan="2">{{ 'Signed By ' . ($user_create_name ?? 'Belum Ada') }}</th>
             </tr>
             <tr>
 
@@ -83,10 +83,14 @@
             <tr>
                 {{-- <th colspan="2"></th> --}}
                 {{-- <th colspan="4"></th> --}}
-                <td colspan="2" >MNG. MTN</td>
-                <td colspan="2">SPV. MTN</td>
-                <td colspan="2">SPV. PROD</td>
+                <td colspan="2">{{ $user_agreed_name }}</td>
+                <td colspan="2">{{ $user_recognize_name}}</td>
+                <td colspan="2">{{ $user_create_name}}</td>
             </tr>
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
             <tr>
                 <th rowspan="2" width="2%">NO.</th>
                 <th rowspan="2" width="15%">NO.INVENTARIS</th>
