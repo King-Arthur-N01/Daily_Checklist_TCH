@@ -344,14 +344,14 @@
             </tr>
             <tr>
                 <td height="4%" id="hidden-column"></td>
-                <td height="4%"></td>
-                <td height="4%"></td>
-                <td height="4%"></td>
+                <th height="4%">{{ 'Signed By ' . ($preventivedata[0]->approve_by_name ?? 'Belum Ada') }}</th>
+                <th height="4%">{{ 'Signed By ' . ($preventivedata[0]->correct_by_name ?? 'Belum Ada') }}</th>
+                <th height="4%">Signed By Operator</th>
             </tr>
             <tr>
                 <td width="55%" id="hidden-column"></td>
-                <th>{{$preventivedata[0]->correct_by_name}}</th>
                 <th>{{$preventivedata[0]->approve_by_name}}</th>
+                <th>{{$preventivedata[0]->correct_by_name}}</th>
                 <th>@foreach ($usernames as $get_user_id)
                     {{$get_user_id}},
                 @endforeach</th>

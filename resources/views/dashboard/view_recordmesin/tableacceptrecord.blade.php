@@ -314,27 +314,6 @@
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                     <textarea class="form-control" id="input_note" type="text" rows="6" cols="50">${data.preventivedata[0].note || ''}</textarea>
-                                    <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
-                                </div>
-                                <div class="form-custom">
-                                    <table class="table table-bordered table-custom" id="userTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Disetujui oleh :</th>
-                                                <th>Dikoreksi oleh :</th>
-                                                <th colspan="4">Dibuat oleh :</th>
-                                            </tr>
-                                            <tr>
-                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
-                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
-                                                    <td>${get_user_id}</td>
-                                                `).join('')}
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                                <div class="form-custom">
                                     <table class="table table-bordered" id="abnormalityTable">
                                         <thead>
                                             <tr>
@@ -365,12 +344,31 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered table-custom" id="userTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Disetujui oleh :</th>
+                                                <th>Dikoreksi oleh :</th>
+                                                <th colspan="4">Dibuat oleh :</th>
+                                            </tr>
+                                            <tr>
+                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
+                                                    <td>${get_user_id}</td>
+                                                `).join('')}
+                                            </tr>
+                                        </thead>
+                                    </table>
                                 </div>
                             </div>
                         `;
                         const button_modal =`
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            @can('delete_records', Permission::class)
+                            @can('delete_record', Permission::class)
                             <button type="submit" class="btn btn-danger" id="deleteButton" data-toggle="modal">Delete</button>
                             @endcan
                             <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
@@ -585,27 +583,6 @@
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                     <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" disabled>${data.preventivedata[0].note || ''}</textarea>
-                                    <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
-                                </div>
-                                <div class="form-custom">
-                                    <table class="table table-bordered table-custom" id="userTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Disetujui oleh :</th>
-                                                <th>Dikoreksi oleh :</th>
-                                                <th colspan="4">Dibuat oleh :</th>
-                                            </tr>
-                                            <tr>
-                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
-                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
-                                                    <td>${get_user_id}</td>
-                                                `).join('')}
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                                <div class="form-custom">
                                     <table class="table table-bordered" id="abnormalityTable">
                                         <thead>
                                             <tr>
@@ -635,6 +612,25 @@
                                                 </td>
                                             </tr>
                                         </tbody>
+                                    </table>
+                                    <input type="hidden" id="record_id" value="${data.preventivedata[0].record_id}">
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered table-custom" id="userTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Disetujui oleh :</th>
+                                                <th>Dikoreksi oleh :</th>
+                                                <th colspan="4">Dibuat oleh :</th>
+                                            </tr>
+                                            <tr>
+                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
+                                                    <td>${get_user_id}</td>
+                                                `).join('')}
+                                            </tr>
+                                        </thead>
                                     </table>
                                 </div>
                             </div>

@@ -389,74 +389,72 @@
                             firstInvalidInput.focus();
                             return; // Stop eksekusi AJAX jika masih ada input kosong
                         }
-                        // Jika semua input valid, lanjutkan dengan AJAX request
-                        if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
-                            let plannedBy = '{{ Auth::user()->id }}';
-                            let rescheduleId = [];
-                            let rescheduleHour = [];
-                            let rescheduleValue = [];
-                            let rescheduleNote = [];
+                        
+                        let plannedBy = '{{ Auth::user()->id }}';
+                        let rescheduleId = [];
+                        let rescheduleHour = [];
+                        let rescheduleValue = [];
+                        let rescheduleNote = [];
 
-                            $('input[name="schedule_id"]').each(function () {
-                                rescheduleId.push($(this).val());
-                            });
-                            $('input[name="combine_schedule_hour"]').each(function () {
-                                rescheduleHour.push($(this).val());
-                            });
+                        $('input[name="schedule_id"]').each(function () {
+                            rescheduleId.push($(this).val());
+                        });
+                        $('input[name="combine_schedule_hour"]').each(function () {
+                            rescheduleHour.push($(this).val());
+                        });
 
-                            $('#plannerTables tbody tr').each(function () {
-                                const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
-                                const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
-                                const isCheckedTidak = $(this).find('input[type="checkbox"][value="tidak"]').is(':checked');
+                        $('#plannerTables tbody tr').each(function () {
+                            const machineRescheduleInput = $(this).find('input[name="machine_reschedule"]');
+                            const rescheduleNoteInput = $(this).find('input[name="reschedule_note"]');
+                            const isCheckedTidak = $(this).find('input[type="checkbox"][value="tidak"]').is(':checked');
 
-                                if (isCheckedTidak) {
-                                    rescheduleValue.push(machineRescheduleInput.val());
-                                    rescheduleNote.push(rescheduleNoteInput.val());
-                                } else {
-                                    rescheduleValue.push(null);
-                                    rescheduleNote.push(null);
-                                }
-                            });
-
-                            if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
-                                $.ajax({
-                                    type: 'PUT',
-                                    url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
-                                    data: {
-                                        '_token': '{{ csrf_token() }}',
-                                        'planned_by': plannedBy,
-                                        'reschedule_id': rescheduleId,
-                                        'reschedule_hour': rescheduleHour,
-                                        'reschedule_value': rescheduleValue,
-                                        'reschedule_note': rescheduleNote
-                                    },
-                                    success: function(response) {
-                                        if (response.success) {
-                                            $('#successText').text(response.success);
-                                            $('#successModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#successModal').modal('hide');
-                                            $('#plannerModal').modal('hide');
-                                        }, 2000);
-                                    },
-                                    error: function(xhr, status, error) {
-                                        if (xhr.responseText) {
-                                            const warningMessage = JSON.parse(xhr.responseText).error;
-                                            $('#warningText').text(warningMessage);
-                                            $('#warningModal').modal('show');
-                                        }
-                                        setTimeout(function() {
-                                            $('#warningModal').modal('hide');
-                                            $('#plannerModal').modal('hide');
-                                        }, 2000);
-                                    }
-                                }).always(function() {
-                                    table.ajax.reload(null, false);
-                                });
+                            if (isCheckedTidak) {
+                                rescheduleValue.push(machineRescheduleInput.val());
+                                rescheduleNote.push(rescheduleNoteInput.val());
                             } else {
-                                // User cancelled the deletion, do nothing
+                                rescheduleValue.push(null);
+                                rescheduleNote.push(null);
                             }
+                        });
+
+                        if (confirm("Apakah yakin sudah mengetahui preventive ini?")) {
+                            $.ajax({
+                                type: 'PUT',
+                                url: '{{ route("editmonth-planner", ':id') }}'.replace(':id', scheduleId),
+                                data: {
+                                    '_token': '{{ csrf_token() }}',
+                                    'planned_by': plannedBy,
+                                    'reschedule_id': rescheduleId,
+                                    'reschedule_hour': rescheduleHour,
+                                    'reschedule_value': rescheduleValue,
+                                    'reschedule_note': rescheduleNote
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        $('#successText').text(response.success);
+                                        $('#successModal').modal('show');
+                                    }
+                                    setTimeout(function() {
+                                        $('#successModal').modal('hide');
+                                        $('#plannerModal').modal('hide');
+                                    }, 2000);
+                                },
+                                error: function(xhr, status, error) {
+                                    if (xhr.responseText) {
+                                        const warningMessage = JSON.parse(xhr.responseText).error;
+                                        $('#warningText').text(warningMessage);
+                                        $('#warningModal').modal('show');
+                                    }
+                                    setTimeout(function() {
+                                        $('#warningModal').modal('hide');
+                                        $('#plannerModal').modal('hide');
+                                    }, 2000);
+                                }
+                            }).always(function() {
+                                table.ajax.reload(null, false);
+                            });
+                        } else {
+                            // User cancelled the deletion, do nothing
                         }
                     });
 
@@ -634,7 +632,7 @@
                     `;
                     const button_modal =`
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="saveButton" data-toggle="modal">Confirm</button>
+                        <button type="submit" class="btn btn-primary" id="saveEditButton" data-toggle="modal">Confirm</button>
                     `;
                     $('#modal_title_planner_edit').html(header_modal);
                     $('#modal_data_planner_edit').html(data_modal);
@@ -707,7 +705,7 @@
                         }
                     });
 
-                    $('#saveButton').on('click', function() {
+                    $('#saveEditButton').on('click', function() {
                         let plannedBy = '{{ Auth::user()->id }}';
                         let rescheduleId = [];
                         let rescheduleHour = [];

@@ -260,26 +260,6 @@
                                 <div class="form-custom">
                                     <label for="input_note" class="col-form-label text-sm-left" style="margin-left: 4px;">Keterangan</label>
                                     <textarea class="form-control" id="input_note" type="text" rows="6" cols="50" disabled>${data.preventivedata[0].note || '-'}</textarea>
-                                </div>
-                                <div class="form-custom">
-                                    <table class="table table-bordered table-custom" id="userTable">
-                                        <thead>
-                                            <tr>
-                                                <th>Disetujui oleh :</th>
-                                                <th>Dikoreksi oleh :</th>
-                                                <th colspan="4">Dibuat oleh :</th>
-                                            </tr>
-                                            <tr>
-                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
-                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
-                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
-                                                    <td>${get_user_id}</td>
-                                                `).join('')}
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                                <div class="form-custom">
                                     <table class="table table-bordered" id="abnormalityTable">
                                         <thead>
                                             <tr>
@@ -309,6 +289,24 @@
                                                 </td>
                                             </tr>
                                         </tbody>
+                                    </table>
+                                </div>
+                                <div class="form-custom">
+                                    <table class="table table-bordered table-custom" id="userTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Disetujui oleh :</th>
+                                                <th>Dikoreksi oleh :</th>
+                                                <th colspan="4">Dibuat oleh :</th>
+                                            </tr>
+                                            <tr>
+                                                <td>${data.preventivedata[0].approve_by_name ? data.preventivedata[0].approve_by_name : 'Belum disetujui'}</td>
+                                                <td>${data.preventivedata[0].correct_by_name ? data.preventivedata[0].correct_by_name : 'Belum dikoreksi'}</td>
+                                                ${JSON.parse(data.preventivedata[0].create_by).map((get_user_id) => `
+                                                    <td>${get_user_id}</td>
+                                                `).join('')}
+                                            </tr>
+                                        </thead>
                                     </table>
                                 </div>
                             </div>
