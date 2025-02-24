@@ -79,31 +79,31 @@ class MachinepropertyController extends Controller
         }
     }
 
-    // public function findproperty($id)
-    // {
-    //     try {
-    //         $joinproperty = DB::table('machineproperties')
-    //             ->select('machineproperties.id', 'componenchecks.id', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'componenchecks.id as join_id')
-    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
-    //             ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
-    //             ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
-    //             ->where('machineproperties.id', '=', $id)
-    //             ->get();
+    public function findproperty($id)
+    {
+        try {
+            $propertydata = DB::table('machineproperties')
+                ->select('machineproperties.id', 'componenchecks.id', 'parameters.name_parameter', 'metodechecks.name_metodecheck', 'componenchecks.id as join_id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
+                ->leftJoin('parameters', 'componenchecks.id', '=', 'parameters.id_componencheck')
+                ->leftJoin('metodechecks', 'parameters.id', '=', 'metodechecks.id_parameter')
+                ->where('machineproperties.id', '=', $id)
+                ->get();
 
-    //         $joincomponent = DB::table('machineproperties')
-    //             ->select('machineproperties.*', 'componenchecks.name_componencheck', 'componenchecks.id as componen_id')
-    //             ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
-    //             ->where('machineproperties.id', '=', $id)
-    //             ->get();
+            $componentdata = DB::table('machineproperties')
+                ->select('machineproperties.*', 'componenchecks.name_componencheck', 'componenchecks.id as componen_id')
+                ->leftJoin('componenchecks', 'machineproperties.id', '=', 'componenchecks.id_property')
+                ->where('machineproperties.id', '=', $id)
+                ->get();
 
-    //         return response()->json([
-    //             'joinproperty' => $joinproperty,
-    //             'joincomponent' => $joincomponent
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Error fetching data'], 500);
-    //     }
-    // }
+            return response()->json([
+                'propertydata' => $propertydata,
+                'componentdata' => $componentdata
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching data'], 500);
+        }
+    }
 
     // fungsi upload data excel ke database (EXPERIMENTAL PERLU PENGEMBANGAN LEBIH LANJUT)
     // public function importpropertydata(Request $request)

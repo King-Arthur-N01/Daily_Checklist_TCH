@@ -150,8 +150,8 @@
                         <div class="form-group">
                             <label class="col-form-label text-sm-right" style="margin-left: 4px;">Nama Standarisasi</label>
                             <div>
-                                <input class="form-control form-control-user" type="text" name="name_property_edit" placeholder="Nama Standarisasi">
-                                <input type="hidden" name="id_property" id="property_id">
+                                <input class="form-control form-control-user" type="text" name="name_property_edit" id="namePropertyEdit" placeholder="Nama Standarisasi">
+                                <input type="hidden" name="id_property" id="propertyId">
                             </div>
                         </div>
                         <table class="table table-bordered" id="dynamicEditTable" width="100%">
@@ -187,8 +187,8 @@
                                     </td>
                                     <td>
                                         <div class="dynamic-button-group">
-                                            <button type="button" class="btn btn-success btn-sm" id="addRowBtnEdit">Add Rows</i></button>
-                                            <button type="button" class="btn btn-danger btn-sm" id="removeRowBtnEdit">Delete Rows</i></button>
+                                            <button type="button" class="btn btn-success btn-sm" id="addEditRowBtn">Add Rows</i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="removeEditRowBtn">Delete Rows</i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -288,10 +288,10 @@
             }, 60000); // 60000 milidetik = 60 second
 
             // Ambil nilai data-id dari tombol updatemodal
-            $(document).on('click', '.dropdown-item-custom-primary', function() {
-                const propertyId = $(this).data('id');
-                $('#property_id').val(propertyId);
-            });
+            // $(document).on('click', '.dropdown-item-custom-primary', function() {
+            //     const propertyId = $(this).data('id');
+            //     $('#property_id').val(propertyId);
+            // });
 
             // kode javascript untuk menginisiasi datatable dan berfungsi sebagai dynamic table
             const table = $('#propertyTables').DataTable({
@@ -329,45 +329,45 @@
                 ]
             });
 
-            $('#uploadButton').on('click', function(e) {
-                e.preventDefault();
-                let file = $('#importExcel')[0].files[0];
-                let uploadData = new FormData();
-                uploadData.append('file', file);
-                $.ajax({
-                    type: "POST",
-                    url: "",
-                    data: uploadData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        if (response.success) {
-                            const successMessage = response.success;
-                            $('#successText').text(successMessage);
-                            $('#successModal').modal('show');
-                            overlay.toggleClass('is-active');
-                        }
-                        setTimeout(function() {
-                                $('#successModal').modal('hide');
-                                $('#uploadModal').modal('hide');
-                                overlay.removeClass('is-active');
-                        }, 2000);
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.responseText) {
-                            const warningMessage = JSON.parse(xhr.responseText).error;
-                            $('#failedText').text(warningMessage);
-                            $('#failedModal').modal('show');
-                        }
-                        setTimeout(function() {
-                            $('#failedModal').modal('hide');
-                            $('#uploadModal').modal('hide');
-                        }, 2000);
-                    }
-                }).always(function() {
-                    table.ajax.reload(null, false);
-                });
-            });
+            // $('#uploadButton').on('click', function(e) {
+            //     e.preventDefault();
+            //     let file = $('#importExcel')[0].files[0];
+            //     let uploadData = new FormData();
+            //     uploadData.append('file', file);
+            //     $.ajax({
+            //         type: "POST",
+            //         url: "", MASIH PERLU PENGEMBANGAN LAGI UNTUK OPSI UPLOAD UNTUK KE DATABASE
+            //         data: uploadData,
+            //         contentType: false,
+            //         processData: false,
+            //         success: function(response) {
+            //             if (response.success) {
+            //                 const successMessage = response.success;
+            //                 $('#successText').text(successMessage);
+            //                 $('#successModal').modal('show');
+            //                 overlay.toggleClass('is-active');
+            //             }
+            //             setTimeout(function() {
+            //                     $('#successModal').modal('hide');
+            //                     $('#uploadModal').modal('hide');
+            //                     overlay.removeClass('is-active');
+            //             }, 2000);
+            //         },
+            //         error: function(xhr, status, error) {
+            //             if (xhr.responseText) {
+            //                 const warningMessage = JSON.parse(xhr.responseText).error;
+            //                 $('#failedText').text(warningMessage);
+            //                 $('#failedModal').modal('show');
+            //             }
+            //             setTimeout(function() {
+            //                 $('#failedModal').modal('hide');
+            //                 $('#uploadModal').modal('hide');
+            //             }, 2000);
+            //         }
+            //     }).always(function() {
+            //         table.ajax.reload(null, false);
+            //     });
+            // });
 
             $('#registerform').on('submit', function(event) {
                 event.preventDefault();
@@ -449,6 +449,179 @@
                 }
             });
 
+            // <===========================================================================================>
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END EDIT PROPERTY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // <===========================================================================================>
+
+            $('#updateModal').on('shown.bs.modal', function (event) {
+                const button = $(event.relatedTarget);
+                const propertyId = button.data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ route("findproperty", ":id") }}'.replace(':id', propertyId),
+                    success: function (data) {
+                        document.getElementById("namePropertyEdit").value = data.componentdata[0].name_property;
+                        document.getElementById("propertyId").value = data.componentdata[0].id;
+
+                        let tableBodyContent = '';
+                        data.componentdata.forEach((component, rowIndex) => {
+                            let newRow = `
+                                <tr>
+                                    <td id="columnContainerA_${rowIndex + 1}_Edit">
+                                        <div class="dynamic-input-group">
+                                            <textarea type="text" class="form-control" style="height: 100px;" name="bagian_yang_dicheck[]" id="componencheck_${rowIndex + 1}_1_Edit" placeholder="Example : Push Button">${component.name_componencheck || ''}</textarea>
+                                        </div>
+                                    </td>
+                                    <td id="columnContainerB_${rowIndex + 1}_Edit">
+                            `;
+
+                            let parameterCount = 1;
+                            data.propertydata.forEach((item) => {
+                                if (component.componen_id == item.join_id) {
+                                    newRow += `
+                                        <div class="dynamic-input-group" id="inputContainerB_${rowIndex + 1}_${parameterCount}_Edit">
+                                            <input type="text" class="form-control form-control-user" name="standart_parameter[]" id="parameter_${rowIndex + 1}_${parameterCount}_Edit" placeholder="Example : Berfungsi dengan baik" value="${item.name_parameter || ''}">
+                                            <button type="button" class="btn btn-success btn-circle btn-sm addEditColumnBtnB" data-row-id="${rowIndex + 1}"><i class="fas fa-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm removeEditColumnBtnB" data-row-id="${rowIndex + 1}"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    `;
+                                    parameterCount++;
+                                }
+                            });
+
+                            newRow += `
+                                    <input type="hidden" name="total_user_input[]" id="userInputCount_${rowIndex + 1}_Edit" value="${parameterCount - 1}">
+                                    </td>
+                                    <td id="columnContainerC_${rowIndex + 1}_Edit">
+                            `;
+
+                            let metodeCount = 1;
+                            data.propertydata.forEach((item) => {
+                                if (component.componen_id == item.join_id) {
+                                    newRow += `
+                                        <div class="dynamic-input-group" id="inputContainerC_${rowIndex + 1}_${metodeCount}_Edit">
+                                            <input type="text" class="form-control form-control-user" name="metode_pengecekan[]" id="metodecheck_${rowIndex + 1}_${metodeCount}_Edit" placeholder="Example : Dioperasikan" value="${item.name_metodecheck || ''}">
+                                            <button type="button" class="btn btn-success btn-circle btn-sm addEditColumnBtnC" data-row-id="${rowIndex + 1}"><i class="fas fa-plus"></i></button>
+                                            <button type="button" class="btn btn-danger btn-circle btn-sm removeEditColumnBtnC" data-row-id="${rowIndex + 1}"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    `;
+                                    metodeCount++;
+                                }
+                            });
+
+                            newRow += `
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm addEditRowBtn">Add Row</button>
+                                        <button type="button" class="btn btn-danger btn-sm removeEditRowBtn">Remove Row</button>
+                                    </td>
+                                </tr>
+                            `;
+                            tableBodyContent += newRow;
+                        });
+
+                        $('#editTableBody').html(tableBodyContent);
+
+                        $(document).on("click", ".addEditColumnBtnB", function(event) {
+                            event.preventDefault();
+                            const rowId = $(this).data("row-id");
+                            addEditInput(`columnContainerB_${rowId}_Edit`, "standart_parameter[]", `parameter_${rowId}`, "Example: Berfungsi dengan baik", rowId, 'B');
+                        });
+                        $(document).on("click", ".addEditColumnBtnC", function(event) {
+                            event.preventDefault();
+                            const rowId = $(this).data("row-id");
+                            addEditInput(`columnContainerC_${rowId}_Edit`, "metode_pengecekan[]", `metodecheck_${rowId}`, "Example: Dioperasikan", rowId, 'C');
+                        });
+                        $(document).on("click", ".removeEditColumnBtnB", function(event) {
+                            event.preventDefault();
+                            removeEditInput(this, `inputContainerB_${$(this).data("row-id")}_Edit`);
+                        });
+                        $(document).on("click", ".removeEditColumnBtnC", function(event) {
+                            event.preventDefault();
+                            removeEditInput(this, `inputContainerC_${$(this).data("row-id")}_Edit`);
+                        });
+
+
+                        const inputCounts = {1: {A: 1, B: 1, C: 1}};
+                        function addEditInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId) {
+                            const userInputCountElement = document.getElementById(`userInputCount_${rowIdSuffix}_Edit`);
+                            let lastCount = parseInt(userInputCountElement.value, 10) || 0;
+                            const inputContainer = document.getElementById(containerId);
+                            if (!inputCounts[rowIdSuffix]) {
+                                inputCounts[rowIdSuffix] = {A: 1, B: lastCount, C: lastCount};
+                            }
+                            const inputGroupCount = ++inputCounts[rowIdSuffix][columnId];
+                            const newInputGroup = document.createElement("div");
+                            newInputGroup.className = "dynamic-input-group";
+
+                            const newInput = document.createElement("input");
+                            newInput.type = "text";
+                            newInput.className = "form-control form-control-user";
+                            newInput.name = inputName;
+                            newInput.id = `${inputIdPrefix}_${inputGroupCount}_Edit`;
+                            newInput.placeholder = placeholder;
+
+                            const addButton = document.createElement("button");
+                            addButton.type = "button";
+                            addButton.className = "btn btn-success btn-circle btn-sm";
+                            addButton.innerHTML = '<i class="fas fa-plus"></i>';
+                            addButton.addEventListener("click", function (event) {
+                                event.preventDefault();
+                                addEditInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId);
+                            });
+
+                            const removeButton = document.createElement("button");
+                            removeButton.type = "button";
+                            removeButton.className = "btn btn-danger btn-circle btn-sm";
+                            removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                            removeButton.onclick = function () {
+                                removeEditInput(this, containerId);
+                            };
+
+                            newInputGroup.appendChild(newInput);
+                            newInputGroup.appendChild(addButton);
+                            newInputGroup.appendChild(removeButton);
+                            inputContainer.appendChild(newInputGroup);
+
+                            // Increment the hidden input value
+                            document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value = inputGroupCount;
+                        }
+
+                        function removeEditInput(button, containerId) {
+                            const inputContainer = document.getElementById(containerId);
+                            if (inputContainer) {
+                                const inputGroups = inputContainer.querySelectorAll(".dynamic-input-group");
+                                if (inputGroups.length > 1) {
+                                    const inputGroup = button.closest(".dynamic-input-group"); // Temukan parent terdekat
+                                    inputGroup.remove(); // Hapus input group yang diklik
+
+                                    const rowIdSuffix = containerId.match(/\d+/g)?.[0]; // Ambil angka pertama dari ID
+                                    const userInputCountElement = document.getElementById(`userInputCount_${rowIdSuffix}_Edit`);
+                                    if (userInputCountElement) {
+                                        const currentCount = parseInt(userInputCountElement.value, 10);
+                                        userInputCountElement.value = currentCount - 1;
+                                    } else {
+                                        console.warn(`Hidden input userInputCount_${rowIdSuffix}_Edit not found`);
+                                    }
+                                } else {
+                                    alert("At least one input must remain.");
+                                }
+                            } else {
+                                console.error(`Element with id "${containerId}" not found`);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching data:', error);
+                        $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
+                    }
+                });
+            });
+
+            // <===========================================================================================>
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END EDIT PROPERTY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // <===========================================================================================>
+
             $('#updateform').on('submit', function(event) {
                 event.preventDefault();
                 let formData = {
@@ -485,7 +658,7 @@
                             formData[dynamicArrayName].parameter.push(inputValue);
                         } else if (inputId.startsWith(`metodecheck_${rowIdSuffix}_`)) {
                             formData[dynamicArrayName].metodecheck.push(inputValue);
-                        } else if (inputId.startsWith(`userInputCount_${rowIdSuffix}`)) {
+                        } else if (inputId.startsWith(`userInputCount_${rowIdSuffix}_Edit`)) {
                             formData[dynamicArrayName].user_input_count = inputValue;
                         }
                     });
@@ -539,7 +712,7 @@
                 // var no_mesin = $("#viewButton")$(this).attr("data-id");
                 $.ajax({
                     type: 'GET',
-                    url: '{{ route("viewproperty", ':id') }}'.replace(':id', propertyId),
+                    url: '{{ route("viewproperty", ":id") }}'.replace(':id', propertyId),
                     success: function(data) {
                         const header_modal = `
                             <h5 class="modal-title">Detail Preventive Mesin</h5>
@@ -627,29 +800,29 @@
             });
         });
     </script>
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const addRowBtn = document.getElementById("addRowBtnEdit");
-            const removeRowBtn = document.getElementById("removeRowBtnEdit");
+            const addEditRowBtn = document.getElementById("addEditRowBtn");
+            const removeEditRowBtn = document.getElementById("removeEditRowBtn");
 
-            if (addRowBtn) {
-                addRowBtn.addEventListener("click", function (event) {
+            if (addEditRowBtn) {
+                addEditRowBtn.addEventListener("click", function (event) {
                     event.preventDefault();
-                    addRow();
+                    addEditRow();
                 });
             }
 
-            if (removeRowBtn) {
-                removeRowBtn.addEventListener("click", function (event) {
+            if (removeEditRowBtn) {
+                removeEditRowBtn.addEventListener("click", function (event) {
                     event.preventDefault();
-                    removeRow();
+                    removeEditRow();
                 });
             }
 
             let rowCount = 1;
             const inputCounts = {1: {A: 1, B: 1, C: 1}};
 
-            function addRow() {
+            function addEditRow() {
                 const tableBody = document.getElementById("editTableBody");
                 const newRow = tableBody.insertRow(-1);
                 rowCount++;
@@ -679,8 +852,8 @@
                     </td>
                     <td>
                         <div class="dynamic-button-group">
-                            <button type="button" class="btn btn-success btn-sm addRowBtnEdit">Add Rows</button>
-                            <button type="button" class="btn btn-danger btn-sm removeRowBtnEdit">Delete Rows</button>
+                            <button type="button" class="btn btn-success btn-sm addEditRowBtn">Add Rows</button>
+                            <button type="button" class="btn btn-danger btn-sm removeEditRowBtn">Delete Rows</button>
                         </div>
                     </td>
                 `;
@@ -691,36 +864,36 @@
             function attachEventListeners(row, rowIdSuffix) {
                 row.querySelector(`#addColumnBtnB_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
                     event.preventDefault();
-                    addInput(`columnContainerB_${rowIdSuffix}_Edit`, "standart_parameter[]", `parameter_${rowIdSuffix}_Edit`, "Example: Berfungsi dengan baik", rowIdSuffix, 'B');
+                    addEditInput(`columnContainerB_${rowIdSuffix}_Edit`, "standart_parameter[]", `parameter_${rowIdSuffix}_Edit`, "Example: Berfungsi dengan baik", rowIdSuffix, 'B');
                 });
 
                 row.querySelector(`#addColumnBtnC_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
                     event.preventDefault();
-                    addInput(`columnContainerC_${rowIdSuffix}_Edit`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}_Edit`, "Example: Dioperasikan", rowIdSuffix, 'C');
+                    addEditInput(`columnContainerC_${rowIdSuffix}_Edit`, "metode_pengecekan[]", `metodecheck_${rowIdSuffix}_Edit`, "Example: Dioperasikan", rowIdSuffix, 'C');
                 });
 
                 row.querySelector(`#removeColumnBtnB_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
                     event.preventDefault();
-                    removeInput(this, `columnContainerB_${rowIdSuffix}_Edit`);
+                    removeEditInput(this, `columnContainerB_${rowIdSuffix}_Edit`);
                 });
 
                 row.querySelector(`#removeColumnBtnC_${rowIdSuffix}_1_Edit`).addEventListener("click", function (event) {
                     event.preventDefault();
-                    removeInput(this, `columnContainerC_${rowIdSuffix}_Edit`);
+                    removeEditInput(this, `columnContainerC_${rowIdSuffix}_Edit`);
                 });
 
-                row.querySelector(".addRowBtnEdit").addEventListener("click", function (event) {
+                row.querySelector(".addEditRowBtn").addEventListener("click", function (event) {
                     event.preventDefault();
-                    addRow();
+                    addEditRow();
                 });
 
-                row.querySelector(".removeRowBtnEdit").addEventListener("click", function (event) {
+                row.querySelector(".removeEditRowBtn").addEventListener("click", function (event) {
                     event.preventDefault();
-                    removeRow();
+                    removeEditRow();
                 });
             }
 
-            function removeRow() {
+            function removeEditRow() {
                 const tableBody = document.getElementById("editTableBody");
                 const rows = tableBody.rows;
                 if (rows.length > 1) {
@@ -730,27 +903,26 @@
                 }
             }
 
-            document.getElementById("addColumnBtnB_1_1_Edit").addEventListener("click", function (event) {
+            $(document).on("click", ".addEditColumnBtnB", function(event) {
                 event.preventDefault();
-                addInput("columnContainerB_1_Edit", "standart_parameter[]", "parameter_1_Edit", "Example: Berfungsi dengan baik", 1, 'B');
+                const rowId = $(this).data("row-id");
+                addEditInput(`columnContainerB_${rowId}_Edit`, "standart_parameter[]", `parameter_${rowId}`, "Example: Berfungsi dengan baik", rowId, 'B');
+            });
+            $(document).on("click", ".addEditColumnBtnC", function(event) {
+                event.preventDefault();
+                const rowId = $(this).data("row-id");
+                addEditInput(`columnContainerC_${rowId}_Edit`, "metode_pengecekan[]", `metodecheck_${rowId}`, "Example: Dioperasikan", rowId, 'C');
+            });
+            $(document).on("click", ".removeEditColumnBtnB", function(event) {
+                event.preventDefault();
+                removeEditInput(this, `inputContainerB_${$(this).data("row-id")}_Edit`);
+            });
+            $(document).on("click", ".removeEditColumnBtnC", function(event) {
+                event.preventDefault();
+                removeEditInput(this, `inputContainerC_${$(this).data("row-id")}_Edit`);
             });
 
-            document.getElementById("addColumnBtnC_1_1_Edit").addEventListener("click", function (event) {
-                event.preventDefault();
-                addInput("columnContainerC_1_Edit", "metode_pengecekan[]", "metodecheck_1_Edit", "Example: Dioperasikan", 1, 'C');
-            });
-
-            document.getElementById("removeColumnBtnB_1_1_Edit").addEventListener("click", function (event) {
-                event.preventDefault();
-                removeInput(this, `inputContainerB_1_1_Edit`);
-            });
-
-            document.getElementById("removeColumnBtnC_1_1_Edit").addEventListener("click", function (event) {
-                event.preventDefault();
-                removeInput(this, `inputContainerC_1_1_Edit`);
-            });
-
-            function addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId) {
+            function addEditInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId) {
                 const inputContainer = document.getElementById(containerId);
                 if (!inputCounts[rowIdSuffix]) {
                     inputCounts[rowIdSuffix] = {A: 1, B: 1, C: 1};
@@ -763,7 +935,7 @@
                 newInput.type = "text";
                 newInput.className = "form-control form-control-user";
                 newInput.name = inputName;
-                newInput.id = `${inputIdPrefix}_${inputGroupCount}`;
+                newInput.id = `${inputIdPrefix}_${inputGroupCount}_Edit`;
                 newInput.placeholder = placeholder;
 
                 const addButton = document.createElement("button");
@@ -772,7 +944,7 @@
                 addButton.innerHTML = '<i class="fas fa-plus"></i>';
                 addButton.addEventListener("click", function (event) {
                     event.preventDefault();
-                    addInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId);
+                    addEditInput(containerId, inputName, inputIdPrefix, placeholder, rowIdSuffix, columnId);
                 });
 
                 const removeButton = document.createElement("button");
@@ -780,7 +952,7 @@
                 removeButton.className = "btn btn-danger btn-circle btn-sm";
                 removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
                 removeButton.onclick = function () {
-                    removeInput(this, containerId);
+                    removeEditInput(this, containerId);
                 };
 
                 newInputGroup.appendChild(newInput);
@@ -792,18 +964,22 @@
                 document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value = inputGroupCount;
             }
 
-            function removeInput(button, containerId) {
+            function removeEditInput(button, containerId) {
                 const inputContainer = document.getElementById(containerId);
                 if (inputContainer) {
                     const inputGroups = inputContainer.querySelectorAll(".dynamic-input-group");
                     if (inputGroups.length > 1) {
-                        const inputGroup = button.parentNode;
-                        inputGroup.parentNode.removeChild(inputGroup);
+                        const inputGroup = button.closest(".dynamic-input-group"); // Temukan parent terdekat
+                        inputGroup.remove(); // Hapus input group yang diklik
 
-                        // Decrement the hidden input value
-                        const rowIdSuffix = containerId.split('_').pop();
-                        const currentCount = parseInt(document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value, 10);
-                        document.getElementById(`userInputCount_${rowIdSuffix}_Edit`).value = currentCount - 1;
+                        const rowIdSuffix = containerId.match(/\d+/g)?.[0]; // Ambil angka pertama dari ID
+                        const userInputCountElement = document.getElementById(`userInputCount_${rowIdSuffix}_Edit`);
+                        if (userInputCountElement) {
+                            const currentCount = parseInt(userInputCountElement.value, 10);
+                            userInputCountElement.value = currentCount - 1;
+                        } else {
+                            console.warn(`Hidden input userInputCount_${rowIdSuffix}_Edit not found`);
+                        }
                     } else {
                         alert("At least one input must remain.");
                     }
@@ -812,5 +988,5 @@
                 }
             }
         });
-    </script>
+    </script> --}}
 @endpush

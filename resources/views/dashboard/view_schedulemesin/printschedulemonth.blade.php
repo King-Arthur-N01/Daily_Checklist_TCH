@@ -78,9 +78,10 @@
             </tr>
             <tr></tr>
             <tr>
-                <td>{{ $user_create_name}}</td>
-                <td>{{ $user_recognize_name}}</td>
                 <td>{{ $user_agreed_name}}</td>
+                <td>{{ $user_recognize_name}}</td>
+                <td>{{ $user_create_name}}</td>
+
             </tr>
         </tbody>
     </table>

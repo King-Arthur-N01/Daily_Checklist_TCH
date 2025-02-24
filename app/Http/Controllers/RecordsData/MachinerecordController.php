@@ -112,7 +112,8 @@ class MachinerecordController extends Controller
                 ->where('monthly_schedules.schedule_special', '=', 0)
                 ->where('monthly_schedules.schedule_status', '=', 0)
                 ->whereNotNull('monthly_schedules.schedule_planner')
-                ->whereNotIn('machine_schedules.id', $baseonScheduleIds) // Hindari duplikasi
+                ->whereNotIn('machine_schedules.id', $baseonScheduleIds)
+                ->orderBy('machine_schedules.schedule_date', 'asc')
                 ->get();
 
             // Data Working Hour

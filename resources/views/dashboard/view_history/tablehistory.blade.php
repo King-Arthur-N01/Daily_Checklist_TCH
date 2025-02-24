@@ -107,8 +107,8 @@
                                 invent_number: joinrecords.invent_number,
                                 machine_type: joinrecords.machine_type || '-',
                                 machine_number: joinrecords.machine_number || '-',
-                                correct_status: joinrecords.getcorrect || '-',
-                                approve_status: joinrecords.getapprove || '-',
+                                correct_status: joinrecords.getcorrect,
+                                approve_status: joinrecords.getapprove,
                                 record_status: joinrecords.machinerecord_status,
                                 getcreatedate: formatDate(joinrecords.preventive_date),
                                 schedule_status: joinrecords.schedule_time_status,
@@ -125,8 +125,12 @@
                     { data: 'invent_number' },
                     { data: 'machine_type' },
                     { data: 'machine_number' },
-                    { data: 'correct_status' },
-                    { data: 'approve_status' },
+                    { data: 'correct_status', render: function(data, type, row) {
+                        return data === null ? '<span class="badge badge-danger">Belum Diketahui</span>' : '<span class="badge badge-success">Sudah Diketahui</span>';
+                    }},
+                    { data: 'approve_status', render: function(data, type, row) {
+                        return data === null ? '<span class="badge badge-danger">Belum Disetujui</span>' : '<span class="badge badge-success">Sudah Disetujui</span>';
+                    }},
                     { data: 'record_status', render: function(data, type, row) {
                         if (data === 0) {
                             return '<span class="badge badge-success">OPEN</span>';
@@ -332,27 +336,6 @@
                     error: function(xhr, status, error) {
                         console.error('error:', error);
                         $('#modal-data').html('<p>Error fetching data. Please try again.</p>');
-                    }
-                });
-            });
-
-            // fungsi table untuk melihat status dari sebuah preventive
-            table.on('draw', function() {
-                $('#historyTables tbody tr').each(function() {
-                    var correctCell = $(this).find('td:eq(5)');
-                    var approveCell = $(this).find('td:eq(6)');
-                    var correct = correctCell.text().trim();
-                    var approve = approveCell.text().trim();
-
-                    if (correct !== '' && approve !== '') {
-                        correctCell.text('Sudah dikoreksi');
-                        approveCell.text('Sudah disetujui');
-                    } else if (correct !== '' && approve === '') {
-                        correctCell.text('Sudah dikoreksi');
-                        approveCell.text('Belum disetujui');
-                    } else if (correct === '' && approve === '') {
-                        correctCell.text('Belum dikoreksi');
-                        approveCell.text('Belum disetujui');
                     }
                 });
             });

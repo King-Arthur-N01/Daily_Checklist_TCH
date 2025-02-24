@@ -52,7 +52,7 @@ Route::get ('/machineproperty','MachineData\MachinepropertyController@indexmachi
 Route::post('/machineproperty/create','MachineData\MachinepropertyController@createproperty')->name('addproperty');
 Route::put ('/machineproperty/update/{id}','MachineData\MachinepropertyController@updateproperty')->name('editproperty');
 Route::get ('/machineproperty/view/{id}','MachineData\MachinepropertyController@viewproperty')->name('viewproperty');
-// Route::get('/machineproperty/find/{id}','MachineData\MachinepropertyController@findproperty')->name('findproperty');
+Route::get('/machineproperty/find/{id}','MachineData\MachinepropertyController@findproperty')->name('findproperty');
 Route::get ('/machineproperty/table/refresh','MachineData\MachinepropertyController@refreshtableproperty')->name('refreshproperty');
 Route::delete('/machineproperty/delete/{id}','MachineData\MachinepropertyController@deleteproperty')->name('removeproperty');
 // Route::post('/machineproperty/import','MachineData\MachinepropertyController@importpropertydata')->name('importproperty'); EXPERIMENTAL PERLU PENGEMBANGAN LEBIH LANJUT

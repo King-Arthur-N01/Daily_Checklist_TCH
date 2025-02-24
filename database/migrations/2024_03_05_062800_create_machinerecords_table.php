@@ -16,12 +16,12 @@ class CreateMachinerecordsTable extends Migration
         Schema::create('machinerecords', function (Blueprint $table) {
             $table->id();
             $table->string('shift')->nullable();
-            $table->string('note')->nullable();
-            $table->string('problem')->nullable();
-            $table->string('cause')->nullable();
-            $table->string('action')->nullable();
-            $table->string('status')->nullable();
-            $table->string('target')->nullable();
+            $table->text('note')->nullable();
+            $table->text('problem')->nullable();
+            $table->text('cause')->nullable();
+            $table->text('action')->nullable();
+            $table->text('status')->nullable();
+            $table->text('target')->nullable();
             $table->json('create_by')->nullable();
             $table->unsignedBigInteger('correct_by')->nullable();
             $table->unsignedBigInteger('approve_by')->nullable();
